@@ -12,8 +12,11 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    background-image: url(./fundo.png);
     background-size: cover;
-    background-position: center;
+    background-position: center; 
+    overflow: hidden; 
+   
 }
 
 .container {
@@ -63,7 +66,7 @@ body {
     font-size: 20px;
 }
 
-remember-forgot {
+/* remember-forgot {
     display:flex;
     justify-content: space-between;
     margin: -15px 0 15px;
@@ -118,4 +121,4 @@ remember-forgot {
 
 .register-link a:hover {
     text-decoration: underline;
-}
+} */
