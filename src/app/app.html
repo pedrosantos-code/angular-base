@@ -1,36 +1,35 @@
+<router-outlet>
+  <head>
+      <title>Login</title>
+      <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
+      <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
+  </head>
+  <body>
+    <main class="container">
+      <form>
+        <h1>Login</h1>
+          <div class="input-box">
+            <input placeholder="Usuário" type="email">
+            <i class="bx bx-user bx-remove-padding"></i>
+          </div>
+          <div class="input-box">
+            <input placeholder="Senha" type="password">
+            <i class="bx bx-lock bx-remove-padding"></i>
+          </div>
 
-<head>
-    <title>Login</title>
-    <link href="https://cdn.boxicons.com/3.0.8/fonts/basic/boxicons.min.css" rel="stylesheet">
-    <link href="https://cdn.boxicons.com/3.0.8/fonts/filled/boxicons-filled.min.css" rel="stylesheet">
-</head>
-<body>
-  <main class="container">
-    <form>
-      <h1>Login</h1>
-        <div class="input-box">
-          <input placeholder="Usuário" type="email">
-          <i class="bx bx-user bx-remove-padding"></i>
-        </div>
-        <div class="input-box">
-          <input placeholder="Senha" type="password">
-          <i class="bx bx-lock bx-remove-padding"></i>
-        </div>
+          <div class="remember-forgot">
+            <label>
+              <input type="checkbox"> Lembrar senha
+            </label>
+              <a href="#">Esqueci a senha</a>
+          </div>
 
-        <div class="remember-forgot">
-          <label>
-            <input type="checkbox"> Lembrar senha
-          </label>
-            <a href="#">Esqueci a senha</a>
-        </div>
+          <button type="submit" class="login">Login</button>
 
-        <button type="submit" class="login">Login</button>
-
-        <div class="register-link">
-          <p>Não tem uma conta? <a href="#">Cadastre-se</a></p>
-        </div>
-    </form>
-  </main>
-</body>
-
+          <div class="register-link">
+            <p>Não tem uma conta? <a href="#">Cadastre-se</a></p>
+          </div>
+      </form>
+    </main>
+  </body>
 <router-outlet />
