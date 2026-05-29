@@ -7,6 +7,6 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class App {
+export class DashboardComponent {
   protected readonly title = signal('meu-projeto');
 }

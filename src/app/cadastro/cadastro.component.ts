@@ -4,9 +4,9 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+  templateUrl: './cadastro.component.html',
+  styleUrl: './cadastro.component.css',
 })
-export class App {
+export class CadastroComponent {
   protected readonly title = signal('meu-projeto');
 }

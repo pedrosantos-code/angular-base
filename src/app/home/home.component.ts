@@ -4,9 +4,9 @@ import { RouterOutlet } from '@angular/router';
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  templateUrl: './app.html',
-  styleUrl: './app.css',
+  templateUrl: './home.component.html',
+  styleUrl: './home.component.css',
 })
-export class App {
+export class HomeComponent {
   protected readonly title = signal('meu-projeto');
 }
