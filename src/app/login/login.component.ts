@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
-import { RouterOutlet} from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css',
+  templateUrl: './login.component.html',
+  styleUrl: './login.component.css',
 })
-export class App {
+export class LoginComponent {
   protected readonly title = signal('meu-projeto');
 }
