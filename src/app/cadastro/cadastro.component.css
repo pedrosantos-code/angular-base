@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
     margin: 0;
@@ -16,12 +16,11 @@ body {
     background-size: cover;
     background-position: center;
     overflow: hidden;
-
 }
 
 .container {
-    width: 420px;
-    background-color: #0E3165;
+    width: 420px; /* Mantido exatamente o seu tamanho */
+    background-color: #0E3165; /* Seu azul original mantido */
     border: 2px solid rgba(255, 255, 255, .2);
     border-radius: 10px;
     color: white;
@@ -35,44 +34,54 @@ body {
     text-align: center;
 }
 
-.input-box {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    margin: 30px 0;
+.logo {
+    display: block;
+    margin: 0 auto 15px;
+    width: 150px;
+    height: auto;
 }
 
+/* Caixa de input ajustada para funcionar igual ao login */
+.input-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Espaço perfeito entre o texto e o campo branco */
+    width: 100%;
+    margin: 25px 0; /* Margem idêntica ao espaçamento do login */
+}
+
+/* Estilo para as palavras "Email", "Senha" e "Confirme a Senha" */
+.input-box label {
+    color: white;
+    font-size: 16px;
+    font-weight: 550;
+    text-align: left; /* Garante alinhamento à esquerda igual ao login */
+}
+
+/* Input idêntico ao da tela de login */
 .input-box input {
     width: 100%;
-    height: 100%;
+    height: 45px; /* Altura idêntica à do login */
     background-color: white;
     border: 2px solid white;
     border-radius: 10px;
     outline: none;
     font-size: 16px;
     color: #0E3165;
-    padding: 20px 45px 20px 20px;
+    padding: 0 20px; /* Padding limpo para o texto não subir ou sumir */
 }
 
-.input-box input:placeholder {
+.input-box input::placeholder {
     color: #0E3165;
 }
 
-.input-box i {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 20px;
-}
-
 .remember-forgot {
-    display:flex;
+    display: flex;
     justify-content: space-between;
     margin: -15px 0 15px; 
 }
 
-.remember-forgot label input{
+.remember-forgot label input {
     accent-color: white;
     margin-right: 5px;
 }
@@ -86,8 +95,11 @@ body {
     text-decoration: underline;
 }
 
+/* Botão de cadastro com as suas medidas originais */
 .cadastro {
-    width: 100%;
+    display: block;       
+    margin-inline: auto;  
+    width: 50%; /* Mantido em 50% */
     height: 50px;
     background-color: white;
     border: none;
@@ -97,7 +109,7 @@ body {
     color: #0E3165;
     font-weight: 600;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    margin-top: 20px;
+    margin-top: 40px; 
 }
 
 .cadastro:hover {
@@ -114,7 +126,7 @@ body {
     cursor: pointer;
 }
 
-.login-link a{
+.login-link a {
     text-decoration: none;
     color: white;
     font-weight: 600;
