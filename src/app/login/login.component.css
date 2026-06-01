@@ -12,7 +12,7 @@ body {
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-image: url(../../../public/fundo.png);
+    background-color: white;
     background-size: cover;
     background-position: center;
     overflow: hidden;
@@ -21,7 +21,7 @@ body {
 
 .container {
     width: 420px;
-    background-color: transparent;
+    background-color: #0E3165;
     border: 2px solid rgba(255, 255, 255, .2);
     border-radius: 10px;
     color: white;
@@ -74,7 +74,7 @@ body {
     border-radius: 50px;
     cursor: pointer;
     font-size: 16px;
-    color: #333;
+    color: #0E3165;
     font-weight: 600;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
     margin-top: 20px;
