@@ -7,12 +7,12 @@
     font-family: "Poppins", sans-serif;
 }
 
-body {
+.fundo-login {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: white;
+    background-image: url('../../../public/fundo.png');
     background-size: cover;
     background-position: center;
     overflow: hidden;
@@ -34,11 +34,11 @@ body {
     text-align: center;
 }
 
-.logo {
-    display: block;
-    margin: 0 auto 15px;
-    width: 150px;
+.logo {/* Corrigido de display para position */        /* Empurra o início da imagem para o meio */
+    width: 100%;
+    max-width: 450px;   /* Ajustei para 250px para ficar harmônico no container de 420px */
     height: auto;
+    object-fit: contain;
 }
 
 .input-box {

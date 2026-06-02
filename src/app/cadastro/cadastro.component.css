@@ -7,18 +7,19 @@
     font-family: "Poppins", sans-serif;
 }
 
-body {
+.fundo-cadastro {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: white;
+    background-image: url('../../../public/fundo.png');
     background-size: cover;
     background-position: center;
     overflow: hidden;
 }
 
 .container {
+    position: relative; /* CRUCIAL: Mantém o logo absolute preso dentro deste container */
     width: 420px; 
     background-color: #0E3165; 
     border: 2px solid rgba(255, 255, 255, .2);
@@ -27,6 +28,9 @@ body {
     padding: 30px 40px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     backdrop-filter: blur(50px);
+    
+    /* Espaço extra no topo do container para o formulário não começar embaixo da imagem */
+    padding-top: 140px; 
 }
 
 .container h1 {
@@ -35,10 +39,15 @@ body {
 }
 
 .logo {
-    display: block;
-    margin: 0 auto 15px;
-    width: 150px;
+    position: absolute; /* Corrigido de display para position */
+    top: -70px;          /* Afastamento controlado do topo do container azul */
+    left: 50%;          /* Empurra o início da imagem para o meio */
+    transform: translateX(-47%); /* Puxa metade da largura de volta, centralizando perfeitamente */
+    
+    width: 100%;
+    max-width: 450px;   /* Ajustei para 250px para ficar harmônico no container de 420px */
     height: auto;
+    object-fit: contain;
 }
 
 .input-box {
@@ -46,10 +55,9 @@ body {
     flex-direction: column;
     gap: 8px; 
     width: 100%;
-    margin: 25px 0; 
+    /* Reduzimos a margem superior de 25px para 15px */
+    margin: 15px 0 25px; 
 }
-
-
 .input-box label {
     color: white;
     font-size: 16px;
