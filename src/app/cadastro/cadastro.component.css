@@ -19,7 +19,7 @@
 }
 
 .container {
-    position: relative; /* CRUCIAL: Mantém o logo absolute preso dentro deste container */
+    position: relative; 
     width: 420px; 
     background-color: #0E3165; 
     border: 2px solid rgba(255, 255, 255, .2);
@@ -28,8 +28,6 @@
     padding: 30px 40px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     backdrop-filter: blur(50px);
-    
-    /* Espaço extra no topo do container para o formulário não começar embaixo da imagem */
     padding-top: 140px; 
 }
 
@@ -39,13 +37,13 @@
 }
 
 .logo {
-    position: absolute; /* Corrigido de display para position */
-    top: -70px;          /* Afastamento controlado do topo do container azul */
-    left: 50%;          /* Empurra o início da imagem para o meio */
-    transform: translateX(-47%); /* Puxa metade da largura de volta, centralizando perfeitamente */
+    position: absolute; 
+    top: -70px;          
+    left: 50%;          
+    transform: translateX(-47%); 
     
     width: 100%;
-    max-width: 450px;   /* Ajustei para 250px para ficar harmônico no container de 420px */
+    max-width: 450px;   
     height: auto;
     object-fit: contain;
 }
@@ -55,7 +53,6 @@
     flex-direction: column;
     gap: 8px; 
     width: 100%;
-    /* Reduzimos a margem superior de 25px para 15px */
     margin: 15px 0 25px; 
 }
 .input-box label {
