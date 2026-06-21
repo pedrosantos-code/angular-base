@@ -20,7 +20,7 @@
 
 .container {
     width: 420px;
-    background-color: #0E3165; 
+    background-color: #0E3165;
     border: 2px solid rgba(255, 255, 255, .2);
     border-radius: 10px;
     color: white;
@@ -34,9 +34,12 @@
     text-align: center;
 }
 
-.logo {/* Corrigido de display para position */        /* Empurra o início da imagem para o meio */
+.logo {
+    /* Corrigido de display para position */
+    /* Empurra o início da imagem para o meio */
     width: 100%;
-    max-width: 450px;   /* Ajustei para 250px para ficar harmônico no container de 420px */
+    max-width: 450px;
+    /* Ajustei para 250px para ficar harmônico no container de 420px */
     height: auto;
     object-fit: contain;
 }
@@ -44,9 +47,17 @@
 .input-box {
     display: flex;
     flex-direction: column;
-    gap: 8px;              
+    gap: 8px;
     width: 100%;
-    margin: 20px 0;        
+    margin: 20px 0;
+}
+
+.error-msg {
+    color: #ff4d4f;
+    font-size: 0.9em;
+    text-align: center;
+    margin-bottom: 15px;
+    margin-top: -10px;
 }
 
 
@@ -58,14 +69,14 @@
 
 .input-box input {
     width: 100%;
-    height: 45px;         
+    height: 45px;
     background-color: white;
     border: 2px solid white;
     border-radius: 10px;
     outline: none;
     font-size: 16px;
     color: #0E3165;
-    padding: 0 10px;       
+    padding: 0 10px;
 }
 
 .input-box input::placeholder {
@@ -73,8 +84,8 @@
 }
 
 .login {
-    display: block;       
-    margin-inline: auto;  
+    display: block;
+    margin-inline: auto;
     width: 50%;
     height: 50px;
     background-color: white;
@@ -85,7 +96,7 @@
     color: #0E3165;
     font-weight: 600;
     box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    margin-top: 40px;      
+    margin-top: 40px;
 }
 
 .login:hover {

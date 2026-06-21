@@ -19,7 +19,13 @@
         <input #confirmaSenha placeholder="senha" type="password">
       </div>
 
-      <button type="button" class="cadastro" (click)="onRegister(email.value, senha.value)">Criar
+      @if (errorMessage()) {
+      <p class="error-msg">
+        {{ errorMessage() }}
+      </p>
+      }
+
+      <button type="button" class="cadastro" (click)="onRegister(email.value, senha.value, confirmaSenha.value)">Criar
         Conta</button>
 
       <div class="login-link">

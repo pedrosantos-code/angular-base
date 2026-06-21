@@ -4,12 +4,18 @@
       <img src="/logo.png" alt="Logo" class="logo">
       <div class="input-box">
         <label>Email</label>
-        <input #email placeholder="Máscara de e-mail" type="email">
+        <input #email placeholder="e-mail" type="email">
       </div>
       <div class="input-box">
         <label>Senha</label>
-        <input #senha placeholder="Máscara de senha" type="password">
+        <input #senha placeholder="senha" type="password">
       </div>
+
+      @if (errorMessage()) {
+      <p class="error-msg">
+        {{ errorMessage() }}
+      </p>
+      }
 
       <button type="button" class="login" (click)="onLogin(email.value, senha.value)">Login</button>
 
