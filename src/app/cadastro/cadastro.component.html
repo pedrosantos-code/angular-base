@@ -1,24 +1,26 @@
-<div class ="fundo-cadastro">
+<div class="fundo-cadastro">
   <main class="container">
     <form>
       <img src="/logo.png" alt="Logo" class="logo">
 
+
       <div class="input-box">
         <label>Email</label>
-        <input placeholder="Máscara de e-mail" type="email">
+        <input #email placeholder="e-mail" type="email">
       </div>
 
       <div class="input-box">
         <label>Senha</label>
-        <input placeholder="Máscara de senha" type="password">
+        <input #senha placeholder="senha" type="password">
       </div>
 
       <div class="input-box">
         <label>Confirme a Senha</label>
-        <input placeholder="Máscara de senha" type="password">
+        <input #confirmaSenha placeholder="senha" type="password">
       </div>
 
-      <button type="submit" class="cadastro">Criar Conta</button>
+      <button type="button" class="cadastro" (click)="onRegister(email.value, senha.value)">Criar
+        Conta</button>
 
       <div class="login-link">
         <p>Já tem uma conta? <a routerLink="/">Fazer Login</a></p>
