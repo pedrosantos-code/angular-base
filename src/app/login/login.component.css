@@ -55,12 +55,15 @@
     text-align: center;
 }
 
+.logo-container {
+    display: flex;
+    justify-content: center;
+    /* margin-bottom: 20px; */
+}
+
 .logo {
-    /* Corrigido de display para position */
-    /* Empurra o início da imagem para o meio */
     width: 100%;
     max-width: 450px;
-    /* Ajustei para 250px para ficar harmônico no container de 420px */
     height: auto;
     object-fit: contain;
 }
