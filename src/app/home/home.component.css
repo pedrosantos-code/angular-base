@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
     margin: 0;
@@ -26,4 +27,40 @@
     height: 50px; 
     background-color: #0E3165; 
     z-index: 1; 
+}
+
+.cabecalho-page {
+  display: flex;
+  justify-content: space-between; /* Mantém um grupo na esquerda e o outro na extrema direita */
+  align-items: center;            /* Alinha verticalmente os ícones e o texto */
+  padding: 10px 20px;             /* Dá um espaçamento interno das bordas */
+}
+
+/* Grupo de ícones da Esquerda */
+.icones-esquerda {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Distância entre o perfil e a engrenagem */
+}
+
+/* Grupo de elementos da Direita (Texto + Logout) */
+.elementos-direita {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Distância entre o texto 'Seia + Ford' e o ícone de logout */
+}
+
+/* Estilo do texto de Parceria */
+.parceria {
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0; /* Remove a margem padrão do <p> para não desalinhar */
+}
+
+/* Estilo geral dos ícones */
+.cabecalho-page i {
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
 }
