@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
   styleUrl: './dashboard.component.css',
 })
 
-export class HomeComponent {
+export class DashboardComponent {
   protected readonly title = signal('meu-projeto');
 
   menuAberto = signal<string | null>(null);

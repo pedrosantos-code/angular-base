@@ -33,21 +33,18 @@
     padding: 10px 20px;
 }
 
-/* Grupo de ícones da Esquerda */
 .icones-esquerda {
   display: flex;
   align-items: center;
   gap: 15px;
 }
 
-/* Grupo de elementos da Direita (Texto + Logout) */
 .elementos-direita {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-/* Estilo do texto de Parceria */
 .parceria {
   color: white;
   font-weight: bold;
@@ -55,7 +52,6 @@
   margin: 0;
 }
 
-/* Estilo geral dos ícones do cabeçalho */
 .cabecalho-page i {
   color: white;
   font-size: 24px;
@@ -67,22 +63,16 @@
   opacity: 0.8;
 }
 
-/* ===================================================
-   REGRAS DOS MENUS DROPDOWN (CAIXAS SUSPENSAS)
-   =================================================== */
-
-/* Prende a caixa exatamente abaixo de cada ícone */
 .menu-item {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* A Caixa fica ESCONDIDA por padrão */
 .dropdown-menu {
   display: none; 
   position: absolute;
-  top: 38px; /* Posição logo abaixo do cabeçalho */
+  top: 38px; 
   left: 0;
   background-color: #2b2b2b;
   min-width: 210px;
@@ -93,32 +83,27 @@
   flex-direction: column;
 }
 
-/* Garante que o menu do Logout alinhe à direita e não saia da tela */
 .dropdown-direita {
   left: auto;
   right: 0;
 }
 
-/* CLASSE QUE O ANGULAR ATIVA [class.ativo] AO CLICAR */
 .dropdown-menu.ativo {
   display: flex !important;
 }
 
-/* Estilo do título interno da caixa */
 .menu-header {
   color: #ffffff;
   font-size: 14px;
   padding: 4px;
 }
 
-/* Linha divisória */
 .divisor {
   border: 0;
   border-top: 1px solid #444;
   margin: 6px 0 10px 0;
 }
 
-/* 1. Estilo para os SPANS (Textos estáticos que NÃO navegam) */
 .menu-item-texto {
   display: block;
   color: #e0e0e0;
@@ -127,8 +112,8 @@
   border-radius: 6px;
   transition: background-color 0.2s;
   white-space: nowrap;
-  cursor: default; /* Mostra a seta normal, sem mãozinha de link */
-  user-select: none; /* Evita que o usuário selecione/grife o texto no clique */
+  cursor: default; 
+  user-select: none; 
 }
 
 .menu-item-texto:hover {
@@ -136,7 +121,6 @@
   color: #ffffff;
 }
 
-/* 2. Estilo exclusivo para a TAG <a> (O único link real: Confirmar Saída) */
 .menu-item-link {
   display: block;
   color: #e0e0e0;
@@ -146,7 +130,7 @@
   text-decoration: none;
   transition: background-color 0.2s;
   white-space: nowrap;
-  cursor: pointer; /* Exibe a mãozinha de clique apenas no botão real */
+  cursor: pointer; 
 }
 
 .menu-item-link:hover {
