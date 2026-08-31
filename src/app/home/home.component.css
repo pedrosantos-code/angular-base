@@ -144,18 +144,75 @@
 .sidebar-painel {
   position: fixed;
   top: 0;
-  left: -320px; /* Largura da barra + margem (fica completamente fora da tela à esquerda) */
+  left: -320px; /* Largura da barra + margem */
   width: 300px;
   height: 100vh;
   background-color: #ffffff;
   box-shadow: 4px 0px 16px rgba(0, 0, 0, 0.3);
-  z-index: 1100; /* Fica acima de tudo, até do cabeçalho */
-  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transição suave de entrada/saída */
+  z-index: 1100; /* Fica acima de tudo */
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Estado ativo: desliza para dentro da tela */
 .sidebar-painel.aberto {
   left: 0;
+}
+
+/* --- CONTEÚDO DA SIDEBAR (LISTA VERTICAL) --- */
+.sidebar-conteudo {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column; /* Garante os itens empilhados verticalmente */
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Títulos das Seções em Azul */
+.sidebar-titulo {
+  color: #0E3165;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 22px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.sidebar-titulo:first-of-type {
+  margin-top: 0;
+}
+
+/* Itens da lista */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%; /* Força cada item a ocupar toda a linha */
+  padding: 8px 10px;
+  color: #333333;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* Ícones cinzas */
+.sidebar-item i {
+  font-size: 16px;
+  color: #4A4A4A;
+  width: 20px;
+  text-align: center;
+}
+
+/* Efeito Hover */
+.sidebar-item:hover {
+  color: #0E3165;
+  background-color: #f4f7fc;
+}
+
+.sidebar-item:hover i {
+  color: #0E3165;
 }
 
 /* --- FUNDO ESCURO (OVERLAY) --- */
@@ -166,6 +223,6 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5); /* Escurece o fundo */
-  z-index: 1050; /* Fica acima do cabeçalho, mas atrás da barra lateral */
+  z-index: 1050;
   cursor: pointer;
 }

@@ -81,8 +81,59 @@
   </main>
 
   <!-- Painel Lateral -->
-  <div class="sidebar-painel" [class.aberto]="sidebarAberta()"></div>
+  <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
 
+  <div class="sidebar-conteudo">
+  
+  <!-- Bloco 1: Gestão -->
+  <h4>Gestão e Cadastro</h4>
+  <a class="sidebar-item">
+    <i class="fa-regular fa-user"></i>
+    <span>Visitantes & Convidados</span>
+  </a>
+  <a class="sidebar-item">
+    <i class="fa-regular fa-user"></i>
+    <span>Equipe de Campo</span>
+  </a>
+  <a class="sidebar-item">
+    <i class="fa-regular fa-file-lines"></i>
+    <span>Termos / Contratos</span>
+  </a>
+
+  <!-- NOVO BLOCO: Inteligência Artificial -->
+  <h4>Inteligência Artificial</h4>
+  <a class="sidebar-item">
+    <i class="fa-solid fa-brain"></i>
+    <span>Treinamento do Modelo</span>
+  </a>
+  <a class="sidebar-item">
+    <i class="fa-solid fa-wand-magic-sparkles"></i>
+    <span>Insights & Predições</span>
+  </a>
+
+  <!-- Bloco 3: Mapa -->
+  <h4>Mapa Geral</h4>
+  <a class="sidebar-item">
+    <i class="fa-regular fa-calendar"></i>
+    <span>Visualização Detalhada</span>
+  </a>
+  <a class="sidebar-item">
+    <i class="fa-regular fa-calendar"></i>
+    <span>Agendamentos da Semana</span>
+  </a>
+
+  <!-- Bloco 4: Histórico -->
+  <h4>Históricos de Visitas</h4>
+  <a class="sidebar-item">
+    <i class="fa-solid fa-border-all"></i>
+    <span>Últimas Visitas</span>
+  </a>
+  <a class="sidebar-item">
+    <i class="fa-solid fa-border-all"></i>
+    <span>Buscar Visitas</span>
+  </a>
+</div>
+</div>
   <!-- Fundo escuro (clicar nele fecha a barra) -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>
