@@ -1,17 +1,66 @@
 <div class="fundo-home">
   <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-<div class="cabecalho-page">
-  <!-- Grupo da Esquerda -->
-  <div class="icones-esquerda">
-    <i class="fa-regular fa-circle-user profile"></i>
-    <i class="fa-solid fa-gear gear"></i>
+  
+  <div class="cabecalho-page">
+    <!-- Grupo da Esquerda -->
+    <div class="icones-esquerda">
+
+      <!-- Item: Perfil -->
+      <div class="menu-item">
+        <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
+        
+        <!-- Caixa do Perfil (Totalmente estática) -->
+        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
+          <div class="menu-header">
+            <strong>Perfil do Usuário</strong>
+          </div>
+          <hr class="divisor">
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Visualizar Perfil</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Editar Dados</span>
+        </div>
+      </div>
+
+      <!-- Item: Configurações -->
+      <div class="menu-item">
+        <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
+        
+        <!-- Caixa de Configurações (Totalmente estática) -->
+        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
+          <div class="menu-header">
+            <strong>Configurações</strong>
+          </div>
+          <hr class="divisor">
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Aparência / Tema</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Idioma</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Notificações</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Segurança e Privacidade</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Preferências do Sistema</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Grupo da Direita -->
+    <div class="elementos-direita">
+      <p class="parceria">Seia + Ford</p>
+      
+      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <div class="menu-item">
+        <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
+        
+        <!-- Caixa de Logout -->
+        <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
+          <div class="menu-header">
+            <strong>Sair do Sistema</strong>
+          </div>
+          <hr class="divisor">
+          <a routerLink="/" class="menu-item-link" (click)="fecharMenus()">Confirmar Saída</a>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <div class="elementos-direita">
-    <p class="parceria">Seia + Ford</p>
-    <i class="fa-solid fa-arrow-right-from-bracket logout"></i>
-  </div>
+  <main class="container-home">
+  </main>
 </div>
-
-<main class="container-home">
-</main>

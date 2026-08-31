@@ -26,28 +26,25 @@
     width: 100%;
     height: 50px; 
     background-color: #0E3165; 
-    z-index: 1; 
-}
-
-.cabecalho-page {
-  display: flex;
-  justify-content: space-between; /* Mantém um grupo na esquerda e o outro na extrema direita */
-  align-items: center;            /* Alinha verticalmente os ícones e o texto */
-  padding: 10px 20px;             /* Dá um espaçamento interno das bordas */
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
 }
 
 /* Grupo de ícones da Esquerda */
 .icones-esquerda {
   display: flex;
   align-items: center;
-  gap: 15px; /* Distância entre o perfil e a engrenagem */
+  gap: 15px;
 }
 
 /* Grupo de elementos da Direita (Texto + Logout) */
 .elementos-direita {
   display: flex;
   align-items: center;
-  gap: 20px; /* Distância entre o texto 'Seia + Ford' e o ícone de logout */
+  gap: 20px;
 }
 
 /* Estilo do texto de Parceria */
@@ -55,12 +52,104 @@
   color: white;
   font-weight: bold;
   font-size: 16px;
-  margin: 0; /* Remove a margem padrão do <p> para não desalinhar */
+  margin: 0;
 }
 
-/* Estilo geral dos ícones */
+/* Estilo geral dos ícones do cabeçalho */
 .cabecalho-page i {
   color: white;
   font-size: 24px;
   cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.cabecalho-page i:hover {
+  opacity: 0.8;
+}
+
+/* ===================================================
+   REGRAS DOS MENUS DROPDOWN (CAIXAS SUSPENSAS)
+   =================================================== */
+
+/* Prende a caixa exatamente abaixo de cada ícone */
+.menu-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* A Caixa fica ESCONDIDA por padrão */
+.dropdown-menu {
+  display: none; 
+  position: absolute;
+  top: 38px; /* Posição logo abaixo do cabeçalho */
+  left: 0;
+  background-color: #2b2b2b;
+  min-width: 210px;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.4);
+  z-index: 1001;
+  flex-direction: column;
+}
+
+/* Garante que o menu do Logout alinhe à direita e não saia da tela */
+.dropdown-direita {
+  left: auto;
+  right: 0;
+}
+
+/* CLASSE QUE O ANGULAR ATIVA [class.ativo] AO CLICAR */
+.dropdown-menu.ativo {
+  display: flex !important;
+}
+
+/* Estilo do título interno da caixa */
+.menu-header {
+  color: #ffffff;
+  font-size: 14px;
+  padding: 4px;
+}
+
+/* Linha divisória */
+.divisor {
+  border: 0;
+  border-top: 1px solid #444;
+  margin: 6px 0 10px 0;
+}
+
+/* 1. Estilo para os SPANS (Textos estáticos que NÃO navegam) */
+.menu-item-texto {
+  display: block;
+  color: #e0e0e0;
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  cursor: default; /* Mostra a seta normal, sem mãozinha de link */
+  user-select: none; /* Evita que o usuário selecione/grife o texto no clique */
+}
+
+.menu-item-texto:hover {
+  background-color: #3d3d3d;
+  color: #ffffff;
+}
+
+/* 2. Estilo exclusivo para a TAG <a> (O único link real: Confirmar Saída) */
+.menu-item-link {
+  display: block;
+  color: #e0e0e0;
+  padding: 8px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  white-space: nowrap;
+  cursor: pointer; /* Exibe a mãozinha de clique apenas no botão real */
+}
+
+.menu-item-link:hover {
+  background-color: #3d3d3d;
+  color: #ffffff;
 }
