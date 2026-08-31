@@ -84,6 +84,7 @@
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
 
   <div class="sidebar-conteudo">
+  <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
   
   <!-- Bloco 1: Gestão -->
   <h4>Gestão e Cadastro</h4>
@@ -113,9 +114,9 @@
 
   <!-- Bloco 3: Mapa -->
   <h4>Mapa Geral</h4>
-  <a class="sidebar-item">
+  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
     <i class="fa-regular fa-calendar"></i>
-    <span>Visualização Detalhada</span>
+    <span>Dashboard Detalhado</span>
   </a>
   <a class="sidebar-item">
     <i class="fa-regular fa-calendar"></i>

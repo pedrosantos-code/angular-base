@@ -8,6 +8,18 @@
     font-family: "Poppins", sans-serif;
 }
 
+.fundo-home {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image: url('../../../public/fundo-home.png');
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+/* --- CABEÇALHO --- */
 .cabecalho-page {
     position: fixed;
     top: 0;
@@ -52,6 +64,7 @@
   opacity: 0.8;
 }
 
+/* --- MENUS DROPDOWN --- */
 .menu-item {
   position: relative;
   display: flex;
@@ -78,7 +91,7 @@
 }
 
 .dropdown-menu.ativo {
-  display: flex !important;
+  display: flex;
 }
 
 .menu-header {
@@ -101,7 +114,7 @@
   border-radius: 6px;
   transition: background-color 0.2s;
   white-space: nowrap;
-  cursor: default; 
+  cursor: pointer; /* Alterado para indicar que é clicável */
   user-select: none; 
 }
 
@@ -119,10 +132,104 @@
   text-decoration: none;
   transition: background-color 0.2s;
   white-space: nowrap;
-  cursor: pointer;  
+  cursor: pointer; 
 }
 
 .menu-item-link:hover {
   background-color: #3d3d3d;
   color: #ffffff;
+}
+
+/* --- BARRA LATERAL (SIDEBAR) --- */
+.sidebar-painel {
+  position: fixed;
+  top: 0;
+  left: -320px;
+  width: 300px;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: 4px 0px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1100;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sidebar-painel.aberto {
+  left: 0;
+}
+
+/* --- CONTEÚDO DA SIDEBAR --- */
+.sidebar-conteudo {
+  padding: 40px 24px 30px 24px; /* força o espaço no topo */
+  display: flex;
+  flex-direction: column; /* Força ficar em lista vertical */
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Logo da Sidebar */
+.logo-sidebar {
+  width: 260px ;
+  height: auto ;
+  margin-bottom: 24px; /* Afasta o primeiro título da logo */
+  display: block;
+}
+
+/* Títulos (Suporta H3 e H4) */
+.sidebar-conteudo h3,
+.sidebar-conteudo h4 {
+  color: #000000;
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 24px;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.sidebar-conteudo h3:first-of-type,
+.sidebar-conteudo h4:first-of-type {
+  margin-top: 0;
+}
+
+/* Itens da lista */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 10px 8px; /* Espaçamento entre os links */
+  color: #333333;
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-item i {
+  font-size: 18px;
+  color: #333333;
+  width: 22px;
+  text-align: center;
+}
+
+.sidebar-item:hover {
+  color: #0E3165;
+  background-color: #f4f7fc;
+}
+
+.sidebar-item:hover i {
+  color: #0E3165;
+}
+
+/* --- OVERLAY --- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  cursor: pointer;
 }

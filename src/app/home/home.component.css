@@ -91,7 +91,7 @@
 }
 
 .dropdown-menu.ativo {
-  display: flex !important;
+  display: flex;
 }
 
 .menu-header {
@@ -144,40 +144,49 @@
 .sidebar-painel {
   position: fixed;
   top: 0;
-  left: -320px; /* Largura da barra + margem */
+  left: -320px;
   width: 300px;
   height: 100vh;
   background-color: #ffffff;
   box-shadow: 4px 0px 16px rgba(0, 0, 0, 0.3);
-  z-index: 1100; /* Fica acima de tudo */
+  z-index: 1100;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Estado ativo: desliza para dentro da tela */
 .sidebar-painel.aberto {
   left: 0;
 }
 
-/* --- CONTEÚDO DA SIDEBAR (LISTA VERTICAL) --- */
+/* --- CONTEÚDO DA SIDEBAR --- */
 .sidebar-conteudo {
-  padding: 30px 20px;
+  padding: 40px 24px 30px 24px; /* força o espaço no topo */
   display: flex;
-  flex-direction: column; /* Garante os itens empilhados verticalmente */
+  flex-direction: column; /* Força ficar em lista vertical */
   height: 100vh;
   overflow-y: auto;
 }
 
-/* Títulos das Seções em Azul */
-.sidebar-titulo {
-  color: #0E3165;
-  font-size: 13px;
+/* Logo da Sidebar */
+.logo-sidebar {
+  width: 260px ;
+  height: auto ;
+  margin-bottom: 24px; /* Afasta o primeiro título da logo */
+  display: block;
+}
+
+/* Títulos (Suporta H3 e H4) */
+.sidebar-conteudo h3,
+.sidebar-conteudo h4 {
+  color: #000000;
+  font-size: 15px;
   font-weight: 700;
-  margin-top: 22px;
+  margin-top: 24px;
   margin-bottom: 12px;
   display: block;
 }
 
-.sidebar-titulo:first-of-type {
+.sidebar-conteudo h3:first-of-type,
+.sidebar-conteudo h4:first-of-type {
   margin-top: 0;
 }
 
@@ -185,11 +194,11 @@
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  width: 100%; /* Força cada item a ocupar toda a linha */
-  padding: 8px 10px;
+  gap: 14px;
+  width: 100%;
+  padding: 10px 8px; /* Espaçamento entre os links */
   color: #333333;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 500;
   text-decoration: none;
   cursor: pointer;
@@ -197,15 +206,13 @@
   transition: background-color 0.2s, color 0.2s;
 }
 
-/* Ícones cinzas */
 .sidebar-item i {
-  font-size: 16px;
-  color: #4A4A4A;
-  width: 20px;
+  font-size: 18px;
+  color: #333333;
+  width: 22px;
   text-align: center;
 }
 
-/* Efeito Hover */
 .sidebar-item:hover {
   color: #0E3165;
   background-color: #f4f7fc;
@@ -215,14 +222,14 @@
   color: #0E3165;
 }
 
-/* --- FUNDO ESCURO (OVERLAY) --- */
+/* --- OVERLAY --- */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5); /* Escurece o fundo */
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 1050;
   cursor: pointer;
 }
