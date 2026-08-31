@@ -19,6 +19,7 @@
     overflow: hidden;
 }
 
+/* --- CABEÇALHO --- */
 .cabecalho-page {
     position: fixed;
     top: 0;
@@ -63,6 +64,7 @@
   opacity: 0.8;
 }
 
+/* --- MENUS DROPDOWN --- */
 .menu-item {
   position: relative;
   display: flex;
@@ -112,7 +114,7 @@
   border-radius: 6px;
   transition: background-color 0.2s;
   white-space: nowrap;
-  cursor: default; 
+  cursor: pointer; /* Alterado para indicar que é clicável */
   user-select: none; 
 }
 
@@ -136,4 +138,34 @@
 .menu-item-link:hover {
   background-color: #3d3d3d;
   color: #ffffff;
+}
+
+/* --- BARRA LATERAL (SIDEBAR) --- */
+.sidebar-painel {
+  position: fixed;
+  top: 0;
+  left: -320px; /* Largura da barra + margem (fica completamente fora da tela à esquerda) */
+  width: 300px;
+  height: 100vh;
+  background-color: #ffffff;
+  box-shadow: 4px 0px 16px rgba(0, 0, 0, 0.3);
+  z-index: 1100; /* Fica acima de tudo, até do cabeçalho */
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* Transição suave de entrada/saída */
+}
+
+/* Estado ativo: desliza para dentro da tela */
+.sidebar-painel.aberto {
+  left: 0;
+}
+
+/* --- FUNDO ESCURO (OVERLAY) --- */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5); /* Escurece o fundo */
+  z-index: 1050; /* Fica acima do cabeçalho, mas atrás da barra lateral */
+  cursor: pointer;
 }

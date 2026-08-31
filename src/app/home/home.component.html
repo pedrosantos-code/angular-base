@@ -5,6 +5,22 @@
     <!-- Grupo da Esquerda -->
     <div class="icones-esquerda">
 
+      <!-- Item: Menu Lateral -->
+      <div class="menu-item">
+        <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
+        
+        <!-- Caixa do Menu Lateral -->
+        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
+          <div class="menu-header">
+            <strong>Menu Lateral</strong>
+          </div>
+          <hr class="divisor">
+          
+          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
+          <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
+        </div>
+      </div>
+
       <!-- Item: Perfil -->
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
@@ -63,4 +79,12 @@
 
   <main class="container-home">
   </main>
+
+  <!-- Painel Lateral -->
+  <div class="sidebar-painel" [class.aberto]="sidebarAberta()"></div>
+
+  <!-- Fundo escuro (clicar nele fecha a barra) -->
+  @if (sidebarAberta()) {
+    <div class="overlay" (click)="fecharSidebar()"></div>
+  }
 </div>
