@@ -12,10 +12,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    width: 100%;               /* Garante 100% da largura da janela */
+    min-height: 100%;          /* Garante 100% da altura da janela */
     background-image: url('../../../public/fundo.png');
-    background-size: cover;
+    background-size: cover;     
     background-position: center;
+    background-repeat: no-repeat; /* Evita que a imagem duplique */
     overflow: hidden;
 }
 
@@ -57,14 +59,14 @@
     text-align: center;
 }
 
-.logo {
+.logo-cadastro {
     position: absolute; 
-    top: -70px;          
+    top: 40px;          
     left: 50%;          
-    transform: translateX(-47%); 
+    transform: translateX(-50%); 
     
     width: 100%;
-    max-width: 450px;   
+    max-width: 350px;   
     height: auto;
     object-fit: contain;
 }
