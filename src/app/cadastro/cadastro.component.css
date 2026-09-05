@@ -53,7 +53,7 @@
     backdrop-filter: blur(50px);
     
     /* ADICIONE ESSA LINHA: dá espaço em relação ao cabeçalho fixo */
-    margin-top: 80px; 
+    margin-top: 60px; 
 
     /* REMOVA OU REDUZA ISSO: não use para afastar a div externa */
    padding-top: 140px; 
