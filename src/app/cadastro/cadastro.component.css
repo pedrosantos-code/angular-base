@@ -51,7 +51,12 @@
     padding: 30px 40px;
     box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     backdrop-filter: blur(50px);
-    padding-top: 140px; 
+    
+    /* ADICIONE ESSA LINHA: dá espaço em relação ao cabeçalho fixo */
+    margin-top: 80px; 
+
+    /* REMOVA OU REDUZA ISSO: não use para afastar a div externa */
+   padding-top: 140px; 
 }
 
 .container h1 {
