@@ -54,7 +54,8 @@ html, body, :host {
     font-size: 18px;
     font-weight: 600;
     text-align: right;
-    line-height: 50px; 
+    line-height: 40px;
+    margin-top: 6px; 
     padding-right: 20px; 
     font-family: "EB Garamond", serif;
 }
