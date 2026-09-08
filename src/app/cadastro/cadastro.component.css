@@ -42,20 +42,27 @@ html, body, :host {
     top: 0;
     left: 0;
     width: 100%;
-    height: 50px; 
+    
+    /* 1. Reduz a altura total de 50px para 40px */
+    height: 40px; 
+    
     background-color: #0E3165; 
-    z-index: 1000; 
+    z-index: 1000;
+    
+    /* 2. Garante alinhamento exato no centro */
+    display: flex;
+    justify-content: flex-end; /* Alinha o texto à direita */
+    align-items: center;      /* Centraliza na vertical */
+    padding: 0 20px;
 }
 
 .parceria {
     color: white;
-    font-size: 18px;
+    font-size: 15px; /* Reduz ligeiramente a fonte de 18px para 15px */
     font-weight: 600;
-    text-align: right;
-    line-height: 40px;
-    margin-top: 6px; 
-    padding-right: 20px; 
     font-family: "EB Garamond", serif;
+    margin: 0;
+    line-height: 1; /* Remove alturas extras de linha que empurram para cima/baixo */
 }
 
 /* --- CARD DE CADASTRO --- */
