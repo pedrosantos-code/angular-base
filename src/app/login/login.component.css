@@ -25,9 +25,7 @@ html, body, :host {
     display: flex;
     justify-content: center;
     align-items: center;
-    
-    /* Preenche o fundo para mesclar as bordas escuras da foto */
-    background-color: #03060a; 
+     
     background-image: url('../../../public/fundo.png');
     background-size: cover;
     background-position: center;
