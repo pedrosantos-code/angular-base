@@ -26,8 +26,6 @@ html, body, :host {
     justify-content: center;
     align-items: center;
     
-    /* Preenche o fundo com a mesma cor escura das bordas da imagem */
-    background-color: #03060a; 
     background-image: url('../../../public/fundo-home.png');
     background-size: cover;
     background-position: center;
