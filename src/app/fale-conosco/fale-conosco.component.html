@@ -78,6 +78,119 @@
   </div>
 
   <main class="container-home">
+    <div class="fale-conosco-container">
+  <!-- Cabeçalho da Página -->
+  <header class="page-header">
+    <h1>Fale Conosco</h1>
+    <p class="subtitle">Atendimento Ford - SEIA (Sistema Especialista de Inteligência Artificial)</p>
+  </header>
+
+  <!-- Grid Principais Canais de Atendimento -->
+  <div class="cards-grid">
+    
+    <!-- Card 1: SEIA (AI Partner) -->
+    <div class="card-canal destaque">
+      <div class="card-header">
+        <i class="fa-solid fa-robot header-icon"></i>
+        <h3>Atendimento via SEIA</h3>
+      </div>
+      <div class="card-body">
+        <h4>Sua assistente inteligente 24h</h4>
+        <p>Dúvidas rápidas, status de agendamento e informações de veículos</p>
+      </div>
+      <div class="card-footer">
+        <button class="btn-primary" (click)="abrirChatSeia()">Acessar Chat da SEIA</button>
+      </div>
+    </div>
+
+    <!-- Card 2: Central de Relacionamento -->
+    <div class="card-canal">
+      <div class="card-header">
+        <i class="fa-solid fa-headset header-icon"></i>
+        <h3>Central de Relacionamento Ford</h3>
+      </div>
+      <div class="card-body">
+        <h4>Fale com um atendente</h4>
+        <p>Para questões complexas e suporte dedicado</p>
+        
+        <div class="telefones-lista">
+          <div class="telefone-item">
+            <i class="fa-solid fa-phone"></i>
+            <div class="tel-info">
+              <strong>0800-000-0000</strong>
+              <span>Seg-Sex 8h-20h</span>
+            </div>
+          </div>
+          <div class="telefone-item">
+            <i class="fa-solid fa-phone"></i>
+            <div class="tel-info">
+              <strong>0800-000-0001</strong>
+              <span>Seg-Sex 8h-20h</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <a href="tel:08000000000" class="btn-primary">Ligar Agora</a>
+      </div>
+    </div>
+
+    <!-- Card 3: FAQ / Dúvidas Frequentes -->
+    <div class="card-canal">
+      <div class="card-header">
+        <i class="fa-regular fa-circle-question header-icon"></i>
+        <h3>Dúvidas Frequentes (FAQ)</h3>
+      </div>
+      <div class="card-body">
+        <h4>Busque por respostas rápidas</h4>
+        
+        <div class="links-rapidos">
+          <a routerLink="/agendamentos">Agendamento</a>
+          <a routerLink="/modelos">Manutenção</a>
+          <a routerLink="/sobre-ia">Recall</a>
+        </div>
+
+        <div class="search-box">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input 
+            type="text" 
+            placeholder="Buscar dúvidas..." 
+            [value]="termoBusca()"
+            (input)="atualizarBusca($event)" 
+          />
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn-primary" (click)="verFaqCompleto()">Ver FAQ Completo</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Banner Inferior: Enviar E-mail -->
+  <div class="banner-email">
+    <div class="email-info">
+      <div class="email-icon">
+        <i class="fa-regular fa-envelope"></i>
+      </div>
+      <div class="email-texto">
+        <h3>Enviar E-mail</h3>
+        <p>Seu contato não-urgente</p>
+      </div>
+    </div>
+    <a routerLink="/fale-conosco" class="link-formulario">
+      Formulário de Contato <i class="fa-solid fa-chevron-right"></i>
+    </a>
+  </div>
+
+  <!-- Widget Flutuante da SEIA -->
+  <div class="widget-seia" (click)="abrirChatSeia()">
+    <span class="badge-status">SEIA ON</span>
+    <button class="btn-widget-seia" title="Conversar com a SEIA">
+      <i class="fa-solid fa-robot"></i>
+    </button>
+  </div>
+</div>
   </main>
 
   <!-- Painel Lateral -->

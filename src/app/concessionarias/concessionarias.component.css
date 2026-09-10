@@ -156,6 +156,259 @@ html, body, :host {
     color: #ffffff;
 }
 
+.concessionarias-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+  box-sizing: border-box;
+}
+
+.header-secao h2 {
+  font-size: 22px;
+  color: #0e3165;
+  margin: 0 0 16px 0;
+  font-weight: 700;
+}
+
+/* Filtros */
+.filtros-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.input-group label {
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.input-group input,
+.input-group select {
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 14px;
+  outline: none;
+}
+
+.input-group input {
+  min-width: 220px;
+}
+
+.btn-buscar {
+  background-color: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 9px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-recalcular-topo {
+  background-color: #94a3b8;
+  color: #ffffff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Grid Conteúdo */
+.conteudo-grid {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 20px;
+}
+
+@media (max-width: 900px) {
+  .conteudo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mapa */
+.mapa-wrapper {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  min-height: 480px;
+}
+
+.btn-recalcular-mapa {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 10;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.mapa-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 480px;
+  background-color: #f1f5f9;
+  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 20px 20px;
+  position: relative;
+}
+
+.ponto-usuario {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  background-color: #38bdf8;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+}
+
+.pin-mapa {
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0e3165;
+  font-size: 28px;
+  transition: transform 0.2s;
+}
+
+.pin-mapa span {
+  position: absolute;
+  top: 4px;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+.pin-mapa:hover {
+  transform: scale(1.2);
+}
+
+.zoom-controls {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.zoom-controls button {
+  border: none;
+  background: none;
+  width: 32px;
+  height: 32px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.zoom-controls button:first-child {
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Lista Lateral */
+.lista-concessionarias {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 520px;
+  overflow-y: auto;
+}
+
+.card-concessionaria {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.card-header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.card-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0e3165;
+  margin: 0;
+}
+
+.distancia {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 600;
+}
+
+.endereco, .telefone {
+  font-size: 12px;
+  color: #64748b;
+  margin: 2px 0;
+}
+
+.card-acoes {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-agendar {
+  flex: 1;
+  background-color: #0284c7;
+  color: #ffffff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-ver-mapa {
+  flex: 1;
+  background-color: #0e3165;
+  color: #ffffff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* --- BARRA LATERAL (SIDEBAR) --- */
 .sidebar-painel {
     position: fixed;

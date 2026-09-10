@@ -156,6 +156,200 @@ html, body, :host {
     color: #ffffff;
 }
 
+.perfil-container {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #2c3e50;
+}
+
+/* Header */
+.perfil-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.perfil-header i {
+  font-size: 26px;
+  color: #0e3165;
+}
+
+.perfil-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0e3165;
+  margin: 0;
+}
+
+/* Avatar */
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.avatar-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: #94a3b8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-circle i {
+  font-size: 38px;
+  color: #ffffff;
+}
+
+/* Form Styles */
+.perfil-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-group label {
+  font-size: 12px;
+  color: #475569;
+  font-weight: 600;
+}
+
+.form-group input,
+.select-wrapper select {
+  width: 100%;
+  padding: 10px 14px;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #334155;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.form-group input:focus,
+.select-wrapper select:focus {
+  border-color: #0e3165;
+  background-color: #ffffff;
+}
+
+/* Select customizado */
+.select-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.select-wrapper select {
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  padding-right: 36px;
+}
+
+.select-icon {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: #64748b;
+  pointer-events: none;
+}
+
+/* Seção de Links */
+.links-secao {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.btn-link-item {
+  width: 100%;
+  padding: 12px 14px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-link-item:hover {
+  background-color: #f1f5f9;
+}
+
+.link-item-row {
+  width: 100%;
+  padding: 8px 14px;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #1e293b;
+  box-sizing: border-box;
+}
+
+.btn-sublink {
+  background: none;
+  border: none;
+  color: #0e3165;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+}
+
+.btn-sublink:hover {
+  text-decoration: underline;
+}
+
+/* Botão Salvar */
+.btn-salvar {
+  width: 100%;
+  padding: 12px;
+  background-color: #0e3165;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s;
+}
+
+.btn-salvar:hover {
+  background-color: #123d7d;
+}
+
 /* --- BARRA LATERAL (SIDEBAR) --- */
 .sidebar-painel {
     position: fixed;

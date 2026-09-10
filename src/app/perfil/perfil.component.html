@@ -78,6 +78,93 @@
   </div>
 
   <main class="container-home">
+    <div class="perfil-container">
+  <!-- Header da Tela -->
+  <header class="perfil-header">
+    <i class="fa-solid fa-circle-user header-icon"></i>
+    <h2>Meu Perfil</h2>
+  </header>
+
+  <!-- Avatar / Foto de Perfil -->
+  <div class="avatar-container">
+    <div class="avatar-circle">
+      <i class="fa-solid fa-user"></i>
+    </div>
+  </div>
+
+  <!-- Formulário de Dados -->
+  <form class="perfil-form">
+    <div class="form-group">
+      <label for="nome">Nome Completo</label>
+      <input 
+        type="text" 
+        id="nome" 
+        placeholder="Nome Completo" 
+        [value]="nomeCompleto()"
+        (input)="nomeCompleto.set($any($event.target).value)" 
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input 
+        type="email" 
+        id="email" 
+        placeholder="e-mail@ford.com" 
+        [value]="email()"
+        (input)="email.set($any($event.target).value)" 
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="telefone">Telefone</label>
+      <input 
+        type="tel" 
+        id="telefone" 
+        placeholder="12/233456789" 
+        [value]="telefone()"
+        (input)="telefone.set($any($event.target).value)" 
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="preferencias">Preferências</label>
+      <div class="select-wrapper">
+        <select 
+          id="preferencias" 
+          [value]="preferencias()"
+          (change)="preferencias.set($any($event.target).value)"
+        >
+          <option value="Preferências e motor">Preferências e motor</option>
+          <option value="SUVs e Pickups">SUVs e Pickups</option>
+          <option value="Modelos Elétricos/Híbridos">Modelos Elétricos/Híbridos</option>
+          <option value="Performance e Esportivos">Performance e Esportivos</option>
+        </select>
+        <i class="fa-solid fa-chevron-down select-icon"></i>
+      </div>
+    </div>
+
+    <!-- Links de Acesso Rápido -->
+    <div class="links-secao">
+      <button type="button" class="btn-link-item" (click)="abrirFavoritos()">
+        <span>Meus Favoritos</span>
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <div class="link-item-row">
+        <span>Histórico de Pesquisas</span>
+        <button type="button" class="btn-sublink" (click)="abrirDashboardDetalhado()">
+          Dashboard Detalhado <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Botão de Ação -->
+    <button type="button" class="btn-salvar" (click)="salvarAlteracoes()">
+      Salvar Alterações
+    </button>
+  </form>
+</div>
   </main>
 
   <!-- Painel Lateral -->

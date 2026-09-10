@@ -78,6 +78,95 @@
   </div>
 
   <main class="container-home">
+    <div class="concessionarias-container">
+  <!-- Cabeçalho -->
+  <header class="header-secao">
+    <h2>Concessionárias Próximas (por SEIA)</h2>
+  </header>
+
+  <!-- Barra de Filtros -->
+  <div class="filtros-bar">
+    <div class="input-group">
+      <label for="cepCidade">CEP ou Cidade</label>
+      <input 
+        id="cepCidade" 
+        type="text" 
+        [value]="buscaLocalizacao()" 
+        (input)="atualizarBusca($event)" 
+        placeholder="Digite o CEP ou Cidade"
+      />
+    </div>
+
+    <div class="input-group raio-group">
+      <label for="raio">Raio de Busca (km)</label>
+      <select id="raio" [value]="raioBusca()" (change)="atualizarRaio($event)">
+        <option value="10">10 km</option>
+        <option value="20">20 km</option>
+        <option value="50">50 km</option>
+      </select>
+    </div>
+
+    <button class="btn-buscar" (click)="buscarConcessionarias()">Buscar</button>
+    <button class="btn-recalcular-topo" (click)="recalcularLocalizacao()">Recalcular Localização</button>
+  </div>
+
+  <!-- Conteúdo Principal: Mapa e Lista -->
+  <div class="conteudo-grid">
+    <!-- Seção do Mapa -->
+    <div class="mapa-wrapper">
+      <button class="btn-recalcular-mapa" (click)="recalcularLocalizacao()">
+        <i class="fa-solid fa-arrows-rotate"></i> Recalcular Localização
+      </button>
+
+      <!-- Representação Gráfica do Mapa -->
+      <div class="mapa-placeholder">
+        <div class="ponto-usuario" title="Sua localização atual"></div>
+
+        @for (item of concessionarias(); track item.id) {
+          <div 
+            class="pin-mapa" 
+            [style.top]="item.posicaoMapa.top" 
+            [style.left]="item.posicaoMapa.left"
+            (click)="selecionarConcessionaria(item.id)"
+          >
+            <i class="fa-solid fa-location-dot"></i>
+            <span>{{ item.id }}</span>
+          </div>
+        }
+
+        <!-- Controles de Zoom -->
+        <div class="zoom-controls">
+          <button (click)="alterarZoom(1)">+</button>
+          <button (click)="alterarZoom(-1)">-</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista Lateral de Concessionárias -->
+    <div class="lista-concessionarias">
+      @for (unidade of concessionarias(); track unidade.id) {
+        <div class="card-concessionaria">
+          <div class="card-header">
+            <h3>{{ unidade.nome }}</h3>
+            <span class="distancia">- {{ unidade.distancia }} km</span>
+          </div>
+
+          <p class="endereco">{{ unidade.endereco }}</p>
+          <p class="telefone">{{ unidade.telefone }}</p>
+
+          <div class="card-acoes">
+            <button class="btn-agendar" (click)="agendarTestDrive(unidade)">
+              Agendar Test-Drive
+            </button>
+            <button class="btn-ver-mapa" (click)="focarNoMapa(unidade.id)">
+              Ver no Mapa
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
   </main>
 
   <!-- Painel Lateral -->

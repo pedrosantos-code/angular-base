@@ -4,6 +4,7 @@ import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-fale-conosco',
+  standalone: true,
   imports: [RouterLink],
   templateUrl: './fale-conosco.component.html',
   styleUrl: './fale-conosco.component.css',
@@ -11,15 +12,31 @@ import { AuthService } from '../auth.service';
 export class FaleConoscoComponent {
   protected readonly title = signal('meu-projeto');
 
-  // Declaração dos Signals
+  // Controle da Sidebar e Menus Dropdown
   menuAberto = signal<string | null>(null);
-  sidebarAberta = signal<boolean>(false); 
+  sidebarAberta = signal<boolean>(false);
+
+  // Funcionalidades da tela Fale Conosco
+  termoBusca = signal<string>('');
+
+  atualizarBusca(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.termoBusca.set(input.value);
+  }
+
+  abrirChatSeia(): void {
+    alert('Iniciando o atendimento assistido pela SEIA...');
+  }
+
+  verFaqCompleto(): void {
+    alert(`Buscando por: "${this.termoBusca()}" no FAQ...`);
+  }
 
   toggleMenu(nomeMenu: string): void {
     if (this.menuAberto() === nomeMenu) {
-      this.menuAberto.set(null); 
+      this.menuAberto.set(null);
     } else {
-      this.menuAberto.set(nomeMenu); 
+      this.menuAberto.set(nomeMenu);
     }
   }
 

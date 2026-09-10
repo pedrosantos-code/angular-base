@@ -78,6 +78,53 @@
   </div>
 
   <main class="container-home">
+    <div class="termos-container">
+  <div class="header-termos">
+    <h2>Termos e Contratos</h2>
+    <span class="data-atualizacao">Atualizado em: 15/05/2026</span>
+  </div>
+
+  <!-- Accordion List -->
+  <div class="accordion-list">
+    @for (item of termos(); track item.id) {
+      <div class="accordion-item" [class.aberto]="item.aberto">
+        <button class="accordion-header" (click)="toggleAccordion(item.id)">
+          <span class="titulo-termo">{{ item.titulo }}</span>
+          <i class="fa-solid" [class.fa-chevron-up]="item.aberto" [class.fa-plus]="!item.aberto"></i>
+        </button>
+
+        @if (item.aberto) {
+          <div class="accordion-body">
+            <p>{{ item.descricao }}</p>
+            
+            @if (item.topicos && item.topicos.length > 0) {
+              <strong>Ao utilizar o SEIA, você concorda com:</strong>
+              <ul>
+                @for (topico of item.topicos; track topico) {
+                  <li>{{ topico }}</li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <!-- Footer Actions -->
+  <div class="termos-footer">
+    <label class="checkbox-container">
+      <input type="checkbox" [checked]="concordou()" (change)="toggleConcordo()" />
+      <span class="checkmark"></span>
+      Li e concordo com os termos acima
+    </label>
+
+    <div class="botoes-grupo">
+      <button class="btn-salvar" [disabled]="!concordou()">Salvar e Continuar</button>
+      <button class="btn-gerenciar">Gerenciar Consentimentos Específicos</button>
+    </div>
+  </div>
+</div>
   </main>
 
   <!-- Painel Lateral -->

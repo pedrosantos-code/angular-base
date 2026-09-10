@@ -78,6 +78,90 @@
   </div>
 
   <main class="container-home">
+    <div class="agendamentos-container">
+  <!-- Cabeçalho -->
+  <header class="agendamentos-header">
+    <i class="fa-regular fa-calendar-days header-icon"></i>
+    <h2>Meus Agendamentos</h2>
+  </header>
+
+  <!-- Calendário Simplificado -->
+  <div class="calendar-card">
+    <div class="calendar-nav">
+      <button class="btn-arrow" (click)="mudarMes(-1)">&lt;</button>
+      <span class="mes-ano">Outubro 2023</span>
+      <button class="btn-calendario">Calendário</button>
+      <button class="btn-arrow" (click)="mudarMes(1)">&gt;</button>
+    </div>
+
+    <div class="calendar-grid">
+      <div class="day-name">Lun</div>
+      <div class="day-name">Don</div>
+      <div class="day-name">Mar</div>
+      <div class="day-name">Qui</div>
+      <div class="day-name">Ver</div>
+      <div class="day-name">Sab</div>
+      <div class="day-name">Sao</div>
+
+      <!-- Dias do Mês (Representação Fiel ao Mockup) -->
+      <div class="day opacity-50">30</div>
+      <div class="day">1</div>
+      <div class="day">2</div>
+      <div class="day">3</div>
+      <div class="day">4</div>
+      <div class="day">5</div>
+      <div class="day">6</div>
+      <div class="day">7</div>
+      <div class="day">8</div>
+      <div class="day">9</div>
+      <div class="day">10</div>
+      <div class="day">11</div>
+      <div class="day active">12</div>
+      <div class="day">13</div>
+      <div class="day">14</div>
+      <div class="day">15</div>
+      <div class="day">16</div>
+      <div class="day">17</div>
+      <div class="day">18</div>
+      <div class="day">19</div>
+      <div class="day">20</div>
+      <div class="day">21</div>
+      <div class="day">22</div>
+      <div class="day">23</div>
+      <div class="day">24</div>
+      <div class="day">25</div>
+      <div class="day">26</div>
+      <div class="day">27</div>
+      <div class="day">28</div>
+      <div class="day">29</div>
+      <div class="day">30</div>
+      <div class="day">31</div>
+      <div class="day opacity-50">1</div>
+      <div class="day opacity-50">2</div>
+      <div class="day opacity-50">3</div>
+    </div>
+  </div>
+
+  <!-- Lista de Agendamentos -->
+  <div class="agendamentos-secao">
+    <div class="agendamentos-topo">
+      <h3>Agendamentos</h3>
+      <button class="btn-novo" (click)="novoAgendamento()">Novo Agendamento</button>
+    </div>
+
+    <div class="agendamentos-lista">
+      @for (item of agendamentos(); track item.id) {
+        <div class="agendamento-card" (click)="detalharAgendamento(item.id)">
+          <div class="agendamento-info">
+            <strong>{{ item.titulo }}</strong>
+            <span>{{ item.dataHora }}</span>
+          </div>
+          <i class="fa-solid fa-chevron-right"></i>
+        </div>
+      }
+    </div>
+  </div>
+</div>
   </main>
 
   <!-- Painel Lateral -->
