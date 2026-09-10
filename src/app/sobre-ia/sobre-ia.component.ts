@@ -3,13 +3,13 @@ import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
 @Component({
-  selector: 'app-fale-conosco',
+  selector: 'app-sobre-ia',
   imports: [RouterLink],
-  templateUrl: './faleconosco.component.html',
-  styleUrl: './faleconosco.component.css',
+  templateUrl: './sobre-ia.component.html',
+  styleUrl: './sobre-ia.component.css',
 })
 
-export class FaleConoscoComponent {
+export class SobreIAComponent {
   protected readonly title = signal('meu-projeto');
 
   // Declaração dos Signals
