@@ -78,6 +78,67 @@
   </div>
 
   <main class="container-home">
+<!-- Sidebar de Filtros Lateral -->
+<aside class="sidebar-filtros">
+  <div class="sidebar-header">
+    <i class="fa-solid fa-sliders icon-filtro"></i>
+    <h3>FILTRO</h3>
+  </div>
+
+  <nav class="lista-categorias">
+    @for (categoria of categorias(); track categoria) {
+      <button 
+        class="btn-categoria" 
+        [class.ativo]="categoriaAtiva() === categoria"
+        (click)="selecionarCategoria(categoria)"
+      >
+        {{ categoria }}
+      </button>
+    }
+  </nav>
+</aside>
+
+<!-- Grid de Carros (Exibindo apenas os filtrados) -->
+<main class="conteudo-principal">
+  <header class="header-pagina">
+    <h2>MODELOS FORD</h2>
+  </header>
+
+  <div class="grid-modelos">
+    @for (item of modelosFiltrados(); track item.id) {
+      <div class="card-modelo">
+        <div class="card-imagem">
+          <img [src]="item.imagemUrl" [alt]="item.nome" loading="lazy" />
+        </div>
+
+        <div class="card-corpo">
+          <h3 class="nome-modelo">{{ item.nome }}</h3>
+          
+          <p class="preco-label">
+            A partir de <strong>{{ item.precoAPartir }}</strong>
+          </p>
+
+          <ul class="especificacoes">
+            <li>
+              <i class="fa-solid fa-engine"></i> {{ item.motorizacao }}
+            </li>
+            <li>
+              <i class="fa-solid fa-car"></i> Tração {{ item.tracao }}
+            </li>
+          </ul>
+
+          <button class="btn-saiba-mais">
+            SAIBA MAIS
+          </button>
+        </div>
+      </div>
+    } @empty {
+      <div class="sem-resultados">
+        <p>Nenhum modelo encontrado para esta categoria.</p>
+      </div>
+    }
+  </div>
+</main>
   </main>
 
   <!-- Painel Lateral -->
