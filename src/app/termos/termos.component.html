@@ -1,0 +1,137 @@
+<div class="fundo-home">
+  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+  
+  <div class="cabecalho-page">
+    <!-- Grupo da Esquerda -->
+    <div class="icones-esquerda">
+
+      <!-- Item: Menu Lateral -->
+      <div class="menu-item">
+        <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
+        
+        <!-- Caixa do Menu Lateral -->
+        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
+          <div class="menu-header">
+            <strong>Menu Lateral</strong>
+          </div>
+          <hr class="divisor">
+          
+          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
+          <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
+        </div>
+      </div>
+
+      <!-- Item: Perfil -->
+      <div class="menu-item">
+        <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
+        
+        <!-- Caixa do Perfil (Totalmente estática) -->
+        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
+          <div class="menu-header">
+            <strong>Perfil do Usuário</strong>
+          </div>
+          <hr class="divisor">
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Visualizar Perfil</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Editar Dados</span>
+        </div>
+      </div>
+
+      <!-- Item: Configurações -->
+      <div class="menu-item">
+        <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
+        
+        <!-- Caixa de Configurações (Totalmente estática) -->
+        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
+          <div class="menu-header">
+            <strong>Configurações</strong>
+          </div>
+          <hr class="divisor">
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Aparência / Tema</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Idioma</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Notificações</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Segurança e Privacidade</span>
+          <span class="menu-item-texto" (click)="$event.stopPropagation()">Preferências do Sistema</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Grupo da Direita -->
+    <div class="elementos-direita">
+      <p class="parceria">Seia + Ford</p>
+      
+      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <div class="menu-item">
+        <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
+        
+        <!-- Caixa de Logout -->
+        <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
+          <div class="menu-header">
+            <strong>Sair do Sistema</strong>
+          </div>
+          <hr class="divisor">
+          <a routerLink="/" class="menu-item-link" (click)="fecharMenus()">Confirmar Saída</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <main class="container-home">
+  </main>
+
+  <!-- Painel Lateral -->
+  <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
+
+  <div class="sidebar-conteudo">
+
+  <a routerLink="/home" (click)="fecharSidebar()">
+    <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
+  </a>
+  
+  <!-- Bloco 1: Gestão -->
+  <h4>Gestão e Conta</h4>
+  <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
+    <i class="fa-regular fa-user"></i>
+    <span>Meu Perfil</span>
+  </a>
+  <a class="sidebar-item">
+    <i class="fa-regular fa-file-lines"></i>
+    <span>Termos / Contratos</span>
+  </a>
+  <!-- Veículos e Tecnologiasl -->
+  <h4>Veículos e Tecnologias</h4>
+  <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
+    <i class="fa-solid fa-car"></i>
+    <span>Modelos Ford</span>
+  </a>
+  <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
+    <i class="fa-solid fa-brain"></i>
+    <span>Sobre a IA</span>
+  </a>
+  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+    <i class="fa-solid fa-chart-line"></i>
+    <span>Dashboard Detalhado</span>
+  </a>
+
+  <!-- Bloco 4: Histórico -->
+  <h4>Atendimento</h4>
+  <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
+    <i class="fa-regular fa-calendar"></i>
+    <span>Meus Agendamentos</span>
+  </a>
+  <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
+    <i class="fa-solid fa-location-dot"></i>
+    <span>Concessionárias</span>
+  </a>
+    <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
+    <i class="fa-solid fa-phone"></i>
+    <span>Fale Conosco</span>
+  </a>
+</div>
+</div>
+  <!-- Fundo escuro (clicar nele fecha a barra) -->
+  @if (sidebarAberta()) {
+    <div class="overlay" (click)="fecharSidebar()"></div>
+  }
+</div>

@@ -11,32 +11,30 @@ import { AuthService } from '../auth.service';
 
 export class FaleConoscoComponent {
   protected readonly title = signal('meu-projeto');
-  errorMessage = signal<string | null>(null);
-  private authService = inject(AuthService);
-  private router = inject(Router);
 
-  onRegister(email: string, password: string, confirmPassword: string) {
-    this.errorMessage.set(null);
+  // Declaração dos Signals
+  menuAberto = signal<string | null>(null);
+  sidebarAberta = signal<boolean>(false); 
 
-    if (password !== confirmPassword) {
-      this.errorMessage.set('As senhas não coincidem.');
-      return;
+  toggleMenu(nomeMenu: string): void {
+    if (this.menuAberto() === nomeMenu) {
+      this.menuAberto.set(null); 
+    } else {
+      this.menuAberto.set(nomeMenu); 
     }
+  }
 
-    this.authService.register(email, password).subscribe({
-      next: (response) => {
-        if (response.error) {
-          console.error('Registration error from Supabase:', response.error.message);
-          this.errorMessage.set(response.error.message);
-        } else {
-          console.log('Registration successful:', response);
-          this.router.navigate(['/home']);
-        }
-      },
-      error: (error) => {
-        console.error('Registration failed:', error);
-        this.errorMessage.set('Ocorreu um erro ao tentar criar a conta.');
-      }
-    });
+  fecharMenus(): void {
+    this.menuAberto.set(null);
+  }
+
+  // Métodos da Barra Lateral (Sidebar)
+  abrirSidebar(): void {
+    this.sidebarAberta.set(true);
+    this.fecharMenus(); // Fecha o dropdown ao abrir a barra
+  }
+
+  fecharSidebar(): void {
+    this.sidebarAberta.set(false);
   }
 }
