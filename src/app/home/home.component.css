@@ -271,6 +271,17 @@ html, body, :host {
     background-color: #f4f7fc;
 }
 
+/* --- ESTILO QUANDO A TAG ESTIVER ATIVA (SELECIONADA) --- */
+.tag-item.ativa {
+    background-color: #0E3165 !important;
+    color: #ffffff !important;
+    border-color: #0E3165 !important;
+    box-shadow: 0 4px 10px rgba(14, 49, 101, 0.25);
+}
+
+.tag-item.ativa i {
+    color: #ffffff !important;
+}
 /* --- COMO FUNCIONA A RECOMENDAÇÃO --- */
 .como-funciona-secao {
     width: 100%;
