@@ -54,7 +54,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 2.0 EcoBoost (253 cv)',
       tracao: '4x4',
       categoria: 'SUVs',
-      imagemUrl: '/bronco-sport.jpg'
+      imagemUrl: '/bronco-sport.jpeg'
     },
     {
       id: 2,
