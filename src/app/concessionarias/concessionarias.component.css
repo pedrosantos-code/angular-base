@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import "leaflet/dist/leaflet.css";
 
 * {
     margin: 0;
@@ -15,7 +16,7 @@ html, body, :host {
     overflow-x: hidden;
 }
 
-/* --- CONTAINER DO FUNDO (Sua imagem mantida) --- */
+/* --- CONTAINER DO FUNDO --- */
 .fundo-home {
     position: fixed;
     top: 0;
@@ -240,7 +241,7 @@ html, body, :host {
   }
 }
 
-/* Mapa */
+/* Mapa Wrapper e Conteúdo */
 .mapa-wrapper {
   position: relative;
   border-radius: 12px;
@@ -253,7 +254,7 @@ html, body, :host {
   position: absolute;
   top: 12px;
   right: 12px;
-  z-index: 10;
+  z-index: 20;
   background-color: #ffffff;
   border: 1px solid #cbd5e1;
   padding: 6px 12px;
@@ -262,30 +263,34 @@ html, body, :host {
   font-weight: 600;
   color: #334155;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* MAPA REAL: Substituído o radial-gradient pela imagem do mapa */
 .mapa-placeholder {
   width: 100%;
   height: 100%;
   min-height: 480px;
-  background-color: #f1f5f9;
-  background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-color: #e5e3df;
+  background-image: url('https://tile.openstreetmap.org/13/2749/3688.png');
+  background-size: cover;
+  background-position: center;
   position: relative;
+  transition: transform 0.3s ease;
 }
 
 .ponto-usuario {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 14px;
-  height: 14px;
-  background-color: #38bdf8;
+  width: 16px;
+  height: 16px;
+  background-color: #0284c7;
   border: 3px solid #ffffff;
   border-radius: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.8);
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.8);
+  z-index: 5;
 }
 
 .pin-mapa {
@@ -295,20 +300,21 @@ html, body, :host {
   align-items: center;
   justify-content: center;
   color: #0e3165;
-  font-size: 28px;
-  transition: transform 0.2s;
+  font-size: 32px;
+  transition: transform 0.2s ease-in-out;
+  z-index: 10;
 }
 
 .pin-mapa span {
   position: absolute;
-  top: 4px;
+  top: 5px;
   color: #ffffff;
   font-size: 11px;
   font-weight: bold;
 }
 
 .pin-mapa:hover {
-  transform: scale(1.2);
+  transform: scale(1.25);
 }
 
 .zoom-controls {
@@ -321,6 +327,8 @@ html, body, :host {
   border: 1px solid #cbd5e1;
   border-radius: 6px;
   overflow: hidden;
+  z-index: 20;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .zoom-controls button {
@@ -435,7 +443,6 @@ html, body, :host {
     overflow-y: auto;
 }
 
-/* Logo da Sidebar */
 .logo-sidebar {
     width: 260px;
     height: auto;
@@ -443,7 +450,6 @@ html, body, :host {
     display: block;
 }
 
-/* Títulos (H3 e H4) */
 .sidebar-conteudo h3,
 .sidebar-conteudo h4 {
     color: #000000;
@@ -459,7 +465,6 @@ html, body, :host {
     margin-top: 0;
 }
 
-/* Itens da lista */
 .sidebar-item {
     display: flex;
     align-items: center;

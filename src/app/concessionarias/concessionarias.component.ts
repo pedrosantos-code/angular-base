@@ -29,6 +29,10 @@ export class ConcessionariasComponent {
   buscaLocalizacao = signal<string>('São Paulo, SP');
   raioBusca = signal<number>(20);
 
+  // Signal para controlar a imagem e o zoom do mapa ilustrativo
+  imagemMapa = signal<string>('assets/imagens/mapa-sao-paulo.png');
+  nivelZoom = signal<number>(1);
+
   // Lista de Concessionárias
   concessionarias = signal<Concessionaria[]>([
     {
@@ -96,8 +100,10 @@ export class ConcessionariasComponent {
     this.focarNoMapa(id);
   }
 
+  // Ajusta o zoom da imagem do mapa (limites entre 0.8 e 2.0)
   alterarZoom(delta: number): void {
-    // Lógica para ajustar zoom do mapa
+    const novoZoom = Math.min(Math.max(this.nivelZoom() + delta, 0.8), 2.0);
+    this.nivelZoom.set(Number(novoZoom.toFixed(1)));
   }
 
   // Métodos do Menu Dropdown
@@ -116,7 +122,7 @@ export class ConcessionariasComponent {
   // Métodos da Barra Lateral (Sidebar)
   abrirSidebar(): void {
     this.sidebarAberta.set(true);
-    this.fecharMenus(); // Fecha o dropdown ao abrir a barra
+    this.fecharMenus();
   }
 
   fecharSidebar(): void {

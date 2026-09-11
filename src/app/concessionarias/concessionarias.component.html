@@ -15,8 +15,6 @@
             <strong>Menu Lateral</strong>
           </div>
           <hr class="divisor">
-          
-          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
           <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
         </div>
       </div>
@@ -25,7 +23,6 @@
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
         
-        <!-- Caixa do Perfil (Totalmente estática) -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
             <strong>Perfil do Usuário</strong>
@@ -40,7 +37,6 @@
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
         
-        <!-- Caixa de Configurações (Totalmente estática) -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
             <strong>Configurações</strong>
@@ -60,11 +56,10 @@
     <div class="elementos-direita">
       <p class="parceria">Seia + Ford</p>
       
-      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <!-- Item: Logout -->
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
         
-        <!-- Caixa de Logout -->
         <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
           <div class="menu-header">
             <strong>Sair do Sistema</strong>
@@ -79,146 +74,150 @@
 
   <main class="container-home">
     <div class="concessionarias-container">
-  <!-- Cabeçalho -->
-  <header class="header-secao">
-    <h2>Concessionárias Próximas (por SEIA)</h2>
-  </header>
+      <!-- Cabeçalho -->
+      <header class="header-secao">
+        <h2>Concessionárias Próximas (por SEIA)</h2>
+      </header>
 
-  <!-- Barra de Filtros -->
-  <div class="filtros-bar">
-    <div class="input-group">
-      <label for="cepCidade">CEP ou Cidade</label>
-      <input 
-        id="cepCidade" 
-        type="text" 
-        [value]="buscaLocalizacao()" 
-        (input)="atualizarBusca($event)" 
-        placeholder="Digite o CEP ou Cidade"
-      />
-    </div>
+      <!-- Barra de Filtros -->
+      <div class="filtros-bar">
+        <div class="input-group">
+          <label for="cepCidade">CEP ou Cidade</label>
+          <input 
+            id="cepCidade" 
+            type="text" 
+            [value]="buscaLocalizacao()" 
+            (input)="atualizarBusca($event)" 
+            placeholder="Digite o CEP ou Cidade"
+          />
+        </div>
 
-    <div class="input-group raio-group">
-      <label for="raio">Raio de Busca (km)</label>
-      <select id="raio" [value]="raioBusca()" (change)="atualizarRaio($event)">
-        <option value="10">10 km</option>
-        <option value="20">20 km</option>
-        <option value="50">50 km</option>
-      </select>
-    </div>
+        <div class="input-group raio-group">
+          <label for="raio">Raio de Busca (km)</label>
+          <select id="raio" [value]="raioBusca()" (change)="atualizarRaio($event)">
+            <option value="10">10 km</option>
+            <option value="20">20 km</option>
+            <option value="50">50 km</option>
+          </select>
+        </div>
 
-    <button class="btn-buscar" (click)="buscarConcessionarias()">Buscar</button>
-    <button class="btn-recalcular-topo" (click)="recalcularLocalizacao()">Recalcular Localização</button>
-  </div>
+        <button class="btn-buscar" (click)="buscarConcessionarias()">Buscar</button>
+        <button class="btn-recalcular-topo" (click)="recalcularLocalizacao()">Recalcular Localização</button>
+      </div>
 
-  <!-- Conteúdo Principal: Mapa e Lista -->
-  <div class="conteudo-grid">
-    <!-- Seção do Mapa -->
-    <div class="mapa-wrapper">
-      <button class="btn-recalcular-mapa" (click)="recalcularLocalizacao()">
-        <i class="fa-solid fa-arrows-rotate"></i> Recalcular Localização
-      </button>
+      <!-- Conteúdo Principal: Mapa e Lista -->
+      <div class="conteudo-grid">
+        <!-- Seção do Mapa -->
+        <div class="mapa-wrapper">
+          <button class="btn-recalcular-mapa" (click)="recalcularLocalizacao()">
+            <i class="fa-solid fa-arrows-rotate"></i> Recalcular Localização
+          </button>
 
-      <!-- Representação Gráfica do Mapa -->
-      <div class="mapa-placeholder">
-        <div class="ponto-usuario" title="Sua localização atual"></div>
-
-        @for (item of concessionarias(); track item.id) {
+          <!-- Representação Gráfica do Mapa -->
           <div 
-            class="pin-mapa" 
-            [style.top]="item.posicaoMapa.top" 
-            [style.left]="item.posicaoMapa.left"
-            (click)="selecionarConcessionaria(item.id)"
+            class="mapa-placeholder"
+            [style.transform]="'scale(' + nivelZoom() + ')'"
+            style="transform-origin: center center;"
           >
-            <i class="fa-solid fa-location-dot"></i>
-            <span>{{ item.id }}</span>
-          </div>
-        }
+            <div class="ponto-usuario" title="Sua localização atual"></div>
 
-        <!-- Controles de Zoom -->
-        <div class="zoom-controls">
-          <button (click)="alterarZoom(1)">+</button>
-          <button (click)="alterarZoom(-1)">-</button>
+            @for (item of concessionarias(); track item.id) {
+              <div 
+                class="pin-mapa" 
+                [style.top]="item.posicaoMapa.top" 
+                [style.left]="item.posicaoMapa.left"
+                (click)="selecionarConcessionaria(item.id)"
+              >
+                <i class="fa-solid fa-location-dot"></i>
+                <span>{{ item.id }}</span>
+              </div>
+            }
+
+            <!-- Controles de Zoom -->
+            <div class="zoom-controls">
+              <button (click)="alterarZoom(0.2)" title="Aumentar Zoom">+</button>
+              <button (click)="alterarZoom(-0.2)" title="Diminuir Zoom">-</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista Lateral de Concessionárias -->
+        <div class="lista-concessionarias">
+          @for (unidade of concessionarias(); track unidade.id) {
+            <div class="card-concessionaria">
+              <div class="card-header">
+                <h3>{{ unidade.nome }}</h3>
+                <span class="distancia">- {{ unidade.distancia }} km</span>
+              </div>
+
+              <p class="endereco">{{ unidade.endereco }}</p>
+              <p class="telefone">{{ unidade.telefone }}</p>
+
+              <div class="card-acoes">
+                <button class="btn-agendar" (click)="agendarTestDrive(unidade)">
+                  Agendar Test-Drive
+                </button>
+                <button class="btn-ver-mapa" (click)="focarNoMapa(unidade.id)">
+                  Ver no Mapa
+                </button>
+              </div>
+            </div>
+          }
         </div>
       </div>
     </div>
-
-    <!-- Lista Lateral de Concessionárias -->
-    <div class="lista-concessionarias">
-      @for (unidade of concessionarias(); track unidade.id) {
-        <div class="card-concessionaria">
-          <div class="card-header">
-            <h3>{{ unidade.nome }}</h3>
-            <span class="distancia">- {{ unidade.distancia }} km</span>
-          </div>
-
-          <p class="endereco">{{ unidade.endereco }}</p>
-          <p class="telefone">{{ unidade.telefone }}</p>
-
-          <div class="card-acoes">
-            <button class="btn-agendar" (click)="agendarTestDrive(unidade)">
-              Agendar Test-Drive
-            </button>
-            <button class="btn-ver-mapa" (click)="focarNoMapa(unidade.id)">
-              Ver no Mapa
-            </button>
-          </div>
-        </div>
-      }
-    </div>
-  </div>
-</div>
   </main>
 
   <!-- Painel Lateral -->
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
+    <div class="sidebar-conteudo">
+      <a routerLink="/home" (click)="fecharSidebar()">
+        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
+      </a>
+      
+      <!-- Bloco 1: Gestão -->
+      <h4>Gestão e Conta</h4>
+      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
+        <i class="fa-regular fa-user"></i>
+        <span>Meu Perfil</span>
+      </a>
+      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>Termos / Contratos</span>
+      </a>
+      
+      <!-- Veículos e Tecnologias -->
+      <h4>Veículos e Tecnologias</h4>
+      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
+        <i class="fa-solid fa-car"></i>
+        <span>Modelos Ford</span>
+      </a>
+      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
+        <i class="fa-solid fa-brain"></i>
+        <span>Sobre a IA</span>
+      </a>
+      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard Detalhado</span>
+      </a>
 
-  <div class="sidebar-conteudo">
+      <!-- Bloco 4: Histórico -->
+      <h4>Atendimento</h4>
+      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
+        <i class="fa-regular fa-calendar"></i>
+        <span>Meus Agendamentos</span>
+      </a>
+      <a class="sidebar-item">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Concessionárias</span>
+      </a>
+      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
+        <i class="fa-solid fa-phone"></i>
+        <span>Fale Conosco</span>
+      </a>
+    </div>
+  </div>
 
-  <a routerLink="/home" (click)="fecharSidebar()">
-    <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-  </a>
-  
-  <!-- Bloco 1: Gestão -->
-  <h4>Gestão e Conta</h4>
-  <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-    <i class="fa-regular fa-user"></i>
-    <span>Meu Perfil</span>
-  </a>
-  <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-    <i class="fa-regular fa-file-lines"></i>
-    <span>Termos / Contratos</span>
-  </a>
-  <!-- Veículos e Tecnologiasl -->
-  <h4>Veículos e Tecnologias</h4>
-  <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-    <i class="fa-solid fa-car"></i>
-    <span>Modelos Ford</span>
-  </a>
-  <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-    <i class="fa-solid fa-brain"></i>
-    <span>Sobre a IA</span>
-  </a>
-  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-    <i class="fa-solid fa-chart-line"></i>
-    <span>Dashboard Detalhado</span>
-  </a>
-
-  <!-- Bloco 4: Histórico -->
-  <h4>Atendimento</h4>
-  <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-    <i class="fa-regular fa-calendar"></i>
-    <span>Meus Agendamentos</span>
-  </a>
-  <a class="sidebar-item">
-    <i class="fa-solid fa-location-dot"></i>
-    <span>Concessionárias</span>
-  </a>
-    <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-    <i class="fa-solid fa-phone"></i>
-    <span>Fale Conosco</span>
-  </a>
-</div>
-</div>
   <!-- Fundo escuro (clicar nele fecha a barra) -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>
