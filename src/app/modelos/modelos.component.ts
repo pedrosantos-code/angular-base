@@ -54,7 +54,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 2.0 EcoBoost (253 cv)',
       tracao: '4x4',
       categoria: 'SUVs',
-      imagemUrl: 'assets/modelos/bronco-sport.jpg'
+      imagemUrl: '/bronco-sport.jpg'
     },
     {
       id: 2,
@@ -63,7 +63,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 1.5 EcoBoost (169 cv)',
       tracao: 'FWD',
       categoria: 'SUVs',
-      imagemUrl: 'assets/modelos/territory.jpg'
+      imagemUrl: '/territory.jpg'
     },
     {
       id: 3,
@@ -72,7 +72,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 3.0 V6 EcoBoost (400 cv)',
       tracao: 'AWD',
       categoria: 'SUVs',
-      imagemUrl: 'assets/modelos/explorer.jpg'
+      imagemUrl: '/explorer.jpeg'
     },
 
     // --- PICAPES ---
@@ -83,7 +83,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 3.0 V6 Diesel (250 cv)',
       tracao: '4x4',
       categoria: 'Picapes',
-      imagemUrl: 'assets/modelos/ranger.jpg'
+      imagemUrl: '/ranger.jpg'
     },
     {
       id: 5,
@@ -92,16 +92,16 @@ export class ModelosComponent {
       motorizacao: 'Motor 3.0 V6 EcoBoost (397 cv)',
       tracao: '4x4 com Reduzida',
       categoria: 'Picapes',
-      imagemUrl: 'assets/modelos/ranger-raptor.jpg'
+      imagemUrl: '/ranger-raptor.jpg'
     },
     {
       id: 6,
-      nome: 'FORD MAVERICK',
+      nome: 'FORD MAVERICK TREMOR',
       precoAPartir: 'R$ 225.000',
       motorizacao: 'Motor 2.0 EcoBoost (253 cv)',
-      tracao: 'AWD',
+      tracao: 'AWD LFX4 (Integral)',
       categoria: 'Picapes',
-      imagemUrl: 'assets/modelos/maverick.jpg'
+      imagemUrl: '/maverick-tremor.jpg'
     },
     {
       id: 7,
@@ -110,7 +110,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 5.0 V8 Coyote (405 cv)',
       tracao: '4x4',
       categoria: 'Picapes',
-      imagemUrl: 'assets/modelos/f150.jpg'
+      imagemUrl: '/f150.jpg'
     },
 
     // --- ESPORTIVOS ---
@@ -121,7 +121,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 5.0 V8 Coyote (488 cv)',
       tracao: 'RWD (Traseira)',
       categoria: 'Esportivos',
-      imagemUrl: 'assets/modelos/mustang.jpg'
+      imagemUrl: '/mustang.jpg'
     },
 
     // --- ELÉTRICOS (Incluindo Vans) ---
@@ -132,7 +132,7 @@ export class ModelosComponent {
       motorizacao: '100% Elétrico (487 cv)',
       tracao: 'eAWD',
       categoria: 'Elétricos',
-      imagemUrl: 'assets/modelos/mach-e.jpg'
+      imagemUrl: '/mach-e.jpg'
     },
     {
       id: 10,
@@ -141,7 +141,7 @@ export class ModelosComponent {
       motorizacao: '100% Elétrico (580 cv)',
       tracao: 'eAWD',
       categoria: 'Elétricos',
-      imagemUrl: 'assets/modelos/f150-lightning.jpg'
+      imagemUrl: '/f150-lightning.jpg'
     },
     {
       id: 11,
@@ -150,7 +150,7 @@ export class ModelosComponent {
       motorizacao: '100% Elétrico (269 cv)',
       tracao: 'RWD (Traseira)',
       categoria: 'Elétricos',
-      imagemUrl: 'assets/modelos/e-transit.jpg'
+      imagemUrl: '/e-transit.jpg'
     },
 
     // --- HÍBRIDOS ---
@@ -161,7 +161,7 @@ export class ModelosComponent {
       motorizacao: '2.5L Híbrido (194 cv)',
       tracao: 'FWD',
       categoria: 'Híbridos',
-      imagemUrl: 'assets/modelos/maverick-hybrid.jpg'
+      imagemUrl: '/maverick-hybrid.jpg'
     },
 
     // --- COMERCIAIS ---
@@ -172,7 +172,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 2.0 EcoBlue Diesel',
       tracao: 'RWD / FWD',
       categoria: 'Comerciais',
-      imagemUrl: 'assets/modelos/transit-furgao.jpg'
+      imagemUrl: '/transit-furgao.jpeg'
     },
     {
       id: 14,
@@ -181,7 +181,7 @@ export class ModelosComponent {
       motorizacao: 'Motor 2.0 EcoBlue Diesel',
       tracao: 'RWD',
       categoria: 'Comerciais',
-      imagemUrl: 'assets/modelos/transit-minibus.jpg'
+      imagemUrl: '/transit-minibus.jpeg'
     }
   ]);
 
