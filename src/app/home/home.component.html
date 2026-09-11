@@ -15,8 +15,6 @@
             <strong>Menu Lateral</strong>
           </div>
           <hr class="divisor">
-          
-          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
           <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
         </div>
       </div>
@@ -25,7 +23,7 @@
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
         
-        <!-- Caixa do Perfil (Totalmente estática) -->
+        <!-- Caixa do Perfil -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
             <strong>Perfil do Usuário</strong>
@@ -40,7 +38,7 @@
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
         
-        <!-- Caixa de Configurações (Totalmente estática) -->
+        <!-- Caixa de Configurações -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
             <strong>Configurações</strong>
@@ -60,7 +58,7 @@
     <div class="elementos-direita">
       <p class="parceria">Seia + Ford</p>
       
-      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <!-- Item: Logout -->
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
         
@@ -80,113 +78,147 @@
   <main class="container-home">
     <h2 class="titulo-principal">Qual é o seu próximo FORD?</h2>
     <h2 class="subtitulo-principal">Deixe a nossa IA guiar sua escolha</h2>
+    
     <div class="pesquisa-ia-container">
-  <!-- Campo Principal de Prompt -->
-  <div class="prompt-box">
-    <input 
-      type="text" 
-      placeholder="Ex: Preciso de um SUV econômico para viajar com a família..." 
-    />
-    <button type="button" class="btn-ia">
-      <i class="fa-solid fa-wand-magic-sparkles"></i>
-      <span>Buscar com IA</span>
-    </button>
-  </div>
+      <!-- Campo Principal de Prompt -->
+      <div class="prompt-box">
+        <input 
+          type="text" 
+          placeholder="Ex: Preciso de um SUV econômico para viajar com a família..." 
+        />
+        <button type="button" class="btn-ia">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span>Buscar com IA</span>
+        </button>
+      </div>
 
-  <!-- Tags de Filtros Rápidos -->
-  <div class="filtros-rapidos">
-    <span class="titulo-filtros">Busca rápida:</span>
-    <button type="button" class="tag-item">
-      <i class="fa-solid fa-car"></i> Uso Urbano
-    </button>
-    <button type="button" class="tag-item">
-      <i class="fa-solid fa-mountain"></i> Off-Road
-    </button>
-    <button type="button" class="tag-item">
-      <i class="fa-solid fa-users"></i> Família
-    </button>
-    <button type="button" class="tag-item">
-      <i class="fa-solid fa-briefcase"></i> Trabalho
-    </button>
-  </div>
-</div>
-  <section class="como-funciona-container">
-  <h2>Como Funciona a Recomendação por IA</h2>
-  
-  <div class="passo-a-passo">
-    <!-- Passo 1 -->
-    <div class="card-passo">
-      <div class="numero-passo">1</div>
-      <i class="fa-solid fa-comment-dots"></i>
-      <h3>Descreva Seu Estilo</h3>
-      <p>Conte suas necessidades de uso, preferências de conforto e orçamento disponível.</p>
-    </div>
+      <!-- Tags de Filtros Rápidos -->
+      <div class="filtros-rapidos">
+        <span class="titulo-filtros">Busca rápida:</span>
 
-    <!-- Passo 2 -->
-    <div class="card-passo">
-      <div class="numero-passo">2</div>
-      <i class="fa-solid fa-brain"></i>
-      <h3>Análise Inteligente</h3>
-      <p>Nossa IA cruza seus dados com as especificações e fichas técnicas de toda a linha Ford.</p>
-    </div>
+        <button 
+          type="button"
+          class="tag-item" 
+          [class.ativa]="tagSelecionada() === 'Uso Urbano'"
+          (click)="selecionarTag('Uso Urbano')"
+        >
+          <i class="fa-solid fa-car"></i> Uso Urbano
+        </button>
 
-    <!-- Passo 3 -->
-    <div class="card-passo">
-      <div class="numero-passo">3</div>
-      <i class="fa-solid fa-car-side"></i>
-      <h3>Match Perfeito</h3>
-      <p>Receba as melhores sugestões com porcentagem de compatibilidade para seu perfil.</p>
-    </div>
-  </div>
-</section>
+        <button 
+          type="button"
+          class="tag-item" 
+          [class.ativa]="tagSelecionada() === 'Off-Road'"
+          (click)="selecionarTag('Off-Road')"
+        >
+          <i class="fa-solid fa-mountain"></i> Off-Road
+        </button>
+
+        <button 
+          type="button"
+          class="tag-item" 
+          [class.ativa]="tagSelecionada() === 'Família'"
+          (click)="selecionarTag('Família')"
+        >
+          <i class="fa-solid fa-users"></i> Família
+        </button>
+
+        <button 
+          type="button"
+          class="tag-item" 
+          [class.ativa]="tagSelecionada() === 'Trabalho'"
+          (click)="selecionarTag('Trabalho')"
+        >
+          <i class="fa-solid fa-briefcase"></i> Trabalho
+        </button>
+      </div>
+    </div> <!-- Fechamento da div .pesquisa-ia-container -->
+
+    <section class="como-funciona-container">
+      <h2>Como Funciona a Recomendação por IA</h2>
+      
+      <div class="passo-a-passo">
+        <!-- Passo 1 -->
+        <div class="card-passo">
+          <div class="numero-passo">1</div>
+          <div class="icone-passo">
+            <i class="fa-solid fa-comment-dots"></i>
+          </div>
+          <h3>Descreva Seu Estilo</h3>
+          <p>Conte suas necessidades de uso, preferências de conforto e orçamento disponível.</p>
+        </div>
+
+        <!-- Passo 2 -->
+        <div class="card-passo">
+          <div class="numero-passo">2</div>
+          <div class="icone-passo">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <h3>Análise Inteligente</h3>
+          <p>Nossa IA cruza seus dados com as especificações e fichas técnicas de toda a linha Ford.</p>
+        </div>
+
+        <!-- Passo 3 -->
+        <div class="card-passo">
+          <div class="numero-passo">3</div>
+          <div class="icone-passo">
+            <i class="fa-solid fa-car-side"></i>
+          </div>
+          <h3>Match Perfeito</h3>
+          <p>Receba as melhores sugestões com porcentagem de compatibilidade para seu perfil.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Painel Lateral -->
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
+    <div class="sidebar-conteudo">
+      <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
+      
+      <!-- Bloco 1: Gestão -->
+      <h4>Gestão e Conta</h4>
+      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
+        <i class="fa-regular fa-user"></i>
+        <span>Meu Perfil</span>
+      </a>
+      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>Termos / Contratos</span>
+      </a>
 
-  <div class="sidebar-conteudo">
-  <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-  
-  <!-- Bloco 1: Gestão -->
-  <h4>Gestão e Conta</h4>
-  <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-    <i class="fa-regular fa-user"></i>
-    <span>Meu Perfil</span>
-  </a>
-  <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-    <i class="fa-regular fa-file-lines"></i>
-    <span>Termos / Contratos</span>
-  </a>
-  <!-- Veículos e Tecnologiasl -->
-  <h4>Veículos e Tecnologias</h4>
-  <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-    <i class="fa-solid fa-car"></i>
-    <span>Modelos Ford</span>
-  </a>
-  <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-    <i class="fa-solid fa-brain"></i>
-    <span>Sobre a IA</span>
-  </a>
-  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-    <i class="fa-solid fa-chart-line"></i>
-    <span>Dashboard Detalhado</span>
-  </a>
-  <!-- Bloco 4: Histórico -->
-  <h4>Atendimento</h4>
-  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-    <i class="fa-regular fa-calendar"></i>
-    <span>Meus Agendamentos</span>
-  </a>
-  <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-    <i class="fa-solid fa-location-dot"></i>
-    <span>Concessionárias</span>
-  </a>
-  <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-    <i class="fa-solid fa-phone"></i>
-    <span>Fale Conosco</span>
-  </a>
-</div>
-</div>
+      <!-- Bloco 2: Veículos e Tecnologias -->
+      <h4>Veículos e Tecnologias</h4>
+      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
+        <i class="fa-solid fa-car"></i>
+        <span>Modelos Ford</span>
+      </a>
+      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
+        <i class="fa-solid fa-brain"></i>
+        <span>Sobre a IA</span>
+      </a>
+      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard Detalhado</span>
+      </a>
+
+      <!-- Bloco 3: Atendimento -->
+      <h4>Atendimento</h4>
+      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+        <i class="fa-regular fa-calendar"></i>
+        <span>Meus Agendamentos</span>
+      </a>
+      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Concessionárias</span>
+      </a>
+      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
+        <i class="fa-solid fa-phone"></i>
+        <span>Fale Conosco</span>
+      </a>
+    </div>
+  </div>
+
   <!-- Fundo escuro (clicar nele fecha a barra) -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>

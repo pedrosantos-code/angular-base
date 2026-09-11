@@ -13,8 +13,11 @@ export class HomeComponent {
   // Controle dos menus dropdown
   menuAberto = signal<string | null>(null);
 
-  // Novo Signal: controla a exibição da barra lateral
+  // Controle da exibição da barra lateral
   sidebarAberta = signal<boolean>(false);
+
+  // Controle das tags de filtro da busca rápida
+  tagSelecionada = signal<string | null>(null);
 
   toggleMenu(nomeMenu: string): void {
     if (this.menuAberto() === nomeMenu) {
@@ -36,5 +39,14 @@ export class HomeComponent {
 
   fecharSidebar(): void {
     this.sidebarAberta.set(false);
+  }
+
+  // Método para marcar e desmarcar as tags de busca rápida
+  selecionarTag(tag: string): void {
+    if (this.tagSelecionada() === tag) {
+      this.tagSelecionada.set(null); // Desmarca se for clicado novamente
+    } else {
+      this.tagSelecionada.set(tag); // Marca a tag clicada
+    }
   }
 }
