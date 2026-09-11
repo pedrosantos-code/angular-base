@@ -151,6 +151,11 @@ html, body, :host {
     cursor: pointer; 
 }
 
+.menu-item-link:hover {
+    background-color: #3d3d3d;
+    color: #ffffff;
+}
+
 /* Layout Geral */
 .modelos-layout {
   display: flex;
@@ -375,11 +380,6 @@ html, body, :host {
   .card-modelo {
     max-width: 100%;
   }
-}
-
-.menu-item-link:hover {
-    background-color: #3d3d3d;
-    color: #ffffff;
 }
 
 /* --- BARRA LATERAL (SIDEBAR) --- */
