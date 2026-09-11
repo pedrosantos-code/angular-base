@@ -102,7 +102,8 @@
     <!-- Conteúdo Principal de Veículos (Direita) -->
     <main class="conteudo-principal">
       <header class="header-pagina">
-        <h2>MODELOS FORD</h2>
+        <!-- Título dinâmico: Mostra 'MODELOS FORD' ou 'MODELOS FORD - CATEGORIA' -->
+        <h2>MODELOS FORD {{ categoriaAtiva() !== 'Todos' ? '- ' + categoriaAtiva() : '' }}</h2>
       </header>
 
       <div class="grid-modelos">

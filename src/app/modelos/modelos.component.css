@@ -156,7 +156,7 @@ html, body, :host {
   width: 100%;
   padding-top: 50px; /* Garante que o conteúdo fique abaixo do cabeçalho fixo */
   min-height: calc(100vh - 50px);
-  align-items: stretch;
+  align-items: flex-start; /* Permite que a sidebar tenha a altura do seu próprio conteúdo */
 }
 
 /* --- SIDEBAR DE FILTROS (Esquerda) --- */
@@ -167,6 +167,8 @@ html, body, :host {
   color: #ffffff;
   padding: 24px 0;
   flex-shrink: 0;
+  height: fit-content; /* Ocupa apenas o tamanho do conteúdo interno */
+  border-bottom-right-radius: 12px; /* Arredonda o canto inferior para um acabamento limpo */
 }
 
 .sidebar-header {
@@ -442,6 +444,7 @@ html, body, :host {
     width: 100%;
     min-width: 100%;
     padding: 16px 0;
+    border-bottom-right-radius: 0;
   }
 
   .lista-categorias {
