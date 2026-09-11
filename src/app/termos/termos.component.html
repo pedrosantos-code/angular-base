@@ -16,7 +16,6 @@
           </div>
           <hr class="divisor">
           
-          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
           <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
         </div>
       </div>
@@ -25,7 +24,6 @@
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
         
-        <!-- Caixa do Perfil (Totalmente estática) -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
             <strong>Perfil do Usuário</strong>
@@ -40,7 +38,6 @@
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
         
-        <!-- Caixa de Configurações (Totalmente estática) -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
             <strong>Configurações</strong>
@@ -60,11 +57,10 @@
     <div class="elementos-direita">
       <p class="parceria">Seia + Ford</p>
       
-      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <!-- Item: Logout -->
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
         
-        <!-- Caixa de Logout -->
         <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
           <div class="menu-header">
             <strong>Sair do Sistema</strong>
@@ -79,104 +75,115 @@
 
   <main class="container-home">
     <div class="termos-container">
-  <div class="header-termos">
-    <h2>Termos e Contratos</h2>
-    <span class="data-atualizacao">Atualizado em: 15/05/2026</span>
-  </div>
+      <div class="header-termos">
+        <h2>Termos e Contratos</h2>
+        <span class="data-atualizacao">Atualizado em: 15/05/2026</span>
+      </div>
 
-  <!-- Accordion List -->
-  <div class="accordion-list">
-    @for (item of termos(); track item.id) {
-      <div class="accordion-item" [class.aberto]="item.aberto">
-        <button class="accordion-header" (click)="toggleAccordion(item.id)">
-          <span class="titulo-termo">{{ item.titulo }}</span>
-          <i class="fa-solid" [class.fa-chevron-up]="item.aberto" [class.fa-plus]="!item.aberto"></i>
-        </button>
+      <!-- Accordion List -->
+      <div class="accordion-list">
+        @for (item of termos(); track item.id) {
+          <div class="accordion-item" [class.aberto]="item.aberto">
+            <button class="accordion-header" (click)="toggleAccordion(item.id)">
+              <span class="titulo-termo">{{ item.titulo }}</span>
+              <i class="fa-solid" [class.fa-chevron-up]="item.aberto" [class.fa-plus]="!item.aberto"></i>
+            </button>
 
-        @if (item.aberto) {
-          <div class="accordion-body">
-            <p>{{ item.descricao }}</p>
-            
-            @if (item.topicos && item.topicos.length > 0) {
-              <strong>Ao utilizar o SEIA, você concorda com:</strong>
-              <ul>
-                @for (topico of item.topicos; track topico) {
-                  <li>{{ topico }}</li>
+            @if (item.aberto) {
+              <div class="accordion-body">
+                <p>{{ item.descricao }}</p>
+                
+                @if (item.topicos && item.topicos.length > 0) {
+                  <strong>Ao utilizar o SEIA, você concorda com:</strong>
+                  <ul>
+                    @for (topico of item.topicos; track topico) {
+                      <li>{{ topico }}</li>
+                    }
+                  </ul>
                 }
-              </ul>
+              </div>
             }
           </div>
         }
       </div>
-    }
-  </div>
 
-  <!-- Footer Actions -->
-  <div class="termos-footer">
-    <label class="checkbox-container">
-      <input type="checkbox" [checked]="concordou()" (change)="toggleConcordo()" />
-      <span class="checkmark"></span>
-      Li e concordo com os termos acima
-    </label>
+      <!-- Footer Actions -->
+      <div class="termos-footer">
+        <label class="checkbox-container">
+          <input type="checkbox" [checked]="concordou()" (change)="toggleConcordo()" />
+          <span class="checkmark"></span>
+          Li e concordo com os termos acima
+        </label>
 
-    <div class="botoes-grupo">
-      <button class="btn-salvar" [disabled]="!concordou()">Salvar e Continuar</button>
-      <button class="btn-gerenciar">Gerenciar Consentimentos Específicos</button>
+        <div class="botoes-grupo">
+          <!-- BOTÃO COM A AÇÃO DE SALVAR ADICIONADA -->
+          <button class="btn-salvar" [disabled]="!concordou()" (click)="salvarTermos()">
+            Salvar e Continuar
+          </button>
+          <button class="btn-gerenciar">Gerenciar Consentimentos Específicos</button>
+        </div>
+
+        <!-- MENSAGEM DE SUCESSO (EXIBIDA QUANDO O SINAL FOR TRUE) -->
+        @if (mensagemSalva()) {
+          <div class="mensagem-sucesso">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Termos salvos com sucesso! Redirecionando...</span>
+          </div>
+        }
+      </div>
     </div>
-  </div>
-</div>
   </main>
 
   <!-- Painel Lateral -->
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
+    <div class="sidebar-conteudo">
+      <a routerLink="/home" (click)="fecharSidebar()">
+        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
+      </a>
+      
+      <!-- Bloco 1: Gestão -->
+      <h4>Gestão e Conta</h4>
+      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
+        <i class="fa-regular fa-user"></i>
+        <span>Meu Perfil</span>
+      </a>
+      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>Termos / Contratos</span>
+      </a>
+      
+      <!-- Veículos e Tecnologias -->
+      <h4>Veículos e Tecnologias</h4>
+      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
+        <i class="fa-solid fa-car"></i>
+        <span>Modelos Ford</span>
+      </a>
+      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
+        <i class="fa-solid fa-brain"></i>
+        <span>Sobre a IA</span>
+      </a>
+      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard Detalhado</span>
+      </a>
 
-  <div class="sidebar-conteudo">
+      <!-- Bloco 4: Atendimento -->
+      <h4>Atendimento</h4>
+      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
+        <i class="fa-regular fa-calendar"></i>
+        <span>Meus Agendamentos</span>
+      </a>
+      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Concessionárias</span>
+      </a>
+      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
+        <i class="fa-solid fa-phone"></i>
+        <span>Fale Conosco</span>
+      </a>
+    </div>
+  </div>
 
-  <a routerLink="/home" (click)="fecharSidebar()">
-    <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-  </a>
-  
-  <!-- Bloco 1: Gestão -->
-  <h4>Gestão e Conta</h4>
-  <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-    <i class="fa-regular fa-user"></i>
-    <span>Meu Perfil</span>
-  </a>
-  <a class="sidebar-item">
-    <i class="fa-regular fa-file-lines"></i>
-    <span>Termos / Contratos</span>
-  </a>
-  <!-- Veículos e Tecnologiasl -->
-  <h4>Veículos e Tecnologias</h4>
-  <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-    <i class="fa-solid fa-car"></i>
-    <span>Modelos Ford</span>
-  </a>
-  <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-    <i class="fa-solid fa-brain"></i>
-    <span>Sobre a IA</span>
-  </a>
-  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-    <i class="fa-solid fa-chart-line"></i>
-    <span>Dashboard Detalhado</span>
-  </a>
-
-  <!-- Bloco 4: Histórico -->
-  <h4>Atendimento</h4>
-  <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-    <i class="fa-regular fa-calendar"></i>
-    <span>Meus Agendamentos</span>
-  </a>
-  <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-    <i class="fa-solid fa-location-dot"></i>
-    <span>Concessionárias</span>
-  </a>
-    <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-    <i class="fa-solid fa-phone"></i>
-    <span>Fale Conosco</span>
-  </a>
-</div>
-</div>
   <!-- Fundo escuro (clicar nele fecha a barra) -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>

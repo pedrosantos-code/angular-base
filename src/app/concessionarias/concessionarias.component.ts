@@ -1,6 +1,5 @@
-import { Component, signal, inject } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { Component, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 export interface Concessionaria {
   id: number;
@@ -16,12 +15,12 @@ export interface Concessionaria {
   standalone: true,
   imports: [RouterLink],
   templateUrl: './concessionarias.component.html',
-  styleUrl: './concessionarias.component.css',
+  styleUrls: ['./concessionarias.component.css'],
 })
 export class ConcessionariasComponent {
   protected readonly title = signal('meu-projeto');
 
-  // Declaração dos Signals da Interface
+  // Declaração dos Signals de Controle de Menu e Sidebar
   menuAberto = signal<string | null>(null);
   sidebarAberta = signal<boolean>(false);
 
@@ -106,7 +105,7 @@ export class ConcessionariasComponent {
     this.nivelZoom.set(Number(novoZoom.toFixed(1)));
   }
 
-  // Métodos do Menu Dropdown
+  // Métodos do Menu Dropdown do Cabeçalho
   toggleMenu(nomeMenu: string): void {
     if (this.menuAberto() === nomeMenu) {
       this.menuAberto.set(null); 

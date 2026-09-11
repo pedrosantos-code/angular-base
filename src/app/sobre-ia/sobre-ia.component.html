@@ -16,7 +16,6 @@
           </div>
           <hr class="divisor">
           
-          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
           <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
         </div>
       </div>
@@ -60,7 +59,7 @@
     <div class="elementos-direita">
       <p class="parceria">Seia + Ford</p>
       
-      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <!-- Item: Logout -->
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
         
@@ -79,115 +78,113 @@
 
   <main class="container-home">
     <div class="ia-container">
-  <!-- Header da Tela -->
-  <header class="ia-header">
-    <div class="header-icon-circle">
-      <i class="fa-solid fa-brain"></i>
-    </div>
-    <h2>Sobre a IA (SEIA)</h2>
-  </header>
+      <!-- Header da Tela -->
+      <header class="ia-header">
+        <div class="header-icon-circle">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+        <h2>Sobre a IA (SEIA)</h2>
+      </header>
 
-  <!-- Descrição Principal -->
-  <div class="descricao-bloco">
-    <h3>Entenda o SEIA (Sistema de Inteligência Artificial Ford)</h3>
-    <p>Analisamos centenas de dados para encontrar seu veículo ideal.</p>
-  </div>
-
-  <!-- Diagrama Visual -->
-  <div class="diagrama-container">
-    <div class="diagrama-step">
-      <div class="step-icon">
-        <i class="fa-solid fa-user-gear"></i>
+      <!-- Descrição Principal -->
+      <div class="descricao-bloco">
+        <h3>Entenda a IA da SEIA + Ford</h3>
+        <p>Analisamos centenas de dados para encontrar seu veículo ideal.</p>
       </div>
-      <span>Perfil do Usuário</span>
-    </div>
 
-    <i class="fa-solid fa-arrow-right seta-diagrama"></i>
+      <!-- Diagrama Visual -->
+      <div class="diagrama-container">
+        <div class="diagrama-step">
+          <div class="step-icon">
+            <i class="fa-solid fa-user-gear"></i>
+          </div>
+          <span>Seu Perfil</span>
+        </div>
 
-    <div class="diagrama-step">
-      <div class="step-icon">
-        <i class="fa-solid fa-gears"></i>
+        <i class="fa-solid fa-arrow-right seta-diagrama"></i>
+
+        <div class="diagrama-step">
+          <div class="step-icon">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <span>Processamento IA</span>
+        </div>
+
+        <i class="fa-solid fa-arrow-right seta-diagrama"></i>
+
+        <div class="diagrama-step">
+          <div class="step-icon">
+            <i class="fa-solid fa-sliders"></i>
+          </div>
+          <span>Engenharia Ford</span>
+        </div>
       </div>
-      <span>Algoritmo</span>
+
+      <!-- Lista de Passos Limpa (Sem números manuais duplicados) -->
+      <ol class="passos-lista">
+        <li>
+          <strong>Seu Perfil:</strong> Rotina, Preferências, Orçamento
+        </li>
+        <li>
+          <strong>Engenharia Ford:</strong> Ficha Técnica, Consumo, Espaço
+        </li>
+        <li>
+          <strong>Match Perfeito:</strong> Recomendação com Compatibilidade Real
+        </li>
+      </ol>
     </div>
-
-    <i class="fa-solid fa-arrow-right seta-diagrama"></i>
-
-    <div class="diagrama-step">
-      <div class="step-icon">
-        <i class="fa-solid fa-sliders"></i>
-      </div>
-      <span>Parâmetros Técnicos Ford</span>
-    </div>
-  </div>
-
-  <p class="descricao-sub">Analisamos centenas de dados para encontrar seu veículo ideal.</p>
-
-  <!-- Lista de Passos -->
-  <ol class="passos-lista">
-    <li>
-      <strong>Seu Perfil:</strong> Rotina, Preferências, Orçamento
-    </li>
-    <li>
-      <strong>Engenharia Ford:</strong> Ficha Técnica, Consumo, Espaço
-    </li>
-    <li>
-      <strong>Match Perfeito:</strong> Recomendação com Compatibilidade Real
-    </li>
-  </ol>
-</div>
   </main>
 
   <!-- Painel Lateral -->
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
+    <div class="sidebar-conteudo">
+      <a routerLink="/home" (click)="fecharSidebar()">
+        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
+      </a>
+      
+      <!-- Bloco 1: Gestão -->
+      <h4>Gestão e Conta</h4>
+      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
+        <i class="fa-regular fa-user"></i>
+        <span>Meu Perfil</span>
+      </a>
+      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>Termos / Contratos</span>
+      </a>
 
-  <div class="sidebar-conteudo">
+      <!-- Veículos e Tecnologias -->
+      <h4>Veículos e Tecnologias</h4>
+      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
+        <i class="fa-solid fa-car"></i>
+        <span>Modelos Ford</span>
+      </a>
+      <a class="sidebar-item">
+        <i class="fa-solid fa-brain"></i>
+        <span>Sobre a IA</span>
+      </a>
+      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard Detalhado</span>
+      </a>
 
-  <a routerLink="/home" (click)="fecharSidebar()">
-    <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-  </a>
-  
-  <!-- Bloco 1: Gestão -->
-  <h4>Gestão e Conta</h4>
-  <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-    <i class="fa-regular fa-user"></i>
-    <span>Meu Perfil</span>
-  </a>
-  <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-    <i class="fa-regular fa-file-lines"></i>
-    <span>Termos / Contratos</span>
-  </a>
-  <!-- Veículos e Tecnologiasl -->
-  <h4>Veículos e Tecnologias</h4>
-  <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-    <i class="fa-solid fa-car"></i>
-    <span>Modelos Ford</span>
-  </a>
-  <a class="sidebar-item">
-    <i class="fa-solid fa-brain"></i>
-    <span>Sobre a IA</span>
-  </a>
-  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-    <i class="fa-solid fa-chart-line"></i>
-    <span>Dashboard Detalhado</span>
-  </a>
+      <!-- Bloco 4: Atendimento -->
+      <h4>Atendimento</h4>
+      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
+        <i class="fa-regular fa-calendar"></i>
+        <span>Meus Agendamentos</span>
+      </a>
+      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Concessionárias</span>
+      </a>
+      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
+        <i class="fa-solid fa-phone"></i>
+        <span>Fale Conosco</span>
+      </a>
+    </div>
+  </div>
 
-  <!-- Bloco 4: Histórico -->
-  <h4>Atendimento</h4>
-  <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-    <i class="fa-regular fa-calendar"></i>
-    <span>Meus Agendamentos</span>
-  </a>
-  <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-    <i class="fa-solid fa-location-dot"></i>
-    <span>Concessionárias</span>
-  </a>
-    <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-    <i class="fa-solid fa-phone"></i>
-    <span>Fale Conosco</span>
-  </a>
-</div>
-</div>
   <!-- Fundo escuro (clicar nele fecha a barra) -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>

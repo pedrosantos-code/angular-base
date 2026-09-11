@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
@@ -15,7 +15,7 @@ html, body, :host {
     overflow-x: hidden;
 }
 
-/* --- CONTAINER DO FUNDO (Sua imagem mantida) --- */
+/* --- CONTAINER DO FUNDO (CORRIGIDO PARA O CONTEÚDO EXPANDIR PARA BAIXO) --- */
 .fundo-home {
     position: fixed;
     top: 0;
@@ -24,7 +24,8 @@ html, body, :host {
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Impede que o bloco centralize verticalmente e pule ao expandir */
+    padding-top: 70px;       /* Dá uma folga para o cabeçalho fixo */
     
     background-image: url('../../../public/fundo-home.png');
     background-size: cover;
@@ -156,10 +157,27 @@ html, body, :host {
     color: #ffffff;
 }
 
+/* --- CONTAINER PRINCIPAL DOS TERMOS --- */
+.container-home {
+    width: 100%;
+    min-height: calc(100vh - 50px);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
 .termos-container {
+  width: 100%;
   max-width: 900px;
   margin: 0 auto;
   padding: 24px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
   font-family: 'Segoe UI', sans-serif;
   color: #333333;
 }
@@ -174,7 +192,7 @@ html, body, :host {
 .header-termos h2 {
   font-size: 22px;
   font-weight: 700;
-  color: #000000;
+  color: #0e3165;
   margin: 0;
 }
 
@@ -214,20 +232,20 @@ html, body, :host {
   border: none;
   cursor: pointer;
   text-align: left;
-  gap: 16px; /* Evita que o texto encoste no ícone '+' */
+  gap: 16px; 
 }
 
 .titulo-termo {
   font-size: 15px;
   font-weight: 700;
   color: #1a1a1a;
-  flex: 1; /* Ocupa o espaço disponível mantendo o '+' no canto */
+  flex: 1; 
 }
 
 .accordion-header i {
   font-size: 16px;
   color: #0E3165;
-  flex-shrink: 0; /* Impede o ícone de encolher ou mudar de posição */
+  flex-shrink: 0; 
 }
 
 .accordion-body {
@@ -236,7 +254,7 @@ html, body, :host {
   line-height: 1.6;
   color: #4a4a4a;
   border-top: 1px solid #f0f0f0;
-  animation: fadeIn 0.2s ease-in-out; /* Suaviza a expansão para baixo */
+  animation: fadeIn 0.2s ease-in-out; 
 }
 
 .accordion-body ul {
@@ -348,7 +366,6 @@ html, body, :host {
     overflow-y: auto;
 }
 
-/* Logo da Sidebar */
 .logo-sidebar {
     width: 260px;
     height: auto;
@@ -356,7 +373,6 @@ html, body, :host {
     display: block;
 }
 
-/* Títulos (H3 e H4) */
 .sidebar-conteudo h3,
 .sidebar-conteudo h4 {
     color: #000000;
@@ -372,7 +388,6 @@ html, body, :host {
     margin-top: 0;
 }
 
-/* Itens da lista */
 .sidebar-item {
     display: flex;
     align-items: center;

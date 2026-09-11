@@ -18,6 +18,8 @@ interface Termo {
   styleUrl: './termos.component.css',
 })
 export class TermosComponent {
+  private router = inject(Router);
+
   protected readonly title = signal('meu-projeto');
 
   // Controle da Sidebar e Menus
@@ -26,6 +28,9 @@ export class TermosComponent {
 
   // Controle dos Termos e Aceite
   concordou = signal<boolean>(false);
+  
+  // Controle da Mensagem de Sucesso
+  mensagemSalva = signal<boolean>(false);
 
   termos = signal<Termo[]>([
     {
@@ -71,6 +76,19 @@ export class TermosComponent {
 
   toggleConcordo(): void {
     this.concordou.update(val => !val);
+  }
+
+  // Método do Botão Salvar e Continuar
+  salvarTermos(): void {
+    if (this.concordou()) {
+      this.mensagemSalva.set(true);
+
+      // Exibe a mensagem por 3 segundos e redireciona para a home
+      setTimeout(() => {
+        this.mensagemSalva.set(false);
+        this.router.navigate(['/home']);
+      }, 3000);
+    }
   }
 
   // Métodos do Menu Dropdown
