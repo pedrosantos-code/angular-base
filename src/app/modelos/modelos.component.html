@@ -16,7 +16,6 @@
           </div>
           <hr class="divisor">
           
-          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
           <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
         </div>
       </div>
@@ -25,7 +24,7 @@
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
         
-        <!-- Caixa do Perfil (Totalmente estática) -->
+        <!-- Caixa do Perfil -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
             <strong>Perfil do Usuário</strong>
@@ -40,7 +39,7 @@
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
         
-        <!-- Caixa de Configurações (Totalmente estática) -->
+        <!-- Caixa de Configurações -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
             <strong>Configurações</strong>
@@ -60,7 +59,7 @@
     <div class="elementos-direita">
       <p class="parceria">Seia + Ford</p>
       
-      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <!-- Item: Logout -->
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
         
@@ -77,121 +76,124 @@
     </div>
   </div>
 
-  <main class="container-home">
-<!-- Sidebar de Filtros Lateral -->
-<aside class="sidebar-filtros">
-  <div class="sidebar-header">
-    <i class="fa-solid fa-sliders icon-filtro"></i>
-    <h3>FILTRO</h3>
-  </div>
+  <!-- CONTAINER DE LAYOUT LADO A LADO -->
+  <div class="modelos-layout">
+    
+    <!-- Sidebar de Filtros Lateral (Esquerda) -->
+    <aside class="sidebar-filtros">
+      <div class="sidebar-header">
+        <i class="fa-solid fa-sliders icon-filtro"></i>
+        <h3>FILTRO</h3>
+      </div>
 
-  <nav class="lista-categorias">
-    @for (categoria of categorias(); track categoria) {
-      <button 
-        class="btn-categoria" 
-        [class.ativo]="categoriaAtiva() === categoria"
-        (click)="selecionarCategoria(categoria)"
-      >
-        {{ categoria }}
-      </button>
-    }
-  </nav>
-</aside>
-
-<!-- Grid de Carros (Exibindo apenas os filtrados) -->
-<main class="conteudo-principal">
-  <header class="header-pagina">
-    <h2>MODELOS FORD</h2>
-  </header>
-
-  <div class="grid-modelos">
-    @for (item of modelosFiltrados(); track item.id) {
-      <div class="card-modelo">
-        <div class="card-imagem">
-          <img [src]="item.imagemUrl" [alt]="item.nome" loading="lazy" />
-        </div>
-
-        <div class="card-corpo">
-          <h3 class="nome-modelo">{{ item.nome }}</h3>
-          
-          <p class="preco-label">
-            A partir de <strong>{{ item.precoAPartir }}</strong>
-          </p>
-
-          <ul class="especificacoes">
-            <li>
-              <i class="fa-solid fa-engine"></i> {{ item.motorizacao }}
-            </li>
-            <li>
-              <i class="fa-solid fa-car"></i> Tração {{ item.tracao }}
-            </li>
-          </ul>
-
-          <button class="btn-saiba-mais">
-            SAIBA MAIS
+      <nav class="lista-categorias">
+        @for (categoria of categorias(); track categoria) {
+          <button 
+            class="btn-categoria" 
+            [class.ativo]="categoriaAtiva() === categoria"
+            (click)="selecionarCategoria(categoria)"
+          >
+            {{ categoria }}
           </button>
-        </div>
+        }
+      </nav>
+    </aside>
+
+    <!-- Conteúdo Principal de Veículos (Direita) -->
+    <main class="conteudo-principal">
+      <header class="header-pagina">
+        <h2>MODELOS FORD</h2>
+      </header>
+
+      <div class="grid-modelos">
+        @for (item of modelosFiltrados(); track item.id) {
+          <div class="card-modelo">
+            <div class="card-imagem">
+              <img [src]="item.imagemUrl" [alt]="item.nome" loading="lazy" />
+            </div>
+
+            <div class="card-corpo">
+              <h3 class="nome-modelo">{{ item.nome }}</h3>
+              
+              <p class="preco-label">
+                A partir de <strong>{{ item.precoAPartir }}</strong>
+              </p>
+
+              <ul class="especificacoes">
+                <li>
+                  <i class="fa-solid fa-engine"></i> {{ item.motorizacao }}
+                </li>
+                <li>
+                  <i class="fa-solid fa-car"></i> Tração {{ item.tracao }}
+                </li>
+              </ul>
+
+              <button class="btn-saiba-mais">
+                SAIBA MAIS
+              </button>
+            </div>
+          </div>
+        } @empty {
+          <div class="sem-resultados">
+            <p>Nenhum modelo encontrado para esta categoria.</p>
+          </div>
+        }
       </div>
-    } @empty {
-      <div class="sem-resultados">
-        <p>Nenhum modelo encontrado para esta categoria.</p>
-      </div>
-    }
+    </main>
+
   </div>
-</main>
-  </main>
 
-  <!-- Painel Lateral -->
+  <!-- Painel Lateral Deslizante -->
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
+    <div class="sidebar-conteudo">
+      <a routerLink="/home" (click)="fecharSidebar()">
+        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
+      </a>
+      
+      <!-- Bloco 1: Gestão -->
+      <h4>Gestão e Conta</h4>
+      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
+        <i class="fa-regular fa-user"></i>
+        <span>Meu Perfil</span>
+      </a>
+      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>Termos / Contratos</span>
+      </a>
 
-  <div class="sidebar-conteudo">
+      <!-- Veículos e Tecnologias -->
+      <h4>Veículos e Tecnologias</h4>
+      <a class="sidebar-item">
+        <i class="fa-solid fa-car"></i>
+        <span>Modelos Ford</span>
+      </a>
+      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
+        <i class="fa-solid fa-brain"></i>
+        <span>Sobre a IA</span>
+      </a>
+      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard Detalhado</span>
+      </a>
 
-  <a routerLink="/home" (click)="fecharSidebar()">
-    <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-  </a>
-  
-  <!-- Bloco 1: Gestão -->
-  <h4>Gestão e Conta</h4>
-  <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-    <i class="fa-regular fa-user"></i>
-    <span>Meu Perfil</span>
-  </a>
-  <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-    <i class="fa-regular fa-file-lines"></i>
-    <span>Termos / Contratos</span>
-  </a>
-  <!-- Veículos e Tecnologiasl -->
-  <h4>Veículos e Tecnologias</h4>
-  <a class="sidebar-item">
-    <i class="fa-solid fa-car"></i>
-    <span>Modelos Ford</span>
-  </a>
-  <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-    <i class="fa-solid fa-brain"></i>
-    <span>Sobre a IA</span>
-  </a>
-  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-    <i class="fa-solid fa-chart-line"></i>
-    <span>Dashboard Detalhado</span>
-  </a>
+      <!-- Bloco 4: Atendimento -->
+      <h4>Atendimento</h4>
+      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
+        <i class="fa-regular fa-calendar"></i>
+        <span>Meus Agendamentos</span>
+      </a>
+      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Concessionárias</span>
+      </a>
+      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
+        <i class="fa-solid fa-phone"></i>
+        <span>Fale Conosco</span>
+      </a>
+    </div>
+  </div>
 
-  <!-- Bloco 4: Histórico -->
-  <h4>Atendimento</h4>
-  <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-    <i class="fa-regular fa-calendar"></i>
-    <span>Meus Agendamentos</span>
-  </a>
-  <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-    <i class="fa-solid fa-location-dot"></i>
-    <span>Concessionárias</span>
-  </a>
-    <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-    <i class="fa-solid fa-phone"></i>
-    <span>Fale Conosco</span>
-  </a>
-</div>
-</div>
-  <!-- Fundo escuro (clicar nele fecha a barra) -->
+  <!-- Overlay -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>
   }
