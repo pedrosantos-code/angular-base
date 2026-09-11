@@ -232,7 +232,7 @@ html, body, :host {
 .filtros-rapidos {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 10px; /* Espaço entre todos os elementos */
     margin-bottom: 32px;
     flex-wrap: wrap;
 }
@@ -242,7 +242,7 @@ html, body, :host {
     font-weight: 700;
     color: #000000;
     margin: 0;
-    margin-right: 1px;
+    margin-right: 1px; /* Margem extra para descolar do primeiro botão */
     white-space: nowrap;
 }
 
@@ -271,17 +271,6 @@ html, body, :host {
     background-color: #f4f7fc;
 }
 
-/* --- ESTILO DE BOTÃO SELECIONADO --- */
-.tag-item.ativa {
-    background-color: #0E3165 !important;
-    color: #ffffff !important;
-    border-color: #0E3165 !important;
-    box-shadow: 0 4px 10px rgba(14, 49, 101, 0.25);
-}
-
-.tag-item.ativa i {
-    color: #ffffff !important;
-}
 /* --- COMO FUNCIONA A RECOMENDAÇÃO --- */
 .como-funciona-secao {
     width: 100%;
