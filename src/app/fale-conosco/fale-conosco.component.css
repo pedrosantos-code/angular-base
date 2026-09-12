@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
@@ -15,7 +15,7 @@ html, body, :host {
     overflow-x: hidden;
 }
 
-/* --- CONTAINER DO FUNDO (Sua imagem mantida) --- */
+/* --- CONTAINER DO FUNDO (Corrigido para flex-start para não empurrar para cima) --- */
 .fundo-home {
     position: fixed;
     top: 0;
@@ -24,7 +24,7 @@ html, body, :host {
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; 
     
     background-image: url('../../../public/fundo-home.png');
     background-size: cover;
@@ -156,13 +156,49 @@ html, body, :host {
     color: #ffffff;
 }
 
+/* --- TAGS DE BUSCA RÁPIDA (Atualizado com estado .ativa) --- */
+.tag-item {
+    background-color: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #333333;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: all 0.2s;
+}
+
+.tag-item i {
+    color: #1656b8;
+}
+
+.tag-item:hover {
+    border-color: #1656b8;
+    background-color: #f4f7fc;
+}
+
+/* Estado Ativo/Selecionado da Tag */
+.tag-item.ativa {
+    background-color: #0E3165 !important;
+    color: #ffffff !important;
+    border-color: #0E3165 !important;
+    box-shadow: 0 4px 10px rgba(14, 49, 101, 0.25);
+}
+
+.tag-item.ativa i {
+    color: #ffffff !important;
+}
+
 .fale-conosco-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 32px 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #2c3e50;
-  position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px 32px 24px !important; /* Aumentado o topo para 80px para não bater no cabeçalho */
+    position: relative;
 }
 
 /* Page Header */
