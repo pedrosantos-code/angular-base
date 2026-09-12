@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
     margin: 0;
@@ -8,14 +7,13 @@
     font-family: "Poppins", sans-serif;
 }
 
-/* Trava a estrutura base para não criar barra de rolagem horizontal */
 html, body, :host {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
 }
 
-/* --- CONTAINER DO FUNDO (Sua imagem mantida) --- */
+/* --- CONTAINER DO FUNDO --- */
 .fundo-home {
     position: fixed;
     top: 0;
@@ -24,7 +22,7 @@ html, body, :host {
     height: 100vh;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; 
     
     background-image: url('../../../public/fundo-home.png');
     background-size: cover;
@@ -122,24 +120,7 @@ html, body, :host {
     margin: 6px 0 10px 0;
 }
 
-.menu-item-texto {
-    display: block;
-    color: #e0e0e0;
-    padding: 8px 10px;
-    font-size: 14px;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-    white-space: nowrap;
-    cursor: pointer; 
-    user-select: none; 
-}
-
-.menu-item-texto:hover {
-    background-color: #3d3d3d;
-    color: #ffffff;
-}
-
-.menu-item-link {
+.menu-item-texto, .menu-item-link {
     display: block;
     color: #e0e0e0;
     padding: 8px 10px;
@@ -151,20 +132,40 @@ html, body, :host {
     cursor: pointer; 
 }
 
-.menu-item-link:hover {
+.menu-item-texto:hover, .menu-item-link:hover {
     background-color: #3d3d3d;
     color: #ffffff;
 }
 
+/* --- ALERTA DE SUCESSO --- */
+.alert-sucesso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #d1fae5;
+  border: 1px solid #34d399;
+  color: #065f46;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.alert-sucesso i {
+  font-size: 16px;
+  color: #059669;
+}
+
+/* --- AGENDAMENTOS CONTAINER --- */
 .agendamentos-container {
   max-width: 480px;
-  margin: 0 auto;
+  margin: 80px auto 30px auto;
   padding: 24px;
   background: #ffffff;
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
   border: 1px solid #e2e8f0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #2c3e50;
 }
 
@@ -173,7 +174,7 @@ html, body, :host {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .agendamentos-header i {
@@ -193,8 +194,8 @@ html, body, :host {
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 12px;
-  margin-bottom: 20px;
   background-color: #ffffff;
+  margin-bottom: 20px;
 }
 
 .calendar-nav {
@@ -215,8 +216,20 @@ html, body, :host {
   border: none;
   color: #0e3165;
   font-weight: bold;
+  font-size: 14px;
   cursor: pointer;
   padding: 4px 8px;
+  transition: opacity 0.2s;
+}
+
+.btn-arrow:hover {
+  opacity: 0.7;
+}
+
+.disabled-btn {
+  color: #cbd5e1 !important;
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .btn-calendario {
@@ -227,6 +240,7 @@ html, body, :host {
   border-radius: 6px;
   font-size: 11px;
   font-weight: 600;
+  cursor: pointer;
 }
 
 .calendar-grid {
@@ -245,32 +259,46 @@ html, body, :host {
 
 .day {
   font-size: 12px;
-  padding: 6px 0;
+  padding: 8px 0;
   color: #334155;
-  border-radius: 4px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
 }
 
-.day:hover {
-  background-color: #f1f5f9;
+.day:hover:not(.disabled-day) {
+  background-color: #e2e8f0;
+  color: #0e3165;
+  font-weight: 600;
 }
 
 .day.active {
-  background-color: #38bdf8;
-  color: #ffffff;
+  background-color: #38bdf8 !important;
+  color: #ffffff !important;
   font-weight: bold;
 }
 
-.opacity-50 {
-  opacity: 0.3;
+.disabled-day {
+  color: #cbd5e1 !important;
+  cursor: not-allowed;
+  background-color: transparent !important;
 }
 
-/* Lista */
+.opacity-50 {
+  opacity: 0.35;
+}
+
+/* Seção de Agendamentos e Formulário */
+.agendamentos-secao {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+}
+
 .agendamentos-topo {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .agendamentos-topo h3 {
@@ -280,23 +308,70 @@ html, body, :host {
   color: #1e293b;
 }
 
+.form-agendamento {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-grupo label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.form-grupo select,
+.form-grupo input {
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-family: "Poppins", sans-serif;
+}
+
+.form-grupo select:focus,
+.form-grupo input:focus {
+  border-color: #0e3165;
+}
+
 .btn-novo {
   background-color: #0e3165;
   color: #ffffff;
   border: none;
-  padding: 6px 12px;
+  padding: 8px 12px;
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.btn-novo:hover {
+  background-color: #123d7d;
 }
 
 .agendamentos-lista {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  max-height: 220px;
+  max-height: 180px;
   overflow-y: auto;
+  margin-top: 10px;
 }
 
 .agendamento-card {
@@ -306,12 +381,6 @@ html, body, :host {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.agendamento-card:hover {
-  background-color: #bae6fd;
 }
 
 .agendamento-info {
@@ -330,9 +399,16 @@ html, body, :host {
   color: #0284c7;
 }
 
-.agendamento-card i {
-  font-size: 12px;
-  color: #0369a1;
+.btn-excluir {
+  cursor: pointer;
+  color: #ef4444;
+  font-size: 14px;
+  transition: opacity 0.2s;
+  padding: 4px;
+}
+
+.btn-excluir:hover {
+  opacity: 0.7;
 }
 
 /* --- BARRA LATERAL (SIDEBAR) --- */
@@ -352,7 +428,6 @@ html, body, :host {
     left: 0;
 }
 
-/* --- CONTEÚDO DA SIDEBAR --- */
 .sidebar-conteudo {
     padding: 40px 24px 30px 24px;
     display: flex;
@@ -361,7 +436,6 @@ html, body, :host {
     overflow-y: auto;
 }
 
-/* Logo da Sidebar */
 .logo-sidebar {
     width: 260px;
     height: auto;
@@ -369,8 +443,6 @@ html, body, :host {
     display: block;
 }
 
-/* Títulos (H3 e H4) */
-.sidebar-conteudo h3,
 .sidebar-conteudo h4 {
     color: #000000;
     font-size: 15px;
@@ -380,12 +452,10 @@ html, body, :host {
     display: block;
 }
 
-.sidebar-conteudo h3:first-of-type,
 .sidebar-conteudo h4:first-of-type {
     margin-top: 0;
 }
 
-/* Itens da lista */
 .sidebar-item {
     display: flex;
     align-items: center;
