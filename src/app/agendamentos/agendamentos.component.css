@@ -21,8 +21,9 @@ html, body, :host {
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: flex-start; 
+    flex-direction: column; /* Necessário para empurrar o rodapé para baixo */
+    justify-content: flex-start;
+    align-items: center; 
     
     background-image: url('../../../public/fundo-home.png');
     background-size: cover;
@@ -157,9 +158,21 @@ html, body, :host {
   color: #059669;
 }
 
+/* --- CONTAINER PRINCIPAL DA TELA --- */
+.container-home {
+    width: 100%;
+    flex: 1; /* Ocupa o espaço disponível para empurrar o footer */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
 /* --- AGENDAMENTOS CONTAINER --- */
 .agendamentos-container {
   max-width: 480px;
+  width: 100%;
   margin: 80px auto 30px auto;
   padding: 24px;
   background: #ffffff;
@@ -409,6 +422,49 @@ html, body, :host {
 
 .btn-excluir:hover {
   opacity: 0.7;
+}
+
+/* --- RODAPÉ INSTITUCIONAL --- */
+.rodape-page {
+    width: 100%;
+    background-color: #0E3165; 
+    color: #ffffff;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    z-index: 10;
+}
+
+.rodape-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.link-simulado {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.link-simulado:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.rodape-links span:not(.link-simulado) {
+    color: #ffffff;
+    opacity: 0.6;
+}
+
+.rodape-copy {
+    color: #ffffff;
+    opacity: 0.8;
+    text-align: center;
 }
 
 /* --- BARRA LATERAL (SIDEBAR) --- */

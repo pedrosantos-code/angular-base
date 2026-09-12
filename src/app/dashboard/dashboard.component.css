@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
@@ -8,14 +8,13 @@
     font-family: "Poppins", sans-serif;
 }
 
-/* Trava a estrutura base para não criar barra de rolagem horizontal */
 html, body, :host {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
 }
 
-/* --- CONTAINER DO FUNDO (Sua imagem mantida) --- */
+/* --- CONTAINER DO FUNDO --- */
 .fundo-home {
     position: fixed;
     top: 0;
@@ -23,7 +22,8 @@ html, body, :host {
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-start;
     align-items: center;
     
     background-image: url('../../../public/fundo-home.png');
@@ -154,6 +154,335 @@ html, body, :host {
 .menu-item-link:hover {
     background-color: #3d3d3d;
     color: #ffffff;
+}
+
+/* --- ALERTA DE SUCESSO --- */
+.alert-sucesso {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #d1fae5;
+  border: 1px solid #34d399;
+  color: #065f46;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.alert-sucesso i {
+  font-size: 16px;
+  color: #059669;
+}
+
+/* --- CONTAINER PRINCIPAL DA TELA --- */
+.container-home {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+/* --- AGENDAMENTOS CONTAINER --- */
+.agendamentos-container {
+  max-width: 480px;
+  width: 100%;
+  margin: 80px auto 30px auto;
+  padding: 24px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e2e8f0;
+  color: #2c3e50;
+}
+
+/* Header */
+.agendamentos-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.agendamentos-header i {
+  font-size: 26px;
+  color: #0e3165;
+}
+
+.agendamentos-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0e3165;
+  margin: 0;
+}
+
+/* Calendário */
+.calendar-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px;
+  background-color: #ffffff;
+  margin-bottom: 20px;
+}
+
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.mes-ano {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.btn-arrow {
+  background: none;
+  border: none;
+  color: #0e3165;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 8px;
+  transition: opacity 0.2s;
+}
+
+.btn-arrow:hover {
+  opacity: 0.7;
+}
+
+.disabled-btn {
+  color: #cbd5e1 !important;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-calendario {
+  background-color: #0e3165;
+  color: #ffffff;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.day-name {
+  font-size: 11px;
+  color: #64748b;
+  font-weight: 600;
+  padding-bottom: 6px;
+}
+
+.day {
+  font-size: 12px;
+  padding: 8px 0;
+  color: #334155;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.day:hover:not(.disabled-day) {
+  background-color: #e2e8f0;
+  color: #0e3165;
+  font-weight: 600;
+}
+
+.day.active {
+  background-color: #38bdf8 !important;
+  color: #ffffff !important;
+  font-weight: bold;
+}
+
+.disabled-day {
+  color: #cbd5e1 !important;
+  cursor: not-allowed;
+  background-color: transparent !important;
+}
+
+.opacity-50 {
+  opacity: 0.35;
+}
+
+/* Seção de Agendamentos e Formulário */
+.agendamentos-secao {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 16px;
+}
+
+.agendamentos-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.agendamentos-topo h3 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  color: #1e293b;
+}
+
+.form-agendamento {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f8fafc;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.form-grupo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.form-grupo label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.form-grupo select,
+.form-grupo input {
+  padding: 6px 10px;
+  font-size: 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+  background-color: #ffffff;
+  color: #1e293b;
+  font-family: "Poppins", sans-serif;
+}
+
+.form-grupo select:focus,
+.form-grupo input:focus {
+  border-color: #0e3165;
+}
+
+.btn-novo {
+  background-color: #0e3165;
+  color: #ffffff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  width: 100%;
+  margin-top: 4px;
+}
+
+.btn-novo:hover {
+  background-color: #123d7d;
+}
+
+.agendamentos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.agendamento-card {
+  background-color: #e0f2fe;
+  border-radius: 8px;
+  padding: 10px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.agendamento-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.agendamento-info strong {
+  font-size: 12px;
+  color: #0369a1;
+}
+
+.agendamento-info span {
+  font-size: 11px;
+  color: #0284c7;
+}
+
+.btn-excluir {
+  cursor: pointer;
+  color: #ef4444;
+  font-size: 14px;
+  transition: opacity 0.2s;
+  padding: 4px;
+}
+
+.btn-excluir:hover {
+  opacity: 0.7;
+}
+
+/* --- RODAPÉ INSTITUCIONAL --- */
+.rodape-page {
+    width: 100%;
+    background-color: #0E3165; 
+    color: #ffffff;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+    z-index: 10;
+}
+
+.rodape-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+}
+
+.link-simulado {
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.link-simulado:hover {
+    text-decoration: underline;
+    opacity: 0.8;
+}
+
+.rodape-links span:not(.link-simulado) {
+    color: #ffffff;
+    opacity: 0.6;
+}
+
+.rodape-copy {
+    color: #ffffff;
+    opacity: 0.8;
+    text-align: center;
 }
 
 /* --- BARRA LATERAL (SIDEBAR) --- */

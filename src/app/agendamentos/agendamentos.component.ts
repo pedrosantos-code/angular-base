@@ -51,16 +51,33 @@ export class AgendamentosComponent {
   veiculoSelecionado = signal<string>('Ford Ranger');
   horarioSelecionado = signal<string>('10:00');
 
-  agendamentos = signal<Agendamento[]>([
-    { id: 1, titulo: 'Test-Drive: Ford Ranger', dataHora: '15/10/2026 10:00' },
-    { id: 2, titulo: 'Visita à Concessionária', dataHora: '18/10/2026 15:30' }
-  ]);
+  // Inicializa carregando do localStorage ou usando os dados padrão
+  agendamentos = signal<Agendamento[]>(this.carregarAgendamentosIniciais());
+
+  private carregarAgendamentosIniciais(): Agendamento[] {
+    const salvo = localStorage.getItem('meus_agendamentos_ford');
+    if (salvo) {
+      try {
+        return JSON.parse(salvo);
+      } catch (e) {
+        console.error('Erro ao ler agendamentos salvos', e);
+      }
+    }
+    // Dados padrão caso o armazenamento esteja vazio
+    return [
+      { id: 1, titulo: 'Test-Drive: Ford Ranger', dataHora: '15/10/2026 10:00' },
+      { id: 2, titulo: 'Visita à Concessionária', dataHora: '18/10/2026 15:30' }
+    ];
+  }
+
+  private salvarNoStorage(lista: Agendamento[]): void {
+    localStorage.setItem('meus_agendamentos_ford', JSON.stringify(lista));
+  }
 
   mesAnoFormatado = computed(() => {
     return `${this.nomesMeses[this.mesAtual()]} ${this.anoAtual()}`;
   });
 
-  // Lógica para bloquear botões de voltar caso seja o mês/ano atual ou anterior
   podeVoltarMes = computed(() => {
     const hoje = new Date();
     if (this.anoAtual() > hoje.getFullYear()) return true;
@@ -148,7 +165,7 @@ export class AgendamentosComponent {
   }
 
   selecionarDia(d: DiaCalendario): void {
-    if (d.passado) return; // Impede selecionar dias passados
+    if (d.passado) return;
     
     this.diaSelecionado.set({ dia: d.dia, mes: d.mes, ano: d.ano });
     if (!d.atual) {
@@ -158,7 +175,7 @@ export class AgendamentosComponent {
   }
 
   mudarMes(direcao: number): void {
-    if (direcao < 0 && !this.podeVoltarMes()) return; // Impede retroceder além do mês atual
+    if (direcao < 0 && !this.podeVoltarMes()) return;
 
     let novoMes = this.mesAtual() + direcao;
     let novoAno = this.anoAtual();
@@ -176,7 +193,7 @@ export class AgendamentosComponent {
   }
 
   mudarAno(direcao: number): void {
-    if (direcao < 0 && !this.podeVoltarAno()) return; // Impede retroceder além do ano atual
+    if (direcao < 0 && !this.podeVoltarAno()) return;
     this.anoAtual.update(a => a + direcao);
   }
 
@@ -193,7 +210,6 @@ export class AgendamentosComponent {
 
     const hora = this.horarioSelecionado() || '10:00';
     
-    // Validação estrita do horário de funcionamento (08:00 às 20:00)
     if (hora < '08:00' || hora > '20:00') {
       alert('Por favor, escolha um horário entre 08:00 e 20:00 (horário de funcionamento).');
       return;
@@ -215,9 +231,12 @@ export class AgendamentosComponent {
       dataHora: `${dataBase} ${hora}`
     };
 
-    this.agendamentos.update(lista => [novoItem, ...lista]);
+    this.agendamentos.update(lista => {
+      const novaLista = [novoItem, ...lista];
+      this.salvarNoStorage(novaLista);
+      return novaLista;
+    });
 
-    // Mensagem de sucesso temporária
     this.mensagemSucesso.set('Agendamento realizado com sucesso!');
     setTimeout(() => {
       this.mensagemSucesso.set(null);
@@ -225,7 +244,11 @@ export class AgendamentosComponent {
   }
 
   excluirAgendamento(id: number): void {
-    this.agendamentos.update(lista => lista.filter(item => item.id !== id));
+    this.agendamentos.update(lista => {
+      const novaLista = lista.filter(item => item.id !== id);
+      this.salvarNoStorage(novaLista); // Salva a remoção permanentemente
+      return novaLista;
+    });
   }
 
   toggleMenu(nomeMenu: string): void {

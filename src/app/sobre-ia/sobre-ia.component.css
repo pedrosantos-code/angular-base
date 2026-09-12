@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght=0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
@@ -17,13 +17,10 @@ html, body, :host {
 
 /* --- CONTAINER DO FUNDO --- */
 .fundo-home {
-    position: fixed;
-    top: 0;
-    left: 0;
+    min-height: 100vh;
     width: 100vw;
-    height: 100vh;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
     
     background-image: url('../../../public/fundo-home.png');
@@ -156,10 +153,21 @@ html, body, :host {
     color: #ffffff;
 }
 
+/* --- CONTAINER PRINCIPAL --- */
+.container-home {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 90px 20px 40px 20px;
+}
+
 /* --- CARD PRINCIPAL DE CONTEÚDO --- */
 .ia-container {
+    width: 100%;
     max-width: 480px;
-    margin: 80px auto 40px auto;
+    margin: 0 auto;
     padding: 24px;
     background: #ffffff;
     border-radius: 16px;
@@ -219,7 +227,7 @@ html, body, :host {
     align-items: center;
     justify-content: space-between;
     margin-top: 24px;
-    margin-bottom: 28px; /* Espaço para afastar a lista de baixo */
+    margin-bottom: 28px;
     padding: 0 10px;
 }
 
@@ -267,7 +275,7 @@ html, body, :host {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 12px; /* Espaçamento uniforme entre cada passo */
+    gap: 12px;
 }
 
 .passos-lista li {
@@ -279,6 +287,47 @@ html, body, :host {
 .passos-lista li strong {
     color: #0e3165;
     font-weight: 600;
+}
+
+/* --- RODAPÉ INSTITUCIONAL --- */
+.rodape-page {
+    width: 100%;
+    background-color: #071933;
+    color: #ffffff;
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+.rodape-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.link-simulado {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.link-simulado:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.rodape-copy {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0;
+    text-align: center;
 }
 
 /* --- BARRA LATERAL (SIDEBAR) --- */

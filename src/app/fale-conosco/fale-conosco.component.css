@@ -23,8 +23,9 @@ html, body, :host {
     width: 100vw;
     height: 100vh;
     display: flex;
-    justify-content: center;
-    align-items: flex-start; 
+    flex-direction: column; /* Permite empilhar main e footer verticalmente */
+    justify-content: flex-start;
+    align-items: center; 
     
     background-image: url('../../../public/fundo-home.png');
     background-size: cover;
@@ -194,8 +195,16 @@ html, body, :host {
     color: #ffffff !important;
 }
 
+.container-home {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex: 1;
+}
+
 .fale-conosco-container {
     max-width: 1100px;
+    width: 100%;
     margin: 0 auto;
     padding: 80px 24px 32px 24px !important; /* Aumentado o topo para 80px para não bater no cabeçalho */
     position: relative;
@@ -488,6 +497,50 @@ html, body, :host {
 
 .widget-seia:hover .btn-widget-seia {
   transform: scale(1.08);
+}
+
+/* --- RODAPÉ INSTITUCIONAL --- */
+.rodape-page {
+    width: 100%;
+    background-color: #0A2246;
+    color: #ffffff;
+    padding: 24px 20px;
+    text-align: center;
+    font-size: 12px;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.rodape-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px 12px;
+    max-width: 1100px;
+}
+
+.rodape-links span:not(.link-simulado) {
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.link-simulado {
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.link-simulado:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.rodape-copy {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 11px;
 }
 
 /* --- BARRA LATERAL (SIDEBAR) --- */

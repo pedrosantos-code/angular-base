@@ -16,7 +16,6 @@
           </div>
           <hr class="divisor">
           
-          <!-- CORRIGIDO AQUI: Trocado $event.stopPropagation() por abrirSidebar() -->
           <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
         </div>
       </div>
@@ -25,7 +24,7 @@
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
         
-        <!-- Caixa do Perfil (Totalmente estática) -->
+        <!-- Caixa do Perfil -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
             <strong>Perfil do Usuário</strong>
@@ -40,7 +39,7 @@
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
         
-        <!-- Caixa de Configurações (Totalmente estática) -->
+        <!-- Caixa de Configurações -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
             <strong>Configurações</strong>
@@ -60,7 +59,7 @@
     <div class="elementos-direita">
       <p class="parceria">Seia + Ford</p>
       
-      <!-- Item: Logout (ÚNICO QUE É LINK DE VERDADE) -->
+      <!-- Item: Logout -->
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
         
@@ -79,171 +78,188 @@
 
   <main class="container-home">
     <div class="fale-conosco-container">
-  <!-- Cabeçalho da Página -->
-  <header class="page-header">
-    <h1>Fale Conosco</h1>
-    <p class="subtitle">Atendimento Seia + Ford</p>
-  </header>
+      <!-- Cabeçalho da Página -->
+      <header class="page-header">
+        <h1>Fale Conosco</h1>
+        <p class="subtitle">Atendimento Seia + Ford</p>
+      </header>
 
-  <!-- Grid Principais Canais de Atendimento -->
-  <div class="cards-grid">
-    
-    <!-- Card 1: SEIA (AI Partner) -->
-    <div class="card-canal destaque">
-      <div class="card-header">
-        <i class="fa-solid fa-robot header-icon"></i>
-        <h3>Atendimento via SEIA</h3>
-      </div>
-      <div class="card-body">
-        <h4>Sua assistente inteligente 24h</h4>
-        <p>Dúvidas rápidas, status de agendamento e informações de veículos</p>
-      </div>
-      <div class="card-footer">
-        <button class="btn-primary" (click)="abrirChatSeia()">Acessar Chat da SEIA</button>
-      </div>
-    </div>
-
-    <!-- Card 2: Central de Relacionamento -->
-    <div class="card-canal">
-      <div class="card-header">
-        <i class="fa-solid fa-headset header-icon"></i>
-        <h3>Central de Relacionamento Ford</h3>
-      </div>
-      <div class="card-body">
-        <h4>Fale com um atendente</h4>
-        <p>Para questões complexas e suporte dedicado</p>
+      <!-- Grid Principais Canais de Atendimento -->
+      <div class="cards-grid">
         
-        <div class="telefones-lista">
-          <div class="telefone-item">
-            <i class="fa-solid fa-phone"></i>
-            <div class="tel-info">
-              <strong>0800-000-0000</strong>
-              <span>Seg-Sex 8h-20h</span>
-            </div>
+        <!-- Card 1: SEIA (AI Partner) -->
+        <div class="card-canal destaque">
+          <div class="card-header">
+            <i class="fa-solid fa-robot header-icon"></i>
+            <h3>Atendimento via SEIA</h3>
           </div>
-          <div class="telefone-item">
-            <i class="fa-solid fa-phone"></i>
-            <div class="tel-info">
-              <strong>0800-000-0001</strong>
-              <span>Seg-Sex 8h-20h</span>
-            </div>
+          <div class="card-body">
+            <h4>Sua assistente inteligente 24h</h4>
+            <p>Dúvidas rápidas, status de agendamento e informações de veículos</p>
+          </div>
+          <div class="card-footer">
+            <button class="btn-primary" (click)="abrirChatSeia()">Acessar Chat da SEIA</button>
           </div>
         </div>
-      </div>
-      <div class="card-footer">
-        <a href="tel:08000000000" class="btn-primary">Ligar Agora</a>
-      </div>
-    </div>
 
-    <!-- Card 3: FAQ / Dúvidas Frequentes -->
-    <div class="card-canal">
-      <div class="card-header">
-        <i class="fa-regular fa-circle-question header-icon"></i>
-        <h3>Dúvidas Frequentes (FAQ)</h3>
-      </div>
-      <div class="card-body">
-        <h4>Busque por respostas rápidas</h4>
-        
-        <div class="links-rapidos">
-          <a routerLink="/agendamentos">Agendamento</a>
-          <a routerLink="/modelos">Manutenção</a>
-          <a routerLink="/sobre-ia">Recall</a>
+        <!-- Card 2: Central de Relacionamento -->
+        <div class="card-canal">
+          <div class="card-header">
+            <i class="fa-solid fa-headset header-icon"></i>
+            <h3>Central de Relacionamento Ford</h3>
+          </div>
+          <div class="card-body">
+            <h4>Fale com um atendente</h4>
+            <p>Para questões complexas e suporte dedicado</p>
+            
+            <div class="telefones-lista">
+              <div class="telefone-item">
+                <i class="fa-solid fa-phone"></i>
+                <div class="tel-info">
+                  <strong>0800-000-0000</strong>
+                  <span>Seg-Sex 8h-20h</span>
+                </div>
+              </div>
+              <div class="telefone-item">
+                <i class="fa-solid fa-phone"></i>
+                <div class="tel-info">
+                  <strong>0800-000-0001</strong>
+                  <span>Seg-Sex 8h-20h</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-footer">
+            <a href="tel:08000000000" class="btn-primary">Ligar Agora</a>
+          </div>
         </div>
 
-        <div class="search-box">
-          <i class="fa-solid fa-magnifying-glass search-icon"></i>
-          <input 
-            type="text" 
-            placeholder="Buscar dúvidas..." 
-            [value]="termoBusca()"
-            (input)="atualizarBusca($event)" 
-          />
+        <!-- Card 3: FAQ / Dúvidas Frequentes -->
+        <div class="card-canal">
+          <div class="card-header">
+            <i class="fa-regular fa-circle-question header-icon"></i>
+            <h3>Dúvidas Frequentes (FAQ)</h3>
+          </div>
+          <div class="card-body">
+            <h4>Busque por respostas rápidas</h4>
+            
+            <div class="links-rapidos">
+              <a routerLink="/agendamentos">Agendamento</a>
+              <a routerLink="/modelos">Manutenção</a>
+              <a routerLink="/sobre-ia">Recall</a>
+            </div>
+
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input 
+                type="text" 
+                placeholder="Buscar dúvidas..." 
+                [value]="termoBusca()"
+                (input)="atualizarBusca($event)" 
+              />
+            </div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-primary" (click)="verFaqCompleto()">Ver FAQ Completo</button>
+          </div>
         </div>
+
       </div>
-      <div class="card-footer">
-        <button class="btn-primary" (click)="verFaqCompleto()">Ver FAQ Completo</button>
+
+      <!-- Banner Inferior: Enviar E-mail -->
+      <div class="banner-email">
+        <div class="email-info">
+          <div class="email-icon">
+            <i class="fa-regular fa-envelope"></i>
+          </div>
+          <div class="email-texto">
+            <h3>Enviar E-mail</h3>
+            <p>Seu contato não-urgente</p>
+          </div>
+        </div>
+        <a routerLink="/fale-conosco" class="link-formulario">
+          Formulário de Contato <i class="fa-solid fa-chevron-right"></i>
+        </a>
+      </div>
+
+      <!-- Widget Flutuante da SEIA -->
+      <div class="widget-seia" (click)="abrirChatSeia()">
+        <span class="badge-status">SEIA ON</span>
+        <button class="btn-widget-seia" title="Conversar com a SEIA">
+          <i class="fa-solid fa-robot"></i>
+        </button>
       </div>
     </div>
-
-  </div>
-
-  <!-- Banner Inferior: Enviar E-mail -->
-  <div class="banner-email">
-    <div class="email-info">
-      <div class="email-icon">
-        <i class="fa-regular fa-envelope"></i>
-      </div>
-      <div class="email-texto">
-        <h3>Enviar E-mail</h3>
-        <p>Seu contato não-urgente</p>
-      </div>
-    </div>
-    <a routerLink="/fale-conosco" class="link-formulario">
-      Formulário de Contato <i class="fa-solid fa-chevron-right"></i>
-    </a>
-  </div>
-
-  <!-- Widget Flutuante da SEIA -->
-  <div class="widget-seia" (click)="abrirChatSeia()">
-    <span class="badge-status">SEIA ON</span>
-    <button class="btn-widget-seia" title="Conversar com a SEIA">
-      <i class="fa-solid fa-robot"></i>
-    </button>
-  </div>
-</div>
   </main>
+
+  <!-- Rodapé Institucional -->
+  <footer class="rodape-page">
+    <div class="rodape-links">
+      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
+      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
+      <span class="link-simulado" (click)="$event.stopPropagation()">Fale conosco</span> <span>|</span>
+      <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
+      <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
+      <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
+      <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
+      <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
+    </div>
+    <div class="rodape-copy">
+      Copyright (c) 2026 Ford. Todos os direitos reservados.
+    </div>
+  </footer>
 
   <!-- Painel Lateral -->
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
+    <div class="sidebar-conteudo">
+      <a routerLink="/home" (click)="fecharSidebar()">
+        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
+      </a>
+      
+      <!-- Bloco 1: Gestão -->
+      <h4>Gestão e Conta</h4>
+      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
+        <i class="fa-regular fa-user"></i>
+        <span>Meu Perfil</span>
+      </a>
+      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
+        <i class="fa-regular fa-file-lines"></i>
+        <span>Termos / Contratos</span>
+      </a>
 
-  <div class="sidebar-conteudo">
+      <!-- Veículos e Tecnologias -->
+      <h4>Veículos e Tecnologias</h4>
+      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
+        <i class="fa-solid fa-car"></i>
+        <span>Modelos Ford</span>
+      </a>
+      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
+        <i class="fa-solid fa-brain"></i>
+        <span>Sobre a IA</span>
+      </a>
+      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
+        <i class="fa-solid fa-chart-line"></i>
+        <span>Dashboard Detalhado</span>
+      </a>
 
-  <a routerLink="/home" (click)="fecharSidebar()">
-    <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-  </a>
-  
-  <!-- Bloco 1: Gestão -->
-  <h4>Gestão e Conta</h4>
-  <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-    <i class="fa-regular fa-user"></i>
-    <span>Meu Perfil</span>
-  </a>
-  <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-    <i class="fa-regular fa-file-lines"></i>
-    <span>Termos / Contratos</span>
-  </a>
-  <!-- Veículos e Tecnologiasl -->
-  <h4>Veículos e Tecnologias</h4>
-  <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-    <i class="fa-solid fa-car"></i>
-    <span>Modelos Ford</span>
-  </a>
-  <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-    <i class="fa-solid fa-brain"></i>
-    <span>Sobre a IA</span>
-  </a>
-  <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-    <i class="fa-solid fa-chart-line"></i>
-    <span>Dashboard Detalhado</span>
-  </a>
+      <!-- Bloco 4: Atendimento -->
+      <h4>Atendimento</h4>
+      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
+        <i class="fa-regular fa-calendar"></i>
+        <span>Meus Agendamentos</span>
+      </a>
+      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
+        <i class="fa-solid fa-location-dot"></i>
+        <span>Concessionárias</span>
+      </a>
+      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
+        <i class="fa-solid fa-phone"></i>
+        <span>Fale Conosco</span>
+      </a>
+    </div>
+  </div>
 
-  <!-- Bloco 4: Histórico -->
-  <h4>Atendimento</h4>
-  <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-    <i class="fa-regular fa-calendar"></i>
-    <span>Meus Agendamentos</span>
-  </a>
-  <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-    <i class="fa-solid fa-location-dot"></i>
-    <span>Concessionárias</span>
-  </a>
-    <a class="sidebar-item">
-    <i class="fa-solid fa-phone"></i>
-    <span>Fale Conosco</span>
-  </a>
-</div>
-</div>
-  <!-- Fundo escuro (clicar nele fecha a barra) -->
+  <!-- Fundo escuro -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>
   }

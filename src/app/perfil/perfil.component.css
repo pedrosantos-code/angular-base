@@ -30,7 +30,7 @@ html, body, :host {
     
     overflow-y: auto;
     z-index: 0;
-    padding-bottom: 30px;
+    padding-bottom: 0; /* Removido o padding antigo para o rodapé se encaixar perfeitamente */
 }
 
 /* --- CABEÇALHO --- */
@@ -157,11 +157,12 @@ html, body, :host {
 /* --- CONTAINER DO PERFIL (COM ESPAÇAMENTO SUPERIOR CORRIGIDO) --- */
 .container-home {
     width: 100%;
+    flex: 1; /* Faz o container principal ocupar o espaço flexível empurrando o rodapé para baixo */
     display: flex;
     justify-content: center;
     align-items: center;
     /* 90px de topo garante que a caixa branca não grude no cabeçalho fixo */
-    padding: 90px 20px 30px 20px; 
+    padding: 90px 20px 40px 20px; 
 }
 
 .perfil-container {
@@ -370,6 +371,47 @@ html, body, :host {
 
 .btn-salvar:hover {
     background-color: #123d7d;
+}
+
+/* --- RODAPÉ INSTITUCIONAL --- */
+.rodape-page {
+    width: 100%;
+    background-color: #071933; /* Tom ligeiramente mais escuro que o cabeçalho para contraste elegante */
+    color: #ffffff;
+    padding: 20px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+}
+
+.rodape-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    font-size: 13px;
+    color: #cbd5e1;
+}
+
+.link-simulado {
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.link-simulado:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.rodape-copy {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 0;
+    text-align: center;
 }
 
 /* --- BARRA LATERAL (SIDEBAR) --- */

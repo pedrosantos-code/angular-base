@@ -24,7 +24,7 @@
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
         
-        <!-- Caixa do Perfil (Totalmente estática) -->
+        <!-- Caixa do Perfil -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
             <strong>Perfil do Usuário</strong>
@@ -39,7 +39,7 @@
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
         
-        <!-- Caixa de Configurações (Totalmente estática) -->
+        <!-- Caixa de Configurações -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
             <strong>Configurações</strong>
@@ -120,7 +120,7 @@
         </div>
       </div>
 
-      <!-- Lista de Passos Limpa (Sem números manuais duplicados) -->
+      <!-- Lista de Passos Limpa -->
       <ol class="passos-lista">
         <li>
           <strong>Seu Perfil:</strong> Rotina, Preferências, Orçamento
@@ -134,6 +134,20 @@
       </ol>
     </div>
   </main>
+
+  <!-- Rodapé Institucional -->
+  <footer class="rodape-page">
+    <div class="rodape-links">
+      <span class="link-simulado">Política de Privacidade</span>
+      <span>•</span>
+      <span class="link-simulado">Termos de Uso</span>
+      <span>•</span>
+      <span class="link-simulado">Central de Ajuda</span>
+      <span>•</span>
+      <span class="link-simulado">Concessionárias</span>
+    </div>
+    <p class="rodape-copy">&copy; 2026 Seia + Ford. Todos os direitos reservados.</p>
+  </footer>
 
   <!-- Painel Lateral -->
   <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
@@ -185,7 +199,7 @@
     </div>
   </div>
 
-  <!-- Fundo escuro (clicar nele fecha a barra) -->
+  <!-- Fundo escuro -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>
   }
