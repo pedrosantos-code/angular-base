@@ -11,23 +11,25 @@
 /* Trava a estrutura base para evitar rolagens indesejadas */
 html, body, :host {
   width: 100%;
-  min-height: 100vh;
+  height: 100%;
   overflow-x: hidden;
 }
 
 /* --- CONTAINER DO FUNDO --- */
 .fundo-home {
-  min-height: 100vh;
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background-image: url('../../../public/fundo-home.png');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-attachment: fixed;
-  position: relative;
   z-index: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
 }
 
 /* --- CABEÇALHO --- */
@@ -355,6 +357,7 @@ html, body, :host {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   margin-top: auto;

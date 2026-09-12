@@ -17,16 +17,21 @@ html, body, :host {
 
 /* --- CONTAINER DO FUNDO --- */
 .fundo-home {
-    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
+    
     background-image: url('../../../public/fundo-home.png');
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    
     overflow-y: auto;
     z-index: 0;
     padding-top: 70px; /* Garante que o conteúdo descole do cabeçalho azul fixo */
@@ -344,7 +349,7 @@ html, body, :host {
 /* --- RODAPÉ INSTITUCIONAL --- */
 .rodape-page {
     width: 100%;
-    background-color: #0A2246;
+    background-color: #0E3165;
     color: #ffffff;
     padding: 24px 20px;
     text-align: center;
@@ -353,6 +358,7 @@ html, body, :host {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 12px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
