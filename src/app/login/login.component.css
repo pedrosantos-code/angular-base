@@ -1,176 +1,301 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
 }
 
-/* --- ESTRUTURA BASE DA PÁGINA --- */
-html, body, :host {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
+body {
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  color: #001730;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* --- CONTAINER DO FUNDO --- */
-.fundo-login {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-     
-    background-image: url('../../../public/fundo.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    
-    overflow-y: auto;
-    padding-top: 60px; /* Garante que o card de login não fique sob o cabeçalho */
-    z-index: 0;
+*, *::before, *::after {
+  box-sizing: border-box;
 }
 
-/* --- CABEÇALHO --- */
-.cabecalho {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    
-    /* 1. Reduz a altura total de 50px para 40px */
-    height: 40px; 
-    
-    background-color: #0E3165; 
-    z-index: 1000;
-    
-    /* 2. Garante alinhamento exato no centro */
-    display: flex;
-    justify-content: flex-end; /* Alinha o texto à direita */
-    align-items: center;      /* Centraliza na vertical */
-    padding: 0 20px;
+a {
+  color: #0B57A4;
+  text-decoration: none;
 }
 
-.parceria {
-    color: white;
-    font-size: 15px; /* Reduz ligeiramente a fonte de 18px para 15px */
-    font-weight: 600;
-    font-family: "EB Garamond", serif;
-    margin: 0;
-    line-height: 1; /* Remove alturas extras de linha que empurram para cima/baixo */
+a:hover {
+  color: #002B5C;
 }
 
-/* --- CARD DE LOGIN --- */
-.container {
-    width: 420px;
-    background-color: #0E3165;
-    border: 2px solid rgba(255, 255, 255, .2);
-    border-radius: 10px;
-    color: white;
-    padding: 30px 40px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
-    backdrop-filter: blur(50px);
-    z-index: 1;
+:focus-visible {
+  outline: 2px solid #2E7DD1;
+  outline-offset: 2px;
 }
 
-.container h1 {
-    font-size: 36px;
-    text-align: center;
+::selection {
+  background: #cfe2f5;
 }
 
-.logo-container {
-    display: flex;
-    justify-content: center;
+input {
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 
-.logo-login {
-    width: 100%;
-    max-width: 450px;
-    height: auto;
-    object-fit: contain;
+input:focus {
+  border-color: #2E7DD1 !important;
+  background: #fff !important;
+  outline: none;
 }
 
-/* --- CAMPOS DE ENTRADA --- */
-.input-box {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    margin: 20px 0;
+/* ===== Layout geral ===== */
+
+.login-page {
+  display: grid;
+  grid-template-columns: 1.05fr 1fr;
+  min-height: 100vh;
 }
 
-.error-msg {
-    color: #ff4d4f;
-    font-size: 0.9em;
-    text-align: center;
-    margin-bottom: 15px;
-    margin-top: -10px;
+@media (max-width: 860px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
 }
 
-.input-box label {
-    color: white;
-    font-size: 16px;
-    font-weight: 500;
+/* ===== Coluna esquerda (hero) ===== */
+
+.login-hero {
+  position: relative;
+  background: #001730;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px 56px;
+  min-height: 520px;
 }
 
-.input-box input {
-    width: 100%;
-    height: 45px;
-    background-color: white;
-    border: 2px solid white;
-    border-radius: 10px;
-    outline: none;
-    font-size: 16px;
-    color: #0E3165;
-    padding: 0 10px;
+.login-hero__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: .5;
+  filter: grayscale(1) contrast(1.1);
 }
 
-.input-box input::placeholder {
-    color: #c5c5c5;
+.login-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,23,48,.72) 0%, rgba(0,43,92,.78) 60%, rgba(0,23,48,.95) 100%);
 }
 
-/* --- BOTÃO E LINKS --- */
+.login-hero__brand {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-hero__logo {
+  width: 38px;
+  height: 38px;
+  border: 2px solid #2E7DD1;
+  display: grid;
+  place-items: center;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900;
+  color: #fff;
+  font-size: 16px;
+}
+
+.login-hero__brand-name {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-size: 11px;
+  color: #9FC4E8;
+}
+
+.login-hero__headline {
+  position: relative;
+  max-width: 520px;
+}
+
+.login-hero__headline h1 {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 900;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1.02;
+  letter-spacing: -.02em;
+  color: #fff;
+  margin: 0 0 18px;
+}
+
+.login-hero__headline p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #C9DCEF;
+  margin: 0;
+  max-width: 400px;
+}
+
+.login-hero__stats {
+  position: relative;
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.login-hero__stat-value {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  font-size: 24px;
+  color: #fff;
+}
+
+.login-hero__stat-label {
+  font-size: 12px;
+  color: #8FB8E2;
+}
+
+/* ===== Coluna direita (formulário) ===== */
+
+.login-form-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 40px;
+  background: #fff;
+}
+
+.login-form {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-form h2 {
+  font-family: 'Archivo', sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -.01em;
+  margin: 0 0 8px;
+  color: #001730;
+}
+
+.login-form__subtitle {
+  margin: 0 0 32px;
+  font-size: 15px;
+  color: #5B6B7C;
+  line-height: 1.55;
+}
+
+.login-form__label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #5B6B7C;
+  margin-bottom: 8px;
+}
+
+.login-form__input {
+  width: 100%;
+  padding: 14px 16px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 15px;
+  color: #001730;
+  background: #F4F6F9;
+  border: 1px solid #DCE3EB;
+  border-radius: 2px;
+  margin-bottom: 20px;
+}
+
+.login-form__input:last-of-type {
+  margin-bottom: 14px;
+}
+
+.login-form__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+}
+
+.login-form__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #5B6B7C;
+}
+
+.login-form__checkbox input {
+  accent-color: #002B5C;
+  width: 15px;
+  height: 15px;
+}
+
+.login-form__row a {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* ===== Botão Entrar ===== */
+
 .login {
-    display: block;
-    margin-inline: auto;
-    width: 50%;
-    height: 50px;
-    background-color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    font-size: 16px;
-    color: #0E3165;
-    font-weight: 600;
-    box-shadow: 0 0 10px rgba(0, 0, 0, .1);
-    margin-top: 40px;
-    transition: all 0.3s ease;
+  width: 100%;
+  padding: 16px;
+  background: #002B5C;
+  color: #fff;
+  border: none;
+  border-radius: 2px;
+  font-family: 'Archivo', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: .04em;
+  cursor: pointer;
+  transition: background .18s, filter .18s;
 }
 
 .login:hover {
-    background-color: white;
-    border: 2px solid rgba(255, 255, 255, .2);
-    color: #0E3165;
+  filter: brightness(1.08);
 }
 
-.register-link {
-    font-size: 14px;
-    text-align: center;
-    margin: 20px 0 15px;
-    cursor: pointer;
+/* ===== Rodapé do formulário ===== */
+
+.login-form__footer {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid #EDF1F5;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
 }
 
-.register-link a {
-    text-decoration: none;
-    color: white;
-    font-weight: 600;
+.login-form__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #2E7DD1;
+  margin-top: 6px;
+  animation: seia-pulse 2.2s ease-in-out infinite;
 }
 
-.register-link a:hover {
-    text-decoration: underline;
+.login-form__footer p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #7A8899;
+}
+
+.login-form__footer a {
+  font-weight: 600;
+}
+
+@keyframes seia-pulse {
+  0%, 100% { opacity: .35; }
+  50% { opacity: 1; }
 }

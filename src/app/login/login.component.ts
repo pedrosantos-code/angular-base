@@ -4,32 +4,45 @@ import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
-  protected readonly title = signal('meu-projeto');
-  errorMessage = signal<string | null>(null);
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  onLogin(email: string, password: string) {
-    this.errorMessage.set(null); // Limpa o erro ao tentar de novo
+  errorMessage = signal<string | null>(null);
+  isLoading = signal(false);
+
+  onLogin(email: string, password: string): void {
+    this.errorMessage.set(null);
+
+    if (!email || !password) {
+      this.errorMessage.set('Preencha e-mail e senha.');
+      return;
+    }
+
+    this.isLoading.set(true);
+
     this.authService.login(email, password).subscribe({
       next: (response) => {
+        this.isLoading.set(false);
+
         if (response.error) {
           console.error('Login error from Supabase:', response.error.message);
           this.errorMessage.set('Usuário não encontrado ou senha incorreta.');
-        } else {
-          console.log('Login successful:', response);
-          this.router.navigate(['/home']);
+          return;
         }
+
+        this.router.navigate(['/home']);
       },
       error: (error) => {
+        this.isLoading.set(false);
         console.error('Login failed:', error);
         this.errorMessage.set('Ocorreu um erro ao tentar fazer login.');
-      }
+      },
     });
   }
 }

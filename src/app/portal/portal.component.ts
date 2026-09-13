@@ -7,12 +7,12 @@ import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
 Chart.register(...registerables);
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-portal',
   imports: [RouterLink, FormsModule],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+  templateUrl: './portal.component.html',
+  styleUrl: './portal.component.css',
 })
-export class HomeComponent implements AfterViewInit, OnDestroy {
+export class PortalComponent implements AfterViewInit, OnDestroy {
   protected readonly title = signal('meu-projeto');
 
   private fordApi = inject(FordApiService);

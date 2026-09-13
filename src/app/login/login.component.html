@@ -1,29 +1,68 @@
-<div class="fundo-login">
-  <div class="cabecalho"><p class="parceria">Seia + Ford</p></div>
-  <main class="container">
-    <form>
-        <img src="/logo.png" alt="Logo" class="logo-login">
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>SEIA — Login | Ford</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="login.css">
+</head>
+<body>
+<div class="login-page">
 
-      <div class="input-box">
-        <label>Email</label>
-        <input #email placeholder="e-mail" type="email">
+  <div class="login-hero">
+    <img class="login-hero__image" src="assets/hero-truck.png" alt="">
+    <div class="login-hero__overlay"></div>
+
+    <div class="login-hero__brand">
+      <div class="login-hero__logo">S</div>
+      <div class="login-hero__brand-name">Ford · Squad SEIA</div>
+    </div>
+
+    <div class="login-hero__headline">
+      <h1>O mercado inteiro,<br>numa única tela.</h1>
+      <p>Inteligência competitiva automotiva em tempo real.</p>
+    </div>
+
+    <div class="login-hero__stats">
+      <div class="login-hero__stat">
+        <div class="login-hero__stat-value">24/7</div>
+        <div class="login-hero__stat-label">Coleta contínua</div>
       </div>
-      <div class="input-box">
-        <label>Senha</label>
-        <input #senha placeholder="senha" type="password">
+      <div class="login-hero__stat">
+        <div class="login-hero__stat-value">Multimarca</div>
+        <div class="login-hero__stat-label">Fichas padronizadas</div>
+      </div>
+      <div class="login-hero__stat">
+        <div class="login-hero__stat-value">1 clique</div>
+        <div class="login-hero__stat-label">Relatório pronto</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-form-wrap">
+    <div class="login-form">
+      <h2>Acessar a plataforma</h2>
+      <p class="login-form__subtitle">Credenciais corporativas Ford.</p>
+
+      <label class="login-form__label" for="email">E-mail corporativo</label>
+      <input class="login-form__input" id="email" type="email" placeholder="nome.sobrenome@ford.com">
+
+      <label class="login-form__label" for="senha">Senha</label>
+      <input class="login-form__input" id="senha" type="password" placeholder="••••••••">
+
+      <div class="login-form__row">
+        <label class="login-form__checkbox">
+          <input type="checkbox">
+          Manter conectado
+        </label>
+        <a href="#">Esqueci a senha</a>
       </div>
 
-      @if (errorMessage()) {
-      <p class="error-msg">
-        {{ errorMessage() }}
-      </p>
-      }
+      <button type="button" class="login" (click)="onLogin(email.value, senha.value)">ENTRAR</button> 
+    </div>
+  </div>
 
-      <button type="button" class="login" (click)="onLogin(email.value, senha.value)">Login</button>
-
-      <div class="register-link">
-        <p>Não tem uma conta? <a routerLink="/cadastro">Cadastre-se</a></p>
-      </div>
-    </form>
-  </main>
 </div>
+</body>
+</html>
