@@ -1,37 +1,167 @@
-<div class="fundo-cadastro">
-  <div class="cabecalho"><p class="parceria">Seia + Ford</p></div>
-  <main class="container">
-    <form>
-      <img src="/logo.png" alt="Logo" class="logo-cadastro">
-
-
-      <div class="input-box">
-        <label>Email</label>
-        <input #email placeholder="e-mail" type="email">
+<div class="l-200">
+  
+  <!-- Lado Esquerdo: Formulário de Cadastro -->
+  <div class="l-215">
+    <div class="l-216">
+      
+      <div class="l-217">
+        <h1 class="l-218">Criar conta</h1>
+        <p class="l-219">Use o e-mail da sua empresa para começar.</p>
       </div>
 
-      <div class="input-box">
-        <label>Senha</label>
-        <input #senha placeholder="senha" type="password">
+      <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="l-220">
+          
+          <!-- Nome Completo -->
+          <div class="l-221">
+            <label class="l-222" for="nome">Nome completo</label>
+            <input 
+              id="nome" 
+              type="text" 
+              formControlName="nome" 
+              placeholder="Ana Ribeiro" 
+              class="l-223"
+              [ngClass]="{'l-224': invalido('nome')}"
+            >
+            @if (invalido('nome')) {
+              <span class="l-225">Informe seu nome completo.</span>
+            }
+          </div>
+
+          <!-- E-mail profissional -->
+          <div class="l-221">
+            <label class="l-222" for="email">E-mail profissional</label>
+            <input 
+              id="email" 
+              type="email" 
+              formControlName="email" 
+              placeholder="nome.sobrenome@suaempresa.com" 
+              class="l-223"
+              [ngClass]="{'l-224': invalido('email')}"
+            >
+            @if (invalido('email')) {
+              @if (campo('email').hasError('pessoal')) {
+                <span class="l-225">Use o e-mail da empresa, não um endereço pessoal.</span>
+              } @else {
+                <span class="l-225">Digite um e-mail válido.</span>
+              }
+            }
+          </div>
+
+          <!-- Senha -->
+          <div class="l-221">
+            <label class="l-222" for="senha">Senha</label>
+            <div class="l-228">
+              <input 
+                id="senha" 
+                [type]="mostrarSenha ? 'text' : 'password'" 
+                formControlName="senha" 
+                placeholder="Crie uma senha" 
+                class="l-223 l-229"
+                [ngClass]="{'l-224': invalido('senha')}"
+              >
+              <button type="button" (click)="toggleMostrarSenha()" class="l-230">
+                {{ mostrarSenha ? 'Ocultar' : 'Mostrar' }}
+              </button>
+            </div>
+            @if (invalido('senha')) {
+              <span class="l-225">Use pelo menos 8 caracteres.</span>
+            }
+          </div>
+
+          <!-- Confirmar Senha -->
+          <div class="l-221">
+            <label class="l-222" for="confirmacao">Confirmar senha</label>
+            <input 
+              id="confirmacao" 
+              type="password" 
+              formControlName="confirmacao" 
+              placeholder="Repita a senha" 
+              class="l-223"
+              [ngClass]="{'l-224': senhasDivergentes}"
+            >
+            @if (senhasDivergentes) {
+              <span class="l-225">As senhas não são iguais.</span>
+            }
+          </div>
+
+          <!-- Termos de uso -->
+          <div class="l-234">
+            <label class="l-235">
+              <input type="checkbox" id="termos" formControlName="termos" class="l-236">
+              <span class="l-237">
+                Li e aceito os <a href="#" target="_blank" class="l-238">termos de uso</a> e a <a href="#" target="_blank" class="l-238">política de privacidade</a>
+              </span>
+            </label>
+          </div>
+          @if (invalido('termos')) {
+            <span class="l-225">É preciso aceitar os termos para continuar.</span>
+          }
+
+          <!-- Exibição de Erro do Servidor -->
+          @if (errorMessage()) {
+            <div class="l-239">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <!-- Botão de Envio -->
+          <button type="submit" class="l-240" [disabled]="enviando">
+            {{ enviando ? 'CRIANDO CONTA...' : 'CRIAR CONTA' }}
+          </button>
+
+          <p class="l-258">Confirmação por e-mail. Acesso liberado na sequência.</p>
+
+        </div>
+      </form>
+
+      <div class="l-241">
+        <p>Já tem uma conta? <a routerLink="/login" class="l-242">Fazer Login</a></p>
       </div>
 
-      <div class="input-box">
-        <label>Confirme a Senha</label>
-        <input #confirmaSenha placeholder="senha" type="password">
+    </div>
+  </div>
+
+  <!-- Lado Direito: Painel Informativo da SEIA com animação de fluxo -->
+  <div class="l-201">
+    
+    <button type="button" class="l-205" (click)="goSite.emit()">
+      <span class="l-206">S</span>
+      <span class="l-207">Ford · Squad SEIA</span>
+    </button>
+
+    <div class="l-243">
+      <div class="l-244">
+        @for (f of fluxoDuplicado; track $index) {
+          <div class="l-245">
+            <span class="l-246">portal →</span> {{ f }}
+          </div>
+        }
       </div>
+      <div class="l-247"></div>
 
-      @if (errorMessage()) {
-      <p class="error-msg">
-        {{ errorMessage() }}
-      </p>
-      }
-
-      <button type="button" class="cadastro" (click)="onRegister(email.value, senha.value, confirmaSenha.value)">Criar
-        Conta</button>
-
-      <div class="login-link">
-        <p>Já tem uma conta? <a routerLink="/">Fazer Login</a></p>
+      <!-- Faixa Fixa com Dado Normalizado -->
+      <div class="l-248">
+        <div class="l-249">
+          <span class="l-250">ENTRADA BRUTA</span>
+          <span class="l-251">✓ normalizado</span>
+        </div>
+        <div class="l-252">
+          {{ amostra.veiculo }} <span class="l-253">· {{ amostra.atributos }} · {{ amostra.preco }}</span>
+        </div>
       </div>
-    </form>
-  </main>
+    </div>
+
+    <div class="l-208">
+      <h2 class="l-209">O mercado passa por aqui todo dia.</h2>
+      <p class="l-210">Entra bruto de dezenas de portais. Sai comparável.</p>
+      
+      <div class="l-255">
+        <span class="l-256"></span>
+        <span class="l-257">Coleta ativa · {{ marcas }} marcas na base</span>
+      </div>
+    </div>
+
+  </div>
+
 </div>
