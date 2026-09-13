@@ -67,6 +67,7 @@ input:focus {
   background: #001730;
   overflow: hidden;
   display: flex;
+  background-image: url('/public/hero-truck.png');
   flex-direction: column;
   justify-content: space-between;
   padding: 48px 56px;
