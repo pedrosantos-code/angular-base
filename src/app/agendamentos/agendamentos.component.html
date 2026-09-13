@@ -154,6 +154,20 @@
             </select>
           </div>
 
+          <!-- Seleção de Concessionária / Local de Atendimento Atualizada -->
+          <div class="form-grupo">
+            <label>Concessionária / Unidade de Atendimento:</label>
+            <select [value]="concessionariaSelecionada()" (change)="concessionariaSelecionada.set($any($event.target).value)">
+              <option value="" disabled selected>Selecione uma unidade próxima</option>
+              <option value="Ford CAOA Ceasa - São Paulo">Ford CAOA Ceasa - São Paulo</option>
+              <option value="Ford CAOA Ibirapuera - São Paulo">Ford CAOA Ibirapuera - São Paulo</option>
+              <option value="Ford CAOA Jabaquara - São Paulo">Ford CAOA Jabaquara - São Paulo</option>
+              <option value="Ford Sonnervig Vila Guilherme - São Paulo">Ford Sonnervig Vila Guilherme - São Paulo</option>
+              <option value="Ford Sonnervig Ricardo Jafet - São Paulo">Ford Sonnervig Ricardo Jafet - São Paulo</option>
+              <option value="Ford For São Paulo - Santo Amaro">Ford For São Paulo - Santo Amaro</option>
+            </select>
+          </div>
+
           @if (tipoSelecionado() === 'Test-Drive' || tipoSelecionado() === 'Retirada de Veículo Novo') {
             <div class="form-grupo">
               <label>Escolha o Veículo (14 Modelos Oficiais):</label>
@@ -216,6 +230,14 @@
             <div class="agendamento-card">
               <div class="agendamento-info">
                 <strong>{{ item.titulo }}</strong>
+                
+                <!-- Exibe a concessionária escolhida no card -->
+                @if (item.concessionaria) {
+                  <span style="font-size: 11px; color: #0369a1; font-weight: 600;">
+                    <i class="fa-solid fa-location-dot"></i> {{ item.concessionaria }}
+                  </span>
+                }
+                
                 <span>{{ item.dataHora }}</span>
               </div>
               <i class="fa-solid fa-trash-can btn-excluir" title="Excluir agendamento" (click)="excluirAgendamento(item.id)"></i>

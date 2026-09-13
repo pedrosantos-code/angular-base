@@ -1,6 +1,5 @@
 <div class="fundo-home">
   <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-  
   <div class="cabecalho-page">
     <!-- Grupo da Esquerda -->
     <div class="icones-esquerda">
@@ -15,6 +14,7 @@
             <strong>Menu Lateral</strong>
           </div>
           <hr class="divisor">
+          
           <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
         </div>
       </div>
@@ -23,6 +23,7 @@
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
         
+        <!-- Caixa do Perfil -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
             <strong>Perfil do Usuário</strong>
@@ -37,6 +38,7 @@
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
         
+        <!-- Caixa de Configurações -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
             <strong>Configurações</strong>
@@ -60,6 +62,7 @@
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
         
+        <!-- Caixa de Logout -->
         <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
           <div class="menu-header">
             <strong>Sair do Sistema</strong>
@@ -102,7 +105,6 @@
         </div>
 
         <button class="btn-buscar" (click)="buscarConcessionarias()">Buscar</button>
-        <button class="btn-recalcular-topo" (click)="recalcularLocalizacao()">Recalcular Localização</button>
       </div>
 
       <!-- Conteúdo Principal: Mapa e Lista -->
@@ -113,32 +115,8 @@
             <i class="fa-solid fa-arrows-rotate"></i> Recalcular Localização
           </button>
 
-          <!-- Representação Gráfica do Mapa -->
-          <div 
-            class="mapa-placeholder"
-            [style.transform]="'scale(' + nivelZoom() + ')'"
-            style="transform-origin: center center;"
-          >
-            <div class="ponto-usuario" title="Sua localização atual"></div>
-
-            @for (item of concessionarias(); track item.id) {
-              <div 
-                class="pin-mapa" 
-                [style.top]="item.posicaoMapa.top" 
-                [style.left]="item.posicaoMapa.left"
-                (click)="selecionarConcessionaria(item.id)"
-              >
-                <i class="fa-solid fa-location-dot"></i>
-                <span>{{ item.id }}</span>
-              </div>
-            }
-
-            <!-- Controles de Zoom -->
-            <div class="zoom-controls">
-              <button (click)="alterarZoom(0.2)" title="Aumentar Zoom">+</button>
-              <button (click)="alterarZoom(-0.2)" title="Diminuir Zoom">-</button>
-            </div>
-          </div>
+          <!-- Contêiner Real do Leaflet -->
+          <div id="mapa-concessionarias" class="mapa-placeholder"></div>
         </div>
 
         <!-- Lista Lateral de Concessionárias -->
@@ -153,6 +131,7 @@
               <p class="endereco">{{ unidade.endereco }}</p>
               <p class="telefone">{{ unidade.telefone }}</p>
 
+              <!-- Ações com melhor hierarquia de UX -->
               <div class="card-acoes">
                 <button class="btn-agendar" (click)="agendarTestDrive(unidade)">
                   Agendar Test-Drive
@@ -168,7 +147,7 @@
     </div>
   </main>
 
-  <!-- Rodapé Institucional (Posicionado corretamente no final) -->
+  <!-- Rodapé Institucional -->
   <footer class="rodape-page">
     <div class="rodape-links">
       <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
@@ -235,7 +214,7 @@
     </div>
   </div>
 
-  <!-- Fundo escuro (clicar nele fecha a barra) -->
+  <!-- Fundo escuro -->
   @if (sidebarAberta()) {
     <div class="overlay" (click)="fecharSidebar()"></div>
   }

@@ -6,6 +6,7 @@ interface Agendamento {
   id: number;
   titulo: string;
   dataHora: string;
+  concessionaria?: string;
 }
 
 interface DiaCalendario {
@@ -49,6 +50,7 @@ export class AgendamentosComponent {
   // Campos do formulário de agendamento
   tipoSelecionado = signal<string>('Test-Drive');
   veiculoSelecionado = signal<string>('Ford Ranger');
+  concessionariaSelecionada = signal<string>(''); // <--- Campo da Concessionária integrado
   horarioSelecionado = signal<string>('10:00');
 
   // Inicializa carregando do localStorage ou usando os dados padrão
@@ -65,8 +67,8 @@ export class AgendamentosComponent {
     }
     // Dados padrão caso o armazenamento esteja vazio
     return [
-      { id: 1, titulo: 'Test-Drive: Ford Ranger', dataHora: '15/10/2026 10:00' },
-      { id: 2, titulo: 'Visita à Concessionária', dataHora: '18/10/2026 15:30' }
+      { id: 1, titulo: 'Test-Drive: Ford Ranger', dataHora: '15/10/2026 10:00', concessionaria: 'Ford CAOA Ceasa - São Paulo' },
+      { id: 2, titulo: 'Visita à Concessionária', dataHora: '18/10/2026 15:30', concessionaria: 'Ford Lusitânia - São Paulo' }
     ];
   }
 
@@ -208,6 +210,12 @@ export class AgendamentosComponent {
     const sel = this.diaSelecionado();
     if (!sel) return;
 
+    const concessionaria = this.concessionariaSelecionada();
+    if (!concessionaria) {
+      alert('Por favor, selecione uma concessionária / unidade de atendimento.');
+      return;
+    }
+
     const hora = this.horarioSelecionado() || '10:00';
     
     if (hora < '08:00' || hora > '20:00') {
@@ -228,7 +236,8 @@ export class AgendamentosComponent {
     const novoItem: Agendamento = {
       id: Date.now(),
       titulo: tituloFinal,
-      dataHora: `${dataBase} ${hora}`
+      dataHora: `${dataBase} ${hora}`,
+      concessionaria: concessionaria
     };
 
     this.agendamentos.update(lista => {
@@ -246,7 +255,7 @@ export class AgendamentosComponent {
   excluirAgendamento(id: number): void {
     this.agendamentos.update(lista => {
       const novaLista = lista.filter(item => item.id !== id);
-      this.salvarNoStorage(novaLista); // Salva a remoção permanentemente
+      this.salvarNoStorage(novaLista);
       return novaLista;
     });
   }
