@@ -63,24 +63,28 @@ export class CadastroComponent {
   mostrarSenha = false;
 
   readonly fluxo = [
-    'toro 2.0 td4  |  "170cv @3750rpm"',
-    'amarok v6  |  potencia: 258',
-    's10 2.8 ltz  |  "aut. 8 marchas"',
-    'hilux srx  |  R$ 329.990,00',
-    'frontier pro-4x  |  torque 45,9 kgf.m',
-    'rampage rebel  |  "2.2 turbodiesel"',
-    'l200 triton  |  190cv/3500',
-    'poer king  |  cambio: 8AT',
-    'montana premier  |  "1.2 turbo 133cv"',
-    'strada ranch  |  preco 149.990',
+    'ford bronco sport  |  "2.0 EcoBoost (253cv) · Tração 4WD"',
+    'ford territory  |  "1.5 EcoBoost (169cv) · Tração FWD"',
+    'ford explorer  |  "3.0 V6 (400cv) · Tração AWD"',
+    'ford ranger  |  "3.0 V6 (250cv) · Tração 4x4"',
+    'ford ranger raptor  |  "3.0 V6 (397cv) · Tração 4x4 com Reduzida"',
+    'ford maverick tremor  |  "2.0 (253cv) · Tração AWD (4x4)"',
+    'ford f-150  |  "5.0 V8 (405cv) · Tração 4x4"',
+    'ford mustang gt  |  "5.0 V8 Coyote (488cv) · Tração RWD"',
+    'ford mustang mach-e  |  "100% elétrico (487cv) · Tração eAWD"',
+    'ford f-150 lightning  |  "100% elétrico (426cv) · Tração 4x4"',
+    'ford e-transit van  |  "100% elétrico (269cv) · Tração RWD"',
+    'ford maverick hybrid  |  "2.5 Híbrido (194cv) · Tração FWD"',
+    'ford transit furgão  |  "2.0 EcoBlue Diesel · Tração RWD"',
+    'ford transit minidús  |  "2.0 EcoBlue Diesel · Tração RWD"',
   ];
 
   readonly fluxoDuplicado = [...this.fluxo, ...this.fluxo];
 
   readonly amostra = {
     veiculo: 'Ranger 2.0 Diesel',
-    atributos: '170 cv · 47,9 kgfm · AT 10v ·',
-    preco: 'R$ 189.900',
+    atributos: '170 cv · 47,9 kgfm · AT 10v',
+    tracao: 'Tração 4x4',
   };
 
   readonly marcas = 14;
