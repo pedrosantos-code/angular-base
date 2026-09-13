@@ -1,6 +1,8 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
 
 export interface VeiculoFord {
   id: number;
@@ -15,7 +17,7 @@ export interface VeiculoFord {
 @Component({
   selector: 'app-modelos',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, FormsModule],
   templateUrl: './modelos.component.html',
   styleUrl: './modelos.component.css',
 })
@@ -23,6 +25,68 @@ export class ModelosComponent {
   // Injeção de Serviços
   private authService = inject(AuthService);
   private router = inject(Router);
+  private fordApi = inject(FordApiService);
+
+  // Busca de veículo na API da Ford (dados reais)
+  nomeBusca = signal<string>('');
+  buscandoNaApi = signal<boolean>(false);
+  erroBuscaApi = signal<string | null>(null);
+  resultadosApi = signal<Car[] | null>(null);
+
+  // Carros semelhantes ao primeiro resultado da busca
+  buscandoSemelhantes = signal<boolean>(false);
+  carrosSemelhantes = signal<CarRecommendation[]>([]);
+
+  buscarNaApi(): void {
+    const termo = this.nomeBusca().trim();
+    if (!termo) {
+      this.erroBuscaApi.set('Digite o nome de um carro para buscar.');
+      this.resultadosApi.set(null);
+      return;
+    }
+
+    this.buscandoNaApi.set(true);
+    this.erroBuscaApi.set(null);
+    this.carrosSemelhantes.set([]);
+
+    this.fordApi.listCars({ model: termo, limit: 20 }).subscribe({
+      next: (resposta) => {
+        this.buscandoNaApi.set(false);
+        this.resultadosApi.set(resposta.items);
+        if (resposta.items.length === 0) {
+          this.erroBuscaApi.set('Nenhum veículo encontrado com esse nome na base da Ford.');
+          return;
+        }
+        this.buscarCarrosSemelhantes(resposta.items[0].id);
+      },
+      error: () => {
+        this.buscandoNaApi.set(false);
+        this.erroBuscaApi.set('Não foi possível se conectar à API da Ford. Tente novamente.');
+      },
+    });
+  }
+
+  private buscarCarrosSemelhantes(carId: number): void {
+    this.buscandoSemelhantes.set(true);
+
+    this.fordApi.getRecomendacoes(carId, 5).subscribe({
+      next: (recomendacoes) => {
+        this.buscandoSemelhantes.set(false);
+        this.carrosSemelhantes.set(recomendacoes.filter((r) => r.id !== carId));
+      },
+      error: () => {
+        this.buscandoSemelhantes.set(false);
+        this.carrosSemelhantes.set([]);
+      },
+    });
+  }
+
+  limparBusca(): void {
+    this.nomeBusca.set('');
+    this.resultadosApi.set(null);
+    this.erroBuscaApi.set(null);
+    this.carrosSemelhantes.set([]);
+  }
 
   protected readonly title = signal('meu-projeto');
 

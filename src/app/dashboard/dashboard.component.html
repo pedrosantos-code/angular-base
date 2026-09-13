@@ -77,7 +77,73 @@
   </div>
 
   <main class="container-home">
-    <!-- Conteúdo principal da página vai aqui -->
+    <div class="dashboard-container">
+      <div class="dashboard-header">
+        <i class="fa-solid fa-chart-line"></i>
+        <h2>Dashboard Detalhado</h2>
+      </div>
+
+      <p class="dashboard-subtitulo">
+        Digite o nome de um modelo Ford para consultar os dados técnicos e gerar o gráfico comparativo.
+      </p>
+
+      <form class="form-busca" (ngSubmit)="buscarGraficos()">
+        <input
+          type="text"
+          name="nomeCarro"
+          placeholder="Ex: Mustang, Ranger, Territory..."
+          [ngModel]="nomeCarro()"
+          (ngModelChange)="nomeCarro.set($event)"
+        />
+        <button type="submit" class="btn-buscar" [disabled]="carregando()">
+          @if (carregando()) {
+            Buscando...
+          } @else {
+            <i class="fa-solid fa-magnifying-glass"></i> Gerar Gráfico
+          }
+        </button>
+      </form>
+
+      @if (erroBusca()) {
+        <div class="aviso-busca">{{ erroBusca() }}</div>
+      }
+
+      @if (resultados().length > 0) {
+        <p class="total-resultados">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford.</p>
+
+        <div class="grafico-wrapper">
+          <canvas #graficoCanvas></canvas>
+        </div>
+
+        <div class="tabela-resultados">
+          @for (carro of resultados(); track carro.id) {
+            <div class="linha-resultado">
+              <strong>{{ carro.model }}</strong>
+              <span>{{ carro.variant }}</span>
+              <span>{{ carro.enginePowerBhp ?? '—' }} cv</span>
+              <span>{{ carro.topSpeedKph ?? '—' }} km/h</span>
+              <span>{{ carro.gearboxType ?? '—' }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Carros semelhantes ao primeiro resultado -->
+        @if (buscandoSemelhantes()) {
+          <p class="titulo-semelhantes">Buscando carros semelhantes...</p>
+        } @else if (carrosSemelhantes().length > 0) {
+          <h3 class="titulo-semelhantes">Carros Semelhantes</h3>
+          <div class="lista-semelhantes">
+            @for (carro of carrosSemelhantes(); track carro.id) {
+              <div class="item-semelhante">
+                <strong>{{ carro.model }}</strong>
+                <span>{{ carro.variant }}</span>
+                <span class="badge-similaridade">{{ (carro.similarity * 100).toFixed(0) }}% compatível</span>
+              </div>
+            }
+          </div>
+        }
+      }
+    </div>
   </main>
 
   <!-- Rodapé Institucional -->

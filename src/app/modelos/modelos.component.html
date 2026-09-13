@@ -105,40 +105,109 @@
         <h2>MODELOS FORD {{ categoriaAtiva() !== 'Todos' ? '- ' + categoriaAtiva() : '' }}</h2>
       </header>
 
-      <div class="grid-modelos">
-        @for (item of modelosFiltrados(); track item.id) {
-          <div class="card-modelo">
-            <div class="card-imagem">
-              <img [src]="item.imagemUrl" [alt]="item.nome" loading="lazy" />
+      <!-- Busca por nome de carro na base de dados real da Ford -->
+      <form class="form-busca-modelo" (ngSubmit)="buscarNaApi()">
+        <input
+          type="text"
+          name="nomeBusca"
+          placeholder="Buscar veículo pelo nome (ex: Mustang, Ranger)..."
+          [ngModel]="nomeBusca()"
+          (ngModelChange)="nomeBusca.set($event)"
+        />
+        <button type="submit" class="btn-buscar-modelo" [disabled]="buscandoNaApi()">
+          @if (buscandoNaApi()) {
+            Buscando...
+          } @else {
+            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+          }
+        </button>
+        @if (resultadosApi() !== null) {
+          <button type="button" class="btn-limpar-busca" (click)="limparBusca()">
+            <i class="fa-solid fa-xmark"></i> Limpar
+          </button>
+        }
+      </form>
+
+      @if (erroBuscaApi()) {
+        <div class="aviso-busca-modelo">{{ erroBuscaApi() }}</div>
+      }
+
+      @if (resultadosApi(); as resultados) {
+        <!-- Resultados vindos da API da Ford -->
+        <div class="grid-modelos">
+          @for (item of resultados; track item.id) {
+            <div class="card-modelo card-modelo-api">
+              <div class="card-corpo">
+                <h3 class="nome-modelo">{{ item.model }}</h3>
+                <p class="preco-label">{{ item.variant }}</p>
+
+                <ul class="especificacoes">
+                  <li><i class="fa-solid fa-gauge-high"></i> {{ item.enginePowerBhp ?? '—' }} cv</li>
+                  <li><i class="fa-solid fa-gas-pump"></i> {{ item.engineFuelType ?? '—' }}</li>
+                  <li><i class="fa-solid fa-car"></i> Tração {{ item.drivetrain ?? '—' }}</li>
+                  <li><i class="fa-solid fa-gauge"></i> Vel. máx. {{ item.topSpeedKph ?? '—' }} km/h</li>
+                </ul>
+              </div>
             </div>
-
-            <div class="card-corpo">
-              <h3 class="nome-modelo">{{ item.nome }}</h3>
-              
-              <p class="preco-label">
-                A partir de <strong>{{ item.precoAPartir }}</strong>
-              </p>
-
-              <ul class="especificacoes">
-                <li>
-                  <i class="fa-solid fa-engine"></i> {{ item.motorizacao }}
-                </li>
-                <li>
-                  <i class="fa-solid fa-car"></i> Tração {{ item.tracao }}
-                </li>
-              </ul>
-
-              <button class="btn-saiba-mais">
-                SAIBA MAIS
-              </button>
+          } @empty {
+            <div class="sem-resultados">
+              <p>Nenhum veículo encontrado para essa busca.</p>
             </div>
-          </div>
-        } @empty {
-          <div class="sem-resultados">
-            <p>Nenhum modelo encontrado para esta categoria.</p>
+          }
+        </div>
+
+        <!-- Carros semelhantes ao primeiro resultado -->
+        @if (buscandoSemelhantes()) {
+          <p class="titulo-semelhantes">Buscando carros semelhantes...</p>
+        } @else if (carrosSemelhantes().length > 0) {
+          <h3 class="titulo-semelhantes">Carros Semelhantes</h3>
+          <div class="lista-semelhantes">
+            @for (carro of carrosSemelhantes(); track carro.id) {
+              <div class="item-semelhante">
+                <strong>{{ carro.model }}</strong>
+                <span>{{ carro.variant }}</span>
+                <span class="badge-similaridade">{{ (carro.similarity * 100).toFixed(0) }}% compatível</span>
+              </div>
+            }
           </div>
         }
-      </div>
+      } @else {
+        <!-- Catálogo estático padrão -->
+        <div class="grid-modelos">
+          @for (item of modelosFiltrados(); track item.id) {
+            <div class="card-modelo">
+              <div class="card-imagem">
+                <img [src]="item.imagemUrl" [alt]="item.nome" loading="lazy" />
+              </div>
+
+              <div class="card-corpo">
+                <h3 class="nome-modelo">{{ item.nome }}</h3>
+
+                <p class="preco-label">
+                  A partir de <strong>{{ item.precoAPartir }}</strong>
+                </p>
+
+                <ul class="especificacoes">
+                  <li>
+                    <i class="fa-solid fa-engine"></i> {{ item.motorizacao }}
+                  </li>
+                  <li>
+                    <i class="fa-solid fa-car"></i> Tração {{ item.tracao }}
+                  </li>
+                </ul>
+
+                <button class="btn-saiba-mais">
+                  SAIBA MAIS
+                </button>
+              </div>
+            </div>
+          } @empty {
+            <div class="sem-resultados">
+              <p>Nenhum modelo encontrado para esta categoria.</p>
+            </div>
+          }
+        </div>
+      }
     </main>
 
   </div>

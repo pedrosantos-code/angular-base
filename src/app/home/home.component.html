@@ -1,6 +1,6 @@
 <div class="fundo-home">
   <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-  
+
   <div class="cabecalho-page">
     <!-- Grupo da Esquerda -->
     <div class="icones-esquerda">
@@ -8,7 +8,7 @@
       <!-- Item: Menu Lateral -->
       <div class="menu-item">
         <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
-        
+
         <!-- Caixa do Menu Lateral -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
           <div class="menu-header">
@@ -22,7 +22,7 @@
       <!-- Item: Perfil -->
       <div class="menu-item">
         <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
-        
+
         <!-- Caixa do Perfil -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
           <div class="menu-header">
@@ -37,7 +37,7 @@
       <!-- Item: Configurações -->
       <div class="menu-item">
         <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
-        
+
         <!-- Caixa de Configurações -->
         <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
           <div class="menu-header">
@@ -57,11 +57,11 @@
     <!-- Grupo da Direita -->
     <div class="elementos-direita">
       <p class="parceria">Seia + Ford</p>
-      
+
       <!-- Item: Logout -->
       <div class="menu-item">
         <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
-        
+
         <!-- Caixa de Logout -->
         <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
           <div class="menu-header">
@@ -79,65 +79,112 @@
     <div class="home-content-container">
       <h2 class="titulo-principal">Qual é o seu próximo FORD?</h2>
       <h2 class="subtitulo-principal">Deixe a nossa IA guiar sua escolha</h2>
-      
+
       <div class="pesquisa-ia-container">
         <!-- Campo Principal de Prompt -->
-        <div class="prompt-box">
-          <input 
-            type="text" 
-            placeholder="Ex: Preciso de um SUV econômico para viajar com a família..." 
+        <form class="prompt-box" (ngSubmit)="buscarCarroComIA()">
+          <input
+            type="text"
+            name="nomeCarroBusca"
+            placeholder="Ex: Bronco Sport"
+            [ngModel]="nomeCarroBusca()"
+            (ngModelChange)="nomeCarroBusca.set($event)"
           />
-          <button type="button" class="btn-ia">
-            <i class="fa-solid fa-wand-magic-sparkles"></i>
-            <span>Buscar com IA</span>
+          <button type="submit" class="btn-ia" [disabled]="buscandoCarro()">
+            @if (buscandoCarro()) {
+              <span>Buscando...</span>
+            } @else {
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>Buscar com IA</span>
+            }
           </button>
-        </div>
+        </form>
 
         <!-- Tags de Filtros Rápidos -->
         <div class="filtros-rapidos">
           <span class="titulo-filtros">Busca rápida:</span>
 
-          <button 
+          <button
             type="button"
-            class="tag-item" 
+            class="tag-item"
             [class.ativa]="tagSelecionada() === 'Uso Urbano'"
             (click)="selecionarTag('Uso Urbano')"
           >
             <i class="fa-solid fa-car"></i> Uso Urbano
           </button>
 
-          <button 
+          <button
             type="button"
-            class="tag-item" 
+            class="tag-item"
             [class.ativa]="tagSelecionada() === 'Off-Road'"
             (click)="selecionarTag('Off-Road')"
           >
             <i class="fa-solid fa-mountain"></i> Off-Road
           </button>
 
-          <button 
+          <button
             type="button"
-            class="tag-item" 
+            class="tag-item"
             [class.ativa]="tagSelecionada() === 'Família'"
             (click)="selecionarTag('Família')"
           >
             <i class="fa-solid fa-users"></i> Família
           </button>
 
-          <button 
+          <button
             type="button"
-            class="tag-item" 
+            class="tag-item"
             [class.ativa]="tagSelecionada() === 'Trabalho'"
             (click)="selecionarTag('Trabalho')"
           >
             <i class="fa-solid fa-briefcase"></i> Trabalho
           </button>
         </div>
+
+        <!-- Resultado da busca na API da Ford -->
+        @if (erroBuscaCarro()) {
+          <div class="aviso-busca-ia">{{ erroBuscaCarro() }}</div>
+        }
+
+        @if (resultadosBusca().length > 0) {
+          <div class="resultado-busca-ia">
+            <div class="grafico-busca-ia-wrapper">
+              <canvas #graficoBuscaCanvas></canvas>
+            </div>
+
+            <div class="lista-resultado-ia">
+              @for (carro of resultadosBusca(); track carro.id) {
+                <div class="item-resultado-ia">
+                  <strong>{{ carro.model }}</strong>
+                  <span>{{ carro.variant }}</span>
+                  <span>{{ carro.enginePowerBhp ?? '—' }} cv</span>
+                  <span>{{ carro.topSpeedKph ?? '—' }} km/h</span>
+                </div>
+              }
+            </div>
+
+            <!-- Carros semelhantes ao primeiro resultado -->
+            @if (buscandoSemelhantes()) {
+              <p class="titulo-semelhantes">Buscando carros semelhantes...</p>
+            } @else if (carrosSemelhantes().length > 0) {
+              <h3 class="titulo-semelhantes">Carros Semelhantes</h3>
+              <div class="lista-semelhantes">
+                @for (carro of carrosSemelhantes(); track carro.id) {
+                  <div class="item-semelhante">
+                    <strong>{{ carro.model }}</strong>
+                    <span>{{ carro.variant }}</span>
+                    <span class="badge-similaridade">{{ (carro.similarity * 100).toFixed(0) }}% compatível</span>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
 
       <section class="como-funciona-container">
         <h2>Como Funciona a Recomendação por IA</h2>
-        
+
         <div class="passo-a-passo">
           <!-- Passo 1 -->
           <div class="card-passo">
@@ -196,7 +243,7 @@
       <a routerLink="/home" (click)="fecharSidebar()">
         <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
       </a>
-      
+
       <!-- Bloco 1: Gestão -->
       <h4>Gestão e Conta</h4>
       <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
