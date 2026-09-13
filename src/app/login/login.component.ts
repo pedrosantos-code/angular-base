@@ -20,7 +20,7 @@ export class LoginComponent {
     this.errorMessage.set(null);
 
     if (!email || !password) {
-      this.errorMessage.set('Preencha e-mail e senha.');
+      this.errorMessage.set('Preencha o e-mail e a senha.');
       return;
     }
 
@@ -36,12 +36,13 @@ export class LoginComponent {
           return;
         }
 
-        this.router.navigate(['/home']);
+        console.log('Login successful:', response);
+        this.router.navigate(['/portal']);
       },
       error: (error) => {
         this.isLoading.set(false);
         console.error('Login failed:', error);
-        this.errorMessage.set('Ocorreu um erro ao tentar fazer login.');
+        this.errorMessage.set('Ocorreu um erro de conexão ao tentar fazer login.');
       },
     });
   }

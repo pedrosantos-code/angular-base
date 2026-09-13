@@ -1,11 +1,11 @@
-<!doctype html>
+!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
 <title>SEIA — Login | Ford</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="login.css">
+<link rel="stylesheet" href="login.component.css">
 </head>
 <body>
 <div class="login-page">
@@ -45,21 +45,30 @@
       <h2>Acessar a plataforma</h2>
       <p class="login-form__subtitle">Credenciais corporativas Ford.</p>
 
+      <!-- Exibição de mensagem de erro dinâmica -->
+      @if (errorMessage()) {
+        <div class="login-error-alert" style="color: #ff4d4d; background: rgba(255, 77, 77, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 1rem; font-size: 0.85rem;">
+          {{ errorMessage() }}
+        </div>
+      }
+
       <label class="login-form__label" for="email">E-mail corporativo</label>
-      <input class="login-form__input" id="email" type="email" placeholder="nome.sobrenome@ford.com">
+      <input class="login-form__input" id="email" #emailInput type="email" placeholder="nome.sobrenome@ford.com">
 
       <label class="login-form__label" for="senha">Senha</label>
-      <input class="login-form__input" id="senha" type="password" placeholder="••••••••">
+      <input class="login-form__input" id="senha" #passwordInput type="password" placeholder="••••••••">
 
       <div class="login-form__row">
         <label class="login-form__checkbox">
           <input type="checkbox">
           Manter conectado
         </label>
-        <a href="#">Esqueci a senha</a>
+        <a href="#" (click)="$event.preventDefault()">Esqueci a senha</a>
       </div>
 
-      <button type="button" class="login" (click)="onLogin(email.value, senha.value)">ENTRAR</button> 
+      <button type="button" class="login" (click)="onLogin(emailInput.value, passwordInput.value)">
+        {{ isLoading() ? 'ENTRANDO...' : 'ENTRAR' }}
+      </button> 
     </div>
   </div>
 
