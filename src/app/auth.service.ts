@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { AuthResponse, createClient } from '@supabase/supabase-js'
-import { environment } from '../environments/environment';
+import { environment } from '../environments/environments';
 import { Observable, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 
