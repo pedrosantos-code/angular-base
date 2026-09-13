@@ -67,7 +67,9 @@ input:focus {
   background: #001730;
   overflow: hidden;
   display: flex;
-  background-image: url('/public/hero-truck.png');
+  background-image: url('../../../public/hero-truck.png');
+  background-size: cover;
+  background-position: center; /* Centraliza a imagem no bloco */
   flex-direction: column;
   justify-content: space-between;
   padding: 48px 56px;
