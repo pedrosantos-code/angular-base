@@ -1,204 +1,148 @@
-<div class="fundo-home">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+<div class="l-termos-container">
   
-  <div class="cabecalho-page">
-    <!-- Grupo da Esquerda -->
-    <div class="icones-esquerda">
-
-      <!-- Item: Menu Lateral -->
-      <div class="menu-item">
-        <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
-        
-        <!-- Caixa do Menu Lateral -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
-          <div class="menu-header">
-            <strong>Menu Lateral</strong>
-          </div>
-          <hr class="divisor">
-          
-          <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
-        </div>
-      </div>
-
-      <!-- Item: Perfil -->
-      <div class="menu-item">
-        <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
-        
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
-          <div class="menu-header">
-            <strong>Perfil do Usuário</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Visualizar Perfil</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Editar Dados</span>
-        </div>
-      </div>
-
-      <!-- Item: Configurações -->
-      <div class="menu-item">
-        <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
-        
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
-          <div class="menu-header">
-            <strong>Configurações</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Aparência / Tema</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Idioma</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Notificações</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Segurança e Privacidade</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Preferências do Sistema</span>
-        </div>
-      </div>
-
+  <!-- Cabeçalho Superior -->
+  <header class="l-termos-header">
+    <div class="l-header-titles">
+      <h1 class="l-main-title">
+        Termos e <strong>consentimentos</strong>
+      </h1>
+      <span class="l-version-info">versão 3.1 · publicada em 15/05/2026</span>
     </div>
+    <div class="l-header-badge">
+      <span class="l-badge-number">1</span>
+      <span class="l-badge-text">documento pendente</span>
+    </div>
+  </header>
 
-    <!-- Grupo da Direita -->
-    <div class="elementos-direita">
-      <p class="parceria">Seia + Ford</p>
-      
-      <!-- Item: Logout -->
-      <div class="menu-item">
-        <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
+  <!-- Layout Principal -->
+  <div class="l-termos-layout">
+    
+    <!-- Sidebar -->
+    <aside class="l-termos-sidebar">
+      <div class="l-menu-section">
+        <h3 class="l-section-subtitle">OBRIGATÓRIOS PARA USAR</h3>
+        <ul>
+          <li>
+            <button 
+              type="button" 
+              class="l-term-item" 
+              [class.active]="termoAtivo === 'termos-uso'"
+              (click)="selecionarTermo('termos-uso')">
+              <span class="l-term-name">Termos de Uso da Plataforma</span>
+              <span class="l-term-status pending">
+                <span class="l-icon-alert">⚠️</span> pendente · v3.1
+              </span>
+            </button>
+          </li>
+          <li>
+            <button 
+              type="button" 
+              class="l-term-item" 
+              [class.active]="termoAtivo === 'privacidade'"
+              (click)="selecionarTermo('privacidade')">
+              <span class="l-term-name">Política de Privacidade e Cookies</span>
+              <span class="l-term-status accepted">
+                ✓ aceito em 02/04/2026
+              </span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="l-menu-section">
+        <h3 class="l-section-subtitle">VOCÊ ESCOLHE</h3>
         
-        <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
-          <div class="menu-header">
-            <strong>Sair do Sistema</strong>
+        <div class="l-toggle-item">
+          <div class="l-toggle-info">
+            <span class="l-toggle-label">Compartilhar preferências com concessionárias</span>
+            <span class="l-toggle-state">{{ compartilharConcessionarias ? 'ligado' : 'desligado' }}</span>
           </div>
-          <hr class="divisor">
-          <a routerLink="/" class="menu-item-link" (click)="fecharMenus()">Confirmar Saída</a>
+          <label class="l-switch">
+            <input type="checkbox" [(ngModel)]="compartilharConcessionarias">
+            <span class="l-slider"></span>
+          </label>
+        </div>
+
+        <div class="l-toggle-item">
+          <div class="l-toggle-info">
+            <span class="l-toggle-label">Consentimento para test-drives</span>
+            <span class="l-toggle-state active-state">{{ consentimentoTestDrive ? 'ligado · 02/04/2026' : 'desligado' }}</span>
+          </div>
+          <label class="l-switch">
+            <input type="checkbox" [(ngModel)]="consentimentoTestDrive">
+            <span class="l-slider"></span>
+          </label>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Conteúdo do Documento -->
+    <main class="l-termos-content">
+      <div class="l-content-card" *ngIf="termoAtivo === 'termos-uso'">
+        <div class="l-card-top-tag">
+          <span class="l-doc-tag-title">TERMOS DE USO DA PLATAFORMA</span>
+          <span class="l-tag-badge">OBRIGATÓRIO</span>
+        </div>
+
+        <p class="l-version-history">v3.1 · substitui a v3.0, que você aceitou em 02/04/2026</p>
+
+        <p class="l-intro-text">
+          Ao usar o SEIA + Ford você concorda em seguir as diretrizes de navegação, privacidade e segurança da plataforma.
+        </p>
+
+        <h4 class="l-block-title">O que muda nesta versão</h4>
+        <ul class="l-bullet-list">
+          <li>A recomendação passa a considerar seu histórico de comparações, e não só o texto que você escreve.</li>
+          <li>As notas de compatibilidade passam a ser registradas por 12 meses para você retomar uma comparação.</li>
+        </ul>
+
+        <h4 class="l-block-title">Ao usar o SEIA, você concorda com</h4>
+        <ul class="l-bullet-list">
+          <li>Manter suas credenciais de acesso seguras.</li>
+          <li>Usar os serviços da plataforma de forma adequada.</li>
+          <li>A coleta de dados necessária para personalizar o atendimento.</li>
+        </ul>
+
+        <!-- Caixa de Aceite -->
+        <div class="l-accept-box">
+          <label class="l-checkbox-container">
+            <input type="checkbox" [(ngModel)]="termoAceito">
+            <span class="l-custom-checkbox"></span>
+            <span class="l-checkbox-text">Li e aceito os Termos de Uso v3.1</span>
+          </label>
+          <span class="l-warning-text">Sem este aceite não é possível continuar usando a plataforma.</span>
         </div>
       </div>
 
-    </div>
+      <!-- Conteúdo alternativo se clicar em Política de Privacidade -->
+      <div class="l-content-card" *ngIf="termoAtivo === 'privacidade'">
+        <div class="l-card-top-tag">
+          <span class="l-doc-tag-title">POLÍTICA DE PRIVACIDADE E COOKIES</span>
+          <span class="l-tag-badge accepted-badge">ACEITO</span>
+        </div>
+        <p class="l-version-history">v2.4 · aceito em 02/04/2026</p>
+        <p class="l-intro-text">
+          Esta política detalha como coletamos, usamos e protegemos seus dados pessoais durante a sua experiência com a inteligência artificial da Ford.
+        </p>
+      </div>
+    </main>
   </div>
 
-  <main class="container-home">
-    <div class="termos-container">
-      <div class="header-termos">
-        <h2>Termos e Contratos</h2>
-        <span class="data-atualizacao">Atualizado em: 15/05/2026</span>
-      </div>
-
-      <!-- Accordion List -->
-      <div class="accordion-list">
-        @for (item of termos(); track item.id) {
-          <div class="accordion-item" [class.aberto]="item.aberto">
-            <button class="accordion-header" (click)="toggleAccordion(item.id)">
-              <span class="titulo-termo">{{ item.titulo }}</span>
-              <i class="fa-solid" [class.fa-chevron-up]="item.aberto" [class.fa-plus]="!item.aberto"></i>
-            </button>
-
-            @if (item.aberto) {
-              <div class="accordion-body">
-                <p>{{ item.descricao }}</p>
-                
-                @if (item.topicos && item.topicos.length > 0) {
-                  <strong>Ao utilizar o SEIA, você concorda com:</strong>
-                  <ul>
-                    @for (topico of item.topicos; track topico) {
-                      <li>{{ topico }}</li>
-                    }
-                  </ul>
-                }
-              </div>
-            }
-          </div>
-        }
-      </div>
-
-      <!-- Footer Actions -->
-      <div class="termos-footer">
-        <label class="checkbox-container">
-          <input type="checkbox" [checked]="concordou()" (change)="toggleConcordo()" />
-          <span class="checkmark"></span>
-          Li e concordo com os termos acima
-        </label>
-
-        <div class="botoes-grupo">
-          <button class="btn-salvar" [disabled]="!concordou()" (click)="salvarTermos()">
-            Salvar e Continuar
-          </button>
-          <button class="btn-gerenciar">Gerenciar Consentimentos Específicos</button>
-        </div>
-
-        @if (mensagemSalva()) {
-          <div class="mensagem-sucesso">
-            <i class="fa-solid fa-circle-check"></i>
-            <span>Termos salvos com sucesso! Redirecionando...</span>
-          </div>
-        }
-      </div>
+  <!-- Rodapé -->
+  <footer class="l-termos-footer">
+    <div class="l-footer-status-count">
+      <strong>1 de 2</strong> obrigatórios aceitos
     </div>
-  </main>
-
-  <!-- Rodapé Institucional -->
-  <footer class="rodape-page">
-  <div class="rodape-links">
-        <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Fale conosco</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
-      </div>
-      <div class="rodape-copy">Copyright (c) 2026 Ford. Todos os direitos reservados.</div>
+    <div class="l-footer-actions">
+      <button type="button" class="l-btn-text" (click)="baixarPdf()">Baixar tudo em PDF</button>
+      <button 
+        type="button" 
+        class="l-btn-primary" 
+        [disabled]="!termoAceito"
+        (click)="continuar()">
+        ACEITAR E CONTINUAR
+      </button>
+    </div>
   </footer>
 
-  <!-- Painel Lateral -->
-  <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
-    <div class="sidebar-conteudo">
-      <a routerLink="/home" (click)="fecharSidebar()">
-        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-      </a>
-      
-      <!-- Bloco 1: Gestão -->
-      <h4>Gestão e Conta</h4>
-      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-        <i class="fa-regular fa-user"></i>
-        <span>Meu Perfil</span>
-      </a>
-      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-        <i class="fa-regular fa-file-lines"></i>
-        <span>Termos / Contratos</span>
-      </a>
-      
-      <!-- Veículos e Tecnologias -->
-      <h4>Veículos e Tecnologias</h4>
-      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-        <i class="fa-solid fa-car"></i>
-        <span>Modelos Ford</span>
-      </a>
-      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-        <i class="fa-solid fa-brain"></i>
-        <span>Sobre a IA</span>
-      </a>
-      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-        <i class="fa-solid fa-chart-line"></i>
-        <span>Dashboard Detalhado</span>
-      </a>
-
-      <!-- Bloco 4: Atendimento -->
-      <h4>Atendimento</h4>
-      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-        <i class="fa-regular fa-calendar"></i>
-        <span>Meus Agendamentos</span>
-      </a>
-      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-        <i class="fa-solid fa-location-dot"></i>
-        <span>Concessionárias</span>
-      </a>
-      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-        <i class="fa-solid fa-phone"></i>
-        <span>Fale Conosco</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Fundo escuro -->
-  @if (sidebarAberta()) {
-    <div class="overlay" (click)="fecharSidebar()"></div>
-  }
 </div>
