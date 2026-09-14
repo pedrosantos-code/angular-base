@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 @Component({
@@ -11,6 +12,12 @@ import { TopbarComponent } from '../topbar/topbar.component';
   styleUrl: './termos.component.css',
 })
 export class TermosComponent {
+  private router = inject(Router);
+
+  sair(): void {
+    this.router.navigateByUrl('/');
+  }
+
   termoAtivo = 'termos-uso';
   compartilharConcessionarias = false;
   consentimentoTestDrive = true;

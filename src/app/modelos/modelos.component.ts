@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
@@ -32,9 +33,15 @@ export interface Categoria { chave: string; rotulo: string; }
   styleUrl: './modelos.component.css',
 })
 export class ModelosComponent {
+  private router = inject(Router);
+
   @Output() abrirModelo = new EventEmitter<string>();
   @Output() compararSelecionados = new EventEmitter<string[]>();
   @Output() navegar = new EventEmitter<string>();
+
+  sair(): void {
+    this.router.navigateByUrl('/');
+  }
 
   @Input() modelos: Modelo[] = [
     { id: 'bronco-sport', nome: 'Bronco Sport', segmento: 'SUV compacto', categoria: 'suv', motorizacao: 'combustao', precoDe: 249900, ficha: ['1.5 EcoBoost turbo · 182 cv', 'Tração 4x2 · 5 lugares'], nota: null, imagem: 'bronco-sport.jpeg' },

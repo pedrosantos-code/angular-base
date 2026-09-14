@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TopbarComponent, ICONES, ITENS_PRINCIPAIS, ITENS_ATENDIMENTO, ITENS_SOBRE } from '../topbar/topbar.component';
 
 export interface ModeloFord {
@@ -35,6 +36,8 @@ export interface PassoFuncionamento {
   styleUrl: './portal.component.css',
 })
 export class PortalComponent {
+  private router = inject(Router);
+
   @Input() ativo = 'recomendacao';
 
   /** Termo digitado na caixa de busca (vinculado via ngModel) */
@@ -84,6 +87,10 @@ export class PortalComponent {
 
   ir(chave: string): void {
     this.navegar.emit(chave);
+  }
+
+  sair(): void {
+    this.router.navigateByUrl('/');
   }
 
   selecionarModelo(nomeModelo: string): void {

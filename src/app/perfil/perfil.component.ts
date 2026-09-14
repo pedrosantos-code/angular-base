@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface PerfilUso {
@@ -34,6 +35,12 @@ export interface Previa {
   styleUrl: './perfil.component.css',
 })
 export class PerfilComponent {
+  private router = inject(Router);
+
+  sair(): void {
+    this.router.navigateByUrl('/');
+  }
+
   @Output() salvarPerfil = new EventEmitter<{ uso: PerfilUso; conta: DadosConta }>();
   @Output() navegar = new EventEmitter<string>();
   @Output() alternarConsentimento = new EventEmitter<boolean>();

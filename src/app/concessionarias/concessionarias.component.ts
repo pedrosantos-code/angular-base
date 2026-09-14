@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface Coordenada { lat: number; lng: number; }
@@ -29,6 +30,12 @@ export interface Unidade {
   styleUrl: './concessionarias.component.css',
 })
 export class ConcessionariasComponent {
+  private router = inject(Router);
+
+  sair(): void {
+    this.router.navigateByUrl('/');
+  }
+
   @Output() buscar = new EventEmitter<{ local: string; raioKm: number }>();
   @Output() usarLocalizacao = new EventEmitter<void>();
   @Output() selecionar = new EventEmitter<string>();

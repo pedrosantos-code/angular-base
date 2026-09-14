@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface Entrada { ordem: string; titulo: string; texto: string; }
@@ -21,6 +22,8 @@ export interface ExemploNota {
   styleUrl: './sobre-ia.component.css',
 })
 export class SobreIaComponent {
+  private router = inject(Router);
+
   @Output() navegar = new EventEmitter<string>();
 
   readonly entradas: Entrada[] = [
@@ -86,5 +89,9 @@ export class SobreIaComponent {
   // Método para tratar o evento de navegação sem conflito de tipo de evento nativo
   onNavegar(rota: string): void {
     this.navegar.emit(rota);
+  }
+
+  sair(): void {
+    this.router.navigateByUrl('/');
   }
 }

@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface TipoAtendimento { chave: string; rotulo: string; }
@@ -50,6 +51,12 @@ export interface Agendamento {
   styleUrl: './agendamentos.component.css',
 })
 export class AgendamentosComponent {
+  private router = inject(Router);
+
+  sair(): void {
+    this.router.navigateByUrl('/');
+  }
+
   /** Dispare o carregamento da agenda da unidade escolhida. */
   @Output() carregarAgenda = new EventEmitter<{ unidadeId: string; tipo: string }>();
   /** Dispare o carregamento dos horários do dia escolhido. */
