@@ -32,7 +32,7 @@
   <div class="login-form-wrap">
     <div class="login-form">
       <h2>Acessar a plataforma</h2>
-      <p class="login-form__subtitle">Credenciais corporativas Ford.</p>
+      <p class="login-form__subtitle">Seja bem-vindo. Entre com sua conta para continuar.</p>
 
       <!-- Exibição de mensagem de erro dinâmica -->
       @if (errorMessage()) {
@@ -58,6 +58,9 @@
       <button type="button" class="login" (click)="onLogin(emailInput.value, passwordInput.value)">
         {{ isLoading() ? 'ENTRANDO...' : 'ENTRAR' }}
       </button> 
+      <div class="">
+        <p>Já tem uma conta? <a routerLink="cadastro" class="">Fazer cadastro</a></p>
+      </div>
     </div>
   </div>
 
