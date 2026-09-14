@@ -1,7 +1,7 @@
 .l-termos-container {
-  background-color: #0b1522;
-  color: #ffffff;
-  padding: 40px 48px;
+  background-color: #f4f6f9;
+  color: #1e293b;
+  padding: 36px 48px;
   font-family: inherit;
   min-height: 100vh;
   box-sizing: border-box;
@@ -15,7 +15,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid #cbd5e1;
   padding-bottom: 24px;
   margin-bottom: 32px;
 }
@@ -23,17 +23,19 @@
 .l-main-title {
   font-size: 32px;
   font-weight: 300;
-  margin: 0 0 6px 0;
+  color: #071d41;
+  margin: 0 0 4px 0;
   letter-spacing: -0.5px;
 }
 
 .l-main-title strong {
   font-weight: 700;
+  color: #071d41;
 }
 
 .l-version-info {
   font-size: 13px;
-  color: #7b9abf;
+  color: #64748b;
 }
 
 .l-header-badge {
@@ -45,16 +47,16 @@
 .l-badge-number {
   font-size: 28px;
   font-weight: 700;
-  color: #ffffff;
+  color: #071d41;
   line-height: 1;
 }
 
 .l-badge-text {
   font-size: 11px;
-  color: #7b9abf;
+  color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 /* Layout Principal */
@@ -82,7 +84,7 @@
 .l-section-subtitle {
   font-size: 11px;
   font-weight: 700;
-  color: #7b9abf;
+  color: #64748b;
   letter-spacing: 0.8px;
   margin: 0;
 }
@@ -98,31 +100,34 @@
 
 .l-term-item {
   width: 100%;
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 14px 16px;
   text-align: left;
-  color: #ffffff;
+  color: #1e293b;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
   transition: all 0.2s ease;
 }
 
 .l-term-item:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: #cbd5e1;
 }
 
 .l-term-item.active {
-  border-color: #2e7dd1;
-  background-color: rgba(46, 125, 209, 0.06);
+  border-color: #071d41;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1px #071d41;
 }
 
 .l-term-name {
   font-size: 14px;
   font-weight: 600;
+  color: #0f172a;
 }
 
 .l-term-status {
@@ -133,15 +138,11 @@
 }
 
 .l-term-status.pending {
-  color: #f0ad4e;
+  color: #d97706;
 }
 
 .l-term-status.accepted {
-  color: #5cb85c;
-}
-
-.l-icon-alert {
-  font-size: 10px;
+  color: #16a34a;
 }
 
 /* Toggle Switches */
@@ -149,31 +150,32 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.01);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   padding: 12px 16px;
   border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
 .l-toggle-info {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
 }
 
 .l-toggle-label {
   font-size: 13px;
   font-weight: 500;
-  color: #e2e8f0;
+  color: #1e293b;
 }
 
 .l-toggle-state {
   font-size: 11px;
-  color: #7b9abf;
+  color: #64748b;
 }
 
 .l-toggle-state.active-state {
-  color: #4da3ff;
+  color: #0284c7;
 }
 
 .l-switch {
@@ -193,7 +195,7 @@
   position: absolute;
   cursor: pointer;
   top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #243447;
+  background-color: #cbd5e1;
   transition: .25s;
   border-radius: 20px;
 }
@@ -211,7 +213,7 @@
 }
 
 input:checked + .l-slider {
-  background-color: #2e7dd1;
+  background-color: #071d41;
 }
 
 input:checked + .l-slider:before {
@@ -220,10 +222,11 @@ input:checked + .l-slider:before {
 
 /* Conteúdo Principal */
 .l-termos-content {
-  background-color: rgba(255, 255, 255, 0.015);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 10px;
   padding: 36px 40px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .l-content-card {
@@ -239,41 +242,40 @@ input:checked + .l-slider:before {
 }
 
 .l-doc-tag-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
-  color: #7b9abf;
-  letter-spacing: 0.5px;
+  color: #071d41;
 }
 
 .l-tag-badge {
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid #cbd5e1;
   padding: 3px 8px;
   border-radius: 4px;
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.5px;
-  color: #cbd5e1;
+  color: #475569;
+  background: #f8fafc;
 }
 
 .l-version-history {
   font-size: 13px;
-  color: #7b9abf;
+  color: #64748b;
   margin: 0;
 }
 
 .l-intro-text {
-  font-size: 14px;
+  font-size: 14.5px;
   line-height: 1.6;
-  color: #cbd5e1;
+  color: #334155;
   margin: 0;
 }
 
 .l-block-title {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  color: #ffffff;
+  color: #0f172a;
   margin: 8px 0 0 0;
-  letter-spacing: 0.2px;
 }
 
 .l-bullet-list {
@@ -282,20 +284,20 @@ input:checked + .l-slider:before {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  color: #94a3b8;
+  color: #475569;
   font-size: 13.5px;
   line-height: 1.5;
 }
 
 .l-bullet-list li::marker {
-  color: #2e7dd1;
+  color: #071d41;
 }
 
 /* Caixa de Aceite Customizada */
 .l-accept-box {
   margin-top: 16px;
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
   padding: 16px 20px;
   border-radius: 8px;
   display: flex;
@@ -321,15 +323,15 @@ input:checked + .l-slider:before {
   position: relative;
   height: 18px;
   width: 18px;
-  background-color: #16263b;
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background-color: #ffffff;
+  border: 1px solid #94a3b8;
   border-radius: 4px;
   transition: all 0.2s;
 }
 
 .l-checkbox-container input:checked ~ .l-custom-checkbox {
-  background-color: #2e7dd1;
-  border-color: #2e7dd1;
+  background-color: #071d41;
+  border-color: #071d41;
 }
 
 .l-checkbox-container input:checked ~ .l-custom-checkbox:after {
@@ -347,12 +349,12 @@ input:checked + .l-slider:before {
 .l-checkbox-text {
   font-size: 14px;
   font-weight: 600;
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .l-warning-text {
   font-size: 12px;
-  color: #7b9abf;
+  color: #64748b;
   margin-left: 30px;
 }
 
@@ -360,7 +362,7 @@ input:checked + .l-slider:before {
 .l-termos-footer {
   margin-top: 32px;
   padding-top: 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid #cbd5e1;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -368,11 +370,11 @@ input:checked + .l-slider:before {
 
 .l-footer-status-count {
   font-size: 13.5px;
-  color: #7b9abf;
+  color: #64748b;
 }
 
 .l-footer-status-count strong {
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .l-footer-actions {
@@ -384,7 +386,7 @@ input:checked + .l-slider:before {
 .l-btn-text {
   background: transparent;
   border: none;
-  color: #7b9abf;
+  color: #475569;
   font-size: 13.5px;
   font-weight: 500;
   cursor: pointer;
@@ -392,11 +394,11 @@ input:checked + .l-slider:before {
 }
 
 .l-btn-text:hover {
-  color: #ffffff;
+  color: #0f172a;
 }
 
 .l-btn-primary {
-  background-color: #1d4ed8;
+  background-color: #071d41;
   color: #ffffff;
   border: none;
   padding: 12px 28px;
@@ -409,11 +411,11 @@ input:checked + .l-slider:before {
 }
 
 .l-btn-primary:hover:not(:disabled) {
-  background-color: #2563eb;
+  background-color: #0a2755;
 }
 
 .l-btn-primary:disabled {
-  background-color: rgba(29, 78, 216, 0.35);
-  color: rgba(255, 255, 255, 0.4);
+  background-color: #cbd5e1;
+  color: #94a3b8;
   cursor: not-allowed;
 }

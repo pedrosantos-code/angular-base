@@ -1,207 +1,110 @@
-<div class="fundo-home">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-  
-  <div class="cabecalho-page">
-    <!-- Grupo da Esquerda -->
-    <div class="icones-esquerda">
 
-      <!-- Item: Menu Lateral -->
-      <div class="menu-item">
-        <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
-        
-        <!-- Caixa do Menu Lateral -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
-          <div class="menu-header">
-            <strong>Menu Lateral</strong>
-          </div>
-          <hr class="divisor">
-          
-          <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
+<header class="l-ia-hero">
+  <div class="l-ia-inner">
+    <p class="l-ia-tag">transparência</p>
+    <h1 class="l-ia-title">Como a IA decide</h1>
+    <p class="l-ia-subtitle">
+      Toda recomendação é uma conta com critérios visíveis. Esta página mostra a conta.
+    </p>
+  </div>
+</header>
+
+<section class="l-ia-section">
+  <div class="l-ia-inner">
+    <p class="l-ia-kicker">De onde vem cada dado</p>
+    <div class="l-ia-inputs">
+      @for (e of entradas; track e.ordem) {
+        <div class="l-ia-input">
+          <span class="l-ia-input-order">{{ e.ordem }}</span>
+          <h2 class="l-ia-input-title">{{ e.titulo }}</h2>
+          <p class="l-ia-input-text">{{ e.texto }}</p>
         </div>
-      </div>
-
-      <!-- Item: Perfil -->
-      <div class="menu-item">
-        <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
-        
-        <!-- Caixa do Perfil -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
-          <div class="menu-header">
-            <strong>Perfil do Usuário</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Visualizar Perfil</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Editar Dados</span>
-        </div>
-      </div>
-
-      <!-- Item: Configurações -->
-      <div class="menu-item">
-        <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
-        
-        <!-- Caixa de Configurações -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
-          <div class="menu-header">
-            <strong>Configurações</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Aparência / Tema</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Idioma</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Notificações</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Segurança e Privacidade</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Preferências do Sistema</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Grupo da Direita -->
-    <div class="elementos-direita">
-      <p class="parceria">Seia + Ford</p>
-      
-      <!-- Item: Logout -->
-      <div class="menu-item">
-        <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
-        
-        <!-- Caixa de Logout -->
-        <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
-          <div class="menu-header">
-            <strong>Sair do Sistema</strong>
-          </div>
-          <hr class="divisor">
-          <a routerLink="/" class="menu-item-link" (click)="fecharMenus()">Confirmar Saída</a>
-        </div>
-      </div>
-
+      }
     </div>
   </div>
+</section>
 
-  <main class="container-home">
-    <div class="ia-container">
-      <!-- Header da Tela -->
-      <header class="ia-header">
-        <div class="header-icon-circle">
-          <i class="fa-solid fa-brain"></i>
-        </div>
-        <h2>Sobre a IA (SEIA)</h2>
-      </header>
-
-      <!-- Descrição Principal -->
-      <div class="descricao-bloco">
-        <h3>Entenda a IA da SEIA + Ford</h3>
-        <p>Analisamos centenas de dados para encontrar seu veículo ideal.</p>
+<section class="l-ia-score">
+  <div class="l-ia-inner">
+    <div class="l-ia-score-head">
+      <div>
+        <div class="l-ia-score-model">{{ exemplo.modelo }}</div>
+        <div class="l-ia-score-profile">perfil: {{ exemplo.perfil }}</div>
       </div>
-
-      <!-- Diagrama Visual -->
-      <div class="diagrama-container">
-        <div class="diagrama-step">
-          <div class="step-icon">
-            <i class="fa-solid fa-user-gear"></i>
-          </div>
-          <span>Seu Perfil</span>
-        </div>
-
-        <i class="fa-solid fa-arrow-right seta-diagrama"></i>
-
-        <div class="diagrama-step">
-          <div class="step-icon">
-            <i class="fa-solid fa-brain"></i>
-          </div>
-          <span>Processamento IA</span>
-        </div>
-
-        <i class="fa-solid fa-arrow-right seta-diagrama"></i>
-
-        <div class="diagrama-step">
-          <div class="step-icon">
-            <i class="fa-solid fa-sliders"></i>
-          </div>
-          <span>Engenharia Ford</span>
-        </div>
+      <div class="l-ia-score-total">
+        <strong>{{ total }}</strong>
+        <span>de {{ maximo }}</span>
       </div>
-
-      <!-- Lista de Passos Limpa -->
-      <ol class="passos-lista">
-        <li>
-          <strong>Seu Perfil:</strong> Rotina, Preferências, Orçamento
-        </li>
-        <li>
-          <strong>Engenharia Ford:</strong> Ficha Técnica, Consumo, Espaço
-        </li>
-        <li>
-          <strong>Match Perfeito:</strong> Recomendação com Compatibilidade Real
-        </li>
-      </ol>
     </div>
-  </main>
 
-  <!-- Rodapé Institucional -->
-  <footer class="rodape-page">
-  <div class="rodape-links">
-        <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Fale conosco</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
-        <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
+    @for (c of exemplo.criterios; track c.rotulo) {
+      <div class="l-ia-criterion">
+        <span class="l-ia-criterion-label">{{ c.rotulo }}</span>
+        <span class="l-ia-criterion-track">
+          <span
+            class="l-ia-criterion-fill"
+            [class.is-fraco]="proporcao(c) < corteFraco"
+            [style.width.%]="proporcao(c) * 100"></span>
+        </span>
+        <span class="l-ia-criterion-points">{{ c.pontos }}/{{ c.maximo }}</span>
       </div>
-      <div class="rodape-copy">Copyright (c) 2026 Ford. Todos os direitos reservados.</div>
-  </footer>
+    }
 
-  <!-- Painel Lateral -->
-  <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
-    <div class="sidebar-conteudo">
-      <a routerLink="/home" (click)="fecharSidebar()">
-        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-      </a>
-      
-      <!-- Bloco 1: Gestão -->
-      <h4>Gestão e Conta</h4>
-      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-        <i class="fa-regular fa-user"></i>
-        <span>Meu Perfil</span>
-      </a>
-      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-        <i class="fa-regular fa-file-lines"></i>
-        <span>Termos / Contratos</span>
-      </a>
-
-      <!-- Veículos e Tecnologias -->
-      <h4>Veículos e Tecnologias</h4>
-      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-        <i class="fa-solid fa-car"></i>
-        <span>Modelos Ford</span>
-      </a>
-      <a class="sidebar-item">
-        <i class="fa-solid fa-brain"></i>
-        <span>Sobre a IA</span>
-      </a>
-      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-        <i class="fa-solid fa-chart-line"></i>
-        <span>Dashboard Detalhado</span>
-      </a>
-
-      <!-- Bloco 4: Atendimento -->
-      <h4>Atendimento</h4>
-      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-        <i class="fa-regular fa-calendar"></i>
-        <span>Meus Agendamentos</span>
-      </a>
-      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-        <i class="fa-solid fa-location-dot"></i>
-        <span>Concessionárias</span>
-      </a>
-      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-        <i class="fa-solid fa-phone"></i>
-        <span>Fale Conosco</span>
-      </a>
+    <div class="l-ia-score-sum">
+      <span>{{ exemplo.pesos }}</span>
+      <span><strong>{{ total }} pontos</strong> de {{ maximo }}</span>
     </div>
   </div>
+</section>
 
-  <!-- Fundo escuro -->
-  @if (sidebarAberta()) {
-    <div class="overlay" (click)="fecharSidebar()"></div>
-  }
-</div>
+<section class="l-ia-section">
+  <div class="l-ia-inner">
+    <h2 class="l-ia-heading">O que entra e o que não entra</h2>
+    <div class="l-ia-split">
+      <div class="l-ia-cell is-sim">
+        <div class="l-ia-cell-title">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 7" /></svg>
+          Usamos
+        </div>
+        <ul>
+          @for (i of usamos; track i) { <li>{{ i }}</li> }
+        </ul>
+      </div>
+      <div class="l-ia-cell is-nao">
+        <div class="l-ia-cell-title">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+          Não usamos
+        </div>
+        <ul>
+          @for (i of naoUsamos; track i) { <li>{{ i }}</li> }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="l-ia-limits">
+  <div class="l-ia-inner">
+    <p class="l-ia-kicker">Limites</p>
+    <h2 class="l-ia-heading">O que a IA não faz</h2>
+    <div class="l-ia-limits-grid">
+      @for (l of limites; track l.titulo) {
+        <div class="l-ia-limit">
+          <strong>{{ l.titulo }}</strong>
+          <span>{{ l.texto }}</span>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<footer class="l-ia-footer">
+  <div class="l-ia-inner">
+    <div class="l-ia-footer-links">
+      @for (r of rodape; track r.chave) {
+        <button type="button" (click)="navegar.emit(r.chave)">{{ r.rotulo }}</button>
+      }
+    </div>
+    <p class="l-ia-footer-copy">© 2026 Ford. Todos os direitos reservados.</p>
+  </div>
+</footer>

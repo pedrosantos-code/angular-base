@@ -1,75 +1,90 @@
-import { Component, signal, inject } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
+// ATENÇÃO: Confirme se o caminho e o nome da classe da sua topbar batem com isso:
 
-interface PassoIA {
-  passo: number;
-  titulo: string;
-  descricao: string;
+export interface Entrada { ordem: string; titulo: string; texto: string; }
+export interface Criterio { rotulo: string; pontos: number; maximo: number; }
+export interface Limite { titulo: string; texto: string; }
+
+export interface ExemploNota {
+  modelo: string;
+  perfil: string;
+  criterios: Criterio[];
+  pesos: string;
 }
 
 @Component({
-  selector: 'app-sobre-ia',
+  selector: 'seia-sobre-ia',
   standalone: true,
-  imports: [RouterLink],
+  imports: [CommonModule],
   templateUrl: './sobre-ia.component.html',
   styleUrl: './sobre-ia.component.css',
 })
-export class SobreIAComponent {
-  protected readonly title = signal('meu-projeto');
+export class SobreIaComponent {
+  @Output() navegar = new EventEmitter<string>();
 
-  // Declaração dos Signals da Interface
-  menuAberto = signal<string | null>(null);
-  sidebarAberta = signal<boolean>(false);
+  readonly entradas: Entrada[] = [
+    { ordem: 'Entrada 01', titulo: 'O que você escreve', texto: 'Rotina, número de passageiros, uso na estrada e teto de orçamento.' },
+    { ordem: 'Entrada 02', titulo: 'Seu histórico', texto: 'Modelos que você comparou antes e os que descartou.' },
+    { ordem: 'Entrada 03', titulo: 'Ficha técnica oficial', texto: 'Especificação publicada pela Ford para cada versão em linha.' },
+  ];
 
-  // Informações do Sistema SEIA
-  versaoIA = signal<string>('SEIA v2.4 - Ford Engine');
-  statusAlgoritmo = signal<'Ativo' | 'Processando' | 'Manutenção'>('Ativo');
+  @Input() exemplo: ExemploNota = {
+    modelo: 'Territory Titanium',
+    perfil: 'família · estrada · até R$ 250 mil',
+    pesos: '5 critérios, peso igual',
+    criterios: [
+      { rotulo: 'Espaço para os passageiros', pontos: 20, maximo: 20 },
+      { rotulo: 'Porta-malas para viagem', pontos: 20, maximo: 20 },
+      { rotulo: 'Conforto de rodagem', pontos: 19, maximo: 20 },
+      { rotulo: 'Consumo na estrada', pontos: 18, maximo: 20 },
+      { rotulo: 'Preço dentro do teto', pontos: 17, maximo: 20 },
+    ],
+  };
 
-  // Passos de Funcionamento da IA
-  passosIA = signal<PassoIA[]>([
-    {
-      passo: 1,
-      titulo: 'Seu Perfil',
-      descricao: 'Rotina, Preferências, Orçamento'
-    },
-    {
-      passo: 2,
-      titulo: 'Engenharia Ford',
-      descricao: 'Ficha Técnica, Consumo, Espaço'
-    },
-    {
-      passo: 3,
-      titulo: 'Match Perfeito',
-      descricao: 'Recomendação com Compatibilidade Real'
-    }
-  ]);
+  readonly usamos = [
+    'O texto que você escreve na busca',
+    'Suas comparações anteriores no portal',
+    'Ficha técnica e preço público de cada versão',
+  ];
 
-  // Ações da IA
-  iniciarSimulacaoMatch(): void {
-    alert('Iniciando análise de perfil com a IA (SEIA)...');
+  readonly naoUsamos = [
+    'Dados de crédito ou renda declarada',
+    'Estoque ou meta de venda da concessionária',
+    'Qualquer dado seu para publicidade de terceiros',
+  ];
+
+  readonly limites: Limite[] = [
+    { titulo: 'Não negocia preço', texto: 'A nota usa o preço público. Desconto é conversa com a concessionária.' },
+    { titulo: 'Não garante disponibilidade', texto: 'Um modelo com nota alta pode não estar disponível na sua região.' },
+    { titulo: 'Não substitui o test-drive', texto: 'Conforto e dirigibilidade só se confirmam no banco do carro.' },
+    { titulo: 'Não decide por você', texto: 'A nota ordena opções. A escolha continua sua.' },
+  ];
+
+  readonly rodape = [
+    { chave: 'cookies', rotulo: 'Política de Cookies' },
+    { chave: 'privacidade', rotulo: 'Política de Privacidade' },
+    { chave: 'contato', rotulo: 'Fale conosco' },
+    { chave: 'acessibilidade', rotulo: 'Acessibilidade' },
+    { chave: 'etica', rotulo: 'Código de Ética' },
+  ];
+
+  readonly corteFraco = 0.9;
+
+  get total(): number {
+    return this.exemplo.criterios.reduce((s, c) => s + c.pontos, 0);
   }
 
-  // Métodos do Menu Dropdown
-  toggleMenu(nomeMenu: string): void {
-    if (this.menuAberto() === nomeMenu) {
-      this.menuAberto.set(null); 
-    } else {
-      this.menuAberto.set(nomeMenu); 
-    }
+  get maximo(): number {
+    return this.exemplo.criterios.reduce((s, c) => s + c.maximo, 0);
   }
 
-  fecharMenus(): void {
-    this.menuAberto.set(null);
+  proporcao(c: Criterio): number {
+    return c.maximo ? c.pontos / c.maximo : 0;
   }
 
-  // Métodos da Barra Lateral (Sidebar)
-  abrirSidebar(): void {
-    this.sidebarAberta.set(true);
-    this.fecharMenus(); // Fecha o dropdown ao abrir a barra
-  }
-
-  fecharSidebar(): void {
-    this.sidebarAberta.set(false);
+  // Método para tratar o evento de navegação sem conflito de tipo de evento nativo
+  onNavegar(rota: string): void {
+    this.navegar.emit(rota);
   }
 }
