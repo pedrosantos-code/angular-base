@@ -1,288 +1,133 @@
-import { Component, signal, computed, inject } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { AuthService } from '../auth.service';
-import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
+import { PortalComponent } from '../portal/portal.component';
 
-export interface VeiculoFord {
-  id: number;
+export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
+export type Ordenacao = 'compatibilidade' | 'preco' | 'nome';
+
+export interface Modelo {
+  id: string;
   nome: string;
-  precoAPartir: string;
-  motorizacao: string;
-  tracao: string;
-  categoria: 'SUVs' | 'Picapes' | 'Esportivos' | 'Elétricos' | 'Híbridos' | 'Comerciais';
-  imagemUrl: string;
+  /** Rótulo curto exibido acima do nome: 'SUV médio', 'Picape compacta'… */
+  segmento: string;
+  /** Usado pelo filtro lateral: 'suv', 'picape', 'esportivo', 'comercial'. */
+  categoria: string;
+  motorizacao: Motorizacao;
+  precoDe: number;
+  /** Duas linhas curtas de ficha: motor e tração/lugares. */
+  ficha: string[];
+  /** Nota de compatibilidade com o perfil. Nulo quando não há perfil preenchido. */
+  nota: number | null;
+  imagem?: string;
 }
 
+export interface Categoria { chave: string; rotulo: string; }
+
 @Component({
-  selector: 'app-modelos',
+  selector: 'seia-modelos',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [CommonModule, FormsModule, PortalComponent],
   templateUrl: './modelos.component.html',
   styleUrl: './modelos.component.css',
 })
 export class ModelosComponent {
-  // Injeção de Serviços
-  private authService = inject(AuthService);
-  private router = inject(Router);
-  private fordApi = inject(FordApiService);
+  @Output() abrirModelo = new EventEmitter<string>();
+  @Output() compararSelecionados = new EventEmitter<string[]>();
+  @Output() navegar = new EventEmitter<string>();
 
-  // Busca de veículo na API da Ford (dados reais)
-  nomeBusca = signal<string>('');
-  buscandoNaApi = signal<boolean>(false);
-  erroBuscaApi = signal<string | null>(null);
-  resultadosApi = signal<Car[] | null>(null);
+  @Input() modelos: Modelo[] = [];
+  /** Resumo do perfil, exibido sob o título. Nulo esconde a linha. */
+  @Input() perfil: string | null = 'família · estrada · até R$ 250 mil';
 
-  // Carros semelhantes ao primeiro resultado da busca
-  buscandoSemelhantes = signal<boolean>(false);
-  carrosSemelhantes = signal<CarRecommendation[]>([]);
+  readonly categorias: Categoria[] = [
+    { chave: 'todos', rotulo: 'Todos' },
+    { chave: 'suv', rotulo: 'SUVs' },
+    { chave: 'picape', rotulo: 'Picapes' },
+    { chave: 'esportivo', rotulo: 'Esportivos' },
+    { chave: 'comercial', rotulo: 'Comerciais' },
+  ];
 
-  buscarNaApi(): void {
-    const termo = this.nomeBusca().trim();
-    if (!termo) {
-      this.erroBuscaApi.set('Digite o nome de um carro para buscar.');
-      this.resultadosApi.set(null);
-      return;
-    }
+  readonly motorizacoes: { chave: Motorizacao; rotulo: string }[] = [
+    { chave: 'combustao', rotulo: 'Combustão' },
+    { chave: 'hibrido', rotulo: 'Híbrido' },
+    { chave: 'eletrico', rotulo: 'Elétrico' },
+  ];
 
-    this.buscandoNaApi.set(true);
-    this.erroBuscaApi.set(null);
-    this.carrosSemelhantes.set([]);
+  readonly ordenacoes: { chave: Ordenacao; rotulo: string }[] = [
+    { chave: 'compatibilidade', rotulo: 'compatibilidade' },
+    { chave: 'preco', rotulo: 'preço' },
+    { chave: 'nome', rotulo: 'nome' },
+  ];
 
-    this.fordApi.listCars({ model: termo, limit: 20 }).subscribe({
-      next: (resposta) => {
-        this.buscandoNaApi.set(false);
-        this.resultadosApi.set(resposta.items);
-        if (resposta.items.length === 0) {
-          this.erroBuscaApi.set('Nenhum veículo encontrado com esse nome na base da Ford.');
-          return;
-        }
-        this.buscarCarrosSemelhantes(resposta.items[0].id);
-      },
-      error: () => {
-        this.buscandoNaApi.set(false);
-        this.erroBuscaApi.set('Não foi possível se conectar à API da Ford. Tente novamente.');
-      },
+  /** Abaixo disso a barra clareia: está listado, mas fora do perfil. */
+  readonly corteFraco = 70;
+  readonly maxComparar = 3;
+
+  categoria = 'todos';
+  motorizacoesAtivas = new Set<Motorizacao>();
+  tetoPreco = 350000;
+  soCompativeis = false;
+  termo = '';
+  ordem: Ordenacao = 'compatibilidade';
+  selecionados = new Set<string>();
+
+  get precoMinimo(): number {
+    return this.modelos.length ? Math.min(...this.modelos.map((m) => m.precoDe)) : 0;
+  }
+
+  get precoMaximo(): number {
+    return this.modelos.length ? Math.max(...this.modelos.map((m) => m.precoDe)) : 0;
+  }
+
+  contagem(chave: string): number {
+    return chave === 'todos'
+      ? this.modelos.length
+      : this.modelos.filter((m) => m.categoria === chave).length;
+  }
+
+  get filtrados(): Modelo[] {
+    const termo = this.termo.trim().toLowerCase();
+
+    const lista = this.modelos.filter((m) => {
+      if (this.categoria !== 'todos' && m.categoria !== this.categoria) return false;
+      if (this.motorizacoesAtivas.size && !this.motorizacoesAtivas.has(m.motorizacao)) return false;
+      if (m.precoDe > this.tetoPreco) return false;
+      if (this.soCompativeis && (m.nota ?? 0) < this.corteFraco) return false;
+      if (termo && !m.nome.toLowerCase().includes(termo) && !m.segmento.toLowerCase().includes(termo)) return false;
+      return true;
+    });
+
+    return lista.sort((a, b) => {
+      if (this.ordem === 'preco') return a.precoDe - b.precoDe;
+      if (this.ordem === 'nome') return a.nome.localeCompare(b.nome, 'pt-BR');
+      return (b.nota ?? -1) - (a.nota ?? -1);
     });
   }
 
-  private buscarCarrosSemelhantes(carId: number): void {
-    this.buscandoSemelhantes.set(true);
-
-    this.fordApi.getRecomendacoes(carId, 5).subscribe({
-      next: (recomendacoes) => {
-        this.buscandoSemelhantes.set(false);
-        this.carrosSemelhantes.set(recomendacoes.filter((r) => r.id !== carId));
-      },
-      error: () => {
-        this.buscandoSemelhantes.set(false);
-        this.carrosSemelhantes.set([]);
-      },
-    });
+  alternarMotorizacao(m: Motorizacao): void {
+    this.motorizacoesAtivas.has(m)
+      ? this.motorizacoesAtivas.delete(m)
+      : this.motorizacoesAtivas.add(m);
   }
 
-  limparBusca(): void {
-    this.nomeBusca.set('');
-    this.resultadosApi.set(null);
-    this.erroBuscaApi.set(null);
-    this.carrosSemelhantes.set([]);
+  alternarSelecao(id: string, evento: Event): void {
+    evento.stopPropagation();
+    if (this.selecionados.has(id)) { this.selecionados.delete(id); return; }
+    if (this.selecionados.size >= this.maxComparar) return;
+    this.selecionados.add(id);
   }
 
-  protected readonly title = signal('meu-projeto');
-
-  // Declaração dos Signals do Menu e Sidebar
-  menuAberto = signal<string | null>(null);
-  sidebarAberta = signal<boolean>(false);
-
-  // Categorias disponíveis para o filtro
-  categorias = signal<string[]>([
-    'Todos',
-    'SUVs',
-    'Picapes',
-    'Esportivos',
-    'Elétricos',
-    'Híbridos',
-    'Comerciais'
-  ]);
-
-  // Categoria atualmente selecionada
-  categoriaAtiva = signal<string>('Todos');
-
-  // Lista dos veículos mais relevantes da Ford
-  modelos = signal<VeiculoFord[]>([
-    // --- SUVs ---
-    {
-      id: 1,
-      nome: 'FORD BRONCO SPORT',
-      precoAPartir: 'R$ 252.790',
-      motorizacao: 'Motor 2.0 EcoBoost (253 cv)',
-      tracao: '4x4',
-      categoria: 'SUVs',
-      imagemUrl: '/bronco-sport.jpeg'
-    },
-    {
-      id: 2,
-      nome: 'FORD TERRITORY',
-      precoAPartir: 'R$ 209.990',
-      motorizacao: 'Motor 1.5 EcoBoost (169 cv)',
-      tracao: 'FWD',
-      categoria: 'SUVs',
-      imagemUrl: '/territory.jpg'
-    },
-    {
-      id: 3,
-      nome: 'FORD EXPLORER',
-      precoAPartir: 'R$ 380.000',
-      motorizacao: 'Motor 3.0 V6 EcoBoost (400 cv)',
-      tracao: 'AWD',
-      categoria: 'SUVs',
-      imagemUrl: '/explorer.jpeg'
-    },
-
-    // --- PICAPES ---
-    {
-      id: 4,
-      nome: 'FORD RANGER',
-      precoAPartir: 'R$ 239.990',
-      motorizacao: 'Motor 3.0 V6 Diesel (250 cv)',
-      tracao: '4x4',
-      categoria: 'Picapes',
-      imagemUrl: '/ranger.jpg'
-    },
-    {
-      id: 5,
-      nome: 'FORD RANGER RAPTOR',
-      precoAPartir: 'R$ 466.500',
-      motorizacao: 'Motor 3.0 V6 EcoBoost (397 cv)',
-      tracao: '4x4 com Reduzida',
-      categoria: 'Picapes',
-      imagemUrl: '/ranger-raptor.jpg'
-    },
-    {
-      id: 6,
-      nome: 'FORD MAVERICK TREMOR',
-      precoAPartir: 'R$ 225.000',
-      motorizacao: 'Motor 2.0 EcoBoost (253 cv)',
-      tracao: 'AWD LFX4 (Integral)',
-      categoria: 'Picapes',
-      imagemUrl: '/maverick-tremor.jpg'
-    },
-    {
-      id: 7,
-      nome: 'FORD F-150',
-      precoAPartir: 'R$ 519.990',
-      motorizacao: 'Motor 5.0 V8 Coyote (405 cv)',
-      tracao: '4x4',
-      categoria: 'Picapes',
-      imagemUrl: '/f150.jpg'
-    },
-
-    // --- ESPORTIVOS ---
-    {
-      id: 8,
-      nome: 'FORD MUSTANG GT',
-      precoAPartir: 'R$ 529.000',
-      motorizacao: 'Motor 5.0 V8 Coyote (488 cv)',
-      tracao: 'RWD (Traseira)',
-      categoria: 'Esportivos',
-      imagemUrl: '/mustang.jpg'
-    },
-
-    // --- ELÉTRICOS (Incluindo Vans) ---
-    {
-      id: 9,
-      nome: 'FORD MUSTANG MACH-E',
-      precoAPartir: 'R$ 486.000',
-      motorizacao: '100% Elétrico (487 cv)',
-      tracao: 'eAWD',
-      categoria: 'Elétricos',
-      imagemUrl: '/mach-e.jpg'
-    },
-    {
-      id: 10,
-      nome: 'FORD F-150 LIGHTNING',
-      precoAPartir: 'R$ 550.000',
-      motorizacao: '100% Elétrico (580 cv)',
-      tracao: 'eAWD',
-      categoria: 'Elétricos',
-      imagemUrl: '/f150-lightning.jpg'
-    },
-    {
-      id: 11,
-      nome: 'FORD E-TRANSIT VAN',
-      precoAPartir: 'R$ 319.900',
-      motorizacao: '100% Elétrico (269 cv)',
-      tracao: 'RWD (Traseira)',
-      categoria: 'Elétricos',
-      imagemUrl: '/e-transit.jpg'
-    },
-
-    // --- HÍBRIDOS ---
-    {
-      id: 12,
-      nome: 'FORD MAVERICK HYBRID',
-      precoAPartir: 'R$ 235.000',
-      motorizacao: '2.5L Híbrido (194 cv)',
-      tracao: 'FWD',
-      categoria: 'Híbridos',
-      imagemUrl: '/maverick-hybrid.jpg'
-    },
-
-    // --- COMERCIAIS ---
-    {
-      id: 13,
-      nome: 'FORD TRANSIT FURGÃO',
-      precoAPartir: 'R$ 245.900',
-      motorizacao: 'Motor 2.0 EcoBlue Diesel',
-      tracao: 'RWD / FWD',
-      categoria: 'Comerciais',
-      imagemUrl: '/transit-furgao.jpeg'
-    },
-    {
-      id: 14,
-      nome: 'FORD TRANSIT MINIBÚS',
-      precoAPartir: 'R$ 299.900',
-      motorizacao: 'Motor 2.0 EcoBlue Diesel',
-      tracao: 'RWD',
-      categoria: 'Comerciais',
-      imagemUrl: '/transit-minibus.jpeg'
-    }
-  ]);
-
-  // Computed signal para filtrar os carros automaticamente
-  modelosFiltrados = computed(() => {
-    const categoria = this.categoriaAtiva();
-    if (categoria === 'Todos') {
-      return this.modelos();
-    }
-    return this.modelos().filter(m => m.categoria === categoria);
-  });
-
-  // Método para alterar a categoria selecionada no filtro
-  selecionarCategoria(categoria: string): void {
-    this.categoriaAtiva.set(categoria);
+  limparSelecao(): void {
+    this.selecionados.clear();
   }
 
-  // Métodos da Interface (Menu Dropdown)
-  toggleMenu(nomeMenu: string): void {
-    if (this.menuAberto() === nomeMenu) {
-      this.menuAberto.set(null); 
-    } else {
-      this.menuAberto.set(nomeMenu); 
-    }
+  comparar(): void {
+    if (this.selecionados.size < 2) return;
+    this.compararSelecionados.emit([...this.selecionados]);
   }
 
-  fecharMenus(): void {
-    this.menuAberto.set(null);
-  }
-
-  // Métodos da Barra Lateral (Sidebar)
-  abrirSidebar(): void {
-    this.sidebarAberta.set(true);
-    this.fecharMenus();
-  }
-
-  fecharSidebar(): void {
-    this.sidebarAberta.set(false);
+  preco(v: number): string {
+    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
   }
 }

@@ -11,7 +11,16 @@ import { RouterLink } from '@angular/router';
 })
 export class LandingComponent {
   @Output() goLogin = new EventEmitter<void>();
-  @Output() goRegister = new EventEmitter<void>(); // <--- Adicionado aqui
+  @Output() goRegister = new EventEmitter<void>();
+
+  // Métodos disparadores para os eventos de autenticação/navegação
+  onLoginClick(): void {
+    this.goLogin.emit();
+  }
+
+  onRegisterClick(): void {
+    this.goRegister.emit();
+  }
 
   // Palavras-chave para a faixa de marquee animada
   keywords: string[] = [

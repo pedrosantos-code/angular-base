@@ -1,283 +1,174 @@
-import { Component, signal, computed } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { PortalComponent } from '../portal/portal.component';
 
-interface Agendamento {
-  id: number;
-  titulo: string;
-  dataHora: string;
-  concessionaria?: string;
+export interface TipoAtendimento { chave: string; rotulo: string; }
+
+export interface Unidade {
+  id: string;
+  nome: string;
+  endereco: string;
+  distanciaKm: number;
+  /** Quantas vagas a unidade tem no período carregado. */
+  horariosLivres: number;
 }
 
-interface DiaCalendario {
-  dia: number;
-  mes: number;
-  ano: number;
-  atual: boolean;
+export interface ModeloDisponivel {
+  nome: string;
+  /** Nota de compatibilidade vinda da recomendação. Deixe nulo se a pessoa chegou sem recomendação. */
+  nota: number | null;
+  disponivel: boolean;
+}
+
+export type StatusDia = 'livre' | 'lotado' | 'fechado';
+
+export interface Dia {
+  /** ISO, usado como chave e no payload. */
+  iso: string;
+  semana: string;
+  numero: string;
+  vagas: number;
+  status: StatusDia;
+}
+
+export interface Horario { hora: string; livre: boolean; }
+
+export interface Agendamento {
+  id: string;
+  quando: string;
+  titulo: string;
+  unidade: string;
+  detalhe: string;
   passado: boolean;
-  selecionado: boolean;
 }
 
 @Component({
-  selector: 'app-agendamentos',
+  selector: 'seia-agendamentos',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [CommonModule, PortalComponent],
   templateUrl: './agendamentos.component.html',
   styleUrl: './agendamentos.component.css',
 })
 export class AgendamentosComponent {
-  protected readonly title = signal('meu-projeto');
+  /** Dispare o carregamento da agenda da unidade escolhida. */
+  @Output() carregarAgenda = new EventEmitter<{ unidadeId: string; tipo: string }>();
+  /** Dispare o carregamento dos horários do dia escolhido. */
+  @Output() carregarHorarios = new EventEmitter<{ unidadeId: string; dia: string }>();
+  @Output() confirmar = new EventEmitter<{ tipo: string; unidadeId: string; modelo: string; dia: string; hora: string }>();
+  @Output() remarcar = new EventEmitter<string>();
+  @Output() cancelar = new EventEmitter<string>();
+  @Output() navegar = new EventEmitter<string>();
 
-  menuAberto = signal<string | null>(null);
-  sidebarAberta = signal<boolean>(false);
-  mensagemSucesso = signal<string | null>(null);
-
-  private readonly nomesMeses = [
-    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
-    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  @Input() tipos: TipoAtendimento[] = [
+    { chave: 'test-drive', rotulo: 'Test-drive' },
+    { chave: 'revisao', rotulo: 'Revisão' },
+    { chave: 'avaliacao', rotulo: 'Avaliação de usado' },
+    { chave: 'comercial', rotulo: 'Atendimento comercial' },
   ];
 
-  private dataAtualObj = new Date();
-  mesAtual = signal<number>(this.dataAtualObj.getMonth());
-  anoAtual = signal<number>(this.dataAtualObj.getFullYear());
+  @Input() unidades: Unidade[] = [
+    { id: 'morumbi', nome: 'Ford Morumbi', endereco: 'Av. Giovanni Gronchi, 5900', distanciaKm: 4.2, horariosLivres: 12 },
+    { id: 'interlagos', nome: 'Ford Interlagos', endereco: 'Av. Interlagos, 3000', distanciaKm: 9.7, horariosLivres: 5 },
+    { id: 'santo-amaro', nome: 'Ford Santo Amaro', endereco: 'Av. Santo Amaro, 1200', distanciaKm: 11.3, horariosLivres: 8 },
+  ];
 
-  diaSelecionado = signal<{ dia: number, mes: number, ano: number } | null>({
-    dia: this.dataAtualObj.getDate(),
-    mes: this.dataAtualObj.getMonth(),
-    ano: this.dataAtualObj.getFullYear()
-  });
+  @Input() modelo: ModeloDisponivel = { nome: 'Territory Titanium', nota: 94, disponivel: true };
 
-  // Campos do formulário de agendamento
-  tipoSelecionado = signal<string>('Test-Drive');
-  veiculoSelecionado = signal<string>('Ford Ranger');
-  concessionariaSelecionada = signal<string>(''); // <--- Campo da Concessionária integrado
-  horarioSelecionado = signal<string>('10:00');
+  @Input() periodo = 'setembro 2026';
 
-  // Inicializa carregando do localStorage ou usando os dados padrão
-  agendamentos = signal<Agendamento[]>(this.carregarAgendamentosIniciais());
+  @Input() dias: Dia[] = [
+    { iso: '2026-09-15', semana: 'seg', numero: '15', vagas: 6, status: 'livre' },
+    { iso: '2026-09-16', semana: 'ter', numero: '16', vagas: 4, status: 'livre' },
+    { iso: '2026-09-17', semana: 'qua', numero: '17', vagas: 9, status: 'livre' },
+    { iso: '2026-09-18', semana: 'qui', numero: '18', vagas: 0, status: 'lotado' },
+    { iso: '2026-09-19', semana: 'sex', numero: '19', vagas: 3, status: 'livre' },
+    { iso: '2026-09-20', semana: 'sáb', numero: '20', vagas: 7, status: 'livre' },
+    { iso: '2026-09-21', semana: 'dom', numero: '21', vagas: 0, status: 'fechado' },
+  ];
 
-  private carregarAgendamentosIniciais(): Agendamento[] {
-    const salvo = localStorage.getItem('meus_agendamentos_ford');
-    if (salvo) {
-      try {
-        return JSON.parse(salvo);
-      } catch (e) {
-        console.error('Erro ao ler agendamentos salvos', e);
-      }
-    }
-    // Dados padrão caso o armazenamento esteja vazio
-    return [
-      { id: 1, titulo: 'Test-Drive: Ford Ranger', dataHora: '15/10/2026 10:00', concessionaria: 'Ford CAOA Ceasa - São Paulo' },
-      { id: 2, titulo: 'Visita à Concessionária', dataHora: '18/10/2026 15:30', concessionaria: 'Ford Lusitânia - São Paulo' }
-    ];
+  @Input() horarios: Horario[] = [
+    { hora: '09:00', livre: false }, { hora: '09:30', livre: true },
+    { hora: '10:00', livre: false }, { hora: '10:30', livre: true },
+    { hora: '11:00', livre: true }, { hora: '14:00', livre: false },
+    { hora: '14:30', livre: true }, { hora: '16:00', livre: true },
+  ];
+
+  @Input() agendamentos: Agendamento[] = [
+    { id: 'a1', quando: 'qui · 25/09 · 15:00', titulo: 'Revisão de 20.000 km', unidade: 'Ford Interlagos', detalhe: 'Av. Interlagos, 3000', passado: false },
+    { id: 'a2', quando: 'sex · 29/08 · 11:00', titulo: 'Test-drive Bronco Sport', unidade: 'Ford Morumbi', detalhe: 'compareceu', passado: true },
+  ];
+
+  /** Requisitos exibidos antes da confirmação, por tipo de atendimento. */
+  @Input() requisitos: Record<string, string> = {
+    'test-drive': 'leve CNH válida e em dia',
+    revisao: 'leve o documento do veículo',
+    avaliacao: 'leve documento do veículo e CNH',
+    comercial: 'sem requisitos',
+  };
+
+  tipo = 'test-drive';
+  unidadeId = 'morumbi';
+  dia: string | null = '2026-09-16';
+  hora: string | null = '10:30';
+
+  get unidade(): Unidade | undefined {
+    return this.unidades.find((u) => u.id === this.unidadeId);
   }
 
-  private salvarNoStorage(lista: Agendamento[]): void {
-    localStorage.setItem('meus_agendamentos_ford', JSON.stringify(lista));
+  get diaEscolhido(): Dia | undefined {
+    return this.dias.find((d) => d.iso === this.dia);
   }
 
-  mesAnoFormatado = computed(() => {
-    return `${this.nomesMeses[this.mesAtual()]} ${this.anoAtual()}`;
-  });
-
-  podeVoltarMes = computed(() => {
-    const hoje = new Date();
-    if (this.anoAtual() > hoje.getFullYear()) return true;
-    if (this.anoAtual() === hoje.getFullYear() && this.mesAtual() > hoje.getMonth()) return true;
-    return false;
-  });
-
-  podeVoltarAno = computed(() => {
-    const hoje = new Date();
-    return this.anoAtual() > hoje.getFullYear();
-  });
-
-  diasDoMes = computed(() => {
-    const ano = this.anoAtual();
-    const mes = this.mesAtual();
-    const listaDias: DiaCalendario[] = [];
-
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-
-    const primeiroDia = new Date(ano, mes, 1);
-    const ultimoDia = new Date(ano, mes + 1, 0);
-
-    let diaSemanaInicio = primeiroDia.getDay() - 1;
-    if (diaSemanaInicio === -1) diaSemanaInicio = 6;
-
-    const ultimoDiaMesAnterior = new Date(ano, mes, 0).getDate();
-    for (let i = diaSemanaInicio - 1; i >= 0; i--) {
-      const d = ultimoDiaMesAnterior - i;
-      const mAnt = mes === 0 ? 11 : mes - 1;
-      const aAnt = mes === 0 ? ano - 1 : ano;
-      
-      const dataIterada = new Date(aAnt, mAnt, d);
-      dataIterada.setHours(0, 0, 0, 0);
-
-      listaDias.push({
-        dia: d,
-        mes: mAnt,
-        ano: aAnt,
-        atual: false,
-        passado: dataIterada < hoje,
-        selecionado: this.isSelecionado(d, mAnt, aAnt)
-      });
-    }
-
-    for (let i = 1; i <= ultimoDia.getDate(); i++) {
-      const dataIterada = new Date(ano, mes, i);
-      dataIterada.setHours(0, 0, 0, 0);
-
-      listaDias.push({
-        dia: i,
-        mes: mes,
-        ano: ano,
-        atual: true,
-        passado: dataIterada < hoje,
-        selecionado: this.isSelecionado(i, mes, ano)
-      });
-    }
-
-    const totalCelulas = listaDias.length <= 35 ? 35 : 42;
-    const diasRestantes = totalCelulas - listaDias.length;
-    for (let i = 1; i <= diasRestantes; i++) {
-      const mProx = mes === 11 ? 0 : mes + 1;
-      const aProx = mes === 11 ? ano + 1 : ano;
-      
-      const dataIterada = new Date(aProx, mProx, i);
-      dataIterada.setHours(0, 0, 0, 0);
-
-      listaDias.push({
-        dia: i,
-        mes: mProx,
-        ano: aProx,
-        atual: false,
-        passado: dataIterada < hoje,
-        selecionado: this.isSelecionado(i, mProx, aProx)
-      });
-    }
-
-    return listaDias;
-  });
-
-  isSelecionado(dia: number, mes: number, ano: number): boolean {
-    const sel = this.diaSelecionado();
-    return sel !== null && sel.dia === dia && sel.mes === mes && sel.ano === ano;
+  get tipoRotulo(): string {
+    return this.tipos.find((t) => t.chave === this.tipo)?.rotulo ?? '';
   }
 
-  selecionarDia(d: DiaCalendario): void {
-    if (d.passado) return;
-    
-    this.diaSelecionado.set({ dia: d.dia, mes: d.mes, ano: d.ano });
-    if (!d.atual) {
-      this.mesAtual.set(d.mes);
-      this.anoAtual.set(d.ano);
-    }
+  get completo(): boolean {
+    return !!(this.tipo && this.unidadeId && this.dia && this.hora);
   }
 
-  mudarMes(direcao: number): void {
-    if (direcao < 0 && !this.podeVoltarMes()) return;
-
-    let novoMes = this.mesAtual() + direcao;
-    let novoAno = this.anoAtual();
-
-    if (novoMes > 11) {
-      novoMes = 0;
-      novoAno++;
-    } else if (novoMes < 0) {
-      novoMes = 11;
-      novoAno--;
-    }
-
-    this.mesAtual.set(novoMes);
-    this.anoAtual.set(novoAno);
+  /** Só test-drive e avaliação dependem de um modelo específico. */
+  get exigeModelo(): boolean {
+    return this.tipo === 'test-drive' || this.tipo === 'avaliacao';
   }
 
-  mudarAno(direcao: number): void {
-    if (direcao < 0 && !this.podeVoltarAno()) return;
-    this.anoAtual.update(a => a + direcao);
+  escolherTipo(chave: string): void {
+    this.tipo = chave;
+    this.limparQuando();
+    this.carregarAgenda.emit({ unidadeId: this.unidadeId, tipo: chave });
   }
 
-  irParaMesAtual(): void {
-    const hoje = new Date();
-    this.mesAtual.set(hoje.getMonth());
-    this.anoAtual.set(hoje.getFullYear());
-    this.diaSelecionado.set({ dia: hoje.getDate(), mes: hoje.getMonth(), ano: hoje.getFullYear() });
+  escolherUnidade(id: string): void {
+    this.unidadeId = id;
+    this.limparQuando();
+    this.carregarAgenda.emit({ unidadeId: id, tipo: this.tipo });
   }
 
-  adicionarAgendamento(): void {
-    const sel = this.diaSelecionado();
-    if (!sel) return;
+  escolherDia(d: Dia): void {
+    if (d.status !== 'livre') return;
+    this.dia = d.iso;
+    this.hora = null;
+    this.carregarHorarios.emit({ unidadeId: this.unidadeId, dia: d.iso });
+  }
 
-    const concessionaria = this.concessionariaSelecionada();
-    if (!concessionaria) {
-      alert('Por favor, selecione uma concessionária / unidade de atendimento.');
-      return;
-    }
+  escolherHora(h: Horario): void {
+    if (!h.livre) return;
+    this.hora = h.hora;
+  }
 
-    const hora = this.horarioSelecionado() || '10:00';
-    
-    if (hora < '08:00' || hora > '20:00') {
-      alert('Por favor, escolha um horário entre 08:00 e 20:00 (horário de funcionamento).');
-      return;
-    }
+  private limparQuando(): void {
+    this.dia = null;
+    this.hora = null;
+  }
 
-    const dataBase = `${String(sel.dia).padStart(2, '0')}/${String(sel.mes + 1).padStart(2, '0')}/${sel.ano}`;
-    const tipo = this.tipoSelecionado();
-    
-    let tituloFinal = '';
-    if (tipo === 'Test-Drive' || tipo === 'Retirada de Veículo Novo') {
-      tituloFinal = `${tipo}: ${this.veiculoSelecionado()}`;
-    } else {
-      tituloFinal = `${tipo}`;
-    }
-
-    const novoItem: Agendamento = {
-      id: Date.now(),
-      titulo: tituloFinal,
-      dataHora: `${dataBase} ${hora}`,
-      concessionaria: concessionaria
-    };
-
-    this.agendamentos.update(lista => {
-      const novaLista = [novoItem, ...lista];
-      this.salvarNoStorage(novaLista);
-      return novaLista;
+  enviar(): void {
+    if (!this.completo) return;
+    this.confirmar.emit({
+      tipo: this.tipo,
+      unidadeId: this.unidadeId,
+      modelo: this.exigeModelo ? this.modelo.nome : '',
+      dia: this.dia!,
+      hora: this.hora!,
     });
-
-    this.mensagemSucesso.set('Agendamento realizado com sucesso!');
-    setTimeout(() => {
-      this.mensagemSucesso.set(null);
-    }, 4000);
-  }
-
-  excluirAgendamento(id: number): void {
-    this.agendamentos.update(lista => {
-      const novaLista = lista.filter(item => item.id !== id);
-      this.salvarNoStorage(novaLista);
-      return novaLista;
-    });
-  }
-
-  toggleMenu(nomeMenu: string): void {
-    if (this.menuAberto() === nomeMenu) {
-      this.menuAberto.set(null); 
-    } else {
-      this.menuAberto.set(nomeMenu); 
-    }
-  }
-
-  fecharMenus(): void {
-    this.menuAberto.set(null);
-  }
-
-  abrirSidebar(): void {
-    this.sidebarAberta.set(true);
-    this.fecharMenus();
-  }
-
-  fecharSidebar(): void {
-    this.sidebarAberta.set(false);
   }
 }

@@ -5,7 +5,7 @@ import { CadastroComponent } from './cadastro/cadastro.component';
 import { PortalComponent } from './portal/portal.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ModelosComponent } from './modelos/modelos.component';
-import { SobreIAComponent } from './sobre-ia/sobre-ia.component';
+import { SobreIaComponent } from './sobre-ia/sobre-ia.component';
 import { AgendamentosComponent } from './agendamentos/agendamentos.component';
 import { ConcessionariasComponent } from './concessionarias/concessionarias.component';
 import { PerfilComponent } from './perfil/perfil.component';
@@ -19,7 +19,7 @@ export const routes: Routes = [
     { path: 'portal', component: PortalComponent },
     { path: 'dashboard', component: DashboardComponent },
     { path: 'modelos', component: ModelosComponent },
-    { path: 'sobre-ia', component: SobreIAComponent },
+    { path: 'sobre-ia', component: SobreIaComponent },
     { path: 'agendamentos', component: AgendamentosComponent },
     { path: 'concessionarias', component: ConcessionariasComponent },
     { path: 'fale-conosco', component: FaleConoscoComponent },

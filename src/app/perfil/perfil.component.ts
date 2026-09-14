@@ -1,106 +1,132 @@
-import { Component, signal, inject, OnInit } from '@angular/core';
-import { RouterLink, Router } from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../auth.service';
+import { FormsModule } from '@angular/forms';
+import { PortalComponent } from '../portal/portal.component';
+
+export interface PerfilUso {
+  uso: string;
+  passageiros: string;
+  rodagem: string;
+  orcamento: string;
+  /** No máximo dois. Recebem peso dobrado no cálculo da nota. */
+  prioridades: string[];
+}
+
+export interface DadosConta {
+  nome: string;
+  telefone: string;
+  /** Identificador da conta — não editável por aqui. */
+  email: string;
+  criadaEm: string;
+}
+
+export interface Previa {
+  modelo: string;
+  nota: number;
+  outros: { modelo: string; nota: number }[];
+}
 
 @Component({
-  selector: 'app-perfil',
+  selector: 'seia-perfil',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [CommonModule, FormsModule, PortalComponent],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })
-export class PerfilComponent implements OnInit {
-  protected readonly title = signal('meu-projeto');
+export class PerfilComponent {
+  @Output() salvarPerfil = new EventEmitter<{ uso: PerfilUso; conta: DadosConta }>();
+  @Output() navegar = new EventEmitter<string>();
+  @Output() alternarConsentimento = new EventEmitter<boolean>();
 
-  // Injeção de dependências
-  private authService = inject(AuthService);
-  private router = inject(Router);
+  readonly opcoesUso = ['Cidade', 'Estrada', 'Off-road', 'Trabalho'];
+  readonly opcoesPassageiros = ['1 ou 2', '3 ou 4', '5 ou mais'];
+  readonly opcoesPrioridade = ['Consumo', 'Espaço', 'Conforto', 'Potência'];
+  readonly maxPrioridades = 2;
 
-  // Signals do Formulário de Perfil
-  nomeCompleto = signal<string>('');
-  email = signal<string>('');
-  telefone = signal<string>('');
-  preferencias = signal<string>('Preferências e motor');
+  @Input() uso: PerfilUso = {
+    uso: 'Cidade',
+    passageiros: '3 ou 4',
+    rodagem: '1.200 km',
+    orcamento: 'R$ 250.000',
+    prioridades: ['Consumo', 'Espaço'],
+  };
 
-  // Variáveis para guardar o estado inicial e comparar se mudou algo
-  private valorInicialNome = '';
-  private valorInicialTelefone = '';
-  private valorInicialPreferencias = '';
+  @Input() conta: DadosConta = {
+    nome: 'Anthonio Silva',
+    telefone: '(11) 98765-4321',
+    email: 'anthonio@gmail.com',
+    criadaEm: '02/04/2026',
+  };
 
-  // Declaração dos Signals da Interface
-  menuAberto = signal<string | null>(null);
-  sidebarAberta = signal<boolean>(false);
+  /** Ranking calculado com o perfil já salvo. */
+  @Input() previa: Previa = {
+    modelo: 'Territory Titanium',
+    nota: 94,
+    outros: [
+      { modelo: 'Bronco Sport', nota: 81 },
+      { modelo: 'Ranger XLS', nota: 63 },
+    ],
+  };
 
-  ngOnInit(): void {
-    this.authService.getCurrentUserEmail().subscribe(emailSalvo => {
-      if (emailSalvo) {
-        this.email.set(emailSalvo);
-      }
-    });
+  @Input() atalhos = [
+    { chave: 'favoritos', rotulo: 'Meus favoritos', contagem: 3 },
+    { chave: 'comparacoes', rotulo: 'Minhas comparações', contagem: 7 },
+  ];
 
-    this.valorInicialNome = this.nomeCompleto();
-    this.valorInicialTelefone = this.telefone();
-    this.valorInicialPreferencias = this.preferencias();
+  @Input() compartilhaComConcessionaria = false;
+
+  private usoOriginal: PerfilUso = structuredClone(this.uso);
+  private contaOriginal: DadosConta = structuredClone(this.conta);
+
+  get iniciais(): string {
+    return this.conta.nome
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((p) => p[0]?.toUpperCase() ?? '')
+      .join('');
   }
 
-  // Ações do Formulário do Perfil
-  salvarAlteracoes(): void {
-    const nomeAtual = this.nomeCompleto();
-    const telefoneAtual = this.telefone();
-    const preferenciasAtual = this.preferencias();
-
-    // Verifica se nada foi alterado em comparação ao estado inicial
-    const houveMudanca = 
-      nomeAtual !== this.valorInicialNome ||
-      telefoneAtual !== this.valorInicialTelefone ||
-      preferenciasAtual !== this.valorInicialPreferencias;
-
-    if (!houveMudanca) {
-      alert('Nenhuma alteração foi realizada.');
-      return;
-    }
-
-    // Se houve mudança, exibe o sucesso e redireciona direto para a home
-    console.log('Salvando dados para:', {
-      nome: nomeAtual,
-      email: this.email(),
-      telefone: telefoneAtual,
-      preferencias: preferenciasAtual
-    });
-
-    alert('Alterações salvas com sucesso!');
-    this.router.navigate(['/home']);
+  /** Quantos campos divergem do que está salvo. Alimenta a barra de ação. */
+  get alteracoes(): number {
+    let n = 0;
+    if (this.uso.uso !== this.usoOriginal.uso) n++;
+    if (this.uso.passageiros !== this.usoOriginal.passageiros) n++;
+    if (this.uso.rodagem !== this.usoOriginal.rodagem) n++;
+    if (this.uso.orcamento !== this.usoOriginal.orcamento) n++;
+    if (!this.mesmoConjunto(this.uso.prioridades, this.usoOriginal.prioridades)) n++;
+    if (this.conta.nome !== this.contaOriginal.nome) n++;
+    if (this.conta.telefone !== this.contaOriginal.telefone) n++;
+    return n;
   }
 
-  abrirFavoritos(): void {
-    alert('Redirecionando para Meus Favoritos...');
+  private mesmoConjunto(a: string[], b: string[]): boolean {
+    return a.length === b.length && [...a].sort().join('|') === [...b].sort().join('|');
   }
 
-  abrirDashboardDetalhado(): void {
-    this.router.navigate(['/dashboard']);
+  escolherUso(v: string): void { this.uso.uso = v; }
+  escolherPassageiros(v: string): void { this.uso.passageiros = v; }
+
+  alternarPrioridade(v: string): void {
+    const i = this.uso.prioridades.indexOf(v);
+    if (i >= 0) { this.uso.prioridades.splice(i, 1); return; }
+    if (this.uso.prioridades.length >= this.maxPrioridades) this.uso.prioridades.shift();
+    this.uso.prioridades.push(v);
   }
 
-  // Métodos do Menu Dropdown
-  toggleMenu(nomeMenu: string): void {
-    if (this.menuAberto() === nomeMenu) {
-      this.menuAberto.set(null);
-    } else {
-      this.menuAberto.set(nomeMenu);
-    }
+  prioritario(v: string): boolean {
+    return this.uso.prioridades.includes(v);
   }
 
-  fecharMenus(): void {
-    this.menuAberto.set(null);
+  descartar(): void {
+    this.uso = structuredClone(this.usoOriginal);
+    this.conta = structuredClone(this.contaOriginal);
   }
 
-  // Métodos da Barra Lateral (Sidebar)
-  abrirSidebar(): void {
-    this.sidebarAberta.set(true);
-    this.fecharMenus();
-  }
-
-  fecharSidebar(): void {
-    this.sidebarAberta.set(false);
+  salvar(): void {
+    if (!this.alteracoes) return;
+    this.usoOriginal = structuredClone(this.uso);
+    this.contaOriginal = structuredClone(this.conta);
+    this.salvarPerfil.emit({ uso: this.uso, conta: this.conta });
   }
 }

@@ -1,323 +1,160 @@
-<div class="fundo-home">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-  
-  <div class="cabecalho-page">
-    <!-- Grupo da Esquerda -->
-    <div class="icones-esquerda">
+<seia-topbar [ativo]="'agendamentos'" (navegar)="navegar.emit($event)" (sair)="navegar.emit('sair')" />
 
-      <!-- Item: Menu Lateral -->
-      <div class="menu-item">
-        <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
-        
-        <!-- Caixa do Menu Lateral -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
-          <div class="menu-header">
-            <strong>Menu Lateral</strong>
-          </div>
-          <hr class="divisor">
-          
-          <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
+<header class="l-ag-hero">
+  <h1 class="l-ag-title">Agendar visita</h1>
+  <p class="l-ag-subtitle">Test-drive, revisão ou avaliação de usado nas unidades Ford.</p>
+</header>
+
+<div class="l-ag-body">
+
+  <main class="l-ag-main">
+
+    <section class="l-ag-step">
+      <div class="l-ag-step-head">
+        <span class="l-ag-step-n">01</span>
+        <h2 class="l-ag-step-title">O que você quer fazer</h2>
+      </div>
+      <div class="l-ag-chips" role="group" aria-label="Tipo de atendimento">
+        @for (t of tipos; track t.chave) {
+          <button
+            class="l-ag-chip"
+            type="button"
+            [class.is-on]="tipo === t.chave"
+            [attr.aria-pressed]="tipo === t.chave"
+            (click)="escolherTipo(t.chave)">{{ t.rotulo }}</button>
+        }
+      </div>
+    </section>
+
+    <section class="l-ag-step">
+      <div class="l-ag-step-head">
+        <span class="l-ag-step-n">02</span>
+        <h2 class="l-ag-step-title">Em qual unidade</h2>
+        <span class="l-ag-step-aside">{{ unidades.length }} perto de você</span>
+      </div>
+      <div class="l-ag-units" role="group" aria-label="Unidade">
+        @for (u of unidades; track u.id) {
+          <button
+            class="l-ag-unit"
+            type="button"
+            [class.is-on]="unidadeId === u.id"
+            [attr.aria-pressed]="unidadeId === u.id"
+            (click)="escolherUnidade(u.id)">
+            <span>
+              <span class="l-ag-unit-name">{{ u.nome }}</span>
+              <span class="l-ag-unit-address">{{ u.endereco }} · {{ u.distanciaKm }} km</span>
+            </span>
+            <span class="l-ag-unit-slots">{{ u.horariosLivres }} horários</span>
+          </button>
+        }
+      </div>
+    </section>
+
+    @if (exigeModelo) {
+      <section class="l-ag-step">
+        <div class="l-ag-step-head">
+          <span class="l-ag-step-n">03</span>
+          <h2 class="l-ag-step-title">Qual modelo</h2>
+          @if (modelo.nota !== null) {
+            <span class="l-ag-step-aside">vindo da sua recomendação</span>
+          }
         </div>
+        <div class="l-ag-model">
+          <span>
+            <span class="l-ag-model-name">{{ modelo.nome }}</span>
+            <span class="l-ag-model-note">
+              {{ modelo.disponivel ? 'disponível para test-drive nesta unidade' : 'sem unidade de demonstração aqui' }}
+            </span>
+          </span>
+          @if (modelo.nota !== null) {
+            <span class="l-ag-model-score">
+              <strong>{{ modelo.nota }}</strong><span>% compatível</span>
+            </span>
+          }
+        </div>
+      </section>
+    }
+
+    <section class="l-ag-step">
+      <div class="l-ag-step-head">
+        <span class="l-ag-step-n">{{ exigeModelo ? '04' : '03' }}</span>
+        <h2 class="l-ag-step-title">Quando</h2>
+        <span class="l-ag-step-aside">{{ periodo }}</span>
       </div>
 
-      <!-- Item: Perfil -->
-      <div class="menu-item">
-        <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
-        
-        <!-- Caixa do Perfil -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
-          <div class="menu-header">
-            <strong>Perfil do Usuário</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Visualizar Perfil</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Editar Dados</span>
-        </div>
+      <div class="l-ag-days" role="group" aria-label="Dia">
+        @for (d of dias; track d.iso) {
+          <button
+            class="l-ag-day"
+            type="button"
+            [class.is-on]="dia === d.iso"
+            [class.is-off]="d.status !== 'livre'"
+            [disabled]="d.status !== 'livre'"
+            [attr.aria-pressed]="dia === d.iso"
+            (click)="escolherDia(d)">
+            <span class="l-ag-day-week">{{ d.semana }}</span>
+            <span class="l-ag-day-number">{{ d.numero }}</span>
+            <span class="l-ag-day-slots">
+              @switch (d.status) {
+                @case ('lotado') { lotado }
+                @case ('fechado') { fechado }
+                @default { {{ d.vagas }} vagas }
+              }
+            </span>
+          </button>
+        }
       </div>
 
-      <!-- Item: Configurações -->
-      <div class="menu-item">
-        <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
-        
-        <!-- Caixa de Configurações -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
-          <div class="menu-header">
-            <strong>Configurações</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Aparência / Tema</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Idioma</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Notificações</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Segurança e Privacidade</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Preferências do Sistema</span>
+      @if (dia) {
+        <div class="l-ag-slots" role="group" aria-label="Horário">
+          @for (h of horarios; track h.hora) {
+            <button
+              class="l-ag-slot"
+              type="button"
+              [class.is-on]="hora === h.hora"
+              [class.is-taken]="!h.livre"
+              [disabled]="!h.livre"
+              [attr.aria-pressed]="hora === h.hora"
+              (click)="escolherHora(h)">{{ h.hora }}</button>
+          }
         </div>
-      </div>
-
-    </div>
-
-    <!-- Grupo da Direita -->
-    <div class="elementos-direita">
-      <p class="parceria">Seia + Ford</p>
-      
-      <!-- Item: Logout -->
-      <div class="menu-item">
-        <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
-        
-        <!-- Caixa de Logout -->
-        <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
-          <div class="menu-header">
-            <strong>Sair do Sistema</strong>
-          </div>
-          <hr class="divisor">
-          <a routerLink="/" class="menu-item-link" (click)="fecharMenus()">Confirmar Saída</a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <main class="container-home">
-    <div class="agendamentos-container">
-      <!-- Cabeçalho -->
-      <header class="agendamentos-header">
-        <i class="fa-regular fa-calendar-days header-icon"></i>
-        <h2>Meus Agendamentos</h2>
-      </header>
-
-      <!-- Mensagem de Sucesso (Feedback) -->
-      @if (mensagemSucesso()) {
-        <div class="alert-sucesso">
-          <i class="fa-solid fa-circle-check"></i>
-          <span>{{ mensagemSucesso() }}</span>
-        </div>
+      } @else {
+        <p class="l-ag-empty">Escolha um dia para ver os horários livres.</p>
       }
+    </section>
 
-      <!-- Calendário Dinâmico (Sem opções de voltar no tempo) -->
-      <div class="calendar-card">
-        <div class="calendar-nav">
-          <!-- Controles de Mês (Apenas Avanço se for o mês atual) -->
-          <div style="display: flex; align-items: center; gap: 4px;">
-            <button class="btn-arrow" [class.disabled-btn]="podeVoltarMes() === false" title="Mês Anterior" (click)="mudarMes(-1)">&lt;</button>
-            <span class="mes-ano">{{ mesAnoFormatado() }}</span>
-            <button class="btn-arrow" title="Próximo Mês" (click)="mudarMes(1)">&gt;</button>
-          </div>
-
-          <!-- Controles de Ano -->
-          <div style="display: flex; align-items: center; gap: 6px;">
-            <button class="btn-arrow" [class.disabled-btn]="podeVoltarAno() === false" title="Ano Anterior" (click)="mudarAno(-1)">«</button>
-            <button class="btn-calendario" (click)="irParaMesAtual()">Hoje</button>
-            <button class="btn-arrow" title="Próximo Ano" (click)="mudarAno(1)">»</button>
-          </div>
-        </div>
-
-        <div class="calendar-grid">
-          <div class="day-name">Seg</div>
-          <div class="day-name">Ter</div>
-          <div class="day-name">Qua</div>
-          <div class="day-name">Qui</div>
-          <div class="day-name">Sex</div>
-          <div class="day-name">Sáb</div>
-          <div class="day-name">Dom</div>
-
-          <!-- Dias gerados dinamicamente com restrição de datas passadas -->
-          @for (d of diasDoMes(); track $index) {
-            <div 
-              class="day" 
-              [class.opacity-50]="!d.atual || d.passado" 
-              [class.disabled-day]="d.passado"
-              [class.active]="d.selecionado"
-              (click)="selecionarDia(d)">
-              {{ d.dia }}
-            </div>
-          }
-        </div>
-      </div>
-
-      <!-- Seção de Agendamentos -->
-      <div class="agendamentos-secao">
-        <div class="agendamentos-topo">
-          <h3>Novo Agendamento</h3>
-        </div>
-
-        <!-- Formulário de Agendamento Completo -->
-        <div class="form-agendamento">
-          <div class="form-grupo">
-            <label>Tipo de Agendamento:</label>
-            <select [value]="tipoSelecionado()" (change)="tipoSelecionado.set($any($event.target).value)">
-              <option value="Test-Drive">Test-Drive</option>
-              <option value="Visita à Concessionária">Visita à Concessionária</option>
-              <option value="Revisão Periódica">Revisão Periódica</option>
-              <option value="Manutenção e Reparos">Manutenção e Reparos</option>
-              <option value="Instalação de Acessórios">Instalação de Acessórios</option>
-              <option value="Avaliação de Veículo Usado">Avaliação de Veículo Usado</option>
-              <option value="Retirada de Veículo Novo">Retirada de Veículo Novo</option>
-            </select>
-          </div>
-
-          <!-- Seleção de Concessionária / Local de Atendimento Atualizada -->
-          <div class="form-grupo">
-            <label>Concessionária / Unidade de Atendimento:</label>
-            <select [value]="concessionariaSelecionada()" (change)="concessionariaSelecionada.set($any($event.target).value)">
-              <option value="" disabled selected>Selecione uma unidade próxima</option>
-              <option value="Ford CAOA Ceasa - São Paulo">Ford CAOA Ceasa - São Paulo</option>
-              <option value="Ford CAOA Ibirapuera - São Paulo">Ford CAOA Ibirapuera - São Paulo</option>
-              <option value="Ford CAOA Jabaquara - São Paulo">Ford CAOA Jabaquara - São Paulo</option>
-              <option value="Ford Sonnervig Vila Guilherme - São Paulo">Ford Sonnervig Vila Guilherme - São Paulo</option>
-              <option value="Ford Sonnervig Ricardo Jafet - São Paulo">Ford Sonnervig Ricardo Jafet - São Paulo</option>
-              <option value="Ford For São Paulo - Santo Amaro">Ford For São Paulo - Santo Amaro</option>
-            </select>
-          </div>
-
-          @if (tipoSelecionado() === 'Test-Drive' || tipoSelecionado() === 'Retirada de Veículo Novo') {
-            <div class="form-grupo">
-              <label>Escolha o Veículo (14 Modelos Oficiais):</label>
-              <select [value]="veiculoSelecionado()" (change)="veiculoSelecionado.set($any($event.target).value)">
-                
-                <optgroup label="SUVs">
-                  <option value="Ford Bronco Sport">Ford Bronco Sport</option>
-                  <option value="Ford Territory">Ford Territory</option>
-                  <option value="Ford Explorer">Ford Explorer</option>
-                </optgroup>
-
-                <optgroup label="Picapes">
-                  <option value="Ford Ranger">Ford Ranger</option>
-                  <option value="Ford Ranger Raptor">Ford Ranger Raptor</option>
-                  <option value="Ford Maverick Tremor">Ford Maverick Tremor</option>
-                  <option value="Ford F-150">Ford F-150</option>
-                </optgroup>
-
-                <optgroup label="Esportivos">
-                  <option value="Ford Mustang GT">Ford Mustang GT</option>
-                </optgroup>
-
-                <optgroup label="Elétricos">
-                  <option value="Ford Mustang Mach-E">Ford Mustang Mach-E</option>
-                  <option value="Ford F-150 Lightning">Ford F-150 Lightning</option>
-                  <option value="Ford E-Transit Van">Ford E-Transit Van</option>
-                </optgroup>
-
-                <optgroup label="Comerciais">
-                  <option value="Ford Transit Furgão">Ford Transit Furgão</option>
-                  <option value="Ford Transit Minibús">Ford Transit Minibús</option>
-                </optgroup>
-
-              </select>
-            </div>
-          }
-
-          <div class="form-grupo">
-            <label>Horário (Funcionamento das 08:00 às 20:00):</label>
-            <input 
-              type="time" 
-              min="08:00" 
-              max="20:00" 
-              [value]="horarioSelecionado()" 
-              (input)="horarioSelecionado.set($any($event.target).value)">
-          </div>
-
-          <button class="btn-novo" (click)="adicionarAgendamento()">Confirmar Agendamento</button>
-        </div>
-
-        <div class="agendamentos-topo" style="margin-top: 20px;">
-          <h3>Meus Agendamentos Marcados</h3>
-        </div>
-
-        <div class="agendamentos-lista">
-          @if (agendamentos().length === 0) {
-            <p style="font-size: 12px; color: #64748b; text-align: center; padding: 10px 0;">Nenhum agendamento para este período.</p>
-          }
-          @for (item of agendamentos(); track item.id) {
-            <div class="agendamento-card">
-              <div class="agendamento-info">
-                <strong>{{ item.titulo }}</strong>
-                
-                <!-- Exibe a concessionária escolhida no card -->
-                @if (item.concessionaria) {
-                  <span style="font-size: 11px; color: #0369a1; font-weight: 600;">
-                    <i class="fa-solid fa-location-dot"></i> {{ item.concessionaria }}
-                  </span>
-                }
-                
-                <span>{{ item.dataHora }}</span>
-              </div>
-              <i class="fa-solid fa-trash-can btn-excluir" title="Excluir agendamento" (click)="excluirAgendamento(item.id)"></i>
-            </div>
-          }
-        </div>
-      </div>
-
+    <div class="l-ag-summary">
+      <p class="l-ag-summary-text">
+        @if (completo) {
+          <strong>{{ tipoRotulo }}@if (exigeModelo) { do {{ modelo.nome }} }</strong><br />
+          {{ unidade?.nome }} · {{ diaEscolhido?.semana }}, {{ diaEscolhido?.numero }} · às {{ hora }} · {{ requisitos[tipo] }}
+        } @else {
+          Escolha dia e horário para confirmar.
+        }
+      </p>
+      <button class="l-ag-confirm" type="button" [disabled]="!completo" (click)="enviar()">Confirmar</button>
     </div>
   </main>
 
-  <!-- Rodapé Institucional -->
-  <footer class="rodape-page">
-    <div class="rodape-links">
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Fale conosco</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
-    </div>
-    <div class="rodape-copy">
-      Copyright (c) 2026 Ford. Todos os direitos reservados.
-    </div>
-  </footer>
+  <aside class="l-ag-rail">
+    <div class="l-ag-rail-label">Seus agendamentos</div>
 
-  <!-- Painel Lateral -->
-  <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
-    <div class="sidebar-conteudo">
-      <a routerLink="/home" (click)="fecharSidebar()">
-        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-      </a>
-      
-      <!-- Bloco 1: Gestão -->
-      <h4>Gestão e Conta</h4>
-      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-        <i class="fa-regular fa-user"></i>
-        <span>Meu Perfil</span>
-      </a>
-      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-        <i class="fa-regular fa-file-lines"></i>
-        <span>Termos / Contratos</span>
-      </a>
-
-      <!-- Veículos e Tecnologias -->
-      <h4>Veículos e Tecnologias</h4>
-      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-        <i class="fa-solid fa-car"></i>
-        <span>Modelos Ford</span>
-      </a>
-      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-        <i class="fa-solid fa-brain"></i>
-        <span>Sobre a IA</span>
-      </a>
-      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-        <i class="fa-solid fa-chart-line"></i>
-        <span>Dashboard Detalhado</span>
-      </a>
-
-      <!-- Bloco 4: Atendimento -->
-      <h4>Atendimento</h4>
-      <a class="sidebar-item">
-        <i class="fa-regular fa-calendar"></i>
-        <span>Meus Agendamentos</span>
-      </a>
-      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-        <i class="fa-solid fa-location-dot"></i>
-        <span>Concessionárias</span>
-      </a>
-      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-        <i class="fa-solid fa-phone"></i>
-        <span>Fale Conosco</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Fundo escuro -->
-  @if (sidebarAberta()) {
-    <div class="overlay" (click)="fecharSidebar()"></div>
-  }
+    @for (a of agendamentos; track a.id) {
+      <article class="l-ag-card" [class.is-past]="a.passado">
+        <div class="l-ag-card-when">{{ a.quando }}</div>
+        <h3 class="l-ag-card-title">{{ a.titulo }}</h3>
+        <p class="l-ag-card-unit">{{ a.unidade }}<br />{{ a.detalhe }}</p>
+        <div class="l-ag-card-actions">
+          @if (!a.passado) {
+            <button type="button" class="l-ag-action" (click)="remarcar.emit(a.id)">Remarcar</button>
+            <button type="button" class="l-ag-action is-muted" (click)="cancelar.emit(a.id)">Cancelar</button>
+          } @else {
+            <button type="button" class="l-ag-action" (click)="navegar.emit('comparacoes')">Ver comparação</button>
+          }
+        </div>
+      </article>
+    } @empty {
+      <p class="l-ag-empty">Você ainda não tem visitas marcadas.</p>
+    }
+  </aside>
 </div>

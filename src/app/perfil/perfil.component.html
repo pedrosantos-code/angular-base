@@ -1,240 +1,152 @@
-<div class="fundo-home">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-  
-  <div class="cabecalho-page">
-    <!-- Grupo da Esquerda -->
-    <div class="icones-esquerda">
+<seia-topbar [ativo]="'perfil'" (navegar)="navegar.emit($event)" (sair)="navegar.emit('sair')" />
 
-      <!-- Item: Menu Lateral -->
-      <div class="menu-item">
-        <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
-        
-        <!-- Caixa do Menu Lateral -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
-          <div class="menu-header">
-            <strong>Menu Lateral</strong>
-          </div>
-          <hr class="divisor">
-          
-          <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
-        </div>
-      </div>
-
-      <!-- Item: Perfil -->
-      <div class="menu-item">
-        <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
-        
-        <!-- Caixa do Perfil -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
-          <div class="menu-header">
-            <strong>Perfil do Usuário</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Visualizar Perfil</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Editar Dados</span>
-        </div>
-      </div>
-
-      <!-- Item: Configurações -->
-      <div class="menu-item">
-        <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
-        
-        <!-- Caixa de Configurações -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
-          <div class="menu-header">
-            <strong>Configurações</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Aparência / Tema</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Idioma</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Notificações</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Segurança e Privacidade</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Preferências do Sistema</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Grupo da Direita -->
-    <div class="elementos-direita">
-      <p class="parceria">Seia + Ford</p>
-      
-      <!-- Item: Logout -->
-      <div class="menu-item">
-        <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
-        
-        <!-- Caixa de Logout -->
-        <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
-          <div class="menu-header">
-            <strong>Sair do Sistema</strong>
-          </div>
-          <hr class="divisor">
-          <a routerLink="/" class="menu-item-link" (click)="fecharMenus()">Confirmar Saída</a>
-        </div>
-      </div>
-
-    </div>
+<header class="l-pf-hero">
+  <div class="l-pf-avatar" aria-hidden="true">{{ iniciais }}</div>
+  <div>
+    <h1 class="l-pf-name">{{ conta.nome }}</h1>
+    <p class="l-pf-meta">{{ conta.email }} · conta criada em {{ conta.criadaEm }}</p>
   </div>
+</header>
 
-  <main class="container-home">
-    <div class="perfil-container">
-      <!-- Header da Tela -->
-      <header class="perfil-header">
-        <i class="fa-solid fa-circle-user header-icon"></i>
-        <h2>Meu Perfil</h2>
-      </header>
+<div class="l-pf-body">
 
-      <!-- Avatar / Foto de Perfil -->
-      <div class="avatar-container">
-        <div class="avatar-circle">
-          <i class="fa-solid fa-user"></i>
+  <main class="l-pf-main">
+
+    <p class="l-pf-kicker">Alimenta a recomendação</p>
+    <h2 class="l-pf-heading">Perfil de uso</h2>
+    <p class="l-pf-lead">Tudo nesta seção entra no cálculo da nota de compatibilidade.</p>
+
+    <div class="l-pf-group">
+      <div class="l-pf-field">
+        <span class="l-pf-label" id="lb-uso">Uso principal</span>
+        <div class="l-pf-chips" role="group" aria-labelledby="lb-uso">
+          @for (o of opcoesUso; track o) {
+            <button
+              class="l-pf-chip"
+              type="button"
+              [class.is-on]="uso.uso === o"
+              [attr.aria-pressed]="uso.uso === o"
+              (click)="escolherUso(o)">{{ o }}</button>
+          }
         </div>
       </div>
 
-      <!-- Formulário de Dados -->
-      <form class="perfil-form">
-        <div class="form-group">
-          <label for="nome">Nome Completo</label>
-          <input 
-            type="text" 
-            id="nome" 
-            placeholder="Digite seu nome completo" 
-            [value]="nomeCompleto()"
-            (input)="nomeCompleto.set($any($event.target).value)" 
-          />
+      <div class="l-pf-field">
+        <span class="l-pf-label" id="lb-pax">Pessoas a bordo no dia a dia</span>
+        <div class="l-pf-chips" role="group" aria-labelledby="lb-pax">
+          @for (o of opcoesPassageiros; track o) {
+            <button
+              class="l-pf-chip"
+              type="button"
+              [class.is-on]="uso.passageiros === o"
+              [attr.aria-pressed]="uso.passageiros === o"
+              (click)="escolherPassageiros(o)">{{ o }}</button>
+          }
         </div>
+      </div>
 
-        <!-- CAMPO DE E-MAIL TRAVADO / SOMENTE LEITURA -->
-        <div class="form-group">
-          <label for="email">E-mail (Único / Conta)</label>
-          <input 
-            type="email" 
-            id="email" 
-            [value]="email()" 
-            readonly 
-            class="campo-bloqueado"
-          />
+      <div class="l-pf-two">
+        <div class="l-pf-field">
+          <label class="l-pf-label" for="rodagem">Rodagem mensal</label>
+          <input class="l-pf-input" id="rodagem" name="rodagem" [(ngModel)]="uso.rodagem" />
         </div>
-
-        <div class="form-group">
-          <label for="telefone">Telefone</label>
-          <input 
-            type="tel" 
-            id="telefone" 
-            placeholder="(00) 00000-0000" 
-            [value]="telefone()"
-            (input)="telefone.set($any($event.target).value)" 
-          />
+        <div class="l-pf-field">
+          <label class="l-pf-label" for="orcamento">Teto de orçamento</label>
+          <input class="l-pf-input" id="orcamento" name="orcamento" [(ngModel)]="uso.orcamento" />
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="preferencias">Preferências</label>
-          <div class="select-wrapper">
-            <select 
-              id="preferencias" 
-              [value]="preferencias()"
-              (change)="preferencias.set($any($event.target).value)"
-            >
-              <option value="Preferências e motor">Preferências e motor</option>
-              <option value="SUVs e Pickups">SUVs e Picapes</option>
-              <option value="Modelos Elétricos/Híbridos">Modelos Elétricos/Híbridos</option>
-              <option value="Performance e Esportivos">Performance e Esportivos</option>
-            </select>
-            <i class="fa-solid fa-chevron-down select-icon"></i>
+      <div class="l-pf-field">
+        <span class="l-pf-label" id="lb-prio">O que mais pesa pra você</span>
+        <div class="l-pf-chips" role="group" aria-labelledby="lb-prio">
+          @for (o of opcoesPrioridade; track o) {
+            <button
+              class="l-pf-chip"
+              type="button"
+              [class.is-on]="prioritario(o)"
+              [attr.aria-pressed]="prioritario(o)"
+              (click)="alternarPrioridade(o)">{{ o }}</button>
+          }
+        </div>
+        <p class="l-pf-hint">Escolha até {{ maxPrioridades }}. Eles recebem peso dobrado na nota.</p>
+      </div>
+    </div>
+
+    <div class="l-pf-section">
+      <p class="l-pf-kicker">Não afeta a nota</p>
+      <h2 class="l-pf-heading">Dados da conta</h2>
+      <p class="l-pf-lead">Usados para contato e para o agendamento em concessionária.</p>
+
+      <div class="l-pf-group">
+        <div class="l-pf-two">
+          <div class="l-pf-field">
+            <label class="l-pf-label" for="nome">Nome completo</label>
+            <input class="l-pf-input" id="nome" name="nome" autocomplete="name" [(ngModel)]="conta.nome" />
+          </div>
+          <div class="l-pf-field">
+            <label class="l-pf-label" for="telefone">Telefone</label>
+            <input class="l-pf-input" id="telefone" name="telefone" autocomplete="tel" [(ngModel)]="conta.telefone" />
           </div>
         </div>
 
-        <!-- Links de Acesso Rápido -->
-        <div class="links-secao">
-          <button type="button" class="btn-link-item" (click)="abrirFavoritos()">
-            <span>Meus Favoritos</span>
-            <i class="fa-solid fa-chevron-right"></i>
-          </button>
-
-          <!-- Linha ajustada com espaçamento correto -->
-          <div class="link-item-row">
-            <span class="rotulo-historico">Histórico de Pesquisas</span>
-            <button type="button" class="btn-sublink" (click)="abrirDashboardDetalhado()">
-              Dashboard Detalhado <i class="fa-solid fa-chevron-right"></i>
-            </button>
+        <div class="l-pf-field">
+          <span class="l-pf-label">E-mail da conta</span>
+          <div class="l-pf-locked">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 1 1 8 0v4" /></svg>
+            {{ conta.email }}
           </div>
+          <p class="l-pf-hint">É o identificador da sua conta. Para trocar, fale com o suporte.</p>
         </div>
-
-        <!-- Botão de Ação -->
-        <button type="button" class="btn-salvar" (click)="salvarAlteracoes()">
-          Salvar Alterações
-        </button>
-      </form>
+      </div>
     </div>
   </main>
 
-  <!-- Rodapé Institucional -->
-  <footer class="rodape-page">
- <div class="rodape-links">
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Fale conosco</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
+  <aside class="l-pf-rail">
+    <div class="l-pf-preview">
+      <div class="l-pf-preview-title">Com este perfil</div>
+      <div class="l-pf-preview-model">{{ previa.modelo }}</div>
+      <div class="l-pf-preview-score">
+        <strong>{{ previa.nota }}</strong><span>% compatível</span>
+      </div>
+      <div class="l-pf-preview-track">
+        <div class="l-pf-preview-fill" [style.width.%]="previa.nota"></div>
+      </div>
+      @for (o of previa.outros; track o.modelo) {
+        <div class="l-pf-preview-other"><span>{{ o.modelo }}</span><span>{{ o.nota }}%</span></div>
+      }
+      <p class="l-pf-preview-note">A ordem muda quando você salva alterações no perfil de uso.</p>
     </div>
-    <div class="rodape-copy">Copyright (c) 2026 Ford. Todos os direitos reservados.</div>
-  </footer>
 
-  <!-- Painel Lateral -->
-  <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
-    <div class="sidebar-conteudo">
-      <a routerLink="/home" (click)="fecharSidebar()">
-        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-      </a>
-      
-      <!-- Bloco 1: Gestão -->
-      <h4>Gestão e Conta</h4>
-      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-        <i class="fa-regular fa-user"></i>
-        <span>Meu Perfil</span>
-      </a>
-      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-        <i class="fa-regular fa-file-lines"></i>
-        <span>Termos / Contratos</span>
-      </a>
+    <div class="l-pf-rail-label">Atalhos</div>
+    @for (a of atalhos; track a.chave) {
+      <button class="l-pf-link" type="button" (click)="navegar.emit(a.chave)">
+        <span>{{ a.rotulo }}</span>
+        <span class="l-pf-count">{{ a.contagem }}</span>
+      </button>
+    }
 
-      <!-- Veículos e Tecnologias -->
-      <h4>Veículos e Tecnologias</h4>
-      <a class="sidebar-item" routerLink="/modelos" routerLinkActive="ativo">
-        <i class="fa-solid fa-car"></i>
-        <span>Modelos Ford</span>
-      </a>
-      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-        <i class="fa-solid fa-brain"></i>
-        <span>Sobre a IA</span>
-      </a>
-      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-        <i class="fa-solid fa-chart-line"></i>
-        <span>Dashboard Detalhado</span>
-      </a>
+    <div class="l-pf-rail-label">Consentimento</div>
+    <label class="l-pf-consent">
+      <input
+        type="checkbox"
+        class="l-pf-switch"
+        [(ngModel)]="compartilhaComConcessionaria"
+        (ngModelChange)="alternarConsentimento.emit($event)" />
+      <span>Compartilhar preferências com concessionárias</span>
+    </label>
+  </aside>
+</div>
 
-      <!-- Bloco 4: Atendimento -->
-      <h4>Atendimento</h4>
-      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-        <i class="fa-regular fa-calendar"></i>
-        <span>Meus Agendamentos</span>
-      </a>
-      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-        <i class="fa-solid fa-location-dot"></i>
-        <span>Concessionárias</span>
-      </a>
-      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-        <i class="fa-solid fa-phone"></i>
-        <span>Fale Conosco</span>
-      </a>
-    </div>
+<div class="l-pf-save" [class.is-idle]="!alteracoes">
+  <div class="l-pf-save-state">
+    @if (alteracoes) {
+      <strong>{{ alteracoes }}</strong> {{ alteracoes === 1 ? 'alteração' : 'alterações' }} não {{ alteracoes === 1 ? 'salva' : 'salvas' }}
+    } @else {
+      Tudo salvo
+    }
   </div>
-
-  <!-- Fundo escuro -->
-  @if (sidebarAberta()) {
-    <div class="overlay" (click)="fecharSidebar()"></div>
-  }
+  <div class="l-pf-save-actions">
+    <button class="l-pf-ghost" type="button" [disabled]="!alteracoes" (click)="descartar()">Descartar</button>
+    <button class="l-pf-primary" type="button" [disabled]="!alteracoes" (click)="salvar()">Salvar perfil</button>
+  </div>
 </div>

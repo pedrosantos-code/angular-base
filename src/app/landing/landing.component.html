@@ -1,306 +1,317 @@
-<div>
+<div class="page-wrapper">
 
-<div class="l-1">
-<div class="l-2">
-<div class="l-3">
-<img src="favicon.ico" alt="Logo" class="l-4">
-<div>
-<div class="l-5">SEIA</div>
-<div class="l-6">Ford · Squad SEIA</div>
-</div>
-</div>
-<a href="#problema" class="l-7">Problema</a>
-<a href="#proposta" class="l-7">Proposta</a>
-<a href="#funciona" class="l-7">Como funciona</a>
-<a href="#diferencial" class="l-7">Diferencial</a>
-<a href="#impacto" class="l-7">Impacto</a>
-<button type="button" (click)="goLogin.emit()" routerLink="/login" class="l-8">ENTRAR</button>
-<button type="button" (click)="goRegister.emit()" routerLink="/cadastro" class="l-8" style="background: #2E7DD1;">CADASTRAR</button>
-</div>
-</div>
+  <!-- Cabeçalho (Fundo ocupa 100%) -->
+  <header class="l-1">
+    <div class="l-2">
+      <div class="l-3">
+        <img src="favicon.ico" alt="Logo" class="l-4">
+        <div>
+          <div class="l-5">SEIA</div>
+          <div class="l-6">Ford · Squad SEIA</div>
+        </div>
+      </div>
+      <a href="#problema" class="l-7">Problema</a>
+      <a href="#proposta" class="l-7">Proposta</a>
+      <a href="#funciona" class="l-7">Como funciona</a>
+      <a href="#diferencial" class="l-7">Diferencial</a>
+      <a href="#impacto" class="l-7">Impacto</a>
+      <button type="button" (click)="goLogin.emit()" routerLink="/login" class="l-8">ENTRAR</button>
+      <button type="button" (click)="goRegister.emit()" routerLink="/cadastro" class="l-8" style="background: #2E7DD1;">CADASTRAR</button>
+    </div>
+  </header>
 
-<div class="l-9">
-<div class="l-10">
-<div class="l-11">
-<span class="l-12"></span>
-<span class="l-13">Inteligência competitiva automotiva</span>
-</div>
-<h1 class="l-14">Copiar e colar<br>não é estratégia.</h1>
-<p class="l-15">O SEIA coleta e padroniza as fichas técnicas de todo o mercado e entrega a comparação pronta em uma única tela.</p>
-<div class="l-16">
-<button type="button" (click)="open(0)" class="l-17">ENTENDER O PROJETO EM 5 PASSOS</button>
-<button type="button" (click)="goLogin.emit()" class="l-18">ACESSAR</button>
-</div>
-</div>
-<div class="l-19">
-<div class="l-20">
-<img src="assets/hero-truck.png" alt="Veículo em um data center" class="l-21">
-<div class="l-22"></div>
-<div class="l-23"></div>
-<div class="l-24"></div>
-<div class="l-25">
-<div class="l-26">DADO BRUTO → DECISÃO</div>
-<div class="l-27">O motor roda enquanto<br>a equipe decide.</div>
-</div>
-</div>
-<div class="l-28">
-<div class="l-29">-90%</div>
-<div class="l-30">de trabalho manual<br><span class="l-31">meta do produto</span></div>
-</div>
-</div>
-</div>
+  <!-- Hero Section -->
+  <section class="l-9">
+    <div class="l-10">
+      <div class="l-11">
+        <span class="l-12"></span>
+        <span class="l-13">Inteligência competitiva automotiva</span>
+      </div>
+      <h1 class="l-14">Copiar e colar<br>não é estratégia.</h1>
+      <p class="l-15">O SEIA coleta e padroniza as fichas técnicas de todo o mercado e entrega a comparação pronta em uma única tela.</p>
+      <div class="l-16">
+        <button type="button" (click)="open(0)" class="l-17">ENTENDER O PROJETO EM 5 PASSOS</button>
+        <button type="button" (click)="goLogin.emit()" class="l-18">ACESSAR</button>
+      </div>
+    </div>
+    <div class="l-19">
+      <div class="l-20">
+        <img src="assets/hero-truck.png" alt="Veículo em um data center" class="l-21">
+        <div class="l-22"></div>
+        <div class="l-23"></div>
+        <div class="l-24"></div>
+        <div class="l-25">
+          <div class="l-26">DADO BRUTO → DECISÃO</div>
+          <div class="l-27">O motor roda enquanto<br>a equipe decide.</div>
+        </div>
+      </div>
+      <div class="l-28">
+        <div class="l-29">-90%</div>
+        <div class="l-30">de trabalho manual<br><span class="l-31">meta do produto</span></div>
+      </div>
+    </div>
+  </section>
 
-<div class="l-32">
-<div class="l-33">
-<div class="l-34">
-@for (k of keywords; track $index) {<span class="l-35">{{ k }}</span>}
-</div>
-<div class="l-34">
-@for (k of keywords; track $index) {<span class="l-35">{{ k }}</span>}
-</div>
-</div>
-</div>
+  <!-- Marquee -->
+  <div class="l-32">
+    <div class="l-33">
+      <div class="l-34">
+        @for (k of keywords; track $index) {<span class="l-35">{{ k }}</span>}
+      </div>
+      <div class="l-34">
+        @for (k of keywords; track $index) {<span class="l-35">{{ k }}</span>}
+      </div>
+    </div>
+  </div>
 
-<div id="problema" class="l-36">
-<div class="l-37">
-<div class="l-10">
-<div class="l-38">
-<span class="l-39">01</span>
-<span class="l-40">Qual problema resolvemos</span>
-</div>
-<h2 class="l-41">A informação existe. O tempo, não.</h2>
-<p class="l-42">A ficha técnica de cada concorrente está pública — espalhada em dezenas de portais, em formatos incompatíveis. Hoje o analista garimpa no Google e monta a planilha à mão.</p>
-<div class="l-43">
-@for (p of problems; track $index) {
-<div class="l-44">
-<span class="l-45"></span>
-<span class="l-46">{{ p }}</span>
-</div>
-}
-</div>
-<button type="button" (click)="open(0)" class="l-47">VER EVIDÊNCIAS →</button>
-</div>
-<div class="l-48">
-<div class="l-49">
-<div class="l-50">HOJE · PLANILHA MANUAL</div>
-<div class="l-51">
-@for (r of oldRows; track $index) {
-<div class="l-52">{{ r.a }}</div>
-<div class="l-53">{{ r.b }}</div>
-<div class="l-54" [style.color]="r.fg">{{ r.c }}</div>
-}
-</div>
-<div class="l-55">Copiado à mão · dados de datas diferentes · sem padrão entre portais</div>
-</div>
-<div class="l-56">
-<div class="l-57">COM O SEIA · AUTOMÁTICO</div>
-<div class="l-58">
-@for (r of newRows; track $index) {
-<div class="l-59">{{ r.a }}</div>
-<div class="l-60">{{ r.b }}</div>
-<div class="l-61">{{ r.c }}</div>
-}
-</div>
-<div class="l-62"><span class="l-63"></span><span class="l-64">atualizado hoje · atributos normalizados</span></div>
-</div>
-</div>
-</div>
-</div>
+  <!-- Seção Problema -->
+  <div id="problema" class="l-36">
+    <div class="l-37">
+      <div class="l-10">
+        <div class="l-38">
+          <span class="l-39">01</span>
+          <span class="l-40">Qual problema resolvemos</span>
+        </div>
+        <h2 class="l-41">A informação existe. O tempo, não.</h2>
+        <p class="l-42">A ficha técnica de cada concorrente está pública — espalhada em dezenas de portais, em formatos incompatíveis. Hoje o analista garimpa no Google e monta a planilha à mão.</p>
+        <div class="l-43">
+          @for (p of problems; track $index) {
+            <div class="l-44">
+              <span class="l-45"></span>
+              <span class="l-46">{{ p }}</span>
+            </div>
+          }
+        </div>
+        <button type="button" (click)="open(0)" class="l-47">VER EVIDÊNCIAS →</button>
+      </div>
+      <div class="l-48">
+        <div class="l-49">
+          <div class="l-50">HOJE · PLANILHA MANUAL</div>
+          <div class="l-51">
+            @for (r of oldRows; track $index) {
+              <div class="l-52">{{ r.a }}</div>
+              <div class="l-53">{{ r.b }}</div>
+              <div class="l-54" [style.color]="r.fg">{{ r.c }}</div>
+            }
+          </div>
+          <div class="l-55">Copiado à mão · dados de datas diferentes · sem padrão entre portais</div>
+        </div>
+        <div class="l-56">
+          <div class="l-57">COM O SEIA · AUTOMÁTICO</div>
+          <div class="l-58">
+            @for (r of newRows; track $index) {
+              <div class="l-59">{{ r.a }}</div>
+              <div class="l-60">{{ r.b }}</div>
+              <div class="l-61">{{ r.c }}</div>
+            }
+          </div>
+          <div class="l-62"><span class="l-63"></span><span class="l-64">atualizado hoje · atributos normalizados</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<div id="proposta" class="l-36">
-<div class="l-38">
-<span class="l-39">02</span>
-<span class="l-40">Qual é a proposta</span>
-</div>
-<h2 class="l-65">Um motor próprio que nunca para de coletar — e entrega o dado já pronto para decidir.</h2>
-<p class="l-66">Plataforma web interna da Ford: coleta automatizada, padronização dos atributos e relatório de inteligência competitiva em um clique.</p>
-<div class="l-67">
-@for (p of pillars; track $index) {
-<div class="l-68">
-<div class="l-69">{{ p.k }}</div>
-<h3 class="l-70">{{ p.t }}</h3>
-<p class="l-71">{{ p.d }}</p>
-</div>
-}
-</div>
-</div>
+  <!-- Seção Proposta -->
+  <div id="proposta" class="l-36">
+    <div class="l-38">
+      <span class="l-39">02</span>
+      <span class="l-40">Qual é a proposta</span>
+    </div>
+    <h2 class="l-65">Um motor próprio que nunca para de coletar — e entrega o dado já pronto para decidir.</h2>
+    <p class="l-66">Plataforma web interna da Ford: coleta automatizada, padronização dos atributos e relatório de inteligência competitiva em um clique.</p>
+    <div class="l-67">
+      @for (p of pillars; track $index) {
+        <div class="l-68">
+          <div class="l-69">{{ p.k }}</div>
+          <h3 class="l-70">{{ p.t }}</h3>
+          <p class="l-71">{{ p.d }}</p>
+        </div>
+      }
+    </div>
+  </div>
 
-<div class="l-72">
-<img src="assets/hero-truck.png" alt="" class="l-73">
-<div class="l-74"></div>
-<div class="l-75">
-<div class="l-76">
-<div class="l-77">O QUE MUDA NA PRÁTICA</div>
-<p class="l-78">Semanas de planilha viram minutos de análise. A equipe volta a fazer estratégia.</p>
-</div>
-</div>
-</div>
+  <!-- Banner com Imagem de Fundo (Largura Total) -->
+  <div class="l-72">
+    <img src="assets/hero-truck.png" alt="" class="l-73">
+    <div class="l-74"></div>
+    <div class="l-75">
+      <div class="l-76">
+        <div class="l-77">O QUE MUDA NA PRÁTICA</div>
+        <p class="l-78">Semanas de planilha viram minutos de análise. A equipe volta a fazer estratégia.</p>
+      </div>
+    </div>
+  </div>
 
-<div id="funciona" class="l-36">
-<div class="l-38">
-<span class="l-39">03</span>
-<span class="l-40">Como funciona</span>
-</div>
-<h2 class="l-79">Quatro etapas, do portal à decisão.</h2>
-<div class="l-80">
-@for (s of steps; track $index) {
-<div class="l-81">
-<div class="l-82">
-<span class="l-83">{{ s.n }}</span>
-<span class="l-84"></span>
-<span class="l-85">→</span>
-</div>
-<h3 class="l-86">{{ s.t }}</h3>
-<p class="l-71">{{ s.d }}</p>
-</div>
-}
-</div>
-<div class="l-87">
-<div class="l-88">
-<div class="l-89">
-<div class="l-90"><span class="l-91"></span><span class="l-92"></span><span class="l-92"></span></div>
-<div class="l-93">SEIA · COMPARATIVO MULTIMARCA</div>
-<div class="l-94"><span class="l-63"></span><span class="l-64">coleta ativa</span></div>
-</div>
-<div class="l-95">
-<div class="l-96">
-<span class="l-97">Fichas técnicas</span>
-<span class="l-98">Preços</span>
-<span class="l-98">Pacotes</span>
-<span class="l-99">Exportar PDF/Excel</span>
-</div>
-<div class="l-100">
-@for (r of tableRows; track $index) {
-<div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.a }}</div>
-<div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.b }}</div>
-<div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.c }}</div>
-<div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.d }}</div>
-}
-</div>
-<div class="l-102">
-@for (b of bars; track $index) {
-<div class="l-103">
-<div [style.height]="b.h" [style.background]="b.c"></div>
-<div class="l-104">{{ b.l }}</div>
-</div>
-}
-</div>
-</div>
-</div>
-<div class="l-10">
-<div class="l-105">Arquitetura TOGAF</div>
-<div class="l-106">
-@for (a of arch; track $index) {
-<div class="l-107">
-<div class="l-108">{{ a.t }}</div>
-<div class="l-109">{{ a.d }}</div>
-</div>
-}
-</div>
-<button type="button" (click)="open(2)" class="l-110">VER A ARQUITETURA →</button>
-</div>
-</div>
-</div>
+  <!-- Seção Como Funciona -->
+  <div id="funciona" class="l-36">
+    <div class="l-38">
+      <span class="l-39">03</span>
+      <span class="l-40">Como funciona</span>
+    </div>
+    <h2 class="l-79">Quatro etapas, do portal à decisão.</h2>
+    <div class="l-80">
+      @for (s of steps; track $index) {
+        <div class="l-81">
+          <div class="l-82">
+            <span class="l-83">{{ s.n }}</span>
+            <span class="l-84"></span>
+            <span class="l-85">→</span>
+          </div>
+          <h3 class="l-86">{{ s.t }}</h3>
+          <p class="l-71">{{ s.d }}</p>
+        </div>
+      }
+    </div>
+    <div class="l-87">
+      <div class="l-88">
+        <div class="l-89">
+          <div class="l-90"><span class="l-91"></span><span class="l-92"></span><span class="l-92"></span></div>
+          <div class="l-93">SEIA · COMPARATIVO MULTIMARCA</div>
+          <div class="l-94"><span class="l-63"></span><span class="l-64">coleta ativa</span></div>
+        </div>
+        <div class="l-95">
+          <div class="l-96">
+            <span class="l-97">Fichas técnicas</span>
+            <span class="l-98">Preços</span>
+            <span class="l-98">Pacotes</span>
+            <span class="l-99">Exportar PDF/Excel</span>
+          </div>
+          <div class="l-100">
+            @for (r of tableRows; track $index) {
+              <div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.a }}</div>
+              <div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.b }}</div>
+              <div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.c }}</div>
+              <div class="l-101" [style.background]="r.bg" [style.color]="r.fg" [style.font-weight]="r.fw">{{ r.d }}</div>
+            }
+          </div>
+          <div class="l-102">
+            @for (b of bars; track $index) {
+              <div class="l-103">
+                <div [style.height]="b.h" [style.background]="b.c"></div>
+                <div class="l-104">{{ b.l }}</div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="l-10">
+        <div class="l-105">Arquitetura TOGAF</div>
+        <div class="l-106">
+          @for (a of arch; track $index) {
+            <div class="l-107">
+              <div class="l-108">{{ a.t }}</div>
+              <div class="l-109">{{ a.d }}</div>
+            </div>
+          }
+        </div>
+        <button type="button" (click)="open(2)" class="l-110">VER A ARQUITETURA →</button>
+      </div>
+    </div>
+  </div>
 
-<div id="diferencial" class="l-36">
-<div class="l-38">
-<span class="l-39">04</span>
-<span class="l-40">Qual o diferencial</span>
-</div>
-<h2 class="l-111">Nenhuma alternativa entrega dado padronizado.</h2>
-<div class="l-112">
-<div class="l-113">
-<div class="l-114">CRITÉRIO</div>
-<div class="l-114">BUSCA MANUAL</div>
-<div class="l-114">SITES GENÉRICOS</div>
-<div class="l-115">SEIA</div>
-</div>
-@for (c of compare; track $index) {
-<div class="l-116">
-<div class="l-117">{{ c.k }}</div>
-<div class="l-118">{{ c.a }}</div>
-<div class="l-118">{{ c.b }}</div>
-<div class="l-119">{{ c.c }}</div>
-</div>
-}
-</div>
-</div>
+  <!-- Seção Diferencial -->
+  <div id="diferencial" class="l-36">
+    <div class="l-38">
+      <span class="l-39">04</span>
+      <span class="l-40">Qual o diferencial</span>
+    </div>
+    <h2 class="l-111">Nenhuma alternativa entrega dado padronizado.</h2>
+    <div class="l-112">
+      <div class="l-113">
+        <div class="l-114">CRITÉRIO</div>
+        <div class="l-114">BUSCA MANUAL</div>
+        <div class="l-114">SITES GENÉRICOS</div>
+        <div class="l-115">SEIA</div>
+      </div>
+      @for (c of compare; track $index) {
+        <div class="l-116">
+          <div class="l-117">{{ c.k }}</div>
+          <div class="l-118">{{ c.a }}</div>
+          <div class="l-118">{{ c.b }}</div>
+          <div class="l-119">{{ c.c }}</div>
+        </div>
+      }
+    </div>
+  </div>
 
-<div id="impacto" class="l-36">
-<div class="l-38">
-<span class="l-39">05</span>
-<span class="l-40">Qual o impacto esperado</span>
-</div>
-<h2 class="l-79">Decisão de portfólio com dado confiável.</h2>
-<div class="l-120">
-@for (m of metrics; track $index) {
-<div>
-<div class="l-121">{{ m.v }}</div>
-<div class="l-122">{{ m.l }}</div>
-<div class="l-123">{{ m.n }}</div>
-</div>
-}
-</div>
-<div class="l-124">
-@for (v of valueCols; track $index) {
-<div>
-<div class="l-125">{{ v.k }}</div>
-<div class="l-126">
-@for (i of v.items; track $index) {
-<div class="l-127">{{ i }}</div>
-}
-</div>
-</div>
-}
-</div>
-<div class="l-128">
-@for (c of chapters; track $index) {
-<button type="button" (click)="open($index)" class="l-129">{{ c.num }} · {{ c.tag }}</button>
-}
-</div>
-</div>
+  <!-- Seção Impacto -->
+  <div id="impacto" class="l-36">
+    <div class="l-38">
+      <span class="l-39">05</span>
+      <span class="l-40">Qual o impacto esperado</span>
+    </div>
+    <h2 class="l-79">Decisão de portfólio com dado confiável.</h2>
+    <div class="l-120">
+      @for (m of metrics; track $index) {
+        <div>
+          <div class="l-121">{{ m.v }}</div>
+          <div class="l-122">{{ m.l }}</div>
+          <div class="l-123">{{ m.n }}</div>
+        </div>
+      }
+    </div>
+    <div class="l-124">
+      @for (v of valueCols; track $index) {
+        <div>
+          <div class="l-125">{{ v.k }}</div>
+          <div class="l-126">
+            @for (i of v.items; track $index) {
+              <div class="l-127">{{ i }}</div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+    <div class="l-128">
+      @for (c of chapters; track $index) {
+        <button type="button" (click)="open($index)" class="l-129">{{ c.num }} · {{ c.tag }}</button>
+      }
+    </div>
+  </div>
 
-<div class="l-130">
-<div class="l-131"></div>
-<div class="l-132">
-<div class="l-133">
-<h2 class="l-134">Pronto para rodar<br>na intranet da Ford.</h2>
-<p class="l-135">Squad SEIA — Sprint 1 e 2.</p>
-</div>
-<div class="l-16">
-<button type="button" (click)="goLogin.emit()" class="l-136">ENTRAR NA PLATAFORMA</button>
-<a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-137">ASSISTIR AO PITCH</a>
-</div>
-</div>
-</div>
+  <!-- Call to Action Final (Fundo ocupa 100%) -->
+  <div class="l-130">
+    <div class="l-131"></div>
+    <div class="l-132">
+      <div class="l-133">
+        <h2 class="l-134">Pronto para rodar<br>na intranet da Ford.</h2>
+        <p class="l-135">Squad SEIA — Sprint 1 e 2.</p>
+      </div>
+      <div class="l-16">
+        <button type="button" (click)="goLogin.emit()" class="l-136">ENTRAR NA PLATAFORMA</button>
+        <a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-137">ASSISTIR AO PITCH</a>
+      </div>
+    </div>
+  </div>
 
-<div class="l-138">
-<div class="l-139">
-<div class="l-140">
-<div>
-<div class="l-141">
-<div class="l-142">S</div>
-<div class="l-143">SEIA</div>
-</div>
-<p class="l-144">Sistema de Inteligência Estratégica Automotiva — projeto acadêmico FIAP para a Ford.</p>
-</div>
-<div>
-<div class="l-145">Integrantes do squad</div>
-<div class="l-146">
-@for (p of team; track $index) {
-<div class="l-147">
-<span class="l-148">{{ p.n }}</span>
-<span class="l-149">{{ p.rm }}</span>
-</div>
-}
-</div>
-</div>
-</div>
-<div class="l-150">
-<span>© 2026 Squad SEIA · Sprint 1 e 2 · FIAP + Ford</span>
-<span>Pitch: <a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-151">youtu.be/2D8-hnq4dd0</a></span>
-</div>
-</div>
-</div>
+  <!-- Rodapé (Fundo ocupa 100%) -->
+  <div class="l-138">
+    <div class="l-139">
+      <div class="l-140">
+        <div>
+          <div class="l-141">
+            <div class="l-142">S</div>
+            <div class="l-143">SEIA</div>
+          </div>
+          <p class="l-144">Sistema de Inteligência Estratégica Automotiva — projeto acadêmico FIAP para a Ford.</p>
+        </div>
+        <div>
+          <div class="l-145">Integrantes do squad</div>
+          <div class="l-146">
+            @for (p of team; track $index) {
+              <div class="l-147">
+                <span class="l-148">{{ p.n }}</span>
+                <span class="l-149">{{ p.rm }}</span>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+      <div class="l-150">
+        <span>© 2026 Squad SEIA · Sprint 1 e 2 · FIAP + Ford</span>
+        <span>Pitch: <a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-151">youtu.be/2D8-hnq4dd0</a></span>
+      </div>
+    </div>
+  </div>
 
 </div>

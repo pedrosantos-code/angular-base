@@ -1,284 +1,142 @@
-<div class="fundo-home">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
-  
-  <div class="cabecalho-page">
-    <!-- Grupo da Esquerda -->
-    <div class="icones-esquerda">
+<seia-topbar [ativo]="'modelos'" (navegar)="navegar.emit($event)" (sair)="navegar.emit('sair')" />
 
-      <!-- Item: Menu Lateral -->
-      <div class="menu-item">
-        <i class="fa-solid fa-bars menu-bars" title="Menu Lateral" (click)="toggleMenu('sidebar')"></i>
-        
-        <!-- Caixa do Menu Lateral -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'sidebar'">
-          <div class="menu-header">
-            <strong>Menu Lateral</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="abrirSidebar()">Abrir Painel</span>
-        </div>
-      </div>
+<div class="l-md-shell">
 
-      <!-- Item: Perfil -->
-      <div class="menu-item">
-        <i class="fa-regular fa-circle-user profile" title="Perfil" (click)="toggleMenu('perfil')"></i>
-        
-        <!-- Caixa do Perfil -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'perfil'">
-          <div class="menu-header">
-            <strong>Perfil do Usuário</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Visualizar Perfil</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Editar Dados</span>
-        </div>
-      </div>
+  <aside class="l-md-rail">
+    <div class="l-md-rail-label">Categoria</div>
+    @for (c of categorias; track c.chave) {
+      <button
+        class="l-md-filter"
+        type="button"
+        [class.is-on]="categoria === c.chave"
+        [attr.aria-pressed]="categoria === c.chave"
+        (click)="categoria = c.chave">
+        {{ c.rotulo }} <span class="l-md-filter-count">{{ contagem(c.chave) }}</span>
+      </button>
+    }
 
-      <!-- Item: Configurações -->
-      <div class="menu-item">
-        <i class="fa-solid fa-gear gear" title="Configurações" (click)="toggleMenu('config')"></i>
-        
-        <!-- Caixa de Configurações -->
-        <div class="dropdown-menu" [class.ativo]="menuAberto() === 'config'">
-          <div class="menu-header">
-            <strong>Configurações</strong>
-          </div>
-          <hr class="divisor">
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Aparência / Tema</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Idioma</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Notificações</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Segurança e Privacidade</span>
-          <span class="menu-item-texto" (click)="$event.stopPropagation()">Preferências do Sistema</span>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Grupo da Direita -->
-    <div class="elementos-direita">
-      <p class="parceria">Seia + Ford</p>
-      
-      <!-- Item: Logout -->
-      <div class="menu-item">
-        <i class="fa-solid fa-arrow-right-from-bracket logout" title="Sair" (click)="toggleMenu('logout')"></i>
-        
-        <!-- Caixa de Logout -->
-        <div class="dropdown-menu dropdown-direita" [class.ativo]="menuAberto() === 'logout'">
-          <div class="menu-header">
-            <strong>Sair do Sistema</strong>
-          </div>
-          <hr class="divisor">
-          <a routerLink="/" class="menu-item-link" (click)="fecharMenus()">Confirmar Saída</a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- CONTAINER DE LAYOUT LADO A LADO -->
-  <div class="modelos-layout">
-    
-    <!-- Sidebar de Filtros Lateral (Esquerda) -->
-    <aside class="sidebar-filtros">
-      <div class="sidebar-header">
-        <i class="fa-solid fa-sliders icon-filtro"></i>
-        <h3>FILTRO</h3>
-      </div>
-
-      <nav class="lista-categorias">
-        @for (categoria of categorias(); track categoria) {
-          <button 
-            class="btn-categoria" 
-            [class.ativo]="categoriaAtiva() === categoria"
-            (click)="selecionarCategoria(categoria)"
-          >
-            {{ categoria }}
-          </button>
-        }
-      </nav>
-    </aside>
-
-    <!-- Conteúdo Principal de Veículos (Direita) -->
-    <main class="conteudo-principal">
-      <header class="header-pagina">
-        <!-- Título dinâmico: Mostra 'MODELOS FORD' ou 'MODELOS FORD - CATEGORIA' -->
-        <h2>MODELOS FORD {{ categoriaAtiva() !== 'Todos' ? '- ' + categoriaAtiva() : '' }}</h2>
-      </header>
-
-      <!-- Busca por nome de carro na base de dados real da Ford -->
-      <form class="form-busca-modelo" (ngSubmit)="buscarNaApi()">
+    <div class="l-md-rail-label">Motorização</div>
+    @for (m of motorizacoes; track m.chave) {
+      <label class="l-md-check">
         <input
-          type="text"
-          name="nomeBusca"
-          placeholder="Buscar veículo pelo nome (ex: Mustang, Ranger)..."
-          [ngModel]="nomeBusca()"
-          (ngModelChange)="nomeBusca.set($event)"
-        />
-        <button type="submit" class="btn-buscar-modelo" [disabled]="buscandoNaApi()">
-          @if (buscandoNaApi()) {
-            Buscando...
-          } @else {
-            <i class="fa-solid fa-magnifying-glass"></i> Buscar
+          type="checkbox"
+          [checked]="motorizacoesAtivas.has(m.chave)"
+          (change)="alternarMotorizacao(m.chave)" />
+        {{ m.rotulo }}
+      </label>
+    }
+
+    <div class="l-md-rail-label">Até quanto</div>
+    <div class="l-md-range">
+      <input
+        type="range"
+        [min]="precoMinimo"
+        [max]="precoMaximo"
+        step="10000"
+        [(ngModel)]="tetoPreco"
+        aria-label="Preço máximo" />
+      <div class="l-md-range-labels">
+        <span>{{ preco(precoMinimo) }}</span>
+        <span>{{ preco(tetoPreco) }}</span>
+      </div>
+    </div>
+
+    @if (perfil) {
+      <div class="l-md-rail-label">Seu perfil</div>
+      <label class="l-md-check">
+        <input type="checkbox" [(ngModel)]="soCompativeis" />
+        Só compatíveis
+      </label>
+    }
+  </aside>
+
+  <main class="l-md-main">
+
+    <div class="l-md-top">
+      <div>
+        <h1 class="l-md-title">Modelos Ford</h1>
+        <p class="l-md-count">
+          {{ filtrados.length }} de {{ modelos.length }} modelos@if (perfil) { · perfil: {{ perfil }} }
+        </p>
+      </div>
+
+      <div class="l-md-tools">
+        <input
+          class="l-md-search"
+          type="search"
+          name="termo"
+          [(ngModel)]="termo"
+          placeholder="Buscar por nome"
+          aria-label="Buscar modelo pelo nome" />
+        <div class="l-md-sort">
+          <span>ordenar:</span>
+          @for (o of ordenacoes; track o.chave) {
+            <button
+              class="l-md-sort-option"
+              type="button"
+              [class.is-on]="ordem === o.chave"
+              (click)="ordem = o.chave">{{ o.rotulo }}</button>
           }
-        </button>
-        @if (resultadosApi() !== null) {
-          <button type="button" class="btn-limpar-busca" (click)="limparBusca()">
-            <i class="fa-solid fa-xmark"></i> Limpar
+        </div>
+      </div>
+    </div>
+
+    <div class="l-md-grid">
+      @for (m of filtrados; track m.id) {
+        <article class="l-md-card" [class.is-selected]="selecionados.has(m.id)">
+          <button class="l-md-card-open" type="button" (click)="abrirModelo.emit(m.id)">
+            <span class="l-md-photo">
+              @if (m.imagem) {
+                <img [src]="m.imagem" [alt]="m.nome" loading="lazy" />
+              }
+            </span>
+            <span class="l-md-card-body">
+              <span class="l-md-segment">{{ m.segmento }}</span>
+              <span class="l-md-name">{{ m.nome }}</span>
+              <span class="l-md-price">a partir de {{ preco(m.precoDe) }}</span>
+              <span class="l-md-spec">
+                @for (f of m.ficha; track f) { {{ f }}<br /> }
+              </span>
+
+              @if (m.nota !== null) {
+                <span class="l-md-score">
+                  <strong>{{ m.nota }}</strong><span>% compatível</span>
+                </span>
+                <span class="l-md-track">
+                  <span class="l-md-fill" [class.is-fraco]="m.nota < corteFraco" [style.width.%]="m.nota"></span>
+                </span>
+              }
+            </span>
           </button>
-        }
-      </form>
 
-      @if (erroBuscaApi()) {
-        <div class="aviso-busca-modelo">{{ erroBuscaApi() }}</div>
+          <label class="l-md-compare">
+            <input
+              type="checkbox"
+              [checked]="selecionados.has(m.id)"
+              [disabled]="!selecionados.has(m.id) && selecionados.size >= maxComparar"
+              (click)="alternarSelecao(m.id, $event)" />
+            comparar
+          </label>
+        </article>
+      } @empty {
+        <p class="l-md-blank">Nenhum modelo com esses filtros. Aumente o teto de preço ou limpe a motorização.</p>
       }
-
-      @if (resultadosApi(); as resultados) {
-        <!-- Resultados vindos da API da Ford -->
-        <div class="grid-modelos">
-          @for (item of resultados; track item.id) {
-            <div class="card-modelo card-modelo-api">
-              <div class="card-corpo">
-                <h3 class="nome-modelo">{{ item.model }}</h3>
-                <p class="preco-label">{{ item.variant }}</p>
-
-                <ul class="especificacoes">
-                  <li><i class="fa-solid fa-gauge-high"></i> {{ item.enginePowerBhp ?? '—' }} cv</li>
-                  <li><i class="fa-solid fa-gas-pump"></i> {{ item.engineFuelType ?? '—' }}</li>
-                  <li><i class="fa-solid fa-car"></i> Tração {{ item.drivetrain ?? '—' }}</li>
-                  <li><i class="fa-solid fa-gauge"></i> Vel. máx. {{ item.topSpeedKph ?? '—' }} km/h</li>
-                </ul>
-              </div>
-            </div>
-          } @empty {
-            <div class="sem-resultados">
-              <p>Nenhum veículo encontrado para essa busca.</p>
-            </div>
-          }
-        </div>
-
-        <!-- Carros semelhantes ao primeiro resultado -->
-        @if (buscandoSemelhantes()) {
-          <p class="titulo-semelhantes">Buscando carros semelhantes...</p>
-        } @else if (carrosSemelhantes().length > 0) {
-          <h3 class="titulo-semelhantes">Carros Semelhantes</h3>
-          <div class="lista-semelhantes">
-            @for (carro of carrosSemelhantes(); track carro.id) {
-              <div class="item-semelhante">
-                <strong>{{ carro.model }}</strong>
-                <span>{{ carro.variant }}</span>
-                <span class="badge-similaridade">{{ (carro.similarity * 100).toFixed(0) }}% compatível</span>
-              </div>
-            }
-          </div>
-        }
-      } @else {
-        <!-- Catálogo estático padrão -->
-        <div class="grid-modelos">
-          @for (item of modelosFiltrados(); track item.id) {
-            <div class="card-modelo">
-              <div class="card-imagem">
-                <img [src]="item.imagemUrl" [alt]="item.nome" loading="lazy" />
-              </div>
-
-              <div class="card-corpo">
-                <h3 class="nome-modelo">{{ item.nome }}</h3>
-
-                <p class="preco-label">
-                  A partir de <strong>{{ item.precoAPartir }}</strong>
-                </p>
-
-                <ul class="especificacoes">
-                  <li>
-                    <i class="fa-solid fa-engine"></i> {{ item.motorizacao }}
-                  </li>
-                  <li>
-                    <i class="fa-solid fa-car"></i> Tração {{ item.tracao }}
-                  </li>
-                </ul>
-
-                <button class="btn-saiba-mais">
-                  SAIBA MAIS
-                </button>
-              </div>
-            </div>
-          } @empty {
-            <div class="sem-resultados">
-              <p>Nenhum modelo encontrado para esta categoria.</p>
-            </div>
-          }
-        </div>
-      }
-    </main>
-
-  </div>
-
-  <!-- Rodapé Institucional -->
-  <footer class="rodape-page">
-    <div class="rodape-links">
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Fale conosco</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
     </div>
-    <div class="rodape-copy">Copyright (c) 2026 Ford. Todos os direitos reservados.</div>
-  </footer>
 
-  <!-- Painel Lateral Deslizante -->
-  <div class="sidebar-painel" [class.aberto]="sidebarAberta()">
-    <div class="sidebar-conteudo">
-      <a routerLink="/home" (click)="fecharSidebar()">
-        <img src="/logo-azul.png" alt="Logo" class="logo-sidebar">
-      </a>
-      
-      <!-- Bloco 1: Gestão -->
-      <h4>Gestão e Conta</h4>
-      <a class="sidebar-item" routerLink="/perfil" routerLinkActive="ativo">
-        <i class="fa-regular fa-user"></i>
-        <span>Meu Perfil</span>
-      </a>
-      <a class="sidebar-item" routerLink="/termos" routerLinkActive="ativo">
-        <i class="fa-regular fa-file-lines"></i>
-        <span>Termos / Contratos</span>
-      </a>
-
-      <!-- Veículos e Tecnologias -->
-      <h4>Veículos e Tecnologias</h4>
-      <a class="sidebar-item">
-        <i class="fa-solid fa-car"></i>
-        <span>Modelos Ford</span>
-      </a>
-      <a class="sidebar-item" routerLink="/sobre-ia" routerLinkActive="ativo">
-        <i class="fa-solid fa-brain"></i>
-        <span>Sobre a IA</span>
-      </a>
-      <a class="sidebar-item" routerLink="/dashboard" routerLinkActive="ativo">
-        <i class="fa-solid fa-chart-line"></i>
-        <span>Dashboard Detalhado</span>
-      </a>
-
-      <!-- Bloco 4: Atendimento -->
-      <h4>Atendimento</h4>
-      <a class="sidebar-item" routerLink="/agendamentos" routerLinkActive="ativo">
-        <i class="fa-regular fa-calendar"></i>
-        <span>Meus Agendamentos</span>
-      </a>
-      <a class="sidebar-item" routerLink="/concessionarias" routerLinkActive="ativo">
-        <i class="fa-solid fa-location-dot"></i>
-        <span>Concessionárias</span>
-      </a>
-      <a class="sidebar-item" routerLink="/fale-conosco" routerLinkActive="ativo">
-        <i class="fa-solid fa-phone"></i>
-        <span>Fale Conosco</span>
-      </a>
-    </div>
-  </div>
-
-  <!-- Overlay -->
-  @if (sidebarAberta()) {
-    <div class="overlay" (click)="fecharSidebar()"></div>
-  }
+    @if (selecionados.size) {
+      <div class="l-md-compare-bar">
+        <span class="l-md-compare-count">
+          <strong>{{ selecionados.size }}</strong>
+          {{ selecionados.size === 1 ? 'modelo selecionado' : 'modelos selecionados' }}
+          @if (selecionados.size === 1) { · escolha mais um para comparar }
+        </span>
+        <span class="l-md-compare-actions">
+          <button class="l-md-clear" type="button" (click)="limparSelecao()">Limpar</button>
+          <button class="l-md-primary" type="button" [disabled]="selecionados.size < 2" (click)="comparar()">
+            Comparar lado a lado
+          </button>
+        </span>
+      </div>
+    }
+  </main>
 </div>
