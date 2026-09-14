@@ -1,14 +1,15 @@
 import { Component, ElementRef, ViewChild, signal, inject, AfterViewInit, OnDestroy } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
+import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
-  imports: [RouterLink, FormsModule],
+  imports: [FormsModule, TopbarComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -16,13 +17,23 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   protected readonly title = signal('meu-projeto');
 
   private fordApi = inject(FordApiService);
+  private router = inject(Router);
 
   @ViewChild('graficoCanvas') graficoCanvas?: ElementRef<HTMLCanvasElement>;
   private grafico?: Chart;
 
-  // Declaração dos Signals
-  menuAberto = signal<string | null>(null);
-  sidebarAberta = signal<boolean>(false);
+  onNavegar(chave: string): void {
+    const rota = ROTAS_MENU[chave];
+    if (rota) this.router.navigateByUrl(rota);
+  }
+
+  irPerfil(): void {
+    this.router.navigateByUrl('/perfil');
+  }
+
+  sair(): void {
+    this.router.navigateByUrl('/');
+  }
 
   // Busca de veículo na API da Ford
   nomeCarro = signal<string>('');
@@ -34,28 +45,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   // Carros semelhantes ao primeiro resultado da busca
   buscandoSemelhantes = signal<boolean>(false);
   carrosSemelhantes = signal<CarRecommendation[]>([]);
-
-  toggleMenu(nomeMenu: string): void {
-    if (this.menuAberto() === nomeMenu) {
-      this.menuAberto.set(null);
-    } else {
-      this.menuAberto.set(nomeMenu);
-    }
-  }
-
-  fecharMenus(): void {
-    this.menuAberto.set(null);
-  }
-
-  // Métodos da Barra Lateral (Sidebar)
-  abrirSidebar(): void {
-    this.sidebarAberta.set(true);
-    this.fecharMenus(); // Fecha o dropdown ao abrir a barra
-  }
-
-  fecharSidebar(): void {
-    this.sidebarAberta.set(false);
-  }
 
   ngAfterViewInit(): void {}
 

@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PortalComponent } from '../portal/portal.component';
+import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface TipoAtendimento { chave: string; rotulo: string; }
 
@@ -45,7 +45,7 @@ export interface Agendamento {
 @Component({
   selector: 'seia-agendamentos',
   standalone: true,
-  imports: [CommonModule, PortalComponent],
+  imports: [CommonModule, TopbarComponent],
   templateUrl: './agendamentos.component.html',
   styleUrl: './agendamentos.component.css',
 })

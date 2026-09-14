@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PortalComponent } from '../portal/portal.component';
+import { TopbarComponent } from '../topbar/topbar.component';
 
 export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
 export type Ordenacao = 'compatibilidade' | 'preco' | 'nome';
@@ -27,7 +27,7 @@ export interface Categoria { chave: string; rotulo: string; }
 @Component({
   selector: 'seia-modelos',
   standalone: true,
-  imports: [CommonModule, FormsModule, PortalComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent],
   templateUrl: './modelos.component.html',
   styleUrl: './modelos.component.css',
 })

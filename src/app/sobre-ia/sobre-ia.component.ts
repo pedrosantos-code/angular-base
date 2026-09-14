@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// ATENÇÃO: Confirme se o caminho e o nome da classe da sua topbar batem com isso:
+import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface Entrada { ordem: string; titulo: string; texto: string; }
 export interface Criterio { rotulo: string; pontos: number; maximo: number; }
@@ -16,7 +16,7 @@ export interface ExemploNota {
 @Component({
   selector: 'seia-sobre-ia',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TopbarComponent],
   templateUrl: './sobre-ia.component.html',
   styleUrl: './sobre-ia.component.css',
 })

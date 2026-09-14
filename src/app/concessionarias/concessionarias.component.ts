@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PortalComponent } from '../portal/portal.component';
+import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface Coordenada { lat: number; lng: number; }
 
@@ -24,7 +24,7 @@ export interface Unidade {
 @Component({
   selector: 'seia-concessionarias',
   standalone: true,
-  imports: [CommonModule, FormsModule, PortalComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent],
   templateUrl: './concessionarias.component.html',
   styleUrl: './concessionarias.component.css',
 })

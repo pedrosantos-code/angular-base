@@ -1,20 +1,18 @@
 import { Component, signal, inject } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 
 @Component({
   selector: 'app-fale-conosco',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, TopbarComponent],
   templateUrl: './fale-conosco.component.html',
   styleUrl: './fale-conosco.component.css',
 })
 export class FaleConoscoComponent {
   protected readonly title = signal('meu-projeto');
-
-  // Controle da Sidebar e Menus Dropdown
-  menuAberto = signal<string | null>(null);
-  sidebarAberta = signal<boolean>(false);
+  private router = inject(Router);
 
   // Funcionalidades da tela Fale Conosco
   termoBusca = signal<string>('');
@@ -32,25 +30,16 @@ export class FaleConoscoComponent {
     alert(`Buscando por: "${this.termoBusca()}" no FAQ...`);
   }
 
-  toggleMenu(nomeMenu: string): void {
-    if (this.menuAberto() === nomeMenu) {
-      this.menuAberto.set(null);
-    } else {
-      this.menuAberto.set(nomeMenu);
-    }
+  onNavegar(chave: string): void {
+    const rota = ROTAS_MENU[chave];
+    if (rota) this.router.navigateByUrl(rota);
   }
 
-  fecharMenus(): void {
-    this.menuAberto.set(null);
+  irPerfil(): void {
+    this.router.navigateByUrl('/perfil');
   }
 
-  // Métodos da Barra Lateral (Sidebar)
-  abrirSidebar(): void {
-    this.sidebarAberta.set(true);
-    this.fecharMenus(); // Fecha o dropdown ao abrir a barra
-  }
-
-  fecharSidebar(): void {
-    this.sidebarAberta.set(false);
+  sair(): void {
+    this.router.navigateByUrl('/');
   }
 }

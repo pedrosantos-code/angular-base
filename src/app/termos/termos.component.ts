@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TopbarComponent } from '../topbar/topbar.component';
 
 @Component({
   selector: 'seia-termos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TopbarComponent],
   templateUrl: './termos.component.html',
   styleUrl: './termos.component.css',
 })
@@ -15,6 +16,7 @@ export class TermosComponent {
   consentimentoTestDrive = true;
   termoAceito = false;
 
+  @Output() navegar = new EventEmitter<string>();
   @Output() aceitoEContinuar = new EventEmitter<void>();
   @Output() baixarPdfSolicitado = new EventEmitter<void>();
 

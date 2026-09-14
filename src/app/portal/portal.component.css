@@ -19,77 +19,6 @@
   position: relative;
 }
 
-/* ===== Topbar + gaveta — classes t-01 a t-16 ===== */
-.t-01 {
-  position: sticky; top: 0; z-index: 60;
-  height: 60px; padding: 0 16px;
-  background: #001730;
-  display: flex; align-items: center; gap: 4px;
-}
-
-/* Botão de ícone — sem contorno, sem fundo */
-.t-02 {
-  width: 40px; height: 40px; flex: none;
-  display: grid; place-items: center;
-  background: transparent; border: none; border-radius: 50%;
-  color: #BBD3E9; cursor: pointer;
-  transition: color .16s, background .16s;
-}
-.t-02 svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.t-17 { width: 19px !important; height: 19px !important; }
-.t-18 { width: 20px; height: 20px; }
-.t-02:hover { color: #fff; background: rgba(255,255,255,.1); }
-.t-02:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
-
-.t-03 { width: 1px; height: 20px; background: rgba(255,255,255,.16); margin: 0 8px; flex: none; }
-
-.t-04 { margin-left: auto; display: flex; align-items: center; gap: 14px; }
-.t-05 { display: flex; align-items: center; gap: 10px; }
-.t-06 {
-  width: 28px; height: 28px; flex: none;
-  border: 2px solid #2E7DD1; display: grid; place-items: center;
-  font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 12px; color: #fff;
-}
-.t-07 { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; white-space: nowrap; }
-
-/* Véu */
-.t-08 {
-  position: fixed; inset: 0; z-index: 70;
-  background: rgba(0,12,26,.5);
-  opacity: 0; pointer-events: none; transition: opacity .2s;
-}
-.t-09 { opacity: 1; pointer-events: auto; }
-
-/* Gaveta */
-.t-10 {
-  position: fixed; left: 0; top: 0; bottom: 0; z-index: 80;
-  width: 268px; max-width: 82vw;
-  background: #001730; border-right: 1px solid rgba(255,255,255,.12);
-  padding: 14px 0 24px;
-  transform: translateX(-100%); transition: transform .22s ease;
-  overflow-y: auto;
-}
-.t-11 { transform: translateX(0); }
-
-.t-12 { padding: 14px 20px 0; }
-.t-16 { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #5C7691; margin-bottom: 10px; }
-
-.t-13 {
-  width: 100%; display: flex; align-items: center; gap: 12px;
-  padding: 10px 0; background: transparent; border: none; border-radius: 0;
-  font-family: inherit; font-size: 14px; color: #BBD3E9; text-align: left; cursor: pointer;
-  transition: color .16s;
-}
-.t-13 svg { width: 19px; height: 19px; flex: none; fill: none; stroke: #6E8CA8; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; transition: stroke .16s; }
-.t-13:hover { color: #fff; }
-.t-13:hover svg { stroke: #9FC4E8; }
-.t-13:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px; }
-
-.t-14 { color: #fff; margin-left: -20px; padding-left: 16px; border-left: 4px solid #2E7DD1; }
-.t-14 svg { stroke: #2E7DD1; }
-
-.t-15 { height: 1px; background: rgba(255,255,255,.1); margin: 14px 20px 0; }
-
 /* ===== HERO SECTION ===== */
 .l-main-content { flex: 1; }
 
@@ -362,18 +291,9 @@
   color: #6F8499;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .t-08, .t-10 { transition: none; }
-}
-
 @media (max-width: 768px) {
   .l-result-card { grid-template-columns: 1fr; text-align: left; }
   .l-result-score { text-align: left; margin-top: 8px; }
   .l-score-info { justify-content: flex-start; }
   .l-search-box { flex-direction: column; }
-}
-
-@media (max-width: 520px) {
-  .t-01 { padding: 0 8px; }
-  .t-07 { display: none; }
 }

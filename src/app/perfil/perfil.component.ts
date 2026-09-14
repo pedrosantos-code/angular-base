@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PortalComponent } from '../portal/portal.component';
+import { TopbarComponent } from '../topbar/topbar.component';
 
 export interface PerfilUso {
   uso: string;
@@ -29,7 +29,7 @@ export interface Previa {
 @Component({
   selector: 'seia-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, PortalComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })

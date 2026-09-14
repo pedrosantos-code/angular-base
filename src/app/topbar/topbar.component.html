@@ -1,0 +1,100 @@
+<header class="l-sidebar t-01">
+  <div class="l-sidebar-header">
+    <div class="l-header-left">
+      <!-- Botão do menu -->
+      <button
+        class="l-menu-toggle t-02"
+        type="button"
+        (click)="alternar()"
+        [attr.aria-label]="aberto ? 'Fechar menu' : 'Abrir menu'"
+        [attr.aria-expanded]="aberto">
+        <svg class="t-17" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+          @for (d of icones['menu']; track $index) { <path [attr.d]="d" /> }
+        </svg>
+      </button>
+
+      <!-- Botão de perfil -->
+      <button class="l-icon-btn t-02" type="button" (click)="abrirPerfil.emit()" aria-label="Meu perfil" title="Meu perfil">
+        <svg class="t-18" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+          @for (d of icones['perfil']; track $index) { <path [attr.d]="d" /> }
+        </svg>
+      </button>
+
+      <!-- Botão de configurações / comparador -->
+      <button class="l-icon-btn t-02" type="button" (click)="abrirConfiguracoes.emit()" aria-label="Configurações" title="Configurações">
+        <svg class="t-18" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+          @for (d of icones['config']; track $index) { <path [attr.d]="d" /> }
+        </svg>
+      </button>
+    </div>
+
+    <!-- Marca Seia + Ford -->
+    <div class="l-brand-wrapper">
+      <span class="l-brand-badge t-06">S</span>
+      <span class="l-brand-name t-07">SEIA + FORD</span>
+    </div>
+
+    <!-- Botão de Sair / Logout -->
+    <div class="l-header-right">
+      <button class="l-icon-btn t-02" type="button" (click)="sair.emit()" aria-label="Sair" title="Sair">
+        <svg class="t-18" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+          @for (d of icones['sair']; track $index) { <path [attr.d]="d" /> }
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Navegação Gaveta / Menu retrátil que responde ao estado 'aberto' -->
+  <nav class="l-sidebar-nav t-10" [class.ativo]="aberto" [class.t-11]="aberto" [attr.aria-hidden]="!aberto">
+    <div class="l-nav-group t-12">
+      <h3 class="l-nav-title t-16">PORTAL</h3>
+      <ul>
+        @for (i of principais; track i.chave) {
+          <li>
+            <button class="l-nav-link-btn t-13" type="button" [class.t-14]="ativo === i.chave" (click)="ir(i.chave)">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                @for (d of icones[i.icone]; track $index) { <path [attr.d]="d" /> }
+              </svg>
+              {{ i.rotulo }}
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="l-nav-group t-12">
+      <h3 class="l-nav-title t-16">ATENDIMENTO</h3>
+      <ul>
+        @for (i of atendimento; track i.chave) {
+          <li>
+            <button class="l-nav-link-btn t-13" type="button" [class.t-14]="ativo === i.chave" (click)="ir(i.chave)">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                @for (d of icones[i.icone]; track $index) { <path [attr.d]="d" /> }
+              </svg>
+              {{ i.rotulo }}
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="l-nav-group t-12">
+      <h3 class="l-nav-title t-16">SOBRE</h3>
+      <ul>
+        @for (i of sobre; track i.chave) {
+          <li>
+            <button class="l-nav-link-btn t-13" type="button" [class.t-14]="ativo === i.chave" (click)="ir(i.chave)">
+              <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                @for (d of icones[i.icone]; track $index) { <path [attr.d]="d" /> }
+              </svg>
+              {{ i.rotulo }}
+            </button>
+          </li>
+        }
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<!-- Overlay para fechar o menu ao clicar fora -->
+<div class="t-08" [class.t-09]="aberto" (click)="fechar()"></div>
