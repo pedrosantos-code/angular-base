@@ -55,6 +55,10 @@ html, body, :host {
   color: #059669;
 }
 
+seia-topbar {
+    width: 100%;
+}
+
 /* --- CONTAINER PRINCIPAL DA TELA --- */
 .container-home {
     width: 100%;

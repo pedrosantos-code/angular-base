@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { TopbarComponent } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 
 export interface Entrada { ordem: string; titulo: string; texto: string; }
 export interface Criterio { rotulo: string; pontos: number; maximo: number; }
@@ -87,8 +87,10 @@ export class SobreIaComponent {
   }
 
   // Método para tratar o evento de navegação sem conflito de tipo de evento nativo
-  onNavegar(rota: string): void {
-    this.navegar.emit(rota);
+  onNavegar(chave: string): void {
+    this.navegar.emit(chave);
+    const rota = ROTAS_MENU[chave];
+    if (rota) this.router.navigateByUrl(rota);
   }
 
   sair(): void {

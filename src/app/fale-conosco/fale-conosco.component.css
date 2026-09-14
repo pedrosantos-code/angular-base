@@ -15,6 +15,10 @@ html, body, :host {
     overflow-x: hidden;
 }
 
+seia-topbar {
+    width: 100%;
+}
+
 /* --- CONTAINER DO FUNDO (Corrigido para flex-start para não empurrar para cima) --- */
 .fundo-home {
     position: fixed;

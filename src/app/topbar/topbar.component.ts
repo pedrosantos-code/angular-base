@@ -1,5 +1,8 @@
-import { Component, EventEmitter, HostListener, Input, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { NavigationEnd, Router } from '@angular/router';
+import { filter } from 'rxjs';
 
 export interface ItemMenu {
   chave: string;
@@ -35,7 +38,7 @@ export const ICONES: Record<string, string[]> = {
 export const ITENS_PRINCIPAIS: ItemMenu[] = [
   { chave: 'recomendacao', rotulo: 'Encontrar meu Ford', icone: 'ia' },
   { chave: 'modelos', rotulo: 'Modelos Ford', icone: 'carro' },
-  { chave: 'comparacoes', rotulo: 'Minhas comparações', icone: 'grafico' },
+  { chave: 'comparacoes', rotulo: 'Dashboard detalhado', icone: 'grafico' },
 ];
 
 export const ITENS_ATENDIMENTO: ItemMenu[] = [
@@ -53,12 +56,18 @@ export const ITENS_SOBRE: ItemMenu[] = [
 export const ROTAS_MENU: Record<string, string> = {
   recomendacao: '/portal',
   modelos: '/modelos',
+  comparacoes: '/dashboard',
   agendamentos: '/agendamentos',
   concessionarias: '/concessionarias',
   contato: '/fale-conosco',
   ia: '/sobre-ia',
   termos: '/termos',
 };
+
+/** Mapa inverso: rota real → chave da gaveta, usado para realçar o item ativo a partir da URL. */
+const CHAVE_POR_ROTA: Record<string, string> = Object.fromEntries(
+  Object.entries(ROTAS_MENU).map(([chave, rota]) => [rota, chave]),
+);
 
 @Component({
   selector: 'seia-topbar',
@@ -68,8 +77,25 @@ export const ROTAS_MENU: Record<string, string> = {
   styleUrl: './topbar.component.css',
 })
 export class TopbarComponent {
-  /** Chave da página atual, usada para realçar o item ativo na gaveta. */
-  @Input() ativo = 'recomendacao';
+  private router = inject(Router);
+
+  /** URL atual, atualizada a cada navegação — fonte única para saber qual item está ativo. */
+  private urlAtual = signal(this.router.url);
+
+  /** Chave do item ativo na gaveta, derivada dinamicamente da rota atual. */
+  readonly ativo = computed(() => {
+    const url = this.urlAtual().split('?')[0].split('#')[0];
+    return CHAVE_POR_ROTA[url] ?? '';
+  });
+
+  constructor() {
+    this.router.events
+      .pipe(
+        filter((evento): evento is NavigationEnd => evento instanceof NavigationEnd),
+        takeUntilDestroyed(),
+      )
+      .subscribe((evento) => this.urlAtual.set(evento.urlAfterRedirects));
+  }
 
   @Output() navegar = new EventEmitter<string>();
   @Output() abrirPerfil = new EventEmitter<void>();
@@ -94,6 +120,11 @@ export class TopbarComponent {
   ir(chave: string): void {
     this.navegar.emit(chave);
     this.fechar();
+  }
+
+  irHome(): void {
+    this.fechar();
+    this.router.navigateByUrl(ROTAS_MENU['recomendacao']);
   }
 
   @HostListener('document:keydown.escape')

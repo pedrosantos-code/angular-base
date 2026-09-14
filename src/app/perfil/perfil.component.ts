@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TopbarComponent } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 
 export interface PerfilUso {
   uso: string;
@@ -36,6 +36,12 @@ export interface Previa {
 })
 export class PerfilComponent {
   private router = inject(Router);
+
+  ir(chave: string): void {
+    this.navegar.emit(chave);
+    const rota = ROTAS_MENU[chave];
+    if (rota) this.router.navigateByUrl(rota);
+  }
 
   sair(): void {
     this.router.navigateByUrl('/');

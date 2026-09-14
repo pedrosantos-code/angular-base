@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TopbarComponent } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 
 export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
 export type Ordenacao = 'compatibilidade' | 'preco' | 'nome';
@@ -38,6 +38,12 @@ export class ModelosComponent {
   @Output() abrirModelo = new EventEmitter<string>();
   @Output() compararSelecionados = new EventEmitter<string[]>();
   @Output() navegar = new EventEmitter<string>();
+
+  ir(chave: string): void {
+    this.navegar.emit(chave);
+    const rota = ROTAS_MENU[chave];
+    if (rota) this.router.navigateByUrl(rota);
+  }
 
   sair(): void {
     this.router.navigateByUrl('/');
