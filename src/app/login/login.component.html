@@ -58,8 +58,8 @@
       <button type="button" class="login" (click)="onLogin(emailInput.value, passwordInput.value)">
         {{ isLoading() ? 'ENTRANDO...' : 'ENTRAR' }}
       </button> 
-      <div class="">
-        <p>Já tem uma conta? <a routerLink="cadastro" class="">Fazer cadastro</a></p>
+      <div class="login-register-link">
+        <p>Já tem uma conta? <a routerLink="/cadastro">Fazer cadastro</a></p>
       </div>
     </div>
   </div>

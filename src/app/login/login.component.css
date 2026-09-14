@@ -306,6 +306,17 @@ input:focus {
   font-weight: 600;
 }
 
+.login-register-link {
+  text-align: center;
+  margin-top: 16px;     /* Espaço entre o botão e o texto "Já tem uma conta?" */
+  font-size: 14px;
+  
+}
+
+.login-register-link a {
+  text-decoration: underline;
+}
+
 @keyframes seia-pulse {
   0%, 100% { opacity: .35; }
   50% { opacity: 1; }
