@@ -3,10 +3,10 @@
   <div class="login-hero">
     <div class="login-hero__overlay"></div>
 
-    <div class="login-hero__brand">
+    <button type="button" class="login-hero__brand" (click)="goSite.emit()" routerLink="/">
       <img src="favicon.ico" alt="Logo" class="login-hero__logo">
-      <div class="login-hero__brand-name">Ford · Squad SEIA</div>
-    </div>
+      <div class="login-hero__brand-name">Ford · SEIA</div>
+    </button>
 
     <div class="login-hero__headline">
       <h1>O mercado inteiro,<br>numa única tela.</h1>

@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, output } from '@angular/core'; // 1. Adicione 'output' aqui
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -12,6 +12,9 @@ import { AuthService } from '../auth.service';
 export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
+
+  // 2. Declare o output para se comunicar com o componente pai (se necessário)
+  goSite = output<void>();
 
   errorMessage = signal<string | null>(null);
   isLoading = signal(false);

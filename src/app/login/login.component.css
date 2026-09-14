@@ -100,6 +100,21 @@ input:focus {
   align-items: center;
   gap: 14px;
   z-index: 2;
+  
+  /* Adições para o botão funcionar perfeitamente sem bordas feias */
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+}
+
+/* Garante que ao focar via teclado ou clique, nenhuma borda azul apareça aqui */
+.login-hero__brand:focus,
+.login-hero__brand:focus-visible {
+  outline: none;
+  box-shadow: none;
 }
 
 .login-hero__logo {
