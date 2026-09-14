@@ -22,6 +22,15 @@ export class LandingComponent {
     this.goRegister.emit();
   }
 
+  // Links de navegação do menu lateral/topo
+  navLinks = [
+    { label: 'Problema', href: '#problema' },
+    { label: 'Proposta', href: '#proposta' },
+    { label: 'Como funciona', href: '#funciona' },
+    { label: 'Diferencial', href: '#diferencial' },
+    { label: 'Impacto', href: '#impacto' }
+  ];
+
   // Palavras-chave para a faixa de marquee animada
   keywords: string[] = [
     'INTELIGÊNCIA AUTOMOTIVA',

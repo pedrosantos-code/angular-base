@@ -288,28 +288,37 @@
   <div class="l-138">
     <div class="l-139">
       <div class="l-140">
-        <div>
+        <div class="l-152">
           <div class="l-141">
             <img src="favicon.ico" alt="Logo" class="l-142">
             <div class="l-143">SEIA</div>
           </div>
           <p class="l-144">Sistema de Reconhecimento Inteligente de Veículos — junto com a Ford.</p>
+          <a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-153">
+            <span class="l-154">▶</span> Assistir ao pitch
+          </a>
         </div>
         <div>
-          <div class="l-145">Integrantes do squad</div>
-          <div class="l-146">
-            @for (p of team; track $index) {
-              <div class="l-147">
-                <span class="l-148">{{ p.n }}</span>
-                <span class="l-149">{{ p.rm }}</span>
-              </div>
+          <div class="footer-nav-group">
+            <div class="l-145">Navegação</div>
+            @for (link of navLinks; track $index) {
+              <a [href]="link.href" class="l-146">{{ link.label }}</a>
             }
           </div>
         </div>
+        <div>
+          <div class="l-145">Squad</div>
+          @for (t of team; track $index) {
+            <div class="l-147">
+              <span class="l-148">{{ t.n }}</span>
+              <span class="l-149">{{ t.rm }}</span>
+            </div>
+          }
+        </div>
       </div>
       <div class="l-150">
-        <span>© 2026 Squad SEIA + Ford </span>
-        <span>Pitch: <a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-151">youtu.be/2D8-hnq4dd0</a></span>
+        <span>© 2026 Squad SEIA + Ford</span>
+        <span>Feito para a intranet Ford</span>
       </div>
     </div>
   </div>

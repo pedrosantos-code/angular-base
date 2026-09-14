@@ -46,7 +46,7 @@
   display: block;
 }
 
-.l-title {
+:host h1.l-title {
   font-family: 'Archivo', sans-serif;
   font-weight: 900;
   font-size: clamp(34px, 4.5vw, 56px);
@@ -54,6 +54,7 @@
   letter-spacing: -.03em;
   margin-bottom: 14px;
   max-width: 700px;
+  color: #fff;
 }
 
 .l-subtitle {
@@ -82,7 +83,7 @@
 .l-search-input::placeholder { color: #93A2B2; }
 .l-search-input:focus-visible { outline: none; }
 
-.l-btn-primary {
+button.l-btn-primary {
   background: #2E7DD1;
   color: #fff;
   padding: 0 26px;
@@ -100,17 +101,17 @@
 .l-shortcuts { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
 .l-shortcuts span { font-size: 13.5px; color: #7FB3E4; }
 .l-chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.l-chip {
+button.l-chip {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 14px;
-  border: 1px solid rgba(127,179,228,0.3);
-  color: #BBD3E9;
+  border: 1px solid #2E7DD1;
+  color: #fff;
   font-size: 13px;
-  background: rgba(0, 15, 32, 0.2);
+  background: #2E7DD1;
   transition: all .16s;
 }
-.l-chip:hover { border-color: #2E7DD1; color: #fff; background: rgba(46,125,209,0.15); }
-.l-chip-icon { width: 14px; height: 14px; }
+button.l-chip:hover { border-color: #0B57A4; color: #fff; background: #0B57A4; }
+.l-chip-icon { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 
 .l-example { margin-top: 12px; }
 .l-example small { color: #6E8CA8; font-size: 12.5px; font-style: italic; }

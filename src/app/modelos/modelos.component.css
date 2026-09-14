@@ -32,14 +32,14 @@
 }
 .l-md-rail-label:first-child { margin-top: 0; }
 
-.l-md-filter {
+button.l-md-filter {
   width: 100%; display: flex; align-items: center; gap: 8px;
   padding: 9px 20px; font-size: 14px; color: #BBD3E9;
   border-left: 3px solid transparent;
   transition: color .16s, background .16s;
 }
-.l-md-filter:hover { color: #fff; }
-.l-md-filter.is-on { color: #fff; font-weight: 500; background: rgba(46,125,209,.12); border-left-color: #2E7DD1; }
+button.l-md-filter:hover { color: #fff; }
+button.l-md-filter.is-on { color: #fff; font-weight: 500; background: rgba(46,125,209,.12); border-left-color: #2E7DD1; }
 .l-md-filter:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
 .l-md-filter-count { margin-left: auto; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #6E8CA8; }
 

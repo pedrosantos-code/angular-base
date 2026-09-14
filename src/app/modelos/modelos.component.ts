@@ -36,7 +36,26 @@ export class ModelosComponent {
   @Output() compararSelecionados = new EventEmitter<string[]>();
   @Output() navegar = new EventEmitter<string>();
 
-  @Input() modelos: Modelo[] = [];
+  @Input() modelos: Modelo[] = [
+    { id: 'bronco-sport', nome: 'Bronco Sport', segmento: 'SUV compacto', categoria: 'suv', motorizacao: 'combustao', precoDe: 249900, ficha: ['1.5 EcoBoost turbo · 182 cv', 'Tração 4x2 · 5 lugares'], nota: null, imagem: 'bronco-sport.jpeg' },
+    { id: 'explorer', nome: 'Explorer', segmento: 'SUV grande', categoria: 'suv', motorizacao: 'combustao', precoDe: 429900, ficha: ['2.3 EcoBoost turbo · 300 cv', 'Tração 4x2 · 7 lugares'], nota: null, imagem: 'explorer.jpeg' },
+    { id: 'territory', nome: 'Territory', segmento: 'SUV médio', categoria: 'suv', motorizacao: 'combustao', precoDe: 219900, ficha: ['1.5 turbo · 177 cv', 'Tração 4x2 · 5 lugares'], nota: null, imagem: 'territory.jpeg' },
+
+    { id: 'f-150', nome: 'F-150', segmento: 'Picape grande', categoria: 'picape', motorizacao: 'combustao', precoDe: 439900, ficha: ['3.5 V6 EcoBoost · 400 cv', 'Tração 4x4 · 5 lugares'], nota: null, imagem: 'f150.jpg' },
+    { id: 'ranger', nome: 'Ranger', segmento: 'Picape média', categoria: 'picape', motorizacao: 'combustao', precoDe: 259900, ficha: ['3.0 V6 Turbo Diesel · 250 cv', 'Tração 4x4 · 5 lugares'], nota: null, imagem: 'ranger.jpg' },
+    { id: 'ranger-raptor', nome: 'Ranger Raptor', segmento: 'Picape de performance', categoria: 'picape', motorizacao: 'combustao', precoDe: 399900, ficha: ['3.0 V6 Twin-Turbo · 397 cv', 'Tração 4x4 · 5 lugares'], nota: null, imagem: 'ranger-raptor.jpg' },
+    { id: 'maverick-hybrid', nome: 'Maverick Hybrid', segmento: 'Picape compacta', categoria: 'picape', motorizacao: 'hibrido', precoDe: 219900, ficha: ['2.5 Híbrido · 191 cv', 'Tração 4x2 · 5 lugares'], nota: null, imagem: 'maverick-hybrid.jpg' },
+    { id: 'maverick-tremor', nome: 'Maverick Tremor', segmento: 'Picape compacta off-road', categoria: 'picape', motorizacao: 'combustao', precoDe: 249900, ficha: ['2.0 EcoBoost turbo · 250 cv', 'Tração 4x4 · 5 lugares'], nota: null, imagem: 'maverick-tremor.jpg' },
+
+    { id: 'mustang-gt', nome: 'Mustang GT', segmento: 'Esportivo', categoria: 'esportivo', motorizacao: 'combustao', precoDe: 549900, ficha: ['5.0 V8 · 480 cv', 'Tração traseira · 4 lugares'], nota: null, imagem: 'mustang.jpg' },
+
+    { id: 'mustang-mach-e', nome: 'Mustang Mach-E', segmento: 'SUV elétrico', categoria: 'suv', motorizacao: 'eletrico', precoDe: 379900, ficha: ['Motor elétrico · 351 cv', 'Autonomia até 500 km'], nota: null, imagem: 'mach-e.jpg' },
+    { id: 'f-150-lightning', nome: 'F-150 Lightning', segmento: 'Picape elétrica', categoria: 'picape', motorizacao: 'eletrico', precoDe: 599900, ficha: ['Motor elétrico duplo · 580 cv', 'Tração 4x4 · 5 lugares'], nota: null, imagem: 'f150-lightning.jpg' },
+    { id: 'e-transit', nome: 'E-Transit', segmento: 'Van elétrica', categoria: 'comercial', motorizacao: 'eletrico', precoDe: 349900, ficha: ['Motor elétrico · 269 cv', 'Autonomia até 300 km'], nota: null, imagem: 'e-transit.jpeg' },
+
+    { id: 'transit-furgao', nome: 'Transit Furgão', segmento: 'Van de carga', categoria: 'comercial', motorizacao: 'combustao', precoDe: 219900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Capacidade até 1.5 t'], nota: null, imagem: 'transit-furgao.jpeg' },
+    { id: 'transit-minibus', nome: 'Transit Minibus', segmento: 'Van de passageiros', categoria: 'comercial', motorizacao: 'combustao', precoDe: 239900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Até 16 lugares'], nota: null, imagem: 'transit-minibus.jpeg' },
+  ];
   /** Resumo do perfil, exibido sob o título. Nulo esconde a linha. */
   @Input() perfil: string | null = 'família · estrada · até R$ 250 mil';
 
@@ -66,7 +85,7 @@ export class ModelosComponent {
 
   categoria = 'todos';
   motorizacoesAtivas = new Set<Motorizacao>();
-  tetoPreco = 350000;
+  tetoPreco = 599900;
   soCompativeis = false;
   termo = '';
   ordem: Ordenacao = 'compatibilidade';
