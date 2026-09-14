@@ -139,7 +139,7 @@ export class CadastroComponent {
           this.errorMessage.set(response.error.message);
         } else {
           console.log('Cadastro realizado com sucesso:', response);
-          this.router.navigate(['/home']);
+          this.router.navigate(['/portal']);
         }
       },
       error: (error) => {
