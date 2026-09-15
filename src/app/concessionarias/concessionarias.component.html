@@ -13,19 +13,37 @@
     </div>
     <div class="l-cc-field">
       <label class="l-cc-field-label" for="raio">Raio</label>
-      <select class="l-cc-input l-cc-select" id="raio" name="raio" [(ngModel)]="raioKm">
+      <select class="l-cc-input l-cc-select" id="raio" name="raio" [(ngModel)]="raioKm" (ngModelChange)="aoMudarRaio()">
         @for (r of raios; track r) { <option [value]="r">{{ r }} km</option> }
       </select>
     </div>
-    <button class="l-cc-go" type="button" (click)="aplicarBusca()">Buscar</button>
+    <button class="l-cc-go" type="button" [disabled]="buscando" (click)="aplicarBusca()">
+      {{ buscando ? 'Buscando…' : 'Buscar' }}
+    </button>
   </div>
+  @if (erroBusca) {
+    <p class="l-cc-erro-busca">{{ erroBusca }}</p>
+  }
 </header>
  
 <div class="l-cc-split">
  
   <div class="l-cc-list">
     <p class="l-cc-count">{{ resumo }}</p>
- 
+
+    <div class="l-cc-filtros">
+      @for (s of servicosDisponiveis; track s) {
+        <button
+          type="button"
+          class="l-cc-filtro"
+          [class.is-on]="filtroServicos.has(s)"
+          [attr.aria-pressed]="filtroServicos.has(s)"
+          (click)="alternarServico(s)">
+          {{ s }}
+        </button>
+      }
+    </div>
+
     @for (u of ordenadas; track u.id; let i = $index) {
       <article class="l-cc-unit" [class.is-on]="selecionada === u.id">
         <button class="l-cc-unit-head" type="button" (click)="escolher(u)">
@@ -41,9 +59,9 @@
             @for (s of u.servicos; track s) { <span class="l-cc-tag">{{ s }}</span> }
           </div>
  
-          <p class="l-cc-status" [class.is-open]="u.aberta" [class.is-closed]="!u.aberta">
+          <p class="l-cc-status" [class.is-open]="estaAberta(u)" [class.is-closed]="!estaAberta(u)">
             <span class="l-cc-dot"></span>
-            {{ u.aberta ? 'Aberto ' + u.expediente : 'Fechado · ' + u.expediente }}
+            {{ estaAberta(u) ? 'Aberto ' + expedienteTexto(u) : 'Fechado · ' + expedienteTexto(u) }}
           </p>
  
           @if (u.proximaVaga) {
@@ -66,7 +84,7 @@
   <!-- O Leaflet monta dentro deste container e traz o próprio zoom e a atribuição -->
   <div class="l-cc-map">
     <div class="l-cc-map-canvas" id="mapa-concessionarias"></div>
-    <button class="l-cc-locate" type="button" (click)="usarLocalizacao.emit()">
+    <button class="l-cc-locate" type="button" (click)="usarMinhaLocalizacao()">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M12 21.5s6.8-6 6.8-11.5a6.8 6.8 0 1 0-13.6 0C5.2 15.5 12 21.5 12 21.5z" />
         <path d="M12 7.2a3 3 0 1 1 0 6 3 3 0 0 1 0-6z" />
@@ -75,3 +93,5 @@
     </button>
   </div>
 </div>
+
+<seia-rodape />

@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { RodapeComponent } from '../rodape/rodape.component';
 
 export interface Entrada { ordem: string; titulo: string; texto: string; }
 export interface Criterio { rotulo: string; pontos: number; maximo: number; }
@@ -17,7 +18,7 @@ export interface ExemploNota {
 @Component({
   selector: 'seia-sobre-ia',
   standalone: true,
-  imports: [CommonModule, TopbarComponent],
+  imports: [CommonModule, TopbarComponent, RodapeComponent],
   templateUrl: './sobre-ia.component.html',
   styleUrl: './sobre-ia.component.css',
 })
@@ -62,14 +63,6 @@ export class SobreIaComponent {
     { titulo: 'Não garante disponibilidade', texto: 'Um modelo com nota alta pode não estar disponível na sua região.' },
     { titulo: 'Não substitui o test-drive', texto: 'Conforto e dirigibilidade só se confirmam no banco do carro.' },
     { titulo: 'Não decide por você', texto: 'A nota ordena opções. A escolha continua sua.' },
-  ];
-
-  readonly rodape = [
-    { chave: 'cookies', rotulo: 'Política de Cookies' },
-    { chave: 'privacidade', rotulo: 'Política de Privacidade' },
-    { chave: 'contato', rotulo: 'Fale conosco' },
-    { chave: 'acessibilidade', rotulo: 'Acessibilidade' },
-    { chave: 'etica', rotulo: 'Código de Ética' },
   ];
 
   readonly corteFraco = 0.9;

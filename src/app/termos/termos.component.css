@@ -59,6 +59,11 @@
   margin-top: 4px;
 }
 
+.l-header-badge.is-done .l-badge-number,
+.l-header-badge.is-done .l-badge-text {
+  color: #16a34a;
+}
+
 /* Layout Principal */
 .l-termos-layout {
   display: grid;
@@ -235,6 +240,10 @@ input:checked + .l-slider:before {
   gap: 20px;
 }
 
+.l-content-card[hidden] {
+  display: none;
+}
+
 .l-card-top-tag {
   display: flex;
   justify-content: space-between;
@@ -256,6 +265,12 @@ input:checked + .l-slider:before {
   letter-spacing: 0.5px;
   color: #475569;
   background: #f8fafc;
+}
+
+.l-tag-badge.accepted-badge {
+  border-color: #bbf7d0;
+  color: #16a34a;
+  background: #f0fdf4;
 }
 
 .l-version-history {
@@ -358,6 +373,19 @@ input:checked + .l-slider:before {
   margin-left: 30px;
 }
 
+.l-accept-box.is-done {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.l-accept-box.is-done .l-checkbox-text {
+  color: #16a34a;
+}
+
+.l-accept-box.is-done .l-warning-text {
+  margin-left: 0;
+}
+
 /* Rodapé */
 .l-termos-footer {
   margin-top: 32px;
@@ -418,4 +446,42 @@ input:checked + .l-slider:before {
   background-color: #cbd5e1;
   color: #94a3b8;
   cursor: not-allowed;
+}
+
+/* Impressão — "Baixar tudo em PDF" usa o diálogo de impressão do navegador
+   (Salvar como PDF) e imprime os dois documentos completos, não só a aba ativa. */
+@media print {
+  seia-topbar,
+  seia-rodape,
+  .l-header-badge,
+  .l-termos-sidebar,
+  .l-accept-box,
+  .l-termos-footer {
+    display: none !important;
+  }
+
+  .l-termos-container {
+    background: #fff;
+    padding: 0;
+    min-height: 0;
+    display: block;
+  }
+
+  .l-termos-layout {
+    display: block;
+  }
+
+  .l-termos-content {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  .l-content-card {
+    display: flex !important;
+    break-inside: avoid;
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #cbd5e1;
+  }
 }

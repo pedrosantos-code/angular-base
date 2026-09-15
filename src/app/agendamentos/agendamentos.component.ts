@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { RodapeComponent } from '../rodape/rodape.component';
 
 export interface TipoAtendimento { chave: string; rotulo: string; }
 
@@ -46,12 +47,36 @@ export interface Agendamento {
 @Component({
   selector: 'seia-agendamentos',
   standalone: true,
-  imports: [CommonModule, TopbarComponent],
+  imports: [CommonModule, TopbarComponent, RodapeComponent],
   templateUrl: './agendamentos.component.html',
   styleUrl: './agendamentos.component.css',
 })
 export class AgendamentosComponent {
   private router = inject(Router);
+
+  /** Meia-noite do dia atual. Reavaliado a cada minuto para o calendário virar sozinho quando o dia muda. */
+  private readonly hoje = signal(AgendamentosComponent.meiaNoite(new Date()));
+
+  constructor() {
+    const id = setInterval(() => {
+      const agora = AgendamentosComponent.meiaNoite(new Date());
+      if (agora.getTime() !== this.hoje().getTime()) this.hoje.set(agora);
+    }, 60000);
+    inject(DestroyRef).onDestroy(() => clearInterval(id));
+
+    try {
+      const salvo = localStorage.getItem(this.chaveAgendamentos);
+      if (salvo) this.agendamentos = JSON.parse(salvo);
+    } catch {
+      // localStorage indisponível — a lista fica vazia até um novo agendamento nesta sessão.
+    }
+  }
+
+  private static meiaNoite(d: Date): Date {
+    const copia = new Date(d);
+    copia.setHours(0, 0, 0, 0);
+    return copia;
+  }
 
   ir(chave: string): void {
     this.navegar.emit(chave);
@@ -79,25 +104,65 @@ export class AgendamentosComponent {
     { chave: 'comercial', rotulo: 'Atendimento comercial' },
   ];
 
+  /** Mesmas unidades cadastradas em /concessionarias (mesmo id, nome e endereço) — veja ConcessionariasComponent.unidades. */
   @Input() unidades: Unidade[] = [
-    { id: 'morumbi', nome: 'Ford Morumbi', endereco: 'Av. Giovanni Gronchi, 5900', distanciaKm: 4.2, horariosLivres: 12 },
-    { id: 'interlagos', nome: 'Ford Interlagos', endereco: 'Av. Interlagos, 3000', distanciaKm: 9.7, horariosLivres: 5 },
-    { id: 'santo-amaro', nome: 'Ford Santo Amaro', endereco: 'Av. Santo Amaro, 1200', distanciaKm: 11.3, horariosLivres: 8 },
+    { id: 'caoa-ibirapuera', nome: 'Ford Caoa - Ibirapuera', endereco: 'Av. Ibirapuera, 2400', distanciaKm: 3.5, horariosLivres: 12 },
+    { id: 'caoa-jabaquara', nome: 'Ford CAOA - Jabaquara', endereco: 'Av. Jabaquara, 2207', distanciaKm: 6.8, horariosLivres: 8 },
+    { id: 'caoa-ceasa', nome: 'Ford CAOA - Ceasa', endereco: 'Av. Dr. Gastão Vidigal, 1250', distanciaKm: 9.4, horariosLivres: 5 },
+    { id: 'sonnervig', nome: 'Ford Sonnervig', endereco: 'Rua dos Machados, 150', distanciaKm: 12.1, horariosLivres: 9 },
+    { id: 'ford-sao-paulo', nome: 'Ford For São Paulo', endereco: 'Av. das Nações Unidas, 21883', distanciaKm: 15.6, horariosLivres: 3 },
   ];
 
   @Input() modelo: ModeloDisponivel = { nome: 'Territory Titanium', nota: 94, disponivel: true };
 
-  @Input() periodo = 'setembro 2026';
+  /** Quantidade de dias exibidos, sempre a partir de hoje — 4 semanas fecham exatamente as linhas da grade de 7 colunas. */
+  private readonly janelaDias = 28;
 
-  @Input() dias: Dia[] = [
-    { iso: '2026-09-15', semana: 'seg', numero: '15', vagas: 6, status: 'livre' },
-    { iso: '2026-09-16', semana: 'ter', numero: '16', vagas: 4, status: 'livre' },
-    { iso: '2026-09-17', semana: 'qua', numero: '17', vagas: 9, status: 'livre' },
-    { iso: '2026-09-18', semana: 'qui', numero: '18', vagas: 0, status: 'lotado' },
-    { iso: '2026-09-19', semana: 'sex', numero: '19', vagas: 3, status: 'livre' },
-    { iso: '2026-09-20', semana: 'sáb', numero: '20', vagas: 7, status: 'livre' },
-    { iso: '2026-09-21', semana: 'dom', numero: '21', vagas: 0, status: 'fechado' },
-  ];
+  /** Texto do período (ex.: "15 set – 12 out"), calculado a partir de hoje — nunca fica com uma data parada no passado. */
+  get periodo(): string {
+    const inicio = this.hoje();
+    const fim = new Date(inicio);
+    fim.setDate(fim.getDate() + this.janelaDias - 1);
+    const fmt = (d: Date) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
+    return `${fmt(inicio)} – ${fmt(fim)}`;
+  }
+
+  /** Calendário rolante de hoje até 4 semanas à frente. Domingo fecha; o resto varia de forma determinística (mock). */
+  get dias(): Dia[] {
+    const nomesSemana = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
+    const inicio = this.hoje();
+    const dias: Dia[] = [];
+
+    for (let i = 0; i < this.janelaDias; i++) {
+      const data = new Date(inicio);
+      data.setDate(data.getDate() + i);
+      const diaSemana = data.getDay();
+
+      let status: StatusDia;
+      let vagas: number;
+      if (diaSemana === 0) {
+        status = 'fechado';
+        vagas = 0;
+      } else if ((data.getDate() + diaSemana) % 6 === 0) {
+        status = 'lotado';
+        vagas = 0;
+      } else {
+        status = 'livre';
+        vagas = 2 + ((data.getDate() * 3 + diaSemana) % 8);
+      }
+
+      const iso = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}-${String(data.getDate()).padStart(2, '0')}`;
+      dias.push({
+        iso,
+        semana: nomesSemana[diaSemana],
+        numero: String(data.getDate()).padStart(2, '0'),
+        vagas,
+        status,
+      });
+    }
+
+    return dias;
+  }
 
   @Input() horarios: Horario[] = [
     { hora: '09:00', livre: false }, { hora: '09:30', livre: true },
@@ -106,10 +171,10 @@ export class AgendamentosComponent {
     { hora: '14:30', livre: true }, { hora: '16:00', livre: true },
   ];
 
-  @Input() agendamentos: Agendamento[] = [
-    { id: 'a1', quando: 'qui · 25/09 · 15:00', titulo: 'Revisão de 20.000 km', unidade: 'Ford Interlagos', detalhe: 'Av. Interlagos, 3000', passado: false },
-    { id: 'a2', quando: 'sex · 29/08 · 11:00', titulo: 'Test-drive Bronco Sport', unidade: 'Ford Morumbi', detalhe: 'compareceu', passado: true },
-  ];
+  /** Começa vazio de propósito — só aparece agendamento aqui depois de confirmar um pelo formulário. */
+  @Input() agendamentos: Agendamento[] = [];
+
+  private readonly chaveAgendamentos = 'seia-agendamentos';
 
   /** Requisitos exibidos antes da confirmação, por tipo de atendimento. */
   @Input() requisitos: Record<string, string> = {
@@ -120,9 +185,9 @@ export class AgendamentosComponent {
   };
 
   tipo = 'test-drive';
-  unidadeId = 'morumbi';
-  dia: string | null = '2026-09-16';
-  hora: string | null = '10:30';
+  unidadeId = 'caoa-ibirapuera';
+  dia: string | null = null;
+  hora: string | null = null;
 
   get unidade(): Unidade | undefined {
     return this.unidades.find((u) => u.id === this.unidadeId);
@@ -176,6 +241,21 @@ export class AgendamentosComponent {
 
   enviar(): void {
     if (!this.completo) return;
+
+    const dia = this.diaEscolhido!;
+    const titulo = this.exigeModelo ? `${this.tipoRotulo} · ${this.modelo.nome}` : this.tipoRotulo;
+    const novo: Agendamento = {
+      id: `a-${Date.now()}`,
+      quando: `${dia.semana} · ${dia.iso.slice(8, 10)}/${dia.iso.slice(5, 7)} · ${this.hora}`,
+      titulo,
+      unidade: this.unidade?.nome ?? '',
+      detalhe: this.unidade?.endereco ?? '',
+      passado: false,
+    };
+
+    this.agendamentos = [novo, ...this.agendamentos];
+    this.salvarAgendamentos();
+
     this.confirmar.emit({
       tipo: this.tipo,
       unidadeId: this.unidadeId,
@@ -183,5 +263,23 @@ export class AgendamentosComponent {
       dia: this.dia!,
       hora: this.hora!,
     });
+
+    this.limparQuando();
+  }
+
+  /** Remove um agendamento errado/indesejado da lista, com confirmação para evitar clique acidental. */
+  excluirAgendamento(a: Agendamento): void {
+    if (!confirm(`Cancelar "${a.titulo}" em ${a.quando}?`)) return;
+    this.agendamentos = this.agendamentos.filter((item) => item.id !== a.id);
+    this.salvarAgendamentos();
+    this.cancelar.emit(a.id);
+  }
+
+  private salvarAgendamentos(): void {
+    try {
+      localStorage.setItem(this.chaveAgendamentos, JSON.stringify(this.agendamentos));
+    } catch {
+      // localStorage indisponível — o agendamento vale só para esta sessão.
+    }
   }
 }

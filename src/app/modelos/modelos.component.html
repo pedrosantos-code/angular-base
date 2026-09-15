@@ -140,3 +140,71 @@
     }
   </main>
 </div>
+
+<seia-rodape />
+
+@if (compararAtivo) {
+  <div class="l-md-modal-backdrop" (click)="fecharComparacao()">
+    <div class="l-md-modal" role="dialog" aria-modal="true" aria-label="Comparação de modelos" (click)="$event.stopPropagation()">
+      <div class="l-md-modal-head">
+        <h2>Comparar modelos</h2>
+        <button class="l-md-modal-close" type="button" (click)="fecharComparacao()" aria-label="Fechar comparação">✕</button>
+      </div>
+
+      <div class="l-md-compare-table-wrap">
+        <table class="l-md-compare-table">
+          <thead>
+            <tr>
+              <th></th>
+              @for (m of modelosComparados; track m.id) {
+                <th>
+                  <span class="l-md-ct-photo">
+                    @if (m.imagem) { <img [src]="m.imagem" [alt]="m.nome" loading="lazy" /> }
+                  </span>
+                  <span class="l-md-ct-name">{{ m.nome }}</span>
+                  <span class="l-md-ct-segment">{{ m.segmento }}</span>
+                  <button class="l-md-ct-remove" type="button" (click)="removerDaComparacao(m.id)">remover</button>
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Preço a partir de</th>
+              @for (m of modelosComparados; track m.id) { <td>{{ preco(m.precoDe) }}</td> }
+            </tr>
+            <tr>
+              <th scope="row">Motorização</th>
+              @for (m of modelosComparados; track m.id) { <td class="l-md-ct-cap">{{ m.motorizacao }}</td> }
+            </tr>
+            <tr>
+              <th scope="row">Ficha técnica</th>
+              @for (m of modelosComparados; track m.id) {
+                <td>
+                  @for (f of m.ficha; track f) { {{ f }}<br /> }
+                </td>
+              }
+            </tr>
+            @if (perfil) {
+              <tr>
+                <th scope="row">Compatibilidade</th>
+                @for (m of modelosComparados; track m.id) {
+                  <td>
+                    @if (m.nota !== null) {
+                      <strong class="l-md-ct-nota">{{ m.nota }}%</strong>
+                      <span class="l-md-track">
+                        <span class="l-md-fill" [class.is-fraco]="m.nota < corteFraco" [style.width.%]="m.nota"></span>
+                      </span>
+                    } @else {
+                      —
+                    }
+                  </td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+}

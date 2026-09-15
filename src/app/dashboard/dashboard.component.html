@@ -1,95 +1,99 @@
-<div class="fundo-home">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+<seia-topbar
+  (navegar)="onNavegar($event)"
+  (abrirPerfil)="irPerfil()"
+  (sair)="sair()" />
 
-  <seia-topbar
-    (navegar)="onNavegar($event)"
-    (abrirPerfil)="irPerfil()"
-    (sair)="sair()" />
+<header class="l-db-hero">
+  <div class="l-db-inner">
+    <p class="l-db-tag">análise técnica</p>
+    <h1 class="l-db-title">Dashboard Detalhado</h1>
+    <p class="l-db-subtitle">
+      Digite o nome de um modelo Ford para consultar a ficha técnica oficial e comparar potência e velocidade máxima lado a lado.
+    </p>
 
-  <main class="container-home">
-    <div class="dashboard-container">
-      <div class="dashboard-header">
-        <i class="fa-solid fa-chart-line"></i>
-        <h2>Dashboard Detalhado</h2>
+    <form class="l-db-search" (ngSubmit)="buscarGraficos()">
+      <input
+        class="l-db-input"
+        type="text"
+        name="nomeCarro"
+        placeholder="Ex: Mustang, Ranger, Territory…"
+        [ngModel]="nomeCarro()"
+        (ngModelChange)="nomeCarro.set($event)"
+      />
+      <button type="submit" class="l-db-go" [disabled]="carregando()">
+        {{ carregando() ? 'Buscando…' : 'Gerar gráfico' }}
+      </button>
+    </form>
+
+    <div class="l-db-chips">
+      <span>ou experimente:</span>
+      @for (m of sugestoes; track m) {
+        <button type="button" class="l-db-chip" (click)="buscarSugestao(m)">{{ m }}</button>
+      }
+    </div>
+  </div>
+</header>
+
+<main class="l-db-body">
+  <div class="l-db-inner">
+
+    @if (erroBusca()) {
+      <p class="l-db-erro">{{ erroBusca() }}</p>
+    }
+
+    @if (resultados().length > 0) {
+      <p class="l-db-total">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford</p>
+
+      <div class="l-db-card l-db-chart-card">
+        <canvas #graficoCanvas></canvas>
       </div>
 
-      <p class="dashboard-subtitulo">
-        Digite o nome de um modelo Ford para consultar os dados técnicos e gerar o gráfico comparativo.
-      </p>
-
-      <form class="form-busca" (ngSubmit)="buscarGraficos()">
-        <input
-          type="text"
-          name="nomeCarro"
-          placeholder="Ex: Mustang, Ranger, Territory..."
-          [ngModel]="nomeCarro()"
-          (ngModelChange)="nomeCarro.set($event)"
-        />
-        <button type="submit" class="btn-buscar" [disabled]="carregando()">
-          @if (carregando()) {
-            Buscando...
-          } @else {
-            <i class="fa-solid fa-magnifying-glass"></i> Gerar Gráfico
-          }
-        </button>
-      </form>
-
-      @if (erroBusca()) {
-        <div class="aviso-busca">{{ erroBusca() }}</div>
-      }
-
-      @if (resultados().length > 0) {
-        <p class="total-resultados">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford.</p>
-
-        <div class="grafico-wrapper">
-          <canvas #graficoCanvas></canvas>
-        </div>
-
-        <div class="tabela-resultados">
-          @for (carro of resultados(); track carro.id) {
-            <div class="linha-resultado">
+      <div class="l-db-card l-db-table">
+        @for (carro of resultados(); track carro.id) {
+          <div class="l-db-row">
+            <span class="l-db-row-model">
               <strong>{{ carro.model }}</strong>
               <span>{{ carro.variant }}</span>
-              <span>{{ carro.enginePowerBhp ?? '—' }} cv</span>
-              <span>{{ carro.topSpeedKph ?? '—' }} km/h</span>
-              <span>{{ carro.gearboxType ?? '—' }}</span>
+            </span>
+            <span class="l-db-row-stat">{{ carro.enginePowerBhp ?? '—' }} <small>cv</small></span>
+            <span class="l-db-row-stat">{{ carro.topSpeedKph ?? '—' }} <small>km/h</small></span>
+            <span class="l-db-row-stat l-db-row-gearbox">
+              {{ carro.gearboxType ?? (carro.engineFuelType === 'ELECTRIC' ? 'ELECTRIC' : '—') }}
+            </span>
+          </div>
+        }
+      </div>
+
+      @if (buscandoSemelhantes()) {
+        <p class="l-db-kicker">Buscando carros semelhantes…</p>
+      } @else if (carrosSemelhantes().length > 0) {
+        <p class="l-db-kicker">Carros semelhantes</p>
+        <div class="l-db-card l-db-similar">
+          @for (carro of carrosSemelhantes(); track carro.id) {
+            <div class="l-db-row">
+              <span class="l-db-row-model">
+                <strong>{{ carro.model }}</strong>
+                <span>{{ carro.variant }}</span>
+              </span>
+              <span class="l-db-badge">{{ (carro.similarity * 100).toFixed(0) }}% compatível</span>
             </div>
           }
         </div>
-
-        <!-- Carros semelhantes ao primeiro resultado -->
-        @if (buscandoSemelhantes()) {
-          <p class="titulo-semelhantes">Buscando carros semelhantes...</p>
-        } @else if (carrosSemelhantes().length > 0) {
-          <h3 class="titulo-semelhantes">Carros Semelhantes</h3>
-          <div class="lista-semelhantes">
-            @for (carro of carrosSemelhantes(); track carro.id) {
-              <div class="item-semelhante">
-                <strong>{{ carro.model }}</strong>
-                <span>{{ carro.variant }}</span>
-                <span class="badge-similaridade">{{ (carro.similarity * 100).toFixed(0) }}% compatível</span>
-              </div>
-            }
-          </div>
-        }
       }
-    </div>
-  </main>
+    }
+  </div>
+</main>
 
-  <!-- Rodapé Institucional -->
-  <footer class="rodape-page">
-    <div class="rodape-links">
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Fale conosco</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
-    </div>
-    <div class="rodape-copy">
-      Copyright (c) 2026 Ford. Todos os direitos reservados.
-    </div>
-  </footer>
-</div>
+<footer class="l-db-footer">
+  <div class="l-db-footer-links">
+    <button type="button" class="l-db-link" (click)="irRodape('cookies')">Política de Cookies</button>
+    <button type="button" class="l-db-link" (click)="irRodape('privacidade')">Política de Privacidade</button>
+    <button type="button" class="l-db-link" (click)="irRodape('contato')">Fale conosco</button>
+    <span class="l-db-link is-inert">Regulamentos</span>
+    <span class="l-db-link is-inert">ford.com</span>
+    <span class="l-db-link is-inert">Declaração sobre acessibilidade</span>
+    <span class="l-db-link is-inert">Código de Ética</span>
+    <span class="l-db-link is-inert">Mapa do site</span>
+  </div>
+  <p class="l-db-footer-copy">Copyright (c) 2026 Ford. Todos os direitos reservados.</p>
+</footer>

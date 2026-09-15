@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ICONES, ITENS_PRINCIPAIS, ITENS_ATENDIMENTO, ITENS_SOBRE, ROTAS_MENU } from '../topbar/topbar.component';
+import { RodapeComponent } from '../rodape/rodape.component';
 
 export interface ModeloFord {
   segmento: string;
@@ -31,7 +32,7 @@ export interface PassoFuncionamento {
 @Component({
   selector: 'seia-portal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TopbarComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent],
   templateUrl: './portal.component.html',
   styleUrl: './portal.component.css',
 })

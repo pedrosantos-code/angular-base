@@ -113,28 +113,59 @@
       </div>
 
       <!-- Widget Flutuante da SEIA -->
-      <div class="widget-seia" (click)="abrirChatSeia()">
-        <span class="badge-status">SEIA ON</span>
-        <button class="btn-widget-seia" title="Conversar com a SEIA">
-          <i class="fa-solid fa-robot"></i>
-        </button>
-      </div>
+      @if (!chatAberto()) {
+        <div class="widget-seia" (click)="abrirChatSeia()">
+          <span class="badge-status">SEIA ON</span>
+          <button class="btn-widget-seia" type="button" title="Conversar com a SEIA">
+            <i class="fa-solid fa-robot"></i>
+          </button>
+        </div>
+      }
+
+      <!-- Painel de Chat da SEIA -->
+      @if (chatAberto()) {
+        <div class="painel-chat-seia" role="dialog" aria-label="Chat com a SEIA">
+          <div class="chat-cabecalho">
+            <div class="chat-cabecalho-info">
+              <i class="fa-solid fa-robot"></i>
+              <div class="chat-cabecalho-texto">
+                <strong>SEIA</strong>
+                <span>assistente Ford · online</span>
+              </div>
+            </div>
+            <button type="button" class="chat-fechar" (click)="fecharChat()" aria-label="Fechar chat">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+
+          <div class="chat-mensagens">
+            @for (m of mensagens(); track $index) {
+              <div class="chat-msg" [class.chat-msg-usuario]="m.autor === 'usuario'" [class.chat-msg-seia]="m.autor === 'seia'">
+                {{ m.texto }}
+              </div>
+            }
+            @if (chatDigitando()) {
+              <div class="chat-msg chat-msg-seia chat-msg-digitando">
+                <span></span><span></span><span></span>
+              </div>
+            }
+          </div>
+
+          <div class="chat-entrada">
+            <input
+              type="text"
+              placeholder="Escreva sua mensagem…"
+              [value]="mensagemAtual()"
+              (input)="atualizarMensagemAtual($event)"
+              (keyup.enter)="enviarMensagem()" />
+            <button type="button" (click)="enviarMensagem()" aria-label="Enviar mensagem">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </div>
+        </div>
+      }
     </div>
   </main>
 
-  <!-- Rodapé Institucional -->
-  <footer class="rodape-page">
-    <div class="rodape-links">
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Cookies</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Política de Privacidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Regulamentos</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">ford.com</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Declaração sobre acessibilidade</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Código de Ética</span> <span>|</span>
-      <span class="link-simulado" (click)="$event.stopPropagation()">Mapa do site</span>
-    </div>
-    <div class="rodape-copy">
-      Copyright (c) 2026 Ford. Todos os direitos reservados.
-    </div>
-  </footer>
+  <seia-rodape />
 </div>

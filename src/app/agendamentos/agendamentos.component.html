@@ -1,7 +1,7 @@
 <seia-topbar (navegar)="ir($event)" (sair)="sair()" />
 
 <header class="l-ag-hero">
-  <h1 class="l-ag-title">Agendar visita</h1>
+  <h1 class="l-ag-title">Agendar visitas</h1>
   <p class="l-ag-subtitle">Test-drive, revisão ou avaliação de usado nas unidades Ford.</p>
 </header>
 
@@ -147,7 +147,7 @@
         <div class="l-ag-card-actions">
           @if (!a.passado) {
             <button type="button" class="l-ag-action" (click)="remarcar.emit(a.id)">Remarcar</button>
-            <button type="button" class="l-ag-action is-muted" (click)="cancelar.emit(a.id)">Cancelar</button>
+            <button type="button" class="l-ag-action is-muted" (click)="excluirAgendamento(a)">Cancelar</button>
           } @else {
             <button type="button" class="l-ag-action" (click)="navegar.emit('comparacoes')">Ver comparação</button>
           }
@@ -158,3 +158,5 @@
     }
   </aside>
 </div>
+
+<seia-rodape />

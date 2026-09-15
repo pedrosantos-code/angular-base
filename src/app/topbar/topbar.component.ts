@@ -35,8 +35,8 @@ export const ICONES: Record<string, string[]> = {
   documento: ['M7 3.5h6.8L19 8.6V20.5H7z', 'M13.8 3.5v5.1H19M10 13.5h6M10 17h6'],
 };
 
+/** "Encontrar meu Ford" não entra aqui — o logo da gaveta já leva pra lá (irHome), não precisa duplicar. */
 export const ITENS_PRINCIPAIS: ItemMenu[] = [
-  { chave: 'recomendacao', rotulo: 'Encontrar meu Ford', icone: 'ia' },
   { chave: 'modelos', rotulo: 'Modelos Ford', icone: 'carro' },
   { chave: 'comparacoes', rotulo: 'Dashboard detalhado', icone: 'grafico' },
 ];

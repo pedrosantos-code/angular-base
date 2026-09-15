@@ -14,3 +14,61 @@ app-root {
   display: block;
   min-height: 100vh;
 }
+
+/* =========================================================
+   Pinos e popups do Leaflet — página de Concessionárias.
+   Ficam aqui (fora do CSS do componente) porque o Leaflet
+   cria esses elementos via DOM direto, sem passar pelo
+   encapsulamento de estilos do Angular.
+   ========================================================= */
+.cc-pin-wrap { background: transparent; border: none; }
+
+.cc-pin {
+  position: relative;
+  display: grid; place-items: center;
+  width: 26px; height: 26px;
+  background: #002B5C; color: #fff;
+  font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 12px;
+  box-shadow: 0 2px 6px rgba(0, 23, 48, .35);
+  animation: cc-pin-pop .3s cubic-bezier(.34, 1.56, .64, 1) both;
+}
+.cc-pin::after {
+  content: '';
+  position: absolute; left: 50%; bottom: -6px;
+  width: 0; height: 0; transform: translateX(-50%);
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #002B5C;
+}
+.cc-pin.cc-pin-on { background: #2E7DD1; animation: cc-pin-pop .3s cubic-bezier(.34, 1.56, .64, 1), cc-pin-bounce .6s .3s ease; }
+.cc-pin.cc-pin-on::after { border-top-color: #2E7DD1; }
+
+.cc-pin.cc-pin-origem {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: #15803D; box-shadow: 0 0 0 4px rgba(21, 128, 61, .25);
+}
+.cc-pin.cc-pin-origem::after { display: none; }
+
+@keyframes cc-pin-pop {
+  from { transform: scale(0); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+@keyframes cc-pin-bounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-10px); }
+  55% { transform: translateY(0); }
+  75% { transform: translateY(-4px); }
+}
+
+.cc-popup { font-family: 'IBM Plex Sans', system-ui, sans-serif; min-width: 190px; }
+.cc-popup strong {
+  display: block;
+  font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 14px; color: #001730;
+}
+.cc-popup p { margin: 4px 0 0; font-size: 12.5px; color: #5B6B7C; }
+.cc-popup-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 8px; }
+.cc-popup-tag { font-size: 10.5px; padding: 3px 7px; background: #2E7DD1; color: #fff; border-radius: 2px; }
+.cc-popup-status { margin-top: 8px; font-weight: 600; }
+.cc-popup-status.is-open { color: #15803D; }
+.cc-popup-status.is-closed { color: #B4453A; }

@@ -1,537 +1,149 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+/* =========================================================
+   SEIA + Ford — Dashboard Detalhado
+   Cabeçalho ...... l-db-hero, l-db-tag, l-db-title
+   Busca .......... l-db-search, l-db-chips
+   Resultados ..... l-db-card, l-db-row, l-db-badge
+   ========================================================= */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
+:host {
+  display: block;
+  background: #fff;
+  color: #001730;
+  font-family: 'IBM Plex Sans', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
-html, body, :host {
-    width: 100%;
-    height: 100%;
-    overflow-x: hidden;
-}
+:host *, :host *::before, :host *::after { box-sizing: border-box; }
 
-/* --- CONTAINER DO FUNDO --- */
-.fundo-home {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    
-    background-image: url('../../../public/fundo-home.png');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    
-    overflow-y: auto;
-    z-index: 0;
-}
+/* Reset escopado contra regras globais do app */
+:host button { font: inherit; background: none; border: none; color: inherit; cursor: pointer; text-align: left; }
+:host input { font: inherit; color: #001730; }
 
-/* --- ALERTA DE SUCESSO --- */
-.alert-sucesso {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background-color: #d1fae5;
-  border: 1px solid #34d399;
-  color: #065f46;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  margin-bottom: 14px;
-}
+.l-db-inner { max-width: 900px; margin: 0 auto; padding: 0 32px; }
 
-.alert-sucesso i {
-  font-size: 16px;
-  color: #059669;
-}
-
-seia-topbar {
-    width: 100%;
-}
-
-/* --- CONTAINER PRINCIPAL DA TELA --- */
-.container-home {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    box-sizing: border-box;
-    z-index: 1;
-}
-
-/* --- AGENDAMENTOS CONTAINER --- */
-.agendamentos-container {
-  max-width: 480px;
-  width: 100%;
-  margin: 80px auto 30px auto;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-  color: #2c3e50;
-}
-
-/* Header */
-.agendamentos-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.agendamentos-header i {
-  font-size: 26px;
-  color: #0e3165;
-}
-
-.agendamentos-header h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #0e3165;
-  margin: 0;
-}
-
-/* Calendário */
-.calendar-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 12px;
-  background-color: #ffffff;
-  margin-bottom: 20px;
-}
-
-.calendar-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.mes-ano {
-  font-size: 14px;
-  font-weight: 700;
-  color: #1e293b;
-}
-
-.btn-arrow {
-  background: none;
-  border: none;
-  color: #0e3165;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 8px;
-  transition: opacity 0.2s;
-}
-
-.btn-arrow:hover {
-  opacity: 0.7;
-}
-
-.disabled-btn {
-  color: #cbd5e1 !important;
-  cursor: not-allowed;
-  opacity: 0.5;
-}
-
-.btn-calendario {
-  background-color: #0e3165;
-  color: #ffffff;
-  border: none;
-  padding: 4px 12px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.calendar-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 4px;
-  text-align: center;
-}
-
-.day-name {
-  font-size: 11px;
-  color: #64748b;
-  font-weight: 600;
-  padding-bottom: 6px;
-}
-
-.day {
-  font-size: 12px;
-  padding: 8px 0;
-  color: #334155;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.15s, color 0.15s;
-}
-
-.day:hover:not(.disabled-day) {
-  background-color: #e2e8f0;
-  color: #0e3165;
-  font-weight: 600;
-}
-
-.day.active {
-  background-color: #38bdf8 !important;
-  color: #ffffff !important;
-  font-weight: bold;
-}
-
-.disabled-day {
-  color: #cbd5e1 !important;
-  cursor: not-allowed;
-  background-color: transparent !important;
-}
-
-.opacity-50 {
-  opacity: 0.35;
-}
-
-/* Seção de Agendamentos e Formulário */
-.agendamentos-secao {
-  border-top: 1px solid #e2e8f0;
-  padding-top: 16px;
-}
-
-.agendamentos-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-.agendamentos-topo h3 {
-  font-size: 14px;
-  font-weight: 700;
-  margin: 0;
-  color: #1e293b;
-}
-
-.form-agendamento {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  background-color: #f8fafc;
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
-}
-
-.form-grupo {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.form-grupo label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #475569;
-}
-
-.form-grupo select,
-.form-grupo input {
-  padding: 6px 10px;
-  font-size: 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  outline: none;
-  background-color: #ffffff;
-  color: #1e293b;
-  font-family: "Poppins", sans-serif;
-}
-
-.form-grupo select:focus,
-.form-grupo input:focus {
-  border-color: #0e3165;
-}
-
-.btn-novo {
-  background-color: #0e3165;
-  color: #ffffff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  width: 100%;
-  margin-top: 4px;
-}
-
-.btn-novo:hover {
-  background-color: #123d7d;
-}
-
-.agendamentos-lista {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 180px;
-  overflow-y: auto;
-  margin-top: 10px;
-}
-
-.agendamento-card {
-  background-color: #e0f2fe;
-  border-radius: 8px;
-  padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.agendamento-info {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.agendamento-info strong {
-  font-size: 12px;
-  color: #0369a1;
-}
-
-.agendamento-info span {
-  font-size: 11px;
-  color: #0284c7;
-}
-
-.btn-excluir {
-  cursor: pointer;
-  color: #ef4444;
-  font-size: 14px;
-  transition: opacity 0.2s;
-  padding: 4px;
-}
-
-.btn-excluir:hover {
-  opacity: 0.7;
-}
-
-/* --- DASHBOARD: BUSCA E GRÁFICO --- */
-.dashboard-container {
-  max-width: 900px;
-  width: 100%;
-  margin: 30px auto;
-  padding: 24px;
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  border: 1px solid #e2e8f0;
-  color: #2c3e50;
-}
-
-.dashboard-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.dashboard-header i {
-  font-size: 26px;
-  color: #0e3165;
-}
-
-.dashboard-header h2 {
-  font-size: 22px;
-  font-weight: 700;
-  color: #0e3165;
-  margin: 0;
-}
-
-.dashboard-subtitulo {
-  font-size: 13px;
-  color: #64748b;
-  margin-bottom: 18px;
-}
-
-.form-busca {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.form-busca input {
-  flex: 1;
-  padding: 10px 14px;
-  font-size: 14px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  outline: none;
-  color: #1e293b;
-  font-family: "Poppins", sans-serif;
-}
-
-.form-busca input:focus {
-  border-color: #0e3165;
-}
-
-.btn-buscar {
-  background-color: #0e3165;
-  color: #ffffff;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  white-space: nowrap;
-}
-
-.btn-buscar:hover:not(:disabled) {
-  background-color: #123d7d;
-}
-
-.btn-buscar:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.aviso-busca {
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #991b1b;
-  padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 13px;
-  margin-bottom: 14px;
-}
-
-.total-resultados {
-  font-size: 12px;
-  color: #64748b;
-  margin-bottom: 12px;
-}
-
-.grafico-wrapper {
+/* ===== Cabeçalho ===== */
+.l-db-hero {
+  background: #001730;
+  padding: 48px 0 56px;
   position: relative;
-  height: 320px;
-  margin-bottom: 20px;
+  overflow: hidden;
 }
-
-.tabela-resultados {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.l-db-hero::after {
+  content: '';
+  position: absolute;
+  right: -80px; top: -120px;
+  width: 380px; height: 380px;
+  border: 1px solid rgba(127,179,228,.15);
+  border-radius: 50%;
+  pointer-events: none;
 }
-
-.linha-resultado {
-  display: grid;
-  grid-template-columns: 1.5fr 2fr 1fr 1fr 1fr;
-  gap: 10px;
-  align-items: center;
-  background-color: #f8fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
-  color: #334155;
+.l-db-tag {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 12px; letter-spacing: .1em; color: #7FB3E4;
+  margin: 0 0 14px;
 }
-
-.linha-resultado strong {
-  color: #0e3165;
+h1.l-db-title {
+  font-family: 'Archivo', sans-serif; font-weight: 900;
+  font-size: clamp(28px, 3.6vw, 42px); letter-spacing: -.025em;
+  color: #fff; margin: 0 0 14px;
 }
+.l-db-subtitle { font-size: 15.5px; line-height: 1.55; color: #9FC4E8; margin: 0 0 26px; max-width: 560px; }
 
-/* --- CARROS SEMELHANTES --- */
-.titulo-semelhantes {
-  font-size: 14px;
-  font-weight: 700;
-  color: #0e3165;
-  margin: 20px 0 10px 0;
+/* ===== Busca (dentro do hero) ===== */
+.l-db-body { padding: 30px 0 60px; min-height: 140px; }
+
+.l-db-search { display: flex; gap: 10px; flex-wrap: wrap; }
+.l-db-input {
+  flex: 1; min-width: 220px;
+  background: #fff; border: 1px solid #2E7DD1; border-radius: 2px;
+  padding: 14px 16px; font-size: 15px;
 }
-
-.lista-semelhantes {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.item-semelhante {
-  display: grid;
-  grid-template-columns: 1.5fr 2fr 1fr;
-  gap: 10px;
-  align-items: center;
-  background-color: #f0f9ff;
-  border: 1px solid #bae6fd;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 12px;
-  color: #334155;
-}
-
-.item-semelhante strong {
-  color: #0e3165;
-}
-
-.badge-similaridade {
-  justify-self: end;
-  background-color: #0284c7;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 11px;
-  padding: 4px 10px;
-  border-radius: 12px;
+.l-db-input:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(46,125,209,.3); }
+button.l-db-go {
+  background: #2E7DD1; color: #fff; border-radius: 2px;
+  padding: 14px 24px;
+  font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 12.5px; letter-spacing: .07em; text-transform: uppercase;
+  transition: background .16s;
   white-space: nowrap;
 }
+button.l-db-go:hover:not(:disabled) { background: #0B57A4; }
+button.l-db-go:disabled { background: #35506E; color: #8FA6BC; cursor: default; }
+button.l-db-go:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
-/* --- RODAPÉ INSTITUCIONAL --- */
-.rodape-page {
-    width: 100%;
-    background-color: #0E3165; 
-    color: #ffffff;
-    padding: 24px 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-    font-size: 12px;
-    z-index: 10;
+.l-db-chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 16px; font-size: 13px; color: #8FB8E2; }
+button.l-db-chip {
+  font-size: 12.5px; padding: 6px 12px;
+  border: 1px solid #2E7DD1; border-radius: 2px;
+  background: #2E7DD1; color: #fff;
+  transition: background .16s, border-color .16s;
+}
+button.l-db-chip:hover { background: #0B57A4; border-color: #0B57A4; }
+button.l-db-chip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+.l-db-erro {
+  margin: 16px 0 0; padding: 12px 16px;
+  background: #FBEAE8; border: 1px solid #E8B4AC; border-radius: 2px;
+  font-size: 13.5px; color: #B4453A;
 }
 
-.rodape-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 8px;
+/* ===== Resultados ===== */
+.l-db-total {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 12.5px; color: #8493A3;
+  margin: 28px 0 14px;
 }
 
-.link-simulado {
-    cursor: pointer;
-    transition: opacity 0.2s;
+.l-db-card {
+  background: #fff; border: 1px solid #E2EAF2; border-radius: 2px;
 }
 
-.link-simulado:hover {
-    text-decoration: underline;
-    opacity: 0.8;
+.l-db-chart-card { position: relative; height: 340px; padding: 18px; margin-bottom: 18px; }
+
+.l-db-table { display: flex; flex-direction: column; margin-bottom: 8px; }
+.l-db-row {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #EDF1F5;
+}
+.l-db-row:last-child { border-bottom: none; }
+
+.l-db-row-model { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
+.l-db-row-model strong { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 14.5px; color: #001730; }
+.l-db-row-model span { font-size: 12.5px; color: #8493A3; }
+
+.l-db-row-stat {
+  font-family: 'IBM Plex Mono', ui-monospace, monospace;
+  font-size: 13px; color: #3C4B5B; white-space: nowrap;
+}
+.l-db-row-stat small { color: #8493A3; }
+.l-db-row-gearbox { text-transform: capitalize; }
+
+/* ===== Semelhantes ===== */
+.l-db-kicker {
+  font-family: 'Archivo', sans-serif; font-weight: 900;
+  font-size: 12px; letter-spacing: .12em; text-transform: uppercase;
+  color: #2E7DD1; margin: 26px 0 12px;
+}
+.l-db-similar .l-db-row { justify-content: space-between; }
+.l-db-badge {
+  font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 11.5px;
+  background: #2E7DD1; color: #fff; border-radius: 2px;
+  padding: 5px 10px; white-space: nowrap;
 }
 
-.rodape-links span:not(.link-simulado) {
-    color: #ffffff;
-    opacity: 0.6;
-}
+/* ===== Rodapé institucional ===== */
+.l-db-footer { background: #001730; padding: 30px 0 34px; text-align: center; }
+.l-db-footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 20px; }
+.l-db-link, button.l-db-link { font-size: 13.5px; color: #BBD3E9; cursor: pointer; padding: 6px 0; }
+button.l-db-link:hover { color: #fff; text-decoration: underline; }
+button.l-db-link:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px; }
+.l-db-link.is-inert { cursor: default; }
+.l-db-footer-copy { font-size: 12.5px; color: #6F8499; margin: 14px 0 0; }
 
-.rodape-copy {
-    color: #ffffff;
-    opacity: 0.8;
-    text-align: center;
+/* ===== Responsivo ===== */
+@media (max-width: 640px) {
+  .l-db-inner { padding: 0 20px; }
+  .l-db-hero { padding: 40px 0 90px; }
+  .l-db-search { margin-top: -58px; }
+  .l-db-row { flex-wrap: wrap; row-gap: 6px; }
 }

@@ -23,16 +23,16 @@
 
 /* ===== Cabeçalho ===== */
 .l-ag-hero { background: #001730; padding: 30px 32px 34px; }
-.l-ag-title {
+h1.l-ag-title {
   font-family: 'Archivo', sans-serif; font-weight: 900;
-  font-size: clamp(26px, 3vw, 38px); letter-spacing: -.025em; color: #fff; margin-bottom: 8px;
+  font-size: clamp(26px, 3vw, 38px); letter-spacing: -.005em; word-spacing: .15em; color: #fff; margin-bottom: 8px;
 }
 .l-ag-subtitle { font-size: 15px; color: #9FC4E8; margin: 0; }
 
 /* ===== Corpo ===== */
-.l-ag-body { display: grid; grid-template-columns: minmax(0,1fr) 300px; }
-.l-ag-main { padding: 28px 32px 32px; min-width: 0; }
-.l-ag-rail { border-left: 1px solid #E7EDF3; background: #FAFCFE; padding: 28px 22px; min-width: 0; }
+.l-ag-body { display: grid; grid-template-columns: minmax(0,1fr) 300px; column-gap: 1px; background: #E7EDF3; }
+.l-ag-main { padding: 28px 32px 32px; min-width: 0; background: #fff; }
+.l-ag-rail { background: #F4F7FA; padding: 28px 22px; min-width: 0; box-shadow: -6px 0 16px rgba(0,23,48,.05); }
 
 /* ===== Passos ===== */
 .l-ag-step { border-top: 1px solid #E7EDF3; padding: 22px 0; }
@@ -165,8 +165,8 @@
 
 /* ===== Responsivo ===== */
 @media (max-width: 900px) {
-  .l-ag-body { grid-template-columns: 1fr; }
-  .l-ag-rail { border-left: none; border-top: 1px solid #E7EDF3; }
+  .l-ag-body { grid-template-columns: 1fr; row-gap: 1px; }
+  .l-ag-rail { box-shadow: 0 -6px 16px rgba(0,23,48,.05); }
   .l-ag-hero { padding: 24px 20px 26px; }
   .l-ag-main, .l-ag-rail { padding: 24px 20px; }
 }

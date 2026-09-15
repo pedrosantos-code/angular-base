@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { RodapeComponent } from '../rodape/rodape.component';
 
 export interface PerfilUso {
   uso: string;
@@ -30,7 +31,7 @@ export interface Previa {
 @Component({
   selector: 'seia-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, TopbarComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
 })

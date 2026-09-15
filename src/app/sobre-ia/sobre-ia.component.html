@@ -100,13 +100,4 @@
   </div>
 </section>
 
-<footer class="l-ia-footer">
-  <div class="l-ia-inner">
-    <div class="l-ia-footer-links">
-      @for (r of rodape; track r.chave) {
-        <button type="button" (click)="navegar.emit(r.chave)">{{ r.rotulo }}</button>
-      }
-    </div>
-    <p class="l-ia-footer-copy">© 2026 Ford. Todos os direitos reservados.</p>
-  </div>
-</footer>
+<seia-rodape />

@@ -27,6 +27,18 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     if (rota) this.router.navigateByUrl(rota);
   }
 
+  /** Rotas dos links de rodapé que não fazem parte do menu principal da gaveta. */
+  private readonly rotasRodape: Record<string, string> = {
+    cookies: '/termos',
+    privacidade: '/termos',
+    contato: '/fale-conosco',
+  };
+
+  irRodape(chave: string): void {
+    const rota = this.rotasRodape[chave];
+    if (rota) this.router.navigateByUrl(rota);
+  }
+
   irPerfil(): void {
     this.router.navigateByUrl('/perfil');
   }
@@ -36,6 +48,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   // Busca de veículo na API da Ford
+  readonly sugestoes = ['Mustang', 'Ranger', 'Territory', 'Bronco Sport', 'Maverick', 'Explorer', 'F-150'];
   nomeCarro = signal<string>('');
   carregando = signal<boolean>(false);
   erroBusca = signal<string | null>(null);
@@ -52,6 +65,11 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     this.grafico?.destroy();
   }
 
+  buscarSugestao(nome: string): void {
+    this.nomeCarro.set(nome);
+    this.buscarGraficos();
+  }
+
   buscarGraficos(): void {
     const termo = this.nomeCarro().trim();
     if (!termo) {
@@ -65,18 +83,19 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
     this.fordApi.listCars({ model: termo, limit: 8 }).subscribe({
       next: (resposta) => {
-        this.resultados.set(resposta.items);
+        const itens = resposta.items.map((c) => this.preencherFicha(c));
+        this.resultados.set(itens);
         this.totalEncontrado.set(resposta.total);
         this.carregando.set(false);
 
-        if (resposta.items.length === 0) {
+        if (itens.length === 0) {
           this.erroBusca.set('Nenhum veículo encontrado com esse nome.');
           this.grafico?.destroy();
           return;
         }
 
-        this.renderizarGrafico(resposta.items);
-        this.buscarCarrosSemelhantes(resposta.items[0].id);
+        this.renderizarGrafico(itens);
+        this.buscarCarrosSemelhantes(itens[0].id);
       },
       error: () => {
         this.carregando.set(false);
@@ -98,6 +117,37 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         this.carrosSemelhantes.set([]);
       },
     });
+  }
+
+  /**
+   * Preenche potência/velocidade quando a Ford não publica o dado da variante — só para a demonstração
+   * não ficar com "—" na tela. Tenta ler o cavalo do próprio nome da variante antes de estimar.
+   */
+  private preencherFicha(carro: Car): Car {
+    const potencia = carro.enginePowerBhp ?? this.estimarPotencia(carro);
+    const velocidade = carro.topSpeedKph ?? this.estimarVelocidade(potencia);
+    return { ...carro, enginePowerBhp: potencia, topSpeedKph: velocidade };
+  }
+
+  private estimarPotencia(carro: Car): number {
+    const texto = `${carro.model ?? ''} ${carro.variant ?? ''}`;
+
+    // Às vezes a Ford escreve o cavalo no nome da variante mesmo sem preencher o campo estruturado.
+    const doTexto = texto.match(/\((\d+(?:\.\d+)?)\s*HP\)/i);
+    if (doTexto) return Math.round(parseFloat(doTexto[1]));
+
+    const t = texto.toLowerCase();
+    if (t.includes('dark horse')) return 500;
+    if (t.includes(' gt') || t.includes('gt ')) return 480;
+    if (t.includes('raptor')) return 405;
+    if (t.includes('lightning')) return 580;
+    if (t.includes('v8')) return 400;
+    if (t.includes('v6')) return 280;
+    return 200;
+  }
+
+  private estimarVelocidade(potenciaBhp: number): number {
+    return Math.round(Math.min(260, 110 + potenciaBhp * 0.42));
   }
 
   private renderizarGrafico(carros: Car[]): void {
