@@ -48,11 +48,11 @@
       <div class="l-pf-two">
         <div class="l-pf-field">
           <label class="l-pf-label" for="rodagem">Rodagem mensal</label>
-          <input class="l-pf-input" id="rodagem" name="rodagem" [(ngModel)]="uso.rodagem" (ngModelChange)="aoDigitarUso()" />
+          <input class="l-pf-input" id="rodagem" name="rodagem" placeholder="Ex: 1.200 km" [(ngModel)]="uso.rodagem" (ngModelChange)="aoDigitarUso()" />
         </div>
         <div class="l-pf-field">
           <label class="l-pf-label" for="orcamento">Teto de orçamento</label>
-          <input class="l-pf-input" id="orcamento" name="orcamento" [(ngModel)]="uso.orcamento" (ngModelChange)="aoDigitarUso()" />
+          <input class="l-pf-input" id="orcamento" name="orcamento" placeholder="Ex: R$ 250.000" [(ngModel)]="uso.orcamento" (ngModelChange)="aoDigitarUso()" />
         </div>
       </div>
 
@@ -81,11 +81,11 @@
         <div class="l-pf-two">
           <div class="l-pf-field">
             <label class="l-pf-label" for="nome">Nome completo</label>
-            <input class="l-pf-input" id="nome" name="nome" autocomplete="name" [(ngModel)]="conta.nome" />
+            <input class="l-pf-input" id="nome" name="nome" autocomplete="name" placeholder="Seu nome completo" [(ngModel)]="conta.nome" />
           </div>
           <div class="l-pf-field">
             <label class="l-pf-label" for="telefone">Telefone</label>
-            <input class="l-pf-input" id="telefone" name="telefone" autocomplete="tel" [(ngModel)]="conta.telefone" />
+            <input class="l-pf-input" id="telefone" name="telefone" autocomplete="tel" placeholder="(00) 00000-0000" [(ngModel)]="conta.telefone" />
           </div>
         </div>
 

@@ -76,8 +76,34 @@ const TAG_POR_USO: Record<string, string> = {
 export class PerfilComponent {
   private router = inject(Router);
 
+  private readonly chavePerfilSalvo = 'seia-perfil-salvo';
+
   constructor() {
+    this.carregarSalvo();
+    this.usoOriginal = structuredClone(this.uso);
+    this.contaOriginal = structuredClone(this.conta);
     this.sincronizarComModelos();
+  }
+
+  /** Restaura o que foi salvo antes — sem isso, um F5 devolveria os campos a zero mesmo depois de "Salvar". */
+  private carregarSalvo(): void {
+    try {
+      const salvo = localStorage.getItem(this.chavePerfilSalvo);
+      if (!salvo) return;
+      const dados = JSON.parse(salvo) as { uso: PerfilUso; conta: DadosConta };
+      if (dados.uso) this.uso = { ...this.uso, ...dados.uso };
+      if (dados.conta) this.conta = { ...this.conta, ...dados.conta };
+    } catch {
+      // localStorage indisponível ou dado corrompido — segue com os campos em branco.
+    }
+  }
+
+  private persistir(): void {
+    try {
+      localStorage.setItem(this.chavePerfilSalvo, JSON.stringify({ uso: this.uso, conta: this.conta }));
+    } catch {
+      // localStorage indisponível — o perfil vale só para esta sessão.
+    }
   }
 
   ir(chave: string): void {
@@ -115,14 +141,15 @@ export class PerfilComponent {
   };
 
   /** Ranking completo (14 modelos) recalculado a cada ajuste no perfil de uso — não espera "Salvar". */
-  private calcularRanking(): { id: string; modelo: string; nota: number }[] {
+  private calcularRanking(): { id: string; modelo: string; nota: number; combinaComUso: boolean }[] {
     const orcamento = this.orcamentoNumero();
     const tagDeUso = TAG_POR_USO[this.uso.uso];
 
     const pontuados = CATALOGO_PERFIL.map((m) => {
+      const combinaComUso = !!tagDeUso && m.tags.includes(tagDeUso);
       let nota = 50;
 
-      if (tagDeUso && m.tags.includes(tagDeUso)) nota += 20;
+      if (combinaComUso) nota += 20;
       if (this.uso.passageiros === '5 ou mais' && m.espacoBom) nota += 10;
       if (this.uso.passageiros === '1 ou 2' && !m.espacoBom) nota += 6;
 
@@ -138,7 +165,7 @@ export class PerfilComponent {
         else if (m.precoDe <= orcamento * 0.8) nota += 5;
       }
 
-      return { id: m.id, modelo: m.nome, nota: Math.max(15, Math.min(97, Math.round(nota))) };
+      return { id: m.id, modelo: m.nome, nota: Math.max(15, Math.min(97, Math.round(nota))), combinaComUso };
     });
 
     pontuados.sort((a, b) => b.nota - a.nota);
@@ -161,7 +188,7 @@ export class PerfilComponent {
   /** Contagens lidas do que o perfil atual está sugerindo — a mesma lista que aparece em /modelos. */
   get atalhos(): { chave: string; rotulo: string; contagem: number }[] {
     return [
-      { chave: 'favoritos', rotulo: 'Meus favoritos', contagem: this.contarSalvos(this.chaveFavoritos) },
+      { chave: 'favoritos', rotulo: 'Favoritos', contagem: this.contarSalvos(this.chaveFavoritos) },
       { chave: 'comparacoes', rotulo: 'Minhas comparações', contagem: this.contarSalvos(this.chaveComparacoesUltima) },
     ];
   }
@@ -184,15 +211,22 @@ export class PerfilComponent {
     }
   }
 
-  /** Joga os 3 melhores do ranking atual pra favoritos e pra comparação — é o que você vai ver em /modelos. */
+  /**
+   * Favorita TODOS os modelos que combinam com o "Uso principal" escolhido — não é um top 3 fixo,
+   * varia conforme quantos modelos realmente têm aquela tag (ex.: Off-road tem 5, Trabalho tem 6...).
+   * A comparação pega os 3 melhores dentre esses mesmos favoritos, porque o modal só compara até 3.
+   */
   private sincronizarComModelos(): void {
-    const top3 = this.calcularRanking()
-      .slice(0, 3)
-      .map((r) => r.id);
+    const ranking = this.calcularRanking();
+    const combinam = ranking.filter((r) => r.combinaComUso);
+    const baseFavoritos = combinam.length ? combinam : ranking;
+
+    const favoritosIds = baseFavoritos.map((r) => r.id);
+    const comparacaoIds = baseFavoritos.slice(0, 3).map((r) => r.id);
 
     try {
-      localStorage.setItem(this.chaveFavoritos, JSON.stringify(top3));
-      localStorage.setItem(this.chaveComparacoesUltima, JSON.stringify(top3));
+      localStorage.setItem(this.chaveFavoritos, JSON.stringify(favoritosIds));
+      localStorage.setItem(this.chaveComparacoesUltima, JSON.stringify(comparacaoIds));
     } catch {
       // localStorage indisponível — a sugestão vale só pra esta sessão.
     }
@@ -269,6 +303,7 @@ export class PerfilComponent {
     if (!this.alteracoes) return;
     this.usoOriginal = structuredClone(this.uso);
     this.contaOriginal = structuredClone(this.conta);
+    this.persistir();
     this.salvarPerfil.emit({ uso: this.uso, conta: this.conta });
   }
 }
