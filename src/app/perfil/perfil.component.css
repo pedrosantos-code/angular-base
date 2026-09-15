@@ -80,11 +80,20 @@
 .l-pf-input {
   width: 100%; padding: 14px 16px;
   background: #14181F; border: 1px solid #14181F; border-radius: 2px;
-  font-size: 15px;
+  font-size: 15px; color: #fff !important;
   transition: border-color .16s, background .16s, box-shadow .16s;
 }
-:host input.l-pf-input { color: #fff; }
 .l-pf-input::placeholder { color: #6E7885; }
+
+/* Autofill do navegador (nome/telefone) ignora o tema escuro por padrão e pinta o texto de preto. */
+.l-pf-input:-webkit-autofill,
+.l-pf-input:-webkit-autofill:hover,
+.l-pf-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #fff;
+  -webkit-box-shadow: 0 0 0 1000px #14181F inset;
+  box-shadow: 0 0 0 1000px #14181F inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
 .l-pf-input:hover { border-color: #2E3946; }
 .l-pf-input:focus-visible {
   outline: none; border-color: #2E7DD1;

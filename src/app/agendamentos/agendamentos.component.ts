@@ -106,11 +106,11 @@ export class AgendamentosComponent {
 
   /** Mesmas unidades cadastradas em /concessionarias (mesmo id, nome e endereço) — veja ConcessionariasComponent.unidades. */
   @Input() unidades: Unidade[] = [
-    { id: 'caoa-ibirapuera', nome: 'Ford Caoa - Ibirapuera', endereco: 'Av. Ibirapuera, 2400', distanciaKm: 3.5, horariosLivres: 12 },
-    { id: 'caoa-jabaquara', nome: 'Ford CAOA - Jabaquara', endereco: 'Av. Jabaquara, 2207', distanciaKm: 6.8, horariosLivres: 8 },
-    { id: 'caoa-ceasa', nome: 'Ford CAOA - Ceasa', endereco: 'Av. Dr. Gastão Vidigal, 1250', distanciaKm: 9.4, horariosLivres: 5 },
-    { id: 'sonnervig', nome: 'Ford Sonnervig', endereco: 'Rua dos Machados, 150', distanciaKm: 12.1, horariosLivres: 9 },
-    { id: 'ford-sao-paulo', nome: 'Ford For São Paulo', endereco: 'Av. das Nações Unidas, 21883', distanciaKm: 15.6, horariosLivres: 3 },
+    { id: 'caoa-ibirapuera', nome: 'Ford Caoa - Ibirapuera - SP', endereco: 'Av. Ibirapuera, 2400', distanciaKm: 3.5, horariosLivres: 12 },
+    { id: 'caoa-jabaquara', nome: 'Ford CAOA - Jabaquara - SP', endereco: 'Av. Jabaquara, 2207', distanciaKm: 6.8, horariosLivres: 8 },
+    { id: 'caoa-ceasa', nome: 'Ford CAOA - Ceasa - SP', endereco: 'Av. Dr. Gastão Vidigal, 1250', distanciaKm: 9.4, horariosLivres: 5 },
+    { id: 'sonnervig', nome: 'Ford Sonnervig - SP', endereco: 'Rua dos Machados, 150', distanciaKm: 12.1, horariosLivres: 9 },
+    { id: 'ford-sao-paulo', nome: 'Ford For São Paulo - SP', endereco: 'Av. das Nações Unidas, 21883', distanciaKm: 15.6, horariosLivres: 3 },
   ];
 
   @Input() modelo: ModeloDisponivel = { nome: 'Territory Titanium', nota: 94, disponivel: true };

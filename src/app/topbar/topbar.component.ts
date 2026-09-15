@@ -127,6 +127,12 @@ export class TopbarComponent {
     this.router.navigateByUrl(ROTAS_MENU['recomendacao']);
   }
 
+  irPerfil(): void {
+    this.abrirPerfil.emit();
+    this.fechar();
+    this.router.navigateByUrl('/perfil');
+  }
+
   @HostListener('document:keydown.escape')
   aoPressionarEsc(): void {
     this.fechar();

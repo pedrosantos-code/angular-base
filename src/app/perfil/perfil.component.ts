@@ -28,6 +28,44 @@ export interface Previa {
   outros: { modelo: string; nota: number }[];
 }
 
+interface ModeloAvaliado {
+  /** Mesmo id usado em /modelos — é o que vira favorito/comparação lá. */
+  id: string;
+  nome: string;
+  precoDe: number;
+  /** 'cidade' | 'estrada' | 'offroad' | 'trabalho' — combina com o campo "Uso principal". */
+  tags: string[];
+  espacoBom: boolean;
+  confortoBom: boolean;
+  consumoBom: boolean;
+  potenciaBoa: boolean;
+}
+
+/** Mesma linha e mesmos ids do /modelos, com sinalizadores usados só pra pontuar a prévia do perfil. */
+const CATALOGO_PERFIL: ModeloAvaliado[] = [
+  { id: 'territory', nome: 'Territory', precoDe: 219900, tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'bronco-sport', nome: 'Bronco Sport', precoDe: 249900, tags: ['offroad', 'cidade'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'explorer', nome: 'Explorer', precoDe: 429900, tags: ['estrada', 'cidade'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'f-150', nome: 'F-150', precoDe: 439900, tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'ranger', nome: 'Ranger', precoDe: 259900, tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'ranger-raptor', nome: 'Ranger Raptor', precoDe: 399900, tags: ['offroad', 'trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'maverick-hybrid', nome: 'Maverick Hybrid', precoDe: 219900, tags: ['cidade', 'trabalho'], espacoBom: false, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'maverick-tremor', nome: 'Maverick Tremor', precoDe: 249900, tags: ['offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'mustang-gt', nome: 'Mustang GT', precoDe: 549900, tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'mustang-mach-e', nome: 'Mustang Mach-E', precoDe: 379900, tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'f-150-lightning', nome: 'F-150 Lightning', precoDe: 599900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
+  { id: 'e-transit', nome: 'E-Transit', precoDe: 349900, tags: ['trabalho', 'cidade'], espacoBom: true, confortoBom: false, consumoBom: true, potenciaBoa: false },
+  { id: 'transit-furgao', nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'transit-minibus', nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
+];
+
+const TAG_POR_USO: Record<string, string> = {
+  Cidade: 'cidade',
+  Estrada: 'estrada',
+  'Off-road': 'offroad',
+  Trabalho: 'trabalho',
+};
+
 @Component({
   selector: 'seia-perfil',
   standalone: true,
@@ -37,6 +75,10 @@ export interface Previa {
 })
 export class PerfilComponent {
   private router = inject(Router);
+
+  constructor() {
+    this.sincronizarComModelos();
+  }
 
   ir(chave: string): void {
     this.navegar.emit(chave);
@@ -60,32 +102,110 @@ export class PerfilComponent {
   @Input() uso: PerfilUso = {
     uso: 'Cidade',
     passageiros: '3 ou 4',
-    rodagem: '1.200 km',
-    orcamento: 'R$ 250.000',
+    rodagem: '',
+    orcamento: '',
     prioridades: ['Consumo', 'Espaço'],
   };
 
   @Input() conta: DadosConta = {
-    nome: 'Anthonio Silva',
-    telefone: '(11) 98765-4321',
+    nome: '',
+    telefone: '',
     email: 'anthonio@gmail.com',
     criadaEm: '02/04/2026',
   };
 
-  /** Ranking calculado com o perfil já salvo. */
-  @Input() previa: Previa = {
-    modelo: 'Territory Titanium',
-    nota: 94,
-    outros: [
-      { modelo: 'Bronco Sport', nota: 81 },
-      { modelo: 'Ranger XLS', nota: 63 },
-    ],
-  };
+  /** Ranking completo (14 modelos) recalculado a cada ajuste no perfil de uso — não espera "Salvar". */
+  private calcularRanking(): { id: string; modelo: string; nota: number }[] {
+    const orcamento = this.orcamentoNumero();
+    const tagDeUso = TAG_POR_USO[this.uso.uso];
 
-  @Input() atalhos = [
-    { chave: 'favoritos', rotulo: 'Meus favoritos', contagem: 3 },
-    { chave: 'comparacoes', rotulo: 'Minhas comparações', contagem: 7 },
-  ];
+    const pontuados = CATALOGO_PERFIL.map((m) => {
+      let nota = 50;
+
+      if (tagDeUso && m.tags.includes(tagDeUso)) nota += 20;
+      if (this.uso.passageiros === '5 ou mais' && m.espacoBom) nota += 10;
+      if (this.uso.passageiros === '1 ou 2' && !m.espacoBom) nota += 6;
+
+      for (const p of this.uso.prioridades) {
+        if (p === 'Consumo' && m.consumoBom) nota += 20;
+        if (p === 'Espaço' && m.espacoBom) nota += 20;
+        if (p === 'Conforto' && m.confortoBom) nota += 20;
+        if (p === 'Potência' && m.potenciaBoa) nota += 20;
+      }
+
+      if (orcamento) {
+        if (m.precoDe > orcamento) nota -= 35;
+        else if (m.precoDe <= orcamento * 0.8) nota += 5;
+      }
+
+      return { id: m.id, modelo: m.nome, nota: Math.max(15, Math.min(97, Math.round(nota))) };
+    });
+
+    pontuados.sort((a, b) => b.nota - a.nota);
+    return pontuados;
+  }
+
+  get previa(): Previa {
+    const [primeiro, ...resto] = this.calcularRanking();
+    return { modelo: primeiro.modelo, nota: primeiro.nota, outros: resto.slice(0, 2) };
+  }
+
+  private orcamentoNumero(): number | null {
+    const digitos = this.uso.orcamento.replace(/\D/g, '');
+    return digitos ? Number(digitos) : null;
+  }
+
+  private readonly chaveFavoritos = 'seia-favoritos';
+  private readonly chaveComparacoesUltima = 'seia-comparacoes-ultima';
+
+  /** Contagens lidas do que o perfil atual está sugerindo — a mesma lista que aparece em /modelos. */
+  get atalhos(): { chave: string; rotulo: string; contagem: number }[] {
+    return [
+      { chave: 'favoritos', rotulo: 'Meus favoritos', contagem: this.contarSalvos(this.chaveFavoritos) },
+      { chave: 'comparacoes', rotulo: 'Minhas comparações', contagem: this.contarSalvos(this.chaveComparacoesUltima) },
+    ];
+  }
+
+  private lerStorage(chave: string): string | null {
+    try {
+      return localStorage.getItem(chave);
+    } catch {
+      return null;
+    }
+  }
+
+  private contarSalvos(chave: string): number {
+    const salvo = this.lerStorage(chave);
+    if (!salvo) return 0;
+    try {
+      return (JSON.parse(salvo) as unknown[]).length;
+    } catch {
+      return 0;
+    }
+  }
+
+  /** Joga os 3 melhores do ranking atual pra favoritos e pra comparação — é o que você vai ver em /modelos. */
+  private sincronizarComModelos(): void {
+    const top3 = this.calcularRanking()
+      .slice(0, 3)
+      .map((r) => r.id);
+
+    try {
+      localStorage.setItem(this.chaveFavoritos, JSON.stringify(top3));
+      localStorage.setItem(this.chaveComparacoesUltima, JSON.stringify(top3));
+    } catch {
+      // localStorage indisponível — a sugestão vale só pra esta sessão.
+    }
+  }
+
+  irAtalho(chave: string): void {
+    this.navegar.emit(chave);
+    if (chave === 'favoritos') {
+      this.router.navigate(['/modelos'], { queryParams: { favoritos: '1' } });
+    } else if (chave === 'comparacoes') {
+      this.router.navigate(['/modelos'], { queryParams: { ultimaComparacao: '1' } });
+    }
+  }
 
   @Input() compartilhaComConcessionaria = false;
 
@@ -118,14 +238,22 @@ export class PerfilComponent {
     return a.length === b.length && [...a].sort().join('|') === [...b].sort().join('|');
   }
 
-  escolherUso(v: string): void { this.uso.uso = v; }
-  escolherPassageiros(v: string): void { this.uso.passageiros = v; }
+  escolherUso(v: string): void { this.uso.uso = v; this.sincronizarComModelos(); }
+  escolherPassageiros(v: string): void { this.uso.passageiros = v; this.sincronizarComModelos(); }
 
   alternarPrioridade(v: string): void {
     const i = this.uso.prioridades.indexOf(v);
-    if (i >= 0) { this.uso.prioridades.splice(i, 1); return; }
-    if (this.uso.prioridades.length >= this.maxPrioridades) this.uso.prioridades.shift();
-    this.uso.prioridades.push(v);
+    if (i >= 0) { this.uso.prioridades.splice(i, 1); }
+    else {
+      if (this.uso.prioridades.length >= this.maxPrioridades) this.uso.prioridades.shift();
+      this.uso.prioridades.push(v);
+    }
+    this.sincronizarComModelos();
+  }
+
+  /** Rodagem e orçamento são texto livre — chamado pelo (ngModelChange) desses dois campos. */
+  aoDigitarUso(): void {
+    this.sincronizarComModelos();
   }
 
   prioritario(v: string): boolean {

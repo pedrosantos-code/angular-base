@@ -43,8 +43,8 @@
     <!-- Resultados da IA com barra de progresso -->
     <section class="l-results-section">
       <div class="l-results-header">
-        <span class="l-results-title">EXEMPLO DE RESULTADO</span>
-        <span class="l-results-subtitle">perfil: família, estrada, até R$ 250 mil</span>
+        <span class="l-results-title">{{ tituloResultados }}</span>
+        <span class="l-results-subtitle">{{ subtituloResultados }}</span>
       </div>
       
       @for (r of resultados; track r.modelo) {

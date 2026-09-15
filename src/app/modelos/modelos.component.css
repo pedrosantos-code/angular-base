@@ -138,6 +138,18 @@ button.l-md-filter.is-on { color: #fff; font-weight: 500; background: rgba(46,12
 .l-md-compare:has(input:disabled) { opacity: .5; cursor: default; }
 .l-md-card.is-selected .l-md-compare { background: #002B5C; border-color: #002B5C; color: #fff; }
 
+button.l-md-favorito {
+  position: absolute; left: 12px; top: 12px; z-index: 1;
+  width: 32px; height: 32px; display: grid; place-items: center;
+  background: rgba(255,255,255,.94); border: 1px solid #C8D5E2; border-radius: 50%;
+  color: #8493A3; transition: color .16s, border-color .16s, background .16s;
+}
+button.l-md-favorito svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+button.l-md-favorito:hover { color: #C0392B; border-color: #E8B4AC; }
+button.l-md-favorito.is-on { color: #fff; background: #C0392B; border-color: #C0392B; }
+button.l-md-favorito.is-on svg { fill: currentColor; }
+button.l-md-favorito:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+
 /* ===== Barra de comparação ===== */
 .l-md-compare-bar {
   position: sticky; bottom: 0; z-index: 20;

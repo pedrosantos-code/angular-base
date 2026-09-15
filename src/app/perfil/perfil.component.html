@@ -48,11 +48,11 @@
       <div class="l-pf-two">
         <div class="l-pf-field">
           <label class="l-pf-label" for="rodagem">Rodagem mensal</label>
-          <input class="l-pf-input" id="rodagem" name="rodagem" [(ngModel)]="uso.rodagem" />
+          <input class="l-pf-input" id="rodagem" name="rodagem" [(ngModel)]="uso.rodagem" (ngModelChange)="aoDigitarUso()" />
         </div>
         <div class="l-pf-field">
           <label class="l-pf-label" for="orcamento">Teto de orçamento</label>
-          <input class="l-pf-input" id="orcamento" name="orcamento" [(ngModel)]="uso.orcamento" />
+          <input class="l-pf-input" id="orcamento" name="orcamento" [(ngModel)]="uso.orcamento" (ngModelChange)="aoDigitarUso()" />
         </div>
       </div>
 
@@ -114,12 +114,12 @@
       @for (o of previa.outros; track o.modelo) {
         <div class="l-pf-preview-other"><span>{{ o.modelo }}</span><span>{{ o.nota }}%</span></div>
       }
-      <p class="l-pf-preview-note">A ordem muda quando você salva alterações no perfil de uso.</p>
+      <p class="l-pf-preview-note">Atualiza na hora conforme você ajusta o perfil de uso abaixo.</p>
     </div>
 
     <div class="l-pf-rail-label">Atalhos</div>
     @for (a of atalhos; track a.chave) {
-      <button class="l-pf-link" type="button" (click)="navegar.emit(a.chave)">
+      <button class="l-pf-link" type="button" (click)="irAtalho(a.chave)">
         <span>{{ a.rotulo }}</span>
         <span class="l-pf-count">{{ a.contagem }}</span>
       </button>

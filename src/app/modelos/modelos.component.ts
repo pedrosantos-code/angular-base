@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 
@@ -35,6 +35,7 @@ export interface Categoria { chave: string; rotulo: string; }
 })
 export class ModelosComponent {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   @Output() abrirModelo = new EventEmitter<string>();
   @Output() compararSelecionados = new EventEmitter<string[]>();
@@ -101,10 +102,40 @@ export class ModelosComponent {
   motorizacoesAtivas = new Set<Motorizacao>();
   tetoPreco = 599900;
   soCompativeis = false;
-  termo = '';
+  /** Pré-preenchido quando se chega aqui pelo "Ver ficha" do portal (?termo=Nome+do+modelo). */
+  termo = this.route.snapshot.queryParamMap.get('termo') ?? '';
   ordem: Ordenacao = 'compatibilidade';
   selecionados = new Set<string>();
   compararAtivo = false;
+
+  private readonly chaveFavoritos = 'seia-favoritos';
+  private readonly chaveUltimaComparacao = 'seia-comparacoes-ultima';
+
+  favoritos = new Set<string>();
+  /** Ligado quando se chega aqui pelo atalho "Meus favoritos" do perfil (?favoritos=1). */
+  soFavoritos = this.route.snapshot.queryParamMap.get('favoritos') === '1';
+
+  constructor() {
+    try {
+      const salvos = localStorage.getItem(this.chaveFavoritos);
+      if (salvos) this.favoritos = new Set(JSON.parse(salvos));
+    } catch {
+      // localStorage indisponível — favoritos valem só para esta sessão.
+    }
+
+    if (this.route.snapshot.queryParamMap.get('ultimaComparacao') === '1') {
+      try {
+        const salvos = localStorage.getItem(this.chaveUltimaComparacao);
+        const ids: string[] = salvos ? JSON.parse(salvos) : [];
+        if (ids.length >= 2) {
+          this.selecionados = new Set(ids);
+          this.compararAtivo = true;
+        }
+      } catch {
+        // sem última comparação salva — segue vazio.
+      }
+    }
+  }
 
   get precoMinimo(): number {
     return this.modelos.length ? Math.min(...this.modelos.map((m) => m.precoDe)) : 0;
@@ -128,6 +159,7 @@ export class ModelosComponent {
       if (this.motorizacoesAtivas.size && !this.motorizacoesAtivas.has(m.motorizacao)) return false;
       if (m.precoDe > this.tetoPreco) return false;
       if (this.soCompativeis && (m.nota ?? 0) < this.corteFraco) return false;
+      if (this.soFavoritos && !this.favoritos.has(m.id)) return false;
       if (termo && !m.nome.toLowerCase().includes(termo) && !m.segmento.toLowerCase().includes(termo)) return false;
       return true;
     });
@@ -143,6 +175,16 @@ export class ModelosComponent {
     this.motorizacoesAtivas.has(m)
       ? this.motorizacoesAtivas.delete(m)
       : this.motorizacoesAtivas.add(m);
+  }
+
+  alternarFavorito(id: string, evento: Event): void {
+    evento.stopPropagation();
+    this.favoritos.has(id) ? this.favoritos.delete(id) : this.favoritos.add(id);
+    try {
+      localStorage.setItem(this.chaveFavoritos, JSON.stringify([...this.favoritos]));
+    } catch {
+      // localStorage indisponível — o favorito vale só para esta sessão.
+    }
   }
 
   alternarSelecao(id: string, evento: Event): void {
@@ -166,6 +208,12 @@ export class ModelosComponent {
     if (this.selecionados.size < 2) return;
     this.compararAtivo = true;
     this.compararSelecionados.emit([...this.selecionados]);
+
+    try {
+      localStorage.setItem(this.chaveUltimaComparacao, JSON.stringify([...this.selecionados]));
+    } catch {
+      // localStorage indisponível — a comparação vale só para esta sessão.
+    }
   }
 
   fecharComparacao(): void {

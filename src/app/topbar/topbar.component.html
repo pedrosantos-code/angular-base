@@ -14,7 +14,7 @@
       </button>
 
       <!-- BotÃ£o de perfil -->
-      <button class="l-icon-btn t-02" type="button" (click)="abrirPerfil.emit()" aria-label="Meu perfil" title="Meu perfil">
+      <button class="l-icon-btn t-02" type="button" (click)="irPerfil()" aria-label="Meu perfil" title="Meu perfil">
         <svg class="t-18" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
           @for (d of icones['perfil']; track $index) { <path [attr.d]="d" /> }
         </svg>

@@ -48,6 +48,12 @@
         Só compatíveis
       </label>
     }
+
+    <div class="l-md-rail-label">Favoritos</div>
+    <label class="l-md-check">
+      <input type="checkbox" [(ngModel)]="soFavoritos" />
+      Só favoritos ({{ favoritos.size }})
+    </label>
   </aside>
 
   <main class="l-md-main">
@@ -84,6 +90,18 @@
     <div class="l-md-grid">
       @for (m of filtrados; track m.id) {
         <article class="l-md-card" [class.is-selected]="selecionados.has(m.id)">
+          <button
+            class="l-md-favorito"
+            type="button"
+            [class.is-on]="favoritos.has(m.id)"
+            [attr.aria-pressed]="favoritos.has(m.id)"
+            [attr.aria-label]="favoritos.has(m.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+            (click)="alternarFavorito(m.id, $event)">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 20.5s-7.5-4.6-10-9.2C.6 8 2 4.5 5.5 4c2-.3 3.8.6 5 2.2C11.7 4.6 13.5 3.7 15.5 4 19 4.5 20.4 8 19 11.3c-2.5 4.6-7 9.2-7 9.2z" />
+            </svg>
+          </button>
+
           <button class="l-md-card-open" type="button" (click)="abrirModelo.emit(m.id)">
             <span class="l-md-photo">
               @if (m.imagem) {

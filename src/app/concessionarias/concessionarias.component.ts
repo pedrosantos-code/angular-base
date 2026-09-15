@@ -154,7 +154,7 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
   @Input() unidades: Unidade[] = [
     {
       id: 'caoa-ceasa',
-      nome: 'Ford CAOA - Ceasa',
+      nome: 'Ford CAOA - Ceasa - SP',
       endereco: 'Av. Dr. Gastão Vidigal, 1250',
       bairro: 'Vila Leopoldina',
       coord: { lat: -23.5217, lng: -46.7307 },
@@ -164,7 +164,7 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
     },
     {
       id: 'caoa-ibirapuera',
-      nome: 'Ford Caoa - Ibirapuera',
+      nome: 'Ford Caoa - Ibirapuera - SP',
       endereco: 'Av. Ibirapuera, 2400',
       bairro: 'Moema',
       coord: { lat: -23.6103, lng: -46.6613 },
@@ -174,7 +174,7 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
     },
     {
       id: 'caoa-jabaquara',
-      nome: 'Ford CAOA - Jabaquara',
+      nome: 'Ford CAOA - Jabaquara - SP',
       endereco: 'Av. Jabaquara, 2207',
       bairro: 'Jabaquara / São Judas',
       coord: { lat: -23.6272, lng: -46.6407 },
@@ -184,7 +184,7 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
     },
     {
       id: 'sonnervig',
-      nome: 'Ford Sonnervig',
+      nome: 'Ford Sonnervig - SP',
       endereco: 'Rua dos Machados, 150',
       bairro: 'Vila Guilherme',
       coord: { lat: -23.5093, lng: -46.6058 },
@@ -194,7 +194,7 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
     },
     {
       id: 'ford-sao-paulo',
-      nome: 'Ford For São Paulo',
+      nome: 'Ford For São Paulo - SP',
       endereco: 'Av. das Nações Unidas, 21883',
       bairro: 'Zona Sul',
       coord: { lat: -23.652, lng: -46.71 },
