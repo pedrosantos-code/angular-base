@@ -43,11 +43,15 @@
 
     @if (resultados().length > 0) {
       <p class="l-db-total">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford</p>
+    }
 
-      <div class="l-db-card l-db-chart-card">
-        <canvas #graficoCanvas></canvas>
-      </div>
+    <!-- Sempre no DOM (só escondido) — se ficasse dentro do @if acima, o @ViewChild só existiria
+         depois do primeiro resultado chegar, tarde demais pra desenhar o gráfico na hora. -->
+    <div class="l-db-card l-db-chart-card" [hidden]="resultados().length === 0">
+      <canvas #graficoCanvas></canvas>
+    </div>
 
+    @if (resultados().length > 0) {
       <div class="l-db-card l-db-table">
         @for (carro of resultados(); track carro.id) {
           <div class="l-db-row">
