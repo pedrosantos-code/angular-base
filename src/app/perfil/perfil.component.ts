@@ -214,7 +214,8 @@ export class PerfilComponent {
   /**
    * Favorita TODOS os modelos que combinam com o "Uso principal" escolhido — não é um top 3 fixo,
    * varia conforme quantos modelos realmente têm aquela tag (ex.: Off-road tem 5, Trabalho tem 6...).
-   * A comparação pega os 3 melhores dentre esses mesmos favoritos, porque o modal só compara até 3.
+   * A comparação é sempre o top 3 exato do painel "Com este perfil" (modelo + outros), sem o filtro
+   * de uso — assim "Minhas comparações" bate certinho com o que aparece ali.
    */
   private sincronizarComModelos(): void {
     const ranking = this.calcularRanking();
@@ -222,7 +223,7 @@ export class PerfilComponent {
     const baseFavoritos = combinam.length ? combinam : ranking;
 
     const favoritosIds = baseFavoritos.map((r) => r.id);
-    const comparacaoIds = baseFavoritos.slice(0, 3).map((r) => r.id);
+    const comparacaoIds = ranking.slice(0, 3).map((r) => r.id);
 
     try {
       localStorage.setItem(this.chaveFavoritos, JSON.stringify(favoritosIds));

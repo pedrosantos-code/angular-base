@@ -21,6 +21,8 @@ export interface ResultadoIA {
   modelo: string;
   motivo: string;
   nota: number;
+  /** Só true pros modelos que realmente existem na API da Ford usada no Dashboard — ver comentário do catálogo. */
+  disponivelNoDashboard: boolean;
 }
 
 interface ModeloCatalogo {
@@ -29,24 +31,30 @@ interface ModeloCatalogo {
   /** Palavras-chave de uso associadas ao modelo, usadas na pontuação por texto livre. */
   tags: string[];
   motivo: string;
+  /**
+   * Se uma busca por esse nome exato retorna resultado na API real do Dashboard (api-ford-linux...).
+   * Conferido na mão via curl: alguns nomes de trim do Brasil (Maverick Hybrid/Tremor, E-Transit,
+   * Transit Furgão/Minibus) não existem na base internacional — deixar o botão sumir pra esses.
+   */
+  disponivelNoDashboard: boolean;
 }
 
 /** Mesma linha de modelos do /modelos, com tags de uso pra pontuar a busca em texto livre. */
 const CATALOGO_RECOMENDACAO: ModeloCatalogo[] = [
-  { nome: 'Territory', precoDe: 219900, tags: ['familia', 'viagem', 'estrada', 'cidade'], motivo: 'Espaço interno generoso e conforto para viagens em família.' },
-  { nome: 'Bronco Sport', precoDe: 249900, tags: ['offroad', 'aventura', 'familia'], motivo: 'Tração 4x4 e robustez para fins de semana de aventura.' },
-  { nome: 'Explorer', precoDe: 429900, tags: ['familia', 'viagem', 'estrada'], motivo: '7 lugares e porta-malas grande para famílias maiores.' },
-  { nome: 'Ranger', precoDe: 259900, tags: ['trabalho', 'offroad', 'carga'], motivo: 'Versátil para trabalho e lazer, com boa capacidade de carga.' },
-  { nome: 'Ranger Raptor', precoDe: 399900, tags: ['performance', 'offroad', 'aventura'], motivo: 'Suspensão de performance para trilha e alta velocidade off-road.' },
-  { nome: 'Maverick Hybrid', precoDe: 219900, tags: ['cidade', 'economia', 'trabalho'], motivo: 'Motor híbrido eficiente para o dia a dia na cidade.' },
-  { nome: 'Maverick Tremor', precoDe: 249900, tags: ['offroad', 'aventura'], motivo: 'Picape compacta preparada para trilha.' },
-  { nome: 'Mustang GT', precoDe: 549900, tags: ['performance'], motivo: 'Motor V8 de alta performance, foco em esportividade.' },
-  { nome: 'Mustang Mach-E', precoDe: 379900, tags: ['cidade', 'eletrico', 'familia'], motivo: 'SUV elétrico silencioso, boa autonomia para o dia a dia.' },
-  { nome: 'F-150', precoDe: 439900, tags: ['trabalho', 'carga', 'performance'], motivo: 'Picape robusta de grande porte para trabalho pesado.' },
-  { nome: 'F-150 Lightning', precoDe: 599900, tags: ['trabalho', 'eletrico'], motivo: 'Versão elétrica da F-150, com tração 4x4.' },
-  { nome: 'E-Transit', precoDe: 349900, tags: ['trabalho', 'cidade', 'eletrico'], motivo: 'Van elétrica para entregas urbanas.' },
-  { nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho', 'carga'], motivo: 'Van de carga para uso comercial.' },
-  { nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'viagem'], motivo: 'Van de passageiros, ideal para transporte de grupos.' },
+  { nome: 'Territory', precoDe: 219900, tags: ['familia', 'viagem', 'estrada', 'cidade'], motivo: 'Espaço interno generoso e conforto para viagens em família.', disponivelNoDashboard: true },
+  { nome: 'Bronco Sport', precoDe: 249900, tags: ['offroad', 'aventura', 'familia'], motivo: 'Tração 4x4 e robustez para fins de semana de aventura.', disponivelNoDashboard: true },
+  { nome: 'Explorer', precoDe: 429900, tags: ['familia', 'viagem', 'estrada'], motivo: '7 lugares e porta-malas grande para famílias maiores.', disponivelNoDashboard: true },
+  { nome: 'Ranger', precoDe: 259900, tags: ['trabalho', 'offroad', 'carga'], motivo: 'Versátil para trabalho e lazer, com boa capacidade de carga.', disponivelNoDashboard: true },
+  { nome: 'Ranger Raptor', precoDe: 399900, tags: ['performance', 'offroad', 'aventura'], motivo: 'Suspensão de performance para trilha e alta velocidade off-road.', disponivelNoDashboard: true },
+  { nome: 'Maverick Hybrid', precoDe: 219900, tags: ['cidade', 'economia', 'trabalho'], motivo: 'Motor híbrido eficiente para o dia a dia na cidade.', disponivelNoDashboard: false },
+  { nome: 'Maverick Tremor', precoDe: 249900, tags: ['offroad', 'aventura'], motivo: 'Picape compacta preparada para trilha.', disponivelNoDashboard: false },
+  { nome: 'Mustang GT', precoDe: 549900, tags: ['performance'], motivo: 'Motor V8 de alta performance, foco em esportividade.', disponivelNoDashboard: true },
+  { nome: 'Mustang Mach-E', precoDe: 379900, tags: ['cidade', 'eletrico', 'familia'], motivo: 'SUV elétrico silencioso, boa autonomia para o dia a dia.', disponivelNoDashboard: true },
+  { nome: 'F-150', precoDe: 439900, tags: ['trabalho', 'carga', 'performance'], motivo: 'Picape robusta de grande porte para trabalho pesado.', disponivelNoDashboard: true },
+  { nome: 'F-150 Lightning', precoDe: 599900, tags: ['trabalho', 'eletrico'], motivo: 'Versão elétrica da F-150, com tração 4x4.', disponivelNoDashboard: true },
+  { nome: 'E-Transit', precoDe: 349900, tags: ['trabalho', 'cidade', 'eletrico'], motivo: 'Van elétrica para entregas urbanas.', disponivelNoDashboard: false },
+  { nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho', 'carga'], motivo: 'Van de carga para uso comercial.', disponivelNoDashboard: false },
+  { nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'viagem'], motivo: 'Van de passageiros, ideal para transporte de grupos.', disponivelNoDashboard: false },
 ];
 
 /** Palavras do texto livre que ativam cada tag de uso. */
@@ -114,9 +122,9 @@ export class PortalComponent {
 
   // Exemplo ilustrativo, mostrado só até a pessoa fazer uma busca de verdade
   readonly resultadosExemplo: ResultadoIA[] = [
-    { modelo: 'Territory', motivo: 'Excelente espaço interno para família, porta-malas generoso e conforto em viagens longas.', nota: 92 },
-    { modelo: 'Ranger', motivo: 'Versátil para o trabalho e lazer, robustez mecânica e ótima capacidade de carga.', nota: 78 },
-    { modelo: 'Bronco Sport', motivo: 'Boa dirigibilidade na cidade, tração integral robusta para fins de semana.', nota: 65 }
+    { modelo: 'Territory', motivo: 'Excelente espaço interno para família, porta-malas generoso e conforto em viagens longas.', nota: 92, disponivelNoDashboard: true },
+    { modelo: 'Ranger', motivo: 'Versátil para o trabalho e lazer, robustez mecânica e ótima capacidade de carga.', nota: 78, disponivelNoDashboard: true },
+    { modelo: 'Bronco Sport', motivo: 'Boa dirigibilidade na cidade, tração integral robusta para fins de semana.', nota: 65, disponivelNoDashboard: true }
   ];
 
   /** Preenchido depois que a pessoa busca de verdade — enquanto nulo, mostramos o exemplo acima. */
@@ -157,6 +165,11 @@ export class PortalComponent {
     this.router.navigate(['/modelos'], { queryParams: { termo: nomeModelo } });
   }
 
+  /** Leva a recomendação pro Dashboard, que já faz a busca sozinho na API real da Ford. */
+  verFichaTecnica(nomeModelo: string): void {
+    this.router.navigate(['/dashboard'], { queryParams: { modelo: nomeModelo } });
+  }
+
   enviar(): void {
     const texto = this.termo.trim();
     if (!texto) return;
@@ -194,7 +207,7 @@ export class PortalComponent {
       let nota = tagsDetectadas.length ? 45 + acertos * 14 : 55;
       if (orcamento && m.precoDe > orcamento) nota -= 30;
       nota = Math.max(15, Math.min(97, nota));
-      return { modelo: m.nome, motivo: m.motivo, nota };
+      return { modelo: m.nome, motivo: m.motivo, nota, disponivelNoDashboard: m.disponivelNoDashboard };
     });
 
     pontuados.sort((a, b) => b.nota - a.nota);

@@ -151,6 +151,13 @@ button.l-chip:hover { border-color: #0B57A4; color: #fff; background: #0B57A4; }
 }
 .l-result-modelo { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 19px; color: #001730; }
 .l-result-motivo { font-size: 14px; color: #67788A; margin-top: 4px; }
+button.l-result-ficha {
+  display: inline-block; margin-top: 10px;
+  font-size: 13px; font-weight: 600; color: #2E7DD1;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+button.l-result-ficha:hover { color: #0B57A4; }
+button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 
 .l-result-score { text-align: right; }
 .l-score-info { display: flex; align-items: baseline; justify-content: flex-end; gap: 6px; }

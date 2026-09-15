@@ -135,6 +135,12 @@ export class ModelosComponent {
         // sem última comparação salva — segue vazio.
       }
     }
+
+    // Tira os parâmetros da URL depois de usados — sem isso, um F5 na mesma URL
+    // reabriria o modal de comparação (ou o filtro de favoritos) de novo sozinho.
+    if (this.route.snapshot.queryParamMap.keys.length) {
+      this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+    }
   }
 
   get precoMinimo(): number {

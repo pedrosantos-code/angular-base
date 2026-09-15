@@ -1,5 +1,5 @@
 import { Component, ElementRef, ViewChild, signal, inject, AfterViewInit, OnDestroy } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
@@ -18,6 +18,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   private fordApi = inject(FordApiService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   @ViewChild('graficoCanvas') graficoCanvas?: ElementRef<HTMLCanvasElement>;
   private grafico?: Chart;
@@ -59,7 +60,15 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   buscandoSemelhantes = signal<boolean>(false);
   carrosSemelhantes = signal<CarRecommendation[]>([]);
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void {
+    const modelo = this.route.snapshot.queryParamMap.get('modelo');
+    if (modelo) {
+      this.nomeCarro.set(modelo);
+      this.buscarGraficos();
+      // Tira da URL depois de usado — sem isso, um F5 dispararia a busca de novo sozinho.
+      this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+    }
+  }
 
   ngOnDestroy(): void {
     this.grafico?.destroy();

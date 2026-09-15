@@ -52,6 +52,9 @@
           <div class="l-result-info">
             <h3 class="l-result-modelo">{{ r.modelo }}</h3>
             <p class="l-result-motivo">{{ r.motivo }}</p>
+            @if (r.disponivelNoDashboard) {
+              <button type="button" class="l-result-ficha" (click)="verFichaTecnica(r.modelo)">Ver ficha técnica →</button>
+            }
           </div>
           <div class="l-result-score">
             <div class="l-score-info">
