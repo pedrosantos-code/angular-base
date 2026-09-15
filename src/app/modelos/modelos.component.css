@@ -97,8 +97,20 @@ button.l-md-sort-option { font-size: 13px; color: #5B6B7C; padding-bottom: 3px; 
 .l-md-card { background: #fff; position: relative; }
 .l-md-card.is-selected { outline: 2px solid #2E7DD1; outline-offset: -2px; z-index: 1; }
 
-.l-md-card-open { display: block; width: 100%; padding-bottom: 18px; }
+.l-md-card-open { display: block; width: 100%; }
 .l-md-card-open:focus-visible { outline: 2px solid #2E7DD1; outline-offset: -2px; }
+
+.l-md-card-footer { padding: 0 18px 18px; margin-top: 14px; border-top: 1px solid #EDF1F5; }
+
+button.l-md-vistas {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 12px; padding: 8px 12px;
+  border: 1px solid #C8D5E2; border-radius: 2px;
+  font-size: 12px; font-weight: 600; color: #002B5C;
+  transition: background .16s, border-color .16s;
+}
+button.l-md-vistas:hover { background: #F4F7FA; border-color: #2E7DD1; }
+button.l-md-vistas:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 
 .l-md-photo {
   display: grid; place-items: center;
@@ -123,8 +135,9 @@ button.l-md-sort-option { font-size: 13px; color: #5B6B7C; padding-bottom: 3px; 
 
 .l-md-score {
   display: flex; align-items: baseline; gap: 5px;
-  margin-top: 14px; padding-top: 14px; border-top: 1px solid #EDF1F5;
+  margin-top: 12px;
 }
+.l-md-card-footer > .l-md-score:first-child { margin-top: 0; }
 .l-md-score strong { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 23px; line-height: 1; color: #002B5C; }
 .l-md-score span { font-size: 11.5px; color: #8493A3; }
 .l-md-track { display: block; height: 4px; background: #E7EDF3; margin-top: 8px; }
@@ -231,6 +244,11 @@ button.l-md-ct-remove {
   .l-md-modal-backdrop { padding: 0; }
   .l-md-modal { max-height: 100vh; height: 100%; width: 100%; border-radius: 0; }
 }
+
+/* ===== Modal de vistas (fotos) ===== */
+.l-md-vistas-modal { width: min(760px, 100%); }
+.l-md-vistas-body { overflow: auto; padding: 22px; }
+.l-md-vistas-body img { display: block; width: 100%; height: auto; border-radius: 2px; }
 
 /* ===== Responsivo ===== */
 @media (max-width: 900px) {

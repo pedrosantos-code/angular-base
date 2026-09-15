@@ -115,17 +115,25 @@
               <span class="l-md-spec">
                 @for (f of m.ficha; track f) { {{ f }}<br /> }
               </span>
-
-              @if (m.nota !== null) {
-                <span class="l-md-score">
-                  <strong>{{ m.nota }}</strong><span>% compatível</span>
-                </span>
-                <span class="l-md-track">
-                  <span class="l-md-fill" [class.is-fraco]="m.nota < corteFraco" [style.width.%]="m.nota"></span>
-                </span>
-              }
             </span>
           </button>
+
+          <div class="l-md-card-footer">
+            @if (m.imagemVistas) {
+              <button type="button" class="l-md-vistas" (click)="abrirVistas(m.id, $event)">
+                Ver todas as fotos
+              </button>
+            }
+
+            @if (m.nota !== null) {
+              <span class="l-md-score">
+                <strong>{{ m.nota }}</strong><span>% compatível</span>
+              </span>
+              <span class="l-md-track">
+                <span class="l-md-fill" [class.is-fraco]="m.nota < corteFraco" [style.width.%]="m.nota"></span>
+              </span>
+            }
+          </div>
 
           <label class="l-md-compare">
             <input
@@ -222,6 +230,20 @@
             }
           </tbody>
         </table>
+      </div>
+    </div>
+  </div>
+}
+
+@if (vistaAtiva) {
+  <div class="l-md-modal-backdrop" (click)="fecharVistas()">
+    <div class="l-md-modal l-md-vistas-modal" role="dialog" aria-modal="true" [attr.aria-label]="'Fotos do ' + vistaAtiva.nome" (click)="$event.stopPropagation()">
+      <div class="l-md-modal-head">
+        <h2>{{ vistaAtiva.nome }} · fotos</h2>
+        <button class="l-md-modal-close" type="button" (click)="fecharVistas()" aria-label="Fechar fotos">✕</button>
+      </div>
+      <div class="l-md-vistas-body">
+        <img [src]="vistaAtiva.imagemVistas" [alt]="'Ângulos do ' + vistaAtiva.nome" />
       </div>
     </div>
   </div>
