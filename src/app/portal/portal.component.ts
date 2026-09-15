@@ -59,17 +59,40 @@ const CATALOGO_RECOMENDACAO: ModeloCatalogo[] = [
 
 /** Palavras do texto livre que ativam cada tag de uso. */
 const DICIONARIO_TAGS: Record<string, string[]> = {
-  familia: ['família', 'familia', 'filhos', 'crianças', 'esposa', 'marido'],
-  viagem: ['viagem', 'viajo', 'viajar', 'longa distância'],
-  estrada: ['estrada', 'rodovia'],
-  cidade: ['cidade', 'urbano', 'trânsito', 'transito'],
-  offroad: ['off-road', 'offroad', 'trilha', 'terra', 'estrada de terra'],
-  aventura: ['aventura', 'fim de semana', 'final de semana'],
-  trabalho: ['trabalho', 'entrega', 'entregas', 'comercial', 'empresa'],
-  carga: ['carga', 'transportar', 'mudança'],
-  performance: ['performance', 'esportivo', 'velocidade', 'potência'],
-  economia: ['economia', 'econômico', 'economico', 'consumo', 'combustível', 'combustivel'],
-  eletrico: ['elétrico', 'eletrico', 'híbrido', 'hibrido'],
+  familia: [
+    'família', 'familia', 'filhos', 'filho', 'filha', 'crianças', 'criancas', 'criança', 'crianca',
+    'esposa', 'marido', 'mulher', 'namorada', 'namorado', 'casal', 'bebê', 'bebe', 'pais', 'avó', 'avo',
+    'avô', 'netos', 'cadeirinha',
+  ],
+  viagem: [
+    'viagem', 'viajo', 'viajar', 'longa distância', 'longa distancia', 'road trip', 'passeio',
+    'passear', 'praia', 'litoral', 'interior', 'excursão', 'excursao', 'fora da cidade',
+  ],
+  estrada: ['estrada', 'rodovia', 'pista', 'asfalto', 'br-', 'rodovias'],
+  cidade: [
+    'cidade', 'urbano', 'urbana', 'trânsito', 'transito', 'dia a dia', 'cotidiano', 'centro',
+    'engarrafamento', 'estacionar', 'garagem pequena',
+  ],
+  offroad: [
+    'off-road', 'offroad', 'trilha', 'trilhas', 'terra', 'estrada de terra', '4x4', 'quatro rodas',
+    'picada', 'mato', 'lama', 'atoleiro', 'fazenda', 'sítio', 'sitio',
+  ],
+  aventura: [
+    'aventura', 'fim de semana', 'final de semana', 'camping', 'acampar', 'natureza', 'montanha',
+    'cachoeira', 'trilha' , 'radical',
+  ],
+  trabalho: [
+    'trabalho', 'trabalhar', 'entrega', 'entregas', 'entregador', 'comercial', 'empresa',
+    'uso profissional', 'profissional', 'uber', 'aplicativo', 'app', 'motorista de app',
+    'representante', 'vendas', 'vendedor', 'expediente', 'serviço', 'servico',
+  ],
+  carga: ['carga', 'transportar', 'mudança', 'mudanca', 'material de construção', 'material de construcao', 'ferramentas', 'equipamentos', 'peso'],
+  performance: ['performance', 'esportivo', 'esportiva', 'velocidade', 'potência', 'potencia', 'curva', 'pista de corrida', 'track day', 'acelerar'],
+  economia: [
+    'economia', 'econômico', 'economico', 'econômica', 'economica', 'consumo', 'combustível',
+    'combustivel', 'gastar pouco', 'baixo consumo', 'poupar', 'barato',
+  ],
+  eletrico: ['elétrico', 'eletrico', 'elétrica', 'eletrica', 'híbrido', 'hibrido', 'híbrida', 'hibrida', 'carregar', 'tomada', 'sustentável', 'sustentavel'],
 };
 
 export interface PassoFuncionamento {
@@ -202,13 +225,15 @@ export class PortalComponent {
     const orcamentoMatch = textoNormalizado.match(/r?\$?\s*(\d+)\s*mil/);
     const orcamento = orcamentoMatch ? Number(orcamentoMatch[1]) * 1000 : null;
 
-    const pontuados = CATALOGO_RECOMENDACAO.map((m) => {
-      const acertos = tagsDetectadas.filter((t) => m.tags.includes(t)).length;
-      let nota = tagsDetectadas.length ? 45 + acertos * 14 : 55;
-      if (orcamento && m.precoDe > orcamento) nota -= 30;
-      nota = Math.max(15, Math.min(97, nota));
-      return { modelo: m.nome, motivo: m.motivo, nota, disponivelNoDashboard: m.disponivelNoDashboard };
-    });
+    const pontuados = CATALOGO_RECOMENDACAO
+      .filter((m) => m.disponivelNoDashboard)
+      .map((m) => {
+        const acertos = tagsDetectadas.filter((t) => m.tags.includes(t)).length;
+        let nota = tagsDetectadas.length ? 45 + acertos * 14 : 55;
+        if (orcamento && m.precoDe > orcamento) nota -= 30;
+        nota = Math.max(15, Math.min(97, nota));
+        return { modelo: m.nome, motivo: m.motivo, nota, disponivelNoDashboard: m.disponivelNoDashboard };
+      });
 
     pontuados.sort((a, b) => b.nota - a.nota);
 
