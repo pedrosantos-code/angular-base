@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ICONES, ITENS_PRINCIPAIS, ITENS_ATENDIMENTO, ITENS_SOBRE, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { calcularNota, detectarOrcamento, detectarTags, formatarPerfil } from '../shared/recomendacao-ia';
 
 export interface ModeloFord {
   segmento: string;
@@ -55,44 +56,6 @@ const CATALOGO_RECOMENDACAO: ModeloCatalogo[] = [
   { nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho', 'carga'], motivo: 'Van de carga para uso comercial.', disponivelNoDashboard: false },
   { nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'viagem'], motivo: 'Van de passageiros, ideal para transporte de grupos.', disponivelNoDashboard: false },
 ];
-
-/** Palavras do texto livre que ativam cada tag de uso. */
-const DICIONARIO_TAGS: Record<string, string[]> = {
-  familia: [
-    'família', 'familia', 'filhos', 'filho', 'filha', 'crianças', 'criancas', 'criança', 'crianca',
-    'esposa', 'marido', 'mulher', 'namorada', 'namorado', 'casal', 'bebê', 'bebe', 'pais', 'avó', 'avo',
-    'avô', 'netos', 'cadeirinha',
-  ],
-  viagem: [
-    'viagem', 'viajo', 'viajar', 'longa distância', 'longa distancia', 'road trip', 'passeio',
-    'passear', 'praia', 'litoral', 'interior', 'excursão', 'excursao', 'fora da cidade',
-  ],
-  estrada: ['estrada', 'rodovia', 'pista', 'asfalto', 'br-', 'rodovias'],
-  cidade: [
-    'cidade', 'urbano', 'urbana', 'trânsito', 'transito', 'dia a dia', 'cotidiano', 'centro',
-    'engarrafamento', 'estacionar', 'garagem pequena',
-  ],
-  offroad: [
-    'off-road', 'offroad', 'trilha', 'trilhas', 'terra', 'estrada de terra', '4x4', 'quatro rodas',
-    'picada', 'mato', 'lama', 'atoleiro', 'fazenda', 'sítio', 'sitio',
-  ],
-  aventura: [
-    'aventura', 'fim de semana', 'final de semana', 'camping', 'acampar', 'natureza', 'montanha',
-    'cachoeira', 'trilha' , 'radical',
-  ],
-  trabalho: [
-    'trabalho', 'trabalhar', 'entrega', 'entregas', 'entregador', 'comercial', 'empresa',
-    'uso profissional', 'profissional', 'uber', 'aplicativo', 'app', 'motorista de app',
-    'representante', 'vendas', 'vendedor', 'expediente', 'serviço', 'servico',
-  ],
-  carga: ['carga', 'transportar', 'mudança', 'mudanca', 'material de construção', 'material de construcao', 'ferramentas', 'equipamentos', 'peso'],
-  performance: ['performance', 'esportivo', 'esportiva', 'velocidade', 'potência', 'potencia', 'curva', 'pista de corrida', 'track day', 'acelerar'],
-  economia: [
-    'economia', 'econômico', 'economico', 'econômica', 'economica', 'consumo', 'combustível',
-    'combustivel', 'gastar pouco', 'baixo consumo', 'poupar', 'barato',
-  ],
-  eletrico: ['elétrico', 'eletrico', 'elétrica', 'eletrica', 'híbrido', 'hibrido', 'híbrida', 'hibrida', 'carregar', 'tomada', 'sustentável', 'sustentavel'],
-};
 
 export interface PassoFuncionamento {
   n: string;
@@ -152,6 +115,9 @@ export class PortalComponent {
   /** Preenchido depois que a pessoa busca de verdade — enquanto nulo, mostramos o exemplo acima. */
   resultadoCalculado: ResultadoIA[] | null = null;
   perfilDetectado: string | null = null;
+  /** Tags e orçamento por trás do perfilDetectado — levados pro /modelos quando a pessoa navega de lá pra cá. */
+  private tagsDetectadas: string[] = [];
+  private orcamentoDetectado: number | null = null;
 
   get resultados(): ResultadoIA[] {
     return this.resultadoCalculado ?? this.resultadosExemplo;
@@ -175,7 +141,20 @@ export class PortalComponent {
   ir(chave: string): void {
     this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
-    if (rota) this.router.navigateByUrl(rota);
+    if (!rota) return;
+
+    // Se a pessoa já buscou algo aqui, leva o perfil detectado pro /modelos em vez de um clique "cego".
+    if (chave === 'modelos' && this.tagsDetectadas.length) {
+      this.router.navigate([rota], {
+        queryParams: {
+          tags: this.tagsDetectadas.join(','),
+          orcamento: this.orcamentoDetectado ?? undefined,
+        },
+      });
+      return;
+    }
+
+    this.router.navigateByUrl(rota);
   }
 
   sair(): void {
@@ -197,9 +176,11 @@ export class PortalComponent {
     if (!texto) return;
 
     this.buscaRealizada.emit(texto);
-    const { resultado, perfil } = this.calcularRecomendacao(texto);
+    const { resultado, perfil, tags, orcamento } = this.calcularRecomendacao(texto);
     this.resultadoCalculado = resultado;
     this.perfilDetectado = perfil;
+    this.tagsDetectadas = tags;
+    this.orcamentoDetectado = orcamento;
   }
 
   private readonly atalhoTextos: Record<string, string> = {
@@ -214,36 +195,26 @@ export class PortalComponent {
   }
 
   /** Pontua o catálogo por palavra-chave batida no texto livre — sem IA real, tudo local. */
-  private calcularRecomendacao(texto: string): { resultado: ResultadoIA[]; perfil: string } {
-    const textoNormalizado = texto.toLowerCase();
-
-    const tagsDetectadas = Object.entries(DICIONARIO_TAGS)
-      .filter(([, palavras]) => palavras.some((p) => textoNormalizado.includes(p)))
-      .map(([tag]) => tag);
-
-    const orcamentoMatch = textoNormalizado.match(/r?\$?\s*(\d+)\s*mil/);
-    const orcamento = orcamentoMatch ? Number(orcamentoMatch[1]) * 1000 : null;
+  private calcularRecomendacao(texto: string): { resultado: ResultadoIA[]; perfil: string; tags: string[]; orcamento: number | null } {
+    const tagsDetectadas = detectarTags(texto);
+    const orcamento = detectarOrcamento(texto);
 
     const pontuados = CATALOGO_RECOMENDACAO
       .filter((m) => m.disponivelNoDashboard)
-      .map((m) => {
-        const acertos = tagsDetectadas.filter((t) => m.tags.includes(t)).length;
-        let nota = tagsDetectadas.length ? 45 + acertos * 14 : 55;
-        if (orcamento && m.precoDe > orcamento) nota -= 30;
-        nota = Math.max(15, Math.min(97, nota));
-        return { modelo: m.nome, motivo: m.motivo, nota, disponivelNoDashboard: m.disponivelNoDashboard };
-      });
+      .map((m) => ({
+        modelo: m.nome,
+        motivo: m.motivo,
+        nota: calcularNota(m.tags, tagsDetectadas, m.precoDe, orcamento),
+        disponivelNoDashboard: m.disponivelNoDashboard,
+      }));
 
     pontuados.sort((a, b) => b.nota - a.nota);
 
-    const partesPerfil = [
-      ...tagsDetectadas,
-      orcamento ? `até R$ ${(orcamento / 1000).toFixed(0)} mil` : null,
-    ].filter((p): p is string => !!p);
-
     return {
       resultado: pontuados.slice(0, 3),
-      perfil: partesPerfil.length ? partesPerfil.join(', ') : 'sem critérios claros no texto',
+      perfil: formatarPerfil(tagsDetectadas, orcamento),
+      tags: tagsDetectadas,
+      orcamento,
     };
   }
 }

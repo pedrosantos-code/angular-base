@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { calcularNota, formatarPerfil } from '../shared/recomendacao-ia';
 
 export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
 export type Ordenacao = 'compatibilidade' | 'preco' | 'nome';
@@ -24,6 +25,8 @@ export interface Modelo {
   imagem?: string;
   /** Colagem com os ângulos extras do carro (lateral, frente, motor, interior, porta-malas). */
   imagemVistas?: string;
+  /** Palavras-chave de uso, mesmo dicionário do /portal — usadas pra recalcular a nota quando se chega aqui com um perfil de busca. */
+  tags: string[];
 }
 
 export interface Categoria { chave: string; rotulo: string; }
@@ -54,23 +57,23 @@ export class ModelosComponent {
   }
 
   @Input() modelos: Modelo[] = [
-    { id: 'bronco-sport', nome: 'Bronco Sport', segmento: 'SUV compacto', categoria: 'suv', motorizacao: 'combustao', precoDe: 249900, ficha: ['1.5 EcoBoost turbo · 182 cv', 'Tração 4x2 · 5 lugares'], nota: 81, imagem: 'bronco-sport.jpeg', imagemVistas: 'bronco-sport-vistas.jpg' },
-    { id: 'explorer', nome: 'Explorer', segmento: 'SUV grande', categoria: 'suv', motorizacao: 'combustao', precoDe: 429900, ficha: ['2.3 EcoBoost turbo · 300 cv', 'Tração 4x2 · 7 lugares'], nota: 42, imagem: 'explorer.jpeg', imagemVistas: 'explorer-vistas.jpg' },
-    { id: 'territory', nome: 'Territory', segmento: 'SUV médio', categoria: 'suv', motorizacao: 'combustao', precoDe: 219900, ficha: ['1.5 turbo · 177 cv', 'Tração 4x2 · 5 lugares'], nota: 94, imagem: 'territory.jpeg', imagemVistas: 'territory-vistas.jpg' },
+    { id: 'bronco-sport', nome: 'Bronco Sport', segmento: 'SUV compacto', categoria: 'suv', motorizacao: 'combustao', precoDe: 249900, ficha: ['1.5 EcoBoost turbo · 182 cv', 'Tração 4x2 · 5 lugares'], nota: 81, imagem: 'bronco-sport.jpeg', imagemVistas: 'bronco-sport-vistas.jpg', tags: ['offroad', 'aventura', 'familia'] },
+    { id: 'explorer', nome: 'Explorer', segmento: 'SUV grande', categoria: 'suv', motorizacao: 'combustao', precoDe: 429900, ficha: ['2.3 EcoBoost turbo · 300 cv', 'Tração 4x2 · 7 lugares'], nota: 42, imagem: 'explorer.jpeg', imagemVistas: 'explorer-vistas.jpg', tags: ['familia', 'viagem', 'estrada'] },
+    { id: 'territory', nome: 'Territory', segmento: 'SUV médio', categoria: 'suv', motorizacao: 'combustao', precoDe: 219900, ficha: ['1.5 turbo · 177 cv', 'Tração 4x2 · 5 lugares'], nota: 94, imagem: 'territory.jpeg', imagemVistas: 'territory-vistas.jpg', tags: ['familia', 'viagem', 'estrada', 'cidade'] },
 
-    { id: 'f-150', nome: 'F-150', segmento: 'Picape grande', categoria: 'picape', motorizacao: 'combustao', precoDe: 439900, ficha: ['3.5 V6 EcoBoost · 400 cv', 'Tração 4x4 · 5 lugares'], nota: 35, imagem: 'f150.jpg', imagemVistas: 'f150-vistas.jpg' },
-    { id: 'ranger', nome: 'Ranger', segmento: 'Picape média', categoria: 'picape', motorizacao: 'combustao', precoDe: 259900, ficha: ['3.0 V6 Turbo Diesel · 250 cv', 'Tração 4x4 · 5 lugares'], nota: 63, imagem: 'ranger.jpg', imagemVistas: 'ranger-vistas.jpg' },
-    { id: 'ranger-raptor', nome: 'Ranger Raptor', segmento: 'Picape de performance', categoria: 'picape', motorizacao: 'combustao', precoDe: 399900, ficha: ['3.0 V6 Twin-Turbo · 397 cv', 'Tração 4x4 · 5 lugares'], nota: 38, imagem: 'ranger-raptor.jpg', imagemVistas: 'ranger-raptor-vistas.jpg' },
-    { id: 'maverick-hybrid', nome: 'Maverick Hybrid', segmento: 'Picape compacta', categoria: 'picape', motorizacao: 'hibrido', precoDe: 219900, ficha: ['2.5 Híbrido · 191 cv', 'Tração 4x2 · 5 lugares'], nota: 86, imagem: 'maverick-hybrid.jpg', imagemVistas: 'maverick-hybrid-vistas.jpg' },
-    { id: 'maverick-tremor', nome: 'Maverick Tremor', segmento: 'Picape compacta off-road', categoria: 'picape', motorizacao: 'combustao', precoDe: 249900, ficha: ['2.0 EcoBoost turbo · 250 cv', 'Tração 4x4 · 5 lugares'], nota: 68, imagem: 'maverick-tremor.jpg', imagemVistas: 'maverick-tremor-vistas.jpg' },
+    { id: 'f-150', nome: 'F-150', segmento: 'Picape grande', categoria: 'picape', motorizacao: 'combustao', precoDe: 439900, ficha: ['3.5 V6 EcoBoost · 400 cv', 'Tração 4x4 · 5 lugares'], nota: 35, imagem: 'f150.jpg', imagemVistas: 'f150-vistas.jpg', tags: ['trabalho', 'carga', 'performance'] },
+    { id: 'ranger', nome: 'Ranger', segmento: 'Picape média', categoria: 'picape', motorizacao: 'combustao', precoDe: 259900, ficha: ['3.0 V6 Turbo Diesel · 250 cv', 'Tração 4x4 · 5 lugares'], nota: 63, imagem: 'ranger.jpg', imagemVistas: 'ranger-vistas.jpg', tags: ['trabalho', 'offroad', 'carga'] },
+    { id: 'ranger-raptor', nome: 'Ranger Raptor', segmento: 'Picape de performance', categoria: 'picape', motorizacao: 'combustao', precoDe: 399900, ficha: ['3.0 V6 Twin-Turbo · 397 cv', 'Tração 4x4 · 5 lugares'], nota: 38, imagem: 'ranger-raptor.jpg', imagemVistas: 'ranger-raptor-vistas.jpg', tags: ['performance', 'offroad', 'aventura'] },
+    { id: 'maverick-hybrid', nome: 'Maverick Hybrid', segmento: 'Picape compacta', categoria: 'picape', motorizacao: 'hibrido', precoDe: 219900, ficha: ['2.5 Híbrido · 191 cv', 'Tração 4x2 · 5 lugares'], nota: 86, imagem: 'maverick-hybrid.jpg', imagemVistas: 'maverick-hybrid-vistas.jpg', tags: ['cidade', 'economia', 'trabalho'] },
+    { id: 'maverick-tremor', nome: 'Maverick Tremor', segmento: 'Picape compacta off-road', categoria: 'picape', motorizacao: 'combustao', precoDe: 249900, ficha: ['2.0 EcoBoost turbo · 250 cv', 'Tração 4x4 · 5 lugares'], nota: 68, imagem: 'maverick-tremor.jpg', imagemVistas: 'maverick-tremor-vistas.jpg', tags: ['offroad', 'aventura'] },
 
-    { id: 'mustang-gt', nome: 'Mustang GT', segmento: 'Esportivo', categoria: 'esportivo', motorizacao: 'combustao', precoDe: 549900, ficha: ['5.0 V8 · 480 cv', 'Tração traseira · 4 lugares'], nota: 22, imagem: 'mustang.jpeg', imagemVistas: 'mustang-vistas.jpg' },
+    { id: 'mustang-gt', nome: 'Mustang GT', segmento: 'Esportivo', categoria: 'esportivo', motorizacao: 'combustao', precoDe: 549900, ficha: ['5.0 V8 · 480 cv', 'Tração traseira · 4 lugares'], nota: 22, imagem: 'mustang.jpeg', imagemVistas: 'mustang-vistas.jpg', tags: ['performance'] },
 
-    { id: 'mustang-mach-e', nome: 'Mustang Mach-E', segmento: 'SUV elétrico', categoria: 'suv', motorizacao: 'eletrico', precoDe: 379900, ficha: ['Motor elétrico · 351 cv', 'Autonomia até 500 km'], nota: 51, imagem: 'mach-e.jpg', imagemVistas: 'mach-e-vistas.jpg' },
-    { id: 'f-150-lightning', nome: 'F-150 Lightning', segmento: 'Picape elétrica', categoria: 'picape', motorizacao: 'eletrico', precoDe: 599900, ficha: ['Motor elétrico duplo · 580 cv', 'Tração 4x4 · 5 lugares'], nota: 18, imagem: 'f150-lightning.jpg', imagemVistas: 'f150-lightning-vistas.jpg' },
+    { id: 'mustang-mach-e', nome: 'Mustang Mach-E', segmento: 'SUV elétrico', categoria: 'suv', motorizacao: 'eletrico', precoDe: 379900, ficha: ['Motor elétrico · 351 cv', 'Autonomia até 500 km'], nota: 51, imagem: 'mach-e.jpg', imagemVistas: 'mach-e-vistas.jpg', tags: ['cidade', 'eletrico', 'familia'] },
+    { id: 'f-150-lightning', nome: 'F-150 Lightning', segmento: 'Picape elétrica', categoria: 'picape', motorizacao: 'eletrico', precoDe: 599900, ficha: ['Motor elétrico duplo · 580 cv', 'Tração 4x4 · 5 lugares'], nota: 18, imagem: 'f150-lightning.jpg', imagemVistas: 'f150-lightning-vistas.jpg', tags: ['trabalho', 'eletrico'] },
 
-    { id: 'transit-furgao', nome: 'Transit Furgão', segmento: 'Van de carga', categoria: 'comercial', motorizacao: 'combustao', precoDe: 219900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Capacidade até 1.5 t'], nota: 33, imagem: 'transit-furgao.jpeg', imagemVistas: 'transit-furgao-vistas.jpg' },
-    { id: 'transit-minibus', nome: 'Transit Minibus', segmento: 'Van de passageiros', categoria: 'comercial', motorizacao: 'combustao', precoDe: 239900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Até 16 lugares'], nota: 74, imagem: 'transit-minibus.jpeg', imagemVistas: 'transit-minibus-vistas.jpg' },
+    { id: 'transit-furgao', nome: 'Transit Furgão', segmento: 'Van de carga', categoria: 'comercial', motorizacao: 'combustao', precoDe: 219900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Capacidade até 1.5 t'], nota: 33, imagem: 'transit-furgao.jpeg', imagemVistas: 'transit-furgao-vistas.jpg', tags: ['trabalho', 'carga'] },
+    { id: 'transit-minibus', nome: 'Transit Minibus', segmento: 'Van de passageiros', categoria: 'comercial', motorizacao: 'combustao', precoDe: 239900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Até 16 lugares'], nota: 74, imagem: 'transit-minibus.jpeg', imagemVistas: 'transit-minibus-vistas.jpg', tags: ['trabalho', 'viagem'] },
   ];
   /** Resumo do perfil, exibido sob o título. Nulo esconde a linha. */
   @Input() perfil: string | null = 'família · estrada · até R$ 250 mil';
@@ -137,6 +140,18 @@ export class ModelosComponent {
       } catch {
         // sem última comparação salva — segue vazio.
       }
+    }
+
+    // Chegou aqui com um perfil de busca do /portal (?tags=familia,cidade&orcamento=250000) —
+    // troca o perfil fixo de demonstração pelo perfil de verdade e recalcula a nota de cada modelo.
+    const tagsParam = this.route.snapshot.queryParamMap.get('tags');
+    if (tagsParam) {
+      const tagsDetectadas = tagsParam.split(',').filter(Boolean);
+      const orcamentoParam = this.route.snapshot.queryParamMap.get('orcamento');
+      const orcamento = orcamentoParam ? Number(orcamentoParam) : null;
+
+      this.perfil = formatarPerfil(tagsDetectadas, orcamento);
+      this.modelos = this.modelos.map((m) => ({ ...m, nota: calcularNota(m.tags, tagsDetectadas, m.precoDe, orcamento) }));
     }
 
     // Tira os parâmetros da URL depois de usados — sem isso, um F5 na mesma URL
