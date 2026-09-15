@@ -120,8 +120,11 @@ export class LandingComponent {
 
   // Integrantes do squad
   team = [
-    { n: 'Desenvolvedor / Analista', rm: 'RM XXXXXX' },
-    { n: 'Desenvolvedor / Arquiteto', rm: 'RM XXXXXX' }
+    { n: 'Eric Segawa Montagner' },
+    { n: 'João Victor Oliveira dos Santos' },
+    { n: 'Matheus Alcântara Estevão' },
+    { n: 'Nicolle Pelligrino Jelinski' },
+    { n: 'Pedro Pereira dos Santos' },
   ];
 
   // Função chamada pelos botões de abertura de modal/passos
