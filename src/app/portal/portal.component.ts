@@ -33,7 +33,7 @@ interface ModeloCatalogo {
   motivo: string;
   /**
    * Se uma busca por esse nome exato retorna resultado na API real do Dashboard (api-ford-linux...).
-   * Conferido na mão via curl: alguns nomes de trim do Brasil (Maverick Hybrid/Tremor, E-Transit,
+   * Conferido na mão via curl: alguns nomes de trim do Brasil (Maverick Hybrid/Tremor,
    * Transit Furgão/Minibus) não existem na base internacional — deixar o botão sumir pra esses.
    */
   disponivelNoDashboard: boolean;
@@ -52,7 +52,6 @@ const CATALOGO_RECOMENDACAO: ModeloCatalogo[] = [
   { nome: 'Mustang Mach-E', precoDe: 379900, tags: ['cidade', 'eletrico', 'familia'], motivo: 'SUV elétrico silencioso, boa autonomia para o dia a dia.', disponivelNoDashboard: true },
   { nome: 'F-150', precoDe: 439900, tags: ['trabalho', 'carga', 'performance'], motivo: 'Picape robusta de grande porte para trabalho pesado.', disponivelNoDashboard: true },
   { nome: 'F-150 Lightning', precoDe: 599900, tags: ['trabalho', 'eletrico'], motivo: 'Versão elétrica da F-150, com tração 4x4.', disponivelNoDashboard: true },
-  { nome: 'E-Transit', precoDe: 349900, tags: ['trabalho', 'cidade', 'eletrico'], motivo: 'Van elétrica para entregas urbanas.', disponivelNoDashboard: false },
   { nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho', 'carga'], motivo: 'Van de carga para uso comercial.', disponivelNoDashboard: false },
   { nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'viagem'], motivo: 'Van de passageiros, ideal para transporte de grupos.', disponivelNoDashboard: false },
 ];

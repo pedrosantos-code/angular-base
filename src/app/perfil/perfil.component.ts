@@ -54,7 +54,6 @@ const CATALOGO_PERFIL: ModeloAvaliado[] = [
   { id: 'mustang-gt', nome: 'Mustang GT', precoDe: 549900, tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
   { id: 'mustang-mach-e', nome: 'Mustang Mach-E', precoDe: 379900, tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
   { id: 'f-150-lightning', nome: 'F-150 Lightning', precoDe: 599900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
-  { id: 'e-transit', nome: 'E-Transit', precoDe: 349900, tags: ['trabalho', 'cidade'], espacoBom: true, confortoBom: false, consumoBom: true, potenciaBoa: false },
   { id: 'transit-furgao', nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
   { id: 'transit-minibus', nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
 ];

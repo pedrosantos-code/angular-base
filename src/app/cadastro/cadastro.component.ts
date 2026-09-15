@@ -73,7 +73,6 @@ export class CadastroComponent {
     'ford mustang gt  |  "5.0 V8 Coyote (488cv) · Tração RWD"',
     'ford mustang mach-e  |  "100% elétrico (487cv) · Tração eAWD"',
     'ford f-150 lightning  |  "100% elétrico (426cv) · Tração 4x4"',
-    'ford e-transit van  |  "100% elétrico (269cv) · Tração RWD"',
     'ford maverick hybrid  |  "2.5 Híbrido (194cv) · Tração FWD"',
     'ford transit furgão  |  "2.0 EcoBlue Diesel · Tração RWD"',
     'ford transit minidús  |  "2.0 EcoBlue Diesel · Tração RWD"',
