@@ -111,7 +111,7 @@
             </button>
           </div>
 
-          <div class="chat-mensagens">
+          <div class="chat-mensagens" #listaMensagens>
             @for (m of mensagens(); track $index) {
               <div class="chat-msg" [class.chat-msg-usuario]="m.autor === 'usuario'" [class.chat-msg-seia]="m.autor === 'seia'">
                 {{ m.texto }}
@@ -124,16 +124,15 @@
             }
           </div>
 
-          <div class="chat-entrada">
-            <input
-              type="text"
-              placeholder="Escreva sua mensagem…"
-              [value]="mensagemAtual()"
-              (input)="atualizarMensagemAtual($event)"
-              (keyup.enter)="enviarMensagem()" />
-            <button type="button" (click)="enviarMensagem()" aria-label="Enviar mensagem">
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
+          <div class="chat-opcoes" role="group" aria-label="Escolha uma opção">
+            @for (o of opcoes(); track o.rotulo) {
+              <button
+                type="button"
+                class="chat-opcao"
+                [class.chat-opcao-acao]="o.rota || o.tel"
+                [disabled]="chatDigitando()"
+                (click)="escolher(o)">{{ o.rotulo }}</button>
+            }
           </div>
         </div>
       }
