@@ -3,8 +3,13 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "env:generate": "node scripts/generate-environments.mjs",
+    "postinstall": "node scripts/generate-environments.mjs",
+    "prestart": "node scripts/generate-environments.mjs",
     "start": "ng serve",
+    "prebuild": "node scripts/generate-environments.mjs",
     "build": "ng build",
+    "prewatch": "node scripts/generate-environments.mjs",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },

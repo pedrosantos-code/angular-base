@@ -45,3 +45,6 @@ Thumbs.db
 
 # Environment variables
 src/environments/environment*.ts
+
+# Modelo versionado dos arquivos de ambiente
+!src/environments/environment.example.ts
