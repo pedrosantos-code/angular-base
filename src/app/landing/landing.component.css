@@ -282,9 +282,57 @@
   50% { transform: translateX(4px); }
 }
 
-/* Responsividade Básica */
+/* Responsividade */
 @media (max-width: 860px) {
   .l-9, .l-37, .l-87, .l-140 {
     grid-template-columns: 1fr;
   }
+
+  /* Cabeçalho: os links de seção saem, ficam logo e botões */
+  .l-2 { padding: 12px 20px; gap: 12px; }
+  .l-7 { display: none; }
+
+  .l-9 { padding: 48px 20px 40px; gap: 36px; }
+  .l-20 { aspect-ratio: 16 / 11; }
+  .l-28 { left: 12px; top: 12px; min-width: 0; padding: 14px 18px; }
+  .l-29 { font-size: 30px; }
+
+  .l-36 { padding: 60px 20px 0; }
+  .l-72 { margin-top: 60px; }
+  .l-75 { margin: 0; padding: 0 20px; }
+  .l-130 { margin-top: 60px; }
+  .l-132 { padding: 56px 20px; gap: 28px; }
+  .l-139 { padding: 48px 20px 28px; }
+
+  /* Tabela de diferenciais: rola na horizontal em vez de espremer 4 colunas */
+  .l-112 { overflow-x: auto; }
+  .l-113, .l-116 { min-width: 600px; }
+}
+
+@media (max-width: 560px) {
+  .l-2 { padding: 10px 16px; }
+  .l-5 { font-size: 14px; }
+  .l-6 { display: none; }
+  .l-8 { padding: 10px 14px; font-size: 12px; letter-spacing: .04em; }
+
+  .l-9, .l-36, .l-75, .l-132, .l-139 { padding-left: 16px; padding-right: 16px; }
+  .l-15, .l-42, .l-66 { font-size: 16px; }
+  .l-16 > * { flex: 1 1 100%; text-align: center; }
+  .l-17, .l-18, .l-136, .l-137 { padding: 15px 20px; }
+
+  /* Comparação "hoje x com SEIA" empilhada */
+  .l-48 { grid-template-columns: 1fr; }
+
+  .l-68 { padding: 24px 20px; }
+  .l-81 { padding-right: 0; }
+  .l-95 { padding: 16px; }
+  .l-100 { font-size: 11.5px; }
+  .l-101 { padding: 9px 8px; }
+  .l-102 { gap: 10px; }
+  .l-93 { letter-spacing: .06em; font-size: 10.5px; }
+  .l-99 { margin-left: 0; }
+
+  .l-120 { gap: 24px; }
+  .l-124 { gap: 28px; }
+  .l-150 { flex-direction: column; gap: 6px; }
 }

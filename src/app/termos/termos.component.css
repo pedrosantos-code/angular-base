@@ -485,3 +485,20 @@ input:checked + .l-slider:before {
     border-bottom: 1px solid #cbd5e1;
   }
 }
+/* ===== Responsivo ===== */
+@media (max-width: 900px) {
+  .l-termos-container { padding: 24px 20px; }
+  .l-termos-layout { grid-template-columns: 1fr; gap: 24px; }
+  .l-termos-content { padding: 24px 20px; }
+  .l-main-title { font-size: 26px; }
+}
+
+@media (max-width: 560px) {
+  .l-termos-container { padding: 20px 16px; }
+  .l-termos-header { flex-direction: column; gap: 16px; }
+  .l-header-badge { align-items: flex-start; }
+  .l-termos-content { padding: 20px 16px; }
+  .l-card-top-tag { flex-wrap: wrap; gap: 8px; }
+  .l-termos-footer { flex-direction: column; align-items: stretch; gap: 16px; }
+  .l-footer-actions { justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+}

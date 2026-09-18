@@ -6,6 +6,16 @@ html, body {
   padding: 0;
 }
 
+/* Evita que o celular aumente a fonte sozinho ao girar a tela */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img {
+  max-width: 100%;
+}
+
 body {
   min-height: 100vh;
 }

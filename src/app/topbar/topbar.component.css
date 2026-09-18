@@ -102,3 +102,9 @@ button.t-14 { color: #fff; margin-left: -20px; padding-left: 16px; border-left: 
   .t-01 { padding: 0 8px; }
   .t-07 { display: none; }
 }
+
+@media (max-width: 400px) {
+  button.t-02 { width: 36px; height: 36px; }
+  .l-brand-wrapper { gap: 6px; }
+  .l-brand-seia, .l-brand-ford { height: 18px; }
+}

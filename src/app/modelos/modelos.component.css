@@ -253,7 +253,17 @@ button.l-md-ct-remove {
 /* ===== Responsivo ===== */
 @media (max-width: 900px) {
   .l-md-shell { grid-template-columns: 1fr; }
-  .l-md-rail { padding: 18px 0 22px; }
+
+  /* Filtros viram chips que quebram linha, em vez de uma lista comprida antes dos modelos */
+  .l-md-rail { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 20px 18px; }
+  .l-md-rail-label { width: 100%; padding: 0; margin: 12px 0 0; }
+  .l-md-rail-label:first-child { margin-top: 0; }
+  button.l-md-filter, button.l-md-filter.is-on {
+    width: auto; padding: 7px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 16px;
+  }
+  button.l-md-filter.is-on { border-color: #2E7DD1; }
+  .l-md-check { padding: 6px 4px 6px 0; }
+  .l-md-range { width: 100%; padding: 4px 0 0; }
   .l-md-top { padding: 22px 20px 16px; }
   .l-md-tools { margin-left: 0; width: 100%; }
   .l-md-search { width: 100%; }

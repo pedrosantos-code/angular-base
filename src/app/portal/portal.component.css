@@ -305,3 +305,18 @@ button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset
   .l-score-info { justify-content: flex-start; }
   .l-search-box { flex-direction: column; }
 }
+@media (max-width: 640px) {
+  .l-hero-section { padding: 32px 20px 44px; }
+  .l-hero-section::before { width: 260px; height: 260px; right: -110px; top: -80px; }
+  .l-subtitle { font-size: 15px; margin-bottom: 22px; }
+  button.l-btn-primary { padding: 14px 20px; }
+
+  .l-results-section, .l-steps-section, .l-line-section { padding-left: 20px; padding-right: 20px; }
+  .l-results-section { padding-top: 32px; padding-bottom: 32px; }
+  .l-results-header { flex-wrap: wrap; gap: 4px 12px; }
+
+  .l-steps-grid { grid-template-columns: 1fr; }
+  .l-models-grid { grid-template-columns: 1fr; }
+  .l-footer { padding: 36px 20px 20px; }
+  .l-footer-grid { grid-template-columns: 1fr; gap: 24px; }
+}

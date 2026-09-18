@@ -108,13 +108,16 @@
   .l-200 { grid-template-columns: 1fr; min-height: 0; }
   .l-201 { order: -1; height: auto; }
   .l-205 { padding: 20px 26px; }
-  .l-243 { min-height: 190px; max-height: none; }
-  .l-245, .l-248 { padding-left: 26px; padding-right: 26px; }
+  /* O fluxo animado é decorativo: some no celular para o formulário subir */
+  .l-243 { display: none; }
   .l-208 { padding: 0 26px 28px; }
-  .l-215 { padding: 40px 24px 52px; height: auto; }
+  .l-215 { padding: 40px 24px 52px; height: auto; overflow: visible; }
 }
 
 @media (max-width: 560px) {
-  .l-252 { font-size: 12px; }
+  .l-205 { padding: 16px 16px 12px; }
+  .l-208 { padding: 0 16px 22px; }
+  .l-215 { padding: 28px 16px 40px; }
   .l-234 { flex-direction: column; gap: 8px; }
+  .l-238 { white-space: normal; }
 }

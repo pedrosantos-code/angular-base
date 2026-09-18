@@ -132,7 +132,7 @@ button.l-db-chip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 }
 
 /* ===== Rodapé institucional ===== */
-.l-db-footer { background: #001730; padding: 30px 0 34px; text-align: center; }
+.l-db-footer { background: #001730; padding: 30px 16px 34px; text-align: center; }
 .l-db-footer-links { display: flex; justify-content: center; flex-wrap: wrap; gap: 4px 20px; }
 .l-db-link, button.l-db-link { font-size: 13.5px; color: #BBD3E9; cursor: pointer; padding: 6px 0; }
 button.l-db-link:hover { color: #fff; text-decoration: underline; }
@@ -146,4 +146,7 @@ button.l-db-link:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px
   .l-db-hero { padding: 40px 0 90px; }
   .l-db-search { margin-top: -58px; }
   .l-db-row { flex-wrap: wrap; row-gap: 6px; }
+  .l-db-input { min-width: 0; flex: 1 1 100%; }
+  .l-db-go, button.l-db-go { flex: 1 1 100%; }
+  .l-db-chart-card { height: 300px; padding: 12px; }
 }
