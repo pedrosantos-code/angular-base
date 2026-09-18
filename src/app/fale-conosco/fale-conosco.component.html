@@ -24,8 +24,8 @@
             <h3>Atendimento via SEIA</h3>
           </div>
           <div class="card-body">
-            <h4>Sua assistente inteligente 24h</h4>
-            <p>Dúvidas rápidas, status de agendamento e informações de veículos</p>
+            <h4>Assistente virtual</h4>
+            <p>Respostas rápidas sobre agendamentos, modelos e concessionárias</p>
           </div>
           <div class="card-footer">
             <button class="btn-primary" (click)="abrirChatSeia()">Acessar Chat da SEIA</button>
@@ -64,52 +64,25 @@
           </div>
         </div>
 
-        <!-- Card 3: FAQ / Dúvidas Frequentes -->
+        <!-- Card 3: Atalhos -->
         <div class="card-canal">
           <div class="card-header">
             <i class="fa-regular fa-circle-question header-icon"></i>
-            <h3>Dúvidas Frequentes (FAQ)</h3>
+            <h3>Atalhos</h3>
           </div>
           <div class="card-body">
-            <h4>Busque por respostas rápidas</h4>
+            <h4>Vá direto ao que precisa</h4>
             
             <div class="links-rapidos">
-              <a routerLink="/agendamentos">Agendamento</a>
-              <a routerLink="/modelos">Manutenção</a>
-              <a routerLink="/sobre-ia">Recall</a>
+              <a routerLink="/agendamentos">Agendar visita</a>
+              <a routerLink="/modelos">Ver modelos</a>
+              <a routerLink="/concessionarias">Concessionárias</a>
+              <a routerLink="/sobre-ia">Como a IA decide</a>
             </div>
 
-            <div class="search-box">
-              <i class="fa-solid fa-magnifying-glass search-icon"></i>
-              <input 
-                type="text" 
-                placeholder="Buscar dúvidas..." 
-                [value]="termoBusca()"
-                (input)="atualizarBusca($event)" 
-              />
-            </div>
-          </div>
-          <div class="card-footer">
-            <button class="btn-primary" (click)="verFaqCompleto()">Ver FAQ Completo</button>
           </div>
         </div>
 
-      </div>
-
-      <!-- Banner Inferior: Enviar E-mail -->
-      <div class="banner-email">
-        <div class="email-info">
-          <div class="email-icon">
-            <i class="fa-regular fa-envelope"></i>
-          </div>
-          <div class="email-texto">
-            <h3>Enviar E-mail</h3>
-            <p>Seu contato não-urgente</p>
-          </div>
-        </div>
-        <a routerLink="/fale-conosco" class="link-formulario">
-          Formulário de Contato <i class="fa-solid fa-chevron-right"></i>
-        </a>
       </div>
 
       <!-- Widget Flutuante da SEIA -->

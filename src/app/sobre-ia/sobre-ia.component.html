@@ -13,7 +13,7 @@
 
 <section class="l-ia-section">
   <div class="l-ia-inner">
-    <p class="l-ia-kicker">De onde vem cada dado</p>
+    <p class="l-ia-kicker">O que entra na conta</p>
     <div class="l-ia-inputs">
       @for (e of entradas; track e.ordem) {
         <div class="l-ia-input">
@@ -30,7 +30,7 @@
   <div class="l-ia-inner">
     <div class="l-ia-score-head">
       <div>
-        <div class="l-ia-score-model">{{ exemplo.modelo }}</div>
+        <div class="l-ia-score-model">Exemplo de cálculo: {{ exemplo.modelo }}</div>
         <div class="l-ia-score-profile">perfil: {{ exemplo.perfil }}</div>
       </div>
       <div class="l-ia-score-total">
@@ -48,7 +48,7 @@
             [class.is-fraco]="proporcao(c) < corteFraco"
             [style.width.%]="proporcao(c) * 100"></span>
         </span>
-        <span class="l-ia-criterion-points">{{ c.pontos }}/{{ c.maximo }}</span>
+        <span class="l-ia-criterion-points">+{{ c.pontos }}</span>
       </div>
     }
 

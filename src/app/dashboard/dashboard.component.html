@@ -8,7 +8,7 @@
     <p class="l-db-tag">análise técnica</p>
     <h1 class="l-db-title">Dashboard Detalhado</h1>
     <p class="l-db-subtitle">
-      Digite o nome de um modelo Ford para consultar a ficha técnica oficial e comparar potência e velocidade máxima lado a lado.
+      Digite o nome de um modelo Ford para ver potência, velocidade máxima e câmbio de cada versão, e modelos semelhantes.
     </p>
 
     <form class="l-db-search" (ngSubmit)="buscarGraficos()">
@@ -79,7 +79,7 @@
                 <strong>{{ carro.model }}</strong>
                 <span>{{ carro.variant }}</span>
               </span>
-              <span class="l-db-badge">{{ (carro.similarity * 100).toFixed(0) }}% compatível</span>
+              <span class="l-db-badge">{{ (carro.similarity * 100).toFixed(0) }}% semelhante</span>
             </div>
           }
         </div>

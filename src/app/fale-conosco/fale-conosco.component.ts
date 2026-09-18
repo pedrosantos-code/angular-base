@@ -20,14 +20,6 @@ export class FaleConoscoComponent {
   protected readonly title = signal('meu-projeto');
   private router = inject(Router);
 
-  // Funcionalidades da tela Fale Conosco
-  termoBusca = signal<string>('');
-
-  atualizarBusca(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    this.termoBusca.set(input.value);
-  }
-
   /** Chat simulado da SEIA — respostas roteirizadas, sem chamada a IA real. */
   chatAberto = signal(false);
   chatDigitando = signal(false);
@@ -84,10 +76,6 @@ export class FaleConoscoComponent {
       return 'Por nada! Qualquer outra dúvida, é só chamar por aqui.';
     }
     return 'Anotei sua mensagem. Para esse tipo de dúvida, a Central de Relacionamento consegue ajudar melhor pelo 0800-000-0000.';
-  }
-
-  verFaqCompleto(): void {
-    alert(`Buscando por: "${this.termoBusca()}" no FAQ...`);
   }
 
   onNavegar(chave: string): void {

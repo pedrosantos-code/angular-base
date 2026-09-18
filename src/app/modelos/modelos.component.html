@@ -62,7 +62,7 @@
       <div>
         <h1 class="l-md-title">Modelos Ford</h1>
         <p class="l-md-count">
-          {{ filtrados.length }} de {{ modelos.length }} modelos@if (perfil) { · perfil: {{ perfil }} }
+          {{ filtrados.length }} de {{ modelos.length }} modelos@if (perfil) { · perfil: {{ perfil }} } @else { · <button type="button" class="l-md-clear" (click)="ir('recomendacao')">descreva seu uso para ver a compatibilidade</button> }
         </p>
       </div>
 

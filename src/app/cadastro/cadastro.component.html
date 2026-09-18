@@ -28,7 +28,7 @@
             }
           </div>
 
-          <!-- E-mail profissional -->
+          <!-- E-mail -->
           <div class="l-221">
             <label class="l-222" for="email">E-mail</label>
             <input 
@@ -40,11 +40,7 @@
               [ngClass]="{'l-224': invalido('email')}"
             >
             @if (invalido('email')) {
-              @if (campo('email').hasError('pessoal')) {
-                <span class="l-225">Use o e-mail da empresa, não um endereço pessoal.</span>
-              } @else {
-                <span class="l-225">Digite um e-mail válido.</span>
-              }
+              <span class="l-225">Digite um e-mail válido.</span>
             }
           </div>
 
@@ -90,7 +86,7 @@
             <label class="l-235">
               <input type="checkbox" id="termos" formControlName="termos" class="l-236">
               <span class="l-237">
-                Li e aceito os <a href="#" target="_blank" class="l-238">termos de uso</a> e a <a href="#" target="_blank" class="l-238">política de privacidade</a>
+                Li e aceito os <a routerLink="/termos" target="_blank" class="l-238">termos de uso</a> e a <a routerLink="/termos" target="_blank" class="l-238">política de privacidade</a>
               </span>
             </label>
           </div>
@@ -134,7 +130,7 @@
       <div class="l-244">
         @for (f of fluxoDuplicado; track $index) {
           <div class="l-245">
-            <span class="l-246">portal →</span> {{ f }}
+            <span class="l-246">{{ f.uso }} →</span> {{ f.modelo }}
           </div>
         }
       </div>
@@ -143,22 +139,22 @@
       <!-- Faixa Fixa com Dado Normalizado -->
       <div class="l-248">
         <div class="l-249">
-          <span class="l-250">ENTRADA BRUTA</span>
-          <span class="l-251">✓ normalizado</span>
+          <span class="l-250">EXEMPLO DE RESULTADO</span>
+          <span class="l-251">✓ {{ amostra.nota }}</span>
         </div>
         <div class="l-252">
-          {{ amostra.veiculo }} <span class="l-253">· {{ amostra.atributos }} · {{ amostra.tracao }}</span>
+          {{ amostra.modelo }} <span class="l-253">· {{ amostra.perfil }}</span>
         </div>
       </div>
     </div>
 
     <div class="l-208">
-      <h2 class="l-209">O mercado passa por aqui todo dia.</h2>
-      <p class="l-210">Entra bruto de dezenas de portais. Sai comparável.</p>
+      <h2 class="l-209">Descreva seu uso. Veja o Ford que combina.</h2>
+      <p class="l-210">Com a conta, você recebe recomendações, compara modelos e agenda test-drive.</p>
       
       <div class="l-255">
         <span class="l-256"></span>
-        <span class="l-257">Coleta ativa · {{ marcas }} marcas na base</span>
+        <span class="l-257">Recomendação, comparação e agenda em um só lugar</span>
       </div>
     </div>
 

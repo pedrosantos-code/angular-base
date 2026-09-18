@@ -92,10 +92,10 @@ export class PortalComponent {
   readonly sobre = ITENS_SOBRE;
 
   readonly modelos: ModeloFord[] = [
-    { segmento: 'SUV / Elétrico', nome: 'Mustang Mach-E', preco: 'A partir de R$ 396.900' },
-    { segmento: 'Picape / Performance', nome: 'Ranger Raptor', preco: 'A partir de R$ 448.600' },
-    { segmento: 'Esportivo', nome: 'Mustang GT', preco: 'A partir de R$ 529.000' },
-    { segmento: 'SUV / Off-road', nome: 'Bronco Sport', preco: 'A partir de R$ 264.900' }
+    { segmento: 'SUV / Elétrico', nome: 'Mustang Mach-E', preco: 'A partir de R$ 379.900' },
+    { segmento: 'Picape / Performance', nome: 'Ranger Raptor', preco: 'A partir de R$ 399.900' },
+    { segmento: 'Esportivo', nome: 'Mustang GT', preco: 'A partir de R$ 549.900' },
+    { segmento: 'SUV / Off-road', nome: 'Bronco Sport', preco: 'A partir de R$ 249.900' }
   ];
 
   // Dados para os chips de atalho no HTML
@@ -134,8 +134,8 @@ export class PortalComponent {
   // Passos de funcionamento da IA
   readonly passos: PassoFuncionamento[] = [
     { n: '01', titulo: 'Informe sua rotina', texto: 'Conte quantos quilômetros roda, se enfrenta trânsito ou estrada e quem viaja com você.' },
-    { n: '02', titulo: 'Análise de dados', texto: 'A inteligência artificial cruza suas necessidades com especificações de motor, consumo e preço.' },
-    { n: '03', titulo: 'Resultado inteligente', texto: 'Você recebe um ranking com o percentual exato de compatibilidade de cada modelo.' }
+    { n: '02', titulo: 'Análise de dados', texto: 'O sistema procura no seu texto palavras de uso (família, estrada, cidade…) e orçamento, e compara com o perfil de cada modelo.' },
+    { n: '03', titulo: 'Resultado inteligente', texto: 'Você recebe os modelos ordenados por % de compatibilidade, cada um com o motivo.' }
   ];
 
   ir(chave: string): void {

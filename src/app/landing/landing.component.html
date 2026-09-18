@@ -25,29 +25,29 @@
     <div class="l-10">
       <div class="l-11">
         <span class="l-12"></span>
-        <span class="l-13">Inteligência competitiva automotiva</span>
+        <span class="l-13">Recomendação de veículos com IA</span>
       </div>
       <h1 class="l-14">Dados precisos,<br>carro perfeito.</h1>
-      <p class="l-15">O SEIA coleta e padroniza as fichas técnicas de todo o mercado e entrega a comparação pronta em uma única tela.</p>
+      <p class="l-15">Descreva como você usa o carro. O SEIA compara com o perfil de uso de cada modelo Ford e mostra quais combinam com você, e por quê.</p>
       <div class="l-16">
-        <button type="button" (click)="open(0)" class="l-17">ENTENDER O PROJETO EM 5 PASSOS</button>
+        <button type="button" (click)="scrollTo('funciona')" class="l-17">VER COMO FUNCIONA</button>
         <button type="button" (click)="goLogin.emit()" routerLink="/login" class="l-18">ACESSAR</button>
       </div>
     </div>
     <div class="l-19">
       <div class="l-20">
-        <img src="assets/hero-truck.png" alt="Veículo em um data center" class="l-21">
+        <img src="assets/hero-truck.png" alt="Picape Ford" class="l-21">
         <div class="l-22"></div>
         <div class="l-23"></div>
         <div class="l-24"></div>
         <div class="l-25">
-          <div class="l-26">DADO BRUTO → DECISÃO</div>
-          <div class="l-27">O motor roda enquanto<br>a equipe decide.</div>
+          <div class="l-26">SEU USO → O MODELO CERTO</div>
+          <div class="l-27">Você descreve.<br>A IA mostra a conta.</div>
         </div>
       </div>
       <div class="l-28">
-        <div class="l-29">-90%</div>
-        <div class="l-30">de trabalho manual<br><span class="l-31">meta do produto</span></div>
+        <div class="l-29">4</div>
+        <div class="l-30">etapas<br><span class="l-31">da descrição ao test-drive</span></div>
       </div>
     </div>
   </section>
@@ -72,8 +72,8 @@
           <span class="l-39">01</span>
           <span class="l-40">Qual problema resolvemos</span>
         </div>
-        <h2 class="l-41">A informação existe. O tempo, não.</h2>
-        <p class="l-42">A ficha técnica de cada concorrente está pública e espalhada em dezenas de portais, em formatos incompatíveis. Hoje o analista garimpa no Google e monta a planilha à mão.</p>
+        <h2 class="l-41">Escolher um carro dá trabalho.</h2>
+        <p class="l-42">As informações estão espalhadas em vários sites, em formatos diferentes. Hoje você pesquisa, copia e compara à mão.</p>
         <div class="l-43">
           @for (p of problems; track $index) {
             <div class="l-44">
@@ -82,11 +82,11 @@
             </div>
           }
         </div>
-        <button type="button" (click)="open(0)" class="l-47">VER EVIDÊNCIAS →</button>
+        <button type="button" (click)="scrollTo('proposta')" class="l-47">VER A PROPOSTA →</button>
       </div>
       <div class="l-48">
         <div class="l-49">
-          <div class="l-50">HOJE · PLANILHA MANUAL</div>
+          <div class="l-50">HOJE · BUSCA MANUAL</div>
           <div class="l-51">
             @for (r of oldRows; track $index) {
               <div class="l-52">{{ r.a }}</div>
@@ -94,10 +94,10 @@
               <div class="l-54" [style.color]="r.fg">{{ r.c }}</div>
             }
           </div>
-          <div class="l-55">Copiado à mão · dados de datas diferentes · sem padrão entre portais</div>
+          <div class="l-55">Copiado à mão · fontes diferentes · sem padrão entre sites</div>
         </div>
         <div class="l-56">
-          <div class="l-57">COM O SEIA · AUTOMÁTICO</div>
+          <div class="l-57">COM O SEIA</div>
           <div class="l-58">
             @for (r of newRows; track $index) {
               <div class="l-59">{{ r.a }}</div>
@@ -105,7 +105,7 @@
               <div class="l-61">{{ r.c }}</div>
             }
           </div>
-          <div class="l-62"><span class="l-63"></span><span class="l-64">atualizado hoje · atributos normalizados</span></div>
+          <div class="l-62"><span class="l-63"></span><span class="l-64">ficha oficial · mesmos atributos para todos</span></div>
         </div>
       </div>
     </div>
@@ -117,8 +117,8 @@
       <span class="l-39">02</span>
       <span class="l-40">Qual é a proposta</span>
     </div>
-    <h2 class="l-65">Um motor próprio que nunca para de coletar e entrega o dado já pronto para decidir.</h2>
-    <p class="l-66">Plataforma web interna da Ford: coleta automatizada, padronização dos atributos e relatório de inteligência competitiva em um clique.</p>
+    <h2 class="l-65">Uma plataforma que entende como você usa o carro e recomenda o Ford certo.</h2>
+    <p class="l-66">Você descreve rotina, passageiros, estrada e orçamento. O SEIA dá uma nota de compatibilidade por modelo, e a regra do cálculo é pública.</p>
     <div class="l-67">
       @for (p of pillars; track $index) {
         <div class="l-68">
@@ -137,7 +137,7 @@
     <div class="l-75">
       <div class="l-76">
         <div class="l-77">O QUE MUDA NA PRÁTICA</div>
-        <p class="l-78">Semanas de planilha viram minutos de análise. A equipe volta a fazer estratégia.</p>
+        <p class="l-78">Em vez de cruzar fichas em vários sites, você descreve o uso e recebe os modelos em ordem de afinidade.</p>
       </div>
     </div>
   </div>
@@ -148,7 +148,7 @@
       <span class="l-39">03</span>
       <span class="l-40">Como funciona</span>
     </div>
-    <h2 class="l-79">Quatro etapas, do portal à decisão.</h2>
+    <h2 class="l-79">Quatro etapas, da descrição ao test-drive.</h2>
     <div class="l-80">
       @for (s of steps; track $index) {
         <div class="l-81">
@@ -166,15 +166,14 @@
       <div class="l-88">
         <div class="l-89">
           <div class="l-90"><span class="l-91"></span><span class="l-92"></span><span class="l-92"></span></div>
-          <div class="l-93">SEIA · COMPARATIVO MULTIMARCA</div>
-          <div class="l-94"><span class="l-63"></span><span class="l-64">coleta ativa</span></div>
+          <div class="l-93">SEIA · COMPARATIVO DE MODELOS (EXEMPLO)</div>
+          <div class="l-94"><span class="l-63"></span><span class="l-64">exemplo ilustrativo</span></div>
         </div>
         <div class="l-95">
           <div class="l-96">
-            <span class="l-97">Fichas técnicas</span>
-            <span class="l-98">Preços</span>
-            <span class="l-98">Pacotes</span>
-            <span class="l-99">Exportar PDF/Excel</span>
+            <span class="l-97">Ficha técnica</span>
+            <span class="l-98">Potência</span>
+            <span class="l-98">Velocidade máx.</span>
           </div>
           <div class="l-100">
             @for (r of tableRows; track $index) {
@@ -195,7 +194,7 @@
         </div>
       </div>
       <div class="l-10">
-        <div class="l-105">Arquitetura TOGAF</div>
+        <div class="l-105">O que a plataforma oferece</div>
         <div class="l-106">
           @for (a of arch; track $index) {
             <div class="l-107">
@@ -204,7 +203,7 @@
             </div>
           }
         </div>
-        <button type="button" (click)="open(2)" class="l-110">VER A ARQUITETURA →</button>
+        <button type="button" routerLink="/sobre-ia" class="l-110">COMO A IA DECIDE →</button>
       </div>
     </div>
   </div>
@@ -215,7 +214,7 @@
       <span class="l-39">04</span>
       <span class="l-40">Qual o diferencial</span>
     </div>
-    <h2 class="l-111">Nenhuma alternativa entrega dado padronizado.</h2>
+    <h2 class="l-111">Do interesse ao test-drive em um só lugar.</h2>
     <div class="l-112">
       <div class="l-113">
         <div class="l-114">CRITÉRIO</div>
@@ -240,7 +239,7 @@
       <span class="l-39">05</span>
       <span class="l-40">Qual o impacto esperado</span>
     </div>
-    <h2 class="l-79">Decisão de portfólio com dado confiável.</h2>
+    <h2 class="l-79">Menos tempo pesquisando, mais confiança na escolha.</h2>
     <div class="l-120">
       @for (m of metrics; track $index) {
         <div>
@@ -262,11 +261,6 @@
         </div>
       }
     </div>
-    <div class="l-128">
-      @for (c of chapters; track $index) {
-        <button type="button" (click)="open($index)" class="l-129">{{ c.num }} · {{ c.tag }}</button>
-      }
-    </div>
   </div>
 
   <!-- Call to Action Final (Fundo ocupa 100%) -->
@@ -274,7 +268,7 @@
     <div class="l-131"></div>
     <div class="l-132">
       <div class="l-133">
-        <h2 class="l-134">Pronto para rodar<br>na intranet da Ford.</h2>
+        <h2 class="l-134">Descubra o seu<br>próximo Ford.</h2>
         <p class="l-135">Squad SEIA + Ford</p>
       </div>
       <div class="l-16">
@@ -293,7 +287,7 @@
             <img src="favicon.ico" alt="Logo" class="l-142">
             <div class="l-143">SEIA</div>
           </div>
-          <p class="l-144">Sistema de Reconhecimento Inteligente de Veículos — junto com a Ford.</p>
+          <p class="l-144">Recomendação de veículos Ford com IA.</p>
           <a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-153">
             <span class="l-154">▶</span> Assistir ao pitch
           </a>
@@ -317,7 +311,7 @@
       </div>
       <div class="l-150">
         <span>© 2026 Squad SEIA + Ford</span>
-        <span>Feito para a intranet Ford</span>
+        <span>Recomendação de veículos com IA</span>
       </div>
     </div>
   </div>

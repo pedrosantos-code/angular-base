@@ -18,22 +18,6 @@ export interface CadastroPayload {
   senha: string;
 }
 
-/** Provedores gratuitos mais comuns no Brasil — cadastro é B2B. */
-const PROVEDORES_PESSOAIS = [
-  'gmail.com', 'hotmail.com', 'outlook.com', 'live.com', 'yahoo.com',
-  'yahoo.com.br', 'icloud.com', 'me.com', 'bol.com.br', 'uol.com.br',
-  'terra.com.br', 'ig.com.br', 'globo.com', 'proton.me', 'protonmail.com',
-];
-
-export function emailProfissional(): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    const valor = (control.value ?? '').toString().trim().toLowerCase();
-    const dominio = valor.split('@')[1];
-    if (!dominio) return null;
-    return PROVEDORES_PESSOAIS.includes(dominio) ? { pessoal: true } : null;
-  };
-}
-
 export function camposIguais(campo: string, confirmacao: string): ValidatorFn {
   return (group: AbstractControl): ValidationErrors | null => {
     const a = group.get(campo)?.value;
@@ -63,35 +47,27 @@ export class CadastroComponent {
   mostrarSenha = false;
 
   readonly fluxo = [
-    'ford bronco sport  |  "2.0 EcoBoost (253cv) · Tração 4WD"',
-    'ford territory  |  "1.5 EcoBoost (169cv) · Tração FWD"',
-    'ford explorer  |  "3.0 V6 (400cv) · Tração AWD"',
-    'ford ranger  |  "3.0 V6 (250cv) · Tração 4x4"',
-    'ford ranger raptor  |  "3.0 V6 (397cv) · Tração 4x4 com Reduzida"',
-    'ford maverick tremor  |  "2.0 (253cv) · Tração AWD (4x4)"',
-    'ford f-150  |  "5.0 V8 (405cv) · Tração 4x4"',
-    'ford mustang gt  |  "5.0 V8 Coyote (488cv) · Tração RWD"',
-    'ford mustang mach-e  |  "100% elétrico (487cv) · Tração eAWD"',
-    'ford f-150 lightning  |  "100% elétrico (426cv) · Tração 4x4"',
-    'ford maverick hybrid  |  "2.5 Híbrido (194cv) · Tração FWD"',
-    'ford transit furgão  |  "2.0 EcoBlue Diesel · Tração RWD"',
-    'ford transit minidús  |  "2.0 EcoBlue Diesel · Tração RWD"',
+    { uso: 'família, viagem, estrada', modelo: 'Territory' },
+    { uso: 'cidade, economia', modelo: 'Maverick Hybrid' },
+    { uso: 'trilha, aventura', modelo: 'Bronco Sport' },
+    { uso: 'trabalho, carga', modelo: 'Ranger' },
+    { uso: 'performance', modelo: 'Mustang GT' },
+    { uso: 'cidade, elétrico', modelo: 'Mustang Mach-E' },
+    { uso: 'trabalho, viagem', modelo: 'Transit Minibus' },
   ];
 
   readonly fluxoDuplicado = [...this.fluxo, ...this.fluxo];
 
   readonly amostra = {
-    veiculo: 'Ranger 2.0 Diesel',
-    atributos: '170 cv · 47,9 kgfm · AT 10v',
-    tracao: 'Tração 4x4',
+    modelo: 'Territory',
+    perfil: 'perfil: família, estrada',
+    nota: '73% compatível',
   };
-
-  readonly marcas = 14;
 
   registerForm: FormGroup = this.fb.group(
     {
       nome: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email, emailProfissional()]],
+      email: ['', [Validators.required, Validators.email]],
       senha: ['', [Validators.required, Validators.minLength(8)]],
       confirmacao: ['', Validators.required],
       termos: [false, Validators.requiredTrue],

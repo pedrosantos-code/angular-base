@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { AuthService } from '../auth.service';
 
 export interface PerfilUso {
   uso: string;
@@ -74,6 +75,7 @@ const TAG_POR_USO: Record<string, string> = {
 })
 export class PerfilComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   private readonly chavePerfilSalvo = 'seia-perfil-salvo';
 
@@ -82,6 +84,16 @@ export class PerfilComponent {
     this.usoOriginal = structuredClone(this.uso);
     this.contaOriginal = structuredClone(this.conta);
     this.sincronizarComModelos();
+
+    // O e-mail vem da sessão de login, não do que ficou salvo no navegador.
+    this.authService.getCurrentUserEmail().subscribe({
+      next: (email) => {
+        if (!email) return;
+        this.conta.email = email;
+        this.contaOriginal.email = email;
+      },
+      error: () => {},
+    });
   }
 
   /** Restaura o que foi salvo antes — sem isso, um F5 devolveria os campos a zero mesmo depois de "Salvar". */
@@ -135,8 +147,8 @@ export class PerfilComponent {
   @Input() conta: DadosConta = {
     nome: '',
     telefone: '',
-    email: 'anthonio@gmail.com',
-    criadaEm: '02/04/2026',
+    email: '',
+    criadaEm: '',
   };
 
   /** Ranking completo (14 modelos) recalculado a cada ajuste no perfil de uso — não espera "Salvar". */

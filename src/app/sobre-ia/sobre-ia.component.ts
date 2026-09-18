@@ -28,38 +28,37 @@ export class SobreIaComponent {
   @Output() navegar = new EventEmitter<string>();
 
   readonly entradas: Entrada[] = [
-    { ordem: 'Entrada 01', titulo: 'O que você escreve', texto: 'Rotina, número de passageiros, uso na estrada e teto de orçamento.' },
-    { ordem: 'Entrada 02', titulo: 'Seu histórico', texto: 'Modelos que você comparou antes e os que descartou.' },
-    { ordem: 'Entrada 03', titulo: 'Ficha técnica oficial', texto: 'Especificação publicada pela Ford para cada versão em linha.' },
+    { ordem: 'Entrada 01', titulo: 'O que você escreve', texto: 'Rotina, passageiros, tipo de estrada e teto de orçamento, em texto livre.' },
+    { ordem: 'Entrada 02', titulo: 'Palavras de uso', texto: 'O sistema procura termos como família, estrada, cidade, off-road, trabalho, economia ou elétrico, e valores como "250 mil".' },
+    { ordem: 'Entrada 03', titulo: 'Perfil de cada modelo', texto: 'Cada modelo Ford do catálogo tem etiquetas de uso. Exemplo: Territory = família, viagem, estrada, cidade.' },
   ];
 
   @Input() exemplo: ExemploNota = {
-    modelo: 'Territory Titanium',
+    modelo: 'Territory',
     perfil: 'família · estrada · até R$ 250 mil',
-    pesos: '5 critérios, peso igual',
+    pesos: 'Preço a partir de R$ 219.900: dentro do teto, sem desconto na nota',
     criterios: [
-      { rotulo: 'Espaço para os passageiros', pontos: 20, maximo: 20 },
-      { rotulo: 'Porta-malas para viagem', pontos: 20, maximo: 20 },
-      { rotulo: 'Conforto de rodagem', pontos: 19, maximo: 20 },
-      { rotulo: 'Consumo na estrada', pontos: 18, maximo: 20 },
-      { rotulo: 'Preço dentro do teto', pontos: 17, maximo: 20 },
+      { rotulo: 'Ponto de partida (perfil detectado)', pontos: 45, maximo: 45 },
+      { rotulo: 'Modelo tem a etiqueta "família"', pontos: 14, maximo: 14 },
+      { rotulo: 'Modelo tem a etiqueta "estrada"', pontos: 14, maximo: 14 },
     ],
   };
 
   readonly usamos = [
-    'O texto que você escreve na busca',
-    'Suas comparações anteriores no portal',
-    'Ficha técnica e preço público de cada versão',
+    'O texto que você escreve na busca (palavras de uso e orçamento)',
+    'As etiquetas de uso de cada modelo',
+    'O preço "a partir de" de cada modelo',
   ];
 
   readonly naoUsamos = [
-    'Dados de crédito ou renda declarada',
+    'Dados de crédito ou renda',
     'Estoque ou meta de venda da concessionária',
-    'Qualquer dado seu para publicidade de terceiros',
+    'Seus favoritos e comparações anteriores',
   ];
 
   readonly limites: Limite[] = [
-    { titulo: 'Não negocia preço', texto: 'A nota usa o preço público. Desconto é conversa com a concessionária.' },
+    { titulo: 'Reconhece palavras, não frases', texto: 'A nota vem das palavras-chave do seu texto. Se você não citar o uso, a nota fica genérica.' },
+    { titulo: 'Não negocia preço', texto: 'A nota usa o preço "a partir de". Desconto é conversa com a concessionária.' },
     { titulo: 'Não garante disponibilidade', texto: 'Um modelo com nota alta pode não estar disponível na sua região.' },
     { titulo: 'Não substitui o test-drive', texto: 'Conforto e dirigibilidade só se confirmam no banco do carro.' },
     { titulo: 'Não decide por você', texto: 'A nota ordena opções. A escolha continua sua.' },
@@ -71,9 +70,8 @@ export class SobreIaComponent {
     return this.exemplo.criterios.reduce((s, c) => s + c.pontos, 0);
   }
 
-  get maximo(): number {
-    return this.exemplo.criterios.reduce((s, c) => s + c.maximo, 0);
-  }
+  /** A nota vai de 0 a 100 (na prática, entre 15 e 97). */
+  readonly maximo = 100;
 
   proporcao(c: Criterio): number {
     return c.maximo ? c.pontos / c.maximo : 0;

@@ -152,6 +152,10 @@ export class ModelosComponent {
 
       this.perfil = formatarPerfil(tagsDetectadas, orcamento);
       this.modelos = this.modelos.map((m) => ({ ...m, nota: calcularNota(m.tags, tagsDetectadas, m.precoDe, orcamento) }));
+    } else {
+      // Sem busca no /portal não há perfil: esconde as notas de demonstração para não passar por resultado real.
+      this.perfil = null;
+      this.modelos = this.modelos.map((m) => ({ ...m, nota: null }));
     }
 
     // Tira os parâmetros da URL depois de usados — sem isso, um F5 na mesma URL
