@@ -22,7 +22,7 @@
 
   <!-- Hero Section -->
   <section class="l-9">
-    <div class="l-10">
+    <div class="l-10" appReveal="left">
       <div class="l-11">
         <span class="l-12"></span>
         <span class="l-13">Recomendação de veículos com IA</span>
@@ -34,7 +34,7 @@
         <button type="button" (click)="goLogin.emit()" routerLink="/login" class="l-18">ACESSAR</button>
       </div>
     </div>
-    <div class="l-19">
+    <div class="l-19" appReveal="right" [revealDelay]="150">
       <div class="l-20">
         <img src="assets/hero-truck.png" alt="Picape Ford" class="l-21">
         <div class="l-22"></div>
@@ -67,7 +67,7 @@
   <!-- Seção Problema -->
   <div id="problema" class="l-36">
     <div class="l-37">
-      <div class="l-10">
+      <div class="l-10" appReveal="left">
         <div class="l-38">
           <span class="l-39">01</span>
           <span class="l-40">Qual problema resolvemos</span>
@@ -84,7 +84,7 @@
         </div>
         <button type="button" (click)="scrollTo('proposta')" class="l-47">VER A PROPOSTA →</button>
       </div>
-      <div class="l-48">
+      <div class="l-48" appReveal="right" [revealDelay]="150">
         <div class="l-49">
           <div class="l-50">HOJE · BUSCA MANUAL</div>
           <div class="l-51">
@@ -113,15 +113,15 @@
 
   <!-- Seção Proposta -->
   <div id="proposta" class="l-36">
-    <div class="l-38">
+    <div class="l-38" appReveal>
       <span class="l-39">02</span>
       <span class="l-40">Qual é a proposta</span>
     </div>
-    <h2 class="l-65">Uma plataforma que entende como você usa o carro e recomenda o Ford certo.</h2>
-    <p class="l-66">Você descreve rotina, passageiros, estrada e orçamento. O SEIA dá uma nota de compatibilidade por modelo, e a regra do cálculo é pública.</p>
+    <h2 class="l-65" appReveal [revealDelay]="80">Uma plataforma que entende como você usa o carro e recomenda o Ford certo.</h2>
+    <p class="l-66" appReveal [revealDelay]="160">Você descreve rotina, passageiros, estrada e orçamento. O SEIA dá uma nota de compatibilidade por modelo, e a regra do cálculo é pública.</p>
     <div class="l-67">
       @for (p of pillars; track $index) {
-        <div class="l-68">
+        <div class="l-68" appReveal [revealDelay]="$index * 120">
           <div class="l-69">{{ p.k }}</div>
           <h3 class="l-70">{{ p.t }}</h3>
           <p class="l-71">{{ p.d }}</p>
@@ -135,7 +135,7 @@
     <img src="assets/hero-truck.png" alt="" class="l-73">
     <div class="l-74"></div>
     <div class="l-75">
-      <div class="l-76">
+      <div class="l-76" appReveal="left">
         <div class="l-77">O QUE MUDA NA PRÁTICA</div>
         <p class="l-78">Em vez de cruzar fichas em vários sites, você descreve o uso e recebe os modelos em ordem de afinidade.</p>
       </div>
@@ -144,14 +144,14 @@
 
   <!-- Seção Como Funciona -->
   <div id="funciona" class="l-36">
-    <div class="l-38">
+    <div class="l-38" appReveal>
       <span class="l-39">03</span>
       <span class="l-40">Como funciona</span>
     </div>
-    <h2 class="l-79">Quatro etapas, da descrição ao test-drive.</h2>
+    <h2 class="l-79" appReveal [revealDelay]="80">Quatro etapas, da descrição ao test-drive.</h2>
     <div class="l-80">
       @for (s of steps; track $index) {
-        <div class="l-81">
+        <div class="l-81" appReveal [revealDelay]="$index * 120">
           <div class="l-82">
             <span class="l-83">{{ s.n }}</span>
             <span class="l-84"></span>
@@ -163,7 +163,7 @@
       }
     </div>
     <div class="l-87">
-      <div class="l-88">
+      <div class="l-88" appReveal="zoom">
         <div class="l-89">
           <div class="l-90"><span class="l-91"></span><span class="l-92"></span><span class="l-92"></span></div>
           <div class="l-93">SEIA · COMPARATIVO DE MODELOS (EXEMPLO)</div>
@@ -193,7 +193,7 @@
           </div>
         </div>
       </div>
-      <div class="l-10">
+      <div class="l-10" appReveal="right" [revealDelay]="120">
         <div class="l-105">O que a plataforma oferece</div>
         <div class="l-106">
           @for (a of arch; track $index) {
@@ -210,20 +210,20 @@
 
   <!-- Seção Diferencial -->
   <div id="diferencial" class="l-36">
-    <div class="l-38">
+    <div class="l-38" appReveal>
       <span class="l-39">04</span>
       <span class="l-40">Qual o diferencial</span>
     </div>
-    <h2 class="l-111">Do interesse ao test-drive em um só lugar.</h2>
+    <h2 class="l-111" appReveal [revealDelay]="80">Do interesse ao test-drive em um só lugar.</h2>
     <div class="l-112">
-      <div class="l-113">
+      <div class="l-113" appReveal>
         <div class="l-114">CRITÉRIO</div>
         <div class="l-114">BUSCA MANUAL</div>
         <div class="l-114">SITES GENÉRICOS</div>
         <div class="l-115">SEIA</div>
       </div>
       @for (c of compare; track $index) {
-        <div class="l-116">
+        <div class="l-116" appReveal [revealDelay]="($index + 1) * 120">
           <div class="l-117">{{ c.k }}</div>
           <div class="l-118">{{ c.a }}</div>
           <div class="l-118">{{ c.b }}</div>
@@ -235,14 +235,14 @@
 
   <!-- Seção Impacto -->
   <div id="impacto" class="l-36">
-    <div class="l-38">
+    <div class="l-38" appReveal>
       <span class="l-39">05</span>
       <span class="l-40">Qual o impacto esperado</span>
     </div>
-    <h2 class="l-79">Menos tempo pesquisando, mais confiança na escolha.</h2>
+    <h2 class="l-79" appReveal [revealDelay]="80">Menos tempo pesquisando, mais confiança na escolha.</h2>
     <div class="l-120">
       @for (m of metrics; track $index) {
-        <div>
+        <div appReveal="zoom" [revealDelay]="$index * 150">
           <div class="l-121">{{ m.v }}</div>
           <div class="l-122">{{ m.l }}</div>
           <div class="l-123">{{ m.n }}</div>
@@ -251,7 +251,7 @@
     </div>
     <div class="l-124">
       @for (v of valueCols; track $index) {
-        <div>
+        <div appReveal [revealDelay]="$index * 150">
           <div class="l-125">{{ v.k }}</div>
           <div class="l-126">
             @for (i of v.items; track $index) {
@@ -267,11 +267,11 @@
   <div class="l-130">
     <div class="l-131"></div>
     <div class="l-132">
-      <div class="l-133">
+      <div class="l-133" appReveal="left">
         <h2 class="l-134">Descubra o seu<br>próximo Ford.</h2>
         <p class="l-135">Squad SEIA + Ford</p>
       </div>
-      <div class="l-16">
+      <div class="l-16" appReveal="right" [revealDelay]="150">
         <button type="button" (click)="goLogin.emit()" [routerLink]="'/login'" class="l-136">ENTRAR NA PLATAFORMA</button>
         <a href="https://youtu.be/2D8-hnq4dd0" target="_blank" class="l-137">ASSISTIR AO PITCH</a>
       </div>
@@ -281,7 +281,7 @@
   <!-- Rodapé (Fundo ocupa 100%) -->
   <div class="l-138">
     <div class="l-139">
-      <div class="l-140">
+      <div class="l-140" appReveal>
         <div class="l-152">
           <div class="l-141">
             <img src="favicon.ico" alt="Logo" class="l-142">

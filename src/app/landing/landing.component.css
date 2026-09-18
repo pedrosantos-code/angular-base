@@ -282,8 +282,21 @@
   50% { transform: translateX(4px); }
 }
 
+/* ===== Scroll reveal (diretiva appReveal) ===== */
+/* --p (0 a 1) é atualizado pela diretiva conforme a posição do scroll */
+.reveal {
+  opacity: var(--p, 0);
+  will-change: opacity, transform;
+}
+.reveal-up { transform: translateY(calc((1 - var(--p, 0)) * 32px)); }
+.reveal-left { transform: translateX(calc((1 - var(--p, 0)) * -40px)); }
+.reveal-right { transform: translateX(calc((1 - var(--p, 0)) * 40px)); }
+.reveal-zoom { transform: scale(calc(.94 + .06 * var(--p, 0))); }
+
 /* Responsividade */
 @media (max-width: 860px) {
+  .reveal-left, .reveal-right { transform: translateY(calc((1 - var(--p, 0)) * 28px)); }
+
   .l-9, .l-37, .l-87, .l-140 {
     grid-template-columns: 1fr;
   }
