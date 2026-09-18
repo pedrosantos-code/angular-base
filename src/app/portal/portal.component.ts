@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TopbarComponent, ICONES, ITENS_PRINCIPAIS, ITENS_ATENDIMENTO, ITENS_SOBRE, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { calcularNota, detectarOrcamento, detectarTags, formatarPerfil } from '../shared/recomendacao-ia';
+import { AuthService } from '../auth.service';
 
 export interface ModeloFord {
   segmento: string;
@@ -72,6 +73,7 @@ export interface PassoFuncionamento {
 })
 export class PortalComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   @Input() ativo = 'recomendacao';
 
@@ -158,7 +160,7 @@ export class PortalComponent {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 
   selecionarModelo(nomeModelo: string): void {

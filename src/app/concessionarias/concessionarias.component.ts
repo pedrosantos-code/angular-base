@@ -7,6 +7,7 @@ import * as L from 'leaflet';
 import { catchError, map, of } from 'rxjs';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { AuthService } from '../auth.service';
 
 export interface Coordenada { lat: number; lng: number; }
 
@@ -42,6 +43,7 @@ export interface Unidade {
 })
 export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
   private router = inject(Router);
+  private authService = inject(AuthService);
   private http = inject(HttpClient);
 
   /** Atualiza a cada minuto para o status aberto/fechado virar sozinho quando o horário passa. */
@@ -135,7 +137,7 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 
   @Output() buscar = new EventEmitter<{ local: string; raioKm: number }>();

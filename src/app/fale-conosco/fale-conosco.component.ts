@@ -174,6 +174,7 @@ const ROTEIRO: Record<string, PassoChat> = {
 export class FaleConoscoComponent {
   protected readonly title = signal('meu-projeto');
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   /** Chat guiado da SEIA: a pessoa escolhe botões e a conversa segue o ROTEIRO. Não usa IA. */
   chatAberto = signal(false);
@@ -237,6 +238,6 @@ export class FaleConoscoComponent {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 }

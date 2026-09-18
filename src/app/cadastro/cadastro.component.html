@@ -106,7 +106,11 @@
             {{ enviando ? 'CRIANDO CONTA...' : 'CRIAR CONTA' }}
           </button>
 
-          <p class="l-258">Confirmação por e-mail. Acesso liberado na sequência.</p>
+          @if (aviso()) {
+            <p class="l-258"><strong>{{ aviso() }}</strong> <a routerLink="/login" class="l-242">Ir para o login</a></p>
+          } @else {
+            <p class="l-258">Confirmação por e-mail. Acesso liberado na sequência.</p>
+          }
 
         </div>
       </form>

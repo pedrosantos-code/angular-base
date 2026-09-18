@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { AuthService } from '../auth.service';
 
 export interface Entrada { ordem: string; titulo: string; texto: string; }
 export interface Criterio { rotulo: string; pontos: number; maximo: number; }
@@ -24,6 +25,7 @@ export interface ExemploNota {
 })
 export class SobreIaComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   @Output() navegar = new EventEmitter<string>();
 
@@ -85,6 +87,6 @@ export class SobreIaComponent {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 }

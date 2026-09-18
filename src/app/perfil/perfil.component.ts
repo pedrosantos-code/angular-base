@@ -124,7 +124,7 @@ export class PerfilComponent {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 
   @Output() salvarPerfil = new EventEmitter<{ uso: PerfilUso; conta: DadosConta }>();

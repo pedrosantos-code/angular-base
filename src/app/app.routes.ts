@@ -11,18 +11,22 @@ import { ConcessionariasComponent } from './concessionarias/concessionarias.comp
 import { PerfilComponent } from './perfil/perfil.component';
 import { FaleConoscoComponent } from './fale-conosco/fale-conosco.component';
 import { TermosComponent } from './termos/termos.component';
+import { authGuard } from './auth.guard';
 
 export const routes: Routes = [
+    // Públicas
     { path: '', component: LandingComponent },
     { path: 'login', component: LoginComponent },
     { path: 'cadastro', component: CadastroComponent },
-    { path: 'portal', component: PortalComponent },
-    { path: 'dashboard', component: DashboardComponent },
-    { path: 'modelos', component: ModelosComponent },
     { path: 'sobre-ia', component: SobreIaComponent },
-    { path: 'agendamentos', component: AgendamentosComponent },
-    { path: 'concessionarias', component: ConcessionariasComponent },
-    { path: 'fale-conosco', component: FaleConoscoComponent },
-    { path: 'perfil', component: PerfilComponent },
-    { path: 'termos', component: TermosComponent }
+    { path: 'termos', component: TermosComponent },
+
+    // Exigem login
+    { path: 'portal', component: PortalComponent, canActivate: [authGuard] },
+    { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+    { path: 'modelos', component: ModelosComponent, canActivate: [authGuard] },
+    { path: 'agendamentos', component: AgendamentosComponent, canActivate: [authGuard] },
+    { path: 'concessionarias', component: ConcessionariasComponent, canActivate: [authGuard] },
+    { path: 'fale-conosco', component: FaleConoscoComponent, canActivate: [authGuard] },
+    { path: 'perfil', component: PerfilComponent, canActivate: [authGuard] }
 ];

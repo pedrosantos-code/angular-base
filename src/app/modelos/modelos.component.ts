@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { calcularNota, formatarPerfil } from '../shared/recomendacao-ia';
+import { AuthService } from '../auth.service';
 
 export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
 export type Ordenacao = 'compatibilidade' | 'preco' | 'nome';
@@ -40,6 +41,7 @@ export interface Categoria { chave: string; rotulo: string; }
 })
 export class ModelosComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
 
   @Output() abrirModelo = new EventEmitter<string>();
@@ -53,7 +55,7 @@ export class ModelosComponent {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 
   @Input() modelos: Modelo[] = [

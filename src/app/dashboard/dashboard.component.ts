@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { AuthService } from '../auth.service';
 
 Chart.register(...registerables);
 
@@ -18,6 +19,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   private fordApi = inject(FordApiService);
   private router = inject(Router);
+  private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
 
   @ViewChild('graficoCanvas') graficoCanvas?: ElementRef<HTMLCanvasElement>;
@@ -45,7 +47,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 
   // Busca de veículo na API da Ford

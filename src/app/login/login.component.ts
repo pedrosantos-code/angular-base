@@ -39,7 +39,6 @@ export class LoginComponent {
           return;
         }
 
-        console.log('Login successful:', response);
         this.router.navigate(['/portal']);
       },
       error: (error) => {

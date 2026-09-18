@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { AuthService } from '../auth.service';
 
 export interface Termo {
   chave: string;
@@ -23,6 +24,7 @@ export interface Termo {
 })
 export class TermosComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   ir(chave: string): void {
     this.navegar.emit(chave);
@@ -31,7 +33,7 @@ export class TermosComponent {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 
   @Output() navegar = new EventEmitter<string>();

@@ -43,6 +43,7 @@ export class CadastroComponent {
   private router = inject(Router);
 
   errorMessage = signal<string | null>(null);
+  aviso = signal<string | null>(null);
   enviando = false;
   mostrarSenha = false;
 
@@ -113,8 +114,12 @@ export class CadastroComponent {
           console.error('Erro no Supabase:', response.error.message);
           this.errorMessage.set(response.error.message);
         } else {
-          console.log('Cadastro realizado com sucesso:', response);
-          this.router.navigate(['/portal']);
+          // Com confirmação por e-mail ligada, o Supabase não abre sessão até a pessoa confirmar.
+          if (response.data.session) {
+            this.router.navigate(['/portal']);
+          } else {
+            this.aviso.set('Conta criada. Confirme o e-mail que enviamos para poder entrar.');
+          }
         }
       },
       error: (error) => {

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { AuthService } from '../auth.service';
 
 export interface TipoAtendimento { chave: string; rotulo: string; }
 
@@ -53,6 +54,7 @@ export interface Agendamento {
 })
 export class AgendamentosComponent {
   private router = inject(Router);
+  private authService = inject(AuthService);
 
   /** Meia-noite do dia atual. Reavaliado a cada minuto para o calendário virar sozinho quando o dia muda. */
   private readonly hoje = signal(AgendamentosComponent.meiaNoite(new Date()));
@@ -85,7 +87,7 @@ export class AgendamentosComponent {
   }
 
   sair(): void {
-    this.router.navigateByUrl('/');
+    void this.authService.logout();
   }
 
   /** Dispare o carregamento da agenda da unidade escolhida. */
