@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../shared/reveal.directive';
@@ -11,25 +11,16 @@ import { RevealDirective } from '../shared/reveal.directive';
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
-  @Output() goLogin = new EventEmitter<void>();
-  @Output() goRegister = new EventEmitter<void>();
+  // Menu do cabeçalho no mobile
+  menuOpen = false;
 
-  // Métodos disparadores para os eventos de autenticação/navegação
-  onLoginClick(): void {
-    this.goLogin.emit();
-  }
-
-  onRegisterClick(): void {
-    this.goRegister.emit();
-  }
-
-  // Links de navegação do menu lateral/topo
+  // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
-    { label: 'Problema', href: '#problema' },
-    { label: 'Proposta', href: '#proposta' },
-    { label: 'Como funciona', href: '#funciona' },
-    { label: 'Diferencial', href: '#diferencial' },
-    { label: 'Impacto', href: '#impacto' }
+    { label: 'Problema', id: 'problema' },
+    { label: 'Proposta', id: 'proposta' },
+    { label: 'Como funciona', id: 'funciona' },
+    { label: 'Diferencial', id: 'diferencial' },
+    { label: 'Impacto', id: 'impacto' }
   ];
 
   // Palavras-chave para a faixa de marquee animada
@@ -51,8 +42,8 @@ export class LandingComponent {
 
   // Linhas comparativas (Busca manual vs SEIA)
   oldRows = [
-    { a: 'Modelo A', b: 'Ficha em um site, preço em outro', c: 'Incompleto', fg: '#B4453A' },
-    { a: 'Modelo B', b: 'Atributos com nomes diferentes', c: 'Difícil de comparar', fg: '#B4453A' }
+    { a: 'Modelo A', b: 'Ficha em um site, preço em outro', c: 'Incompleto' },
+    { a: 'Modelo B', b: 'Atributos com nomes diferentes', c: 'Difícil de comparar' }
   ];
 
   newRows = [
@@ -75,18 +66,18 @@ export class LandingComponent {
     { n: '04', t: 'Agende', d: 'Escolha uma concessionária próxima e marque o test-drive.' }
   ];
 
-  // Dados da tabela comparativa (exemplo ilustrativo)
+  // Dados da tabela comparativa (exemplo ilustrativo). kind: head | row | alt
   tableRows = [
-    { a: 'Atributo', b: 'Modelo A', c: 'Modelo B', d: 'Modelo C', bg: '#002B5C', fg: '#fff', fw: '700' },
-    { a: 'Potência', b: 'Maior', c: 'Média', d: 'Menor', bg: '#fff', fg: '#41525F', fw: '400' },
-    { a: 'Velocidade máx.', b: 'Média', c: 'Maior', d: 'Menor', bg: '#F7FAFC', fg: '#0B57A4', fw: '600' }
+    { a: 'Atributo', b: 'Modelo A', c: 'Modelo B', d: 'Modelo C', kind: 'head' },
+    { a: 'Potência', b: 'Maior', c: 'Média', d: 'Menor', kind: 'row' },
+    { a: 'Velocidade máx.', b: 'Média', c: 'Maior', d: 'Menor', kind: 'alt' }
   ];
 
-  // Barras do gráfico ilustrativo
+  // Barras do gráfico ilustrativo (h = altura, strong = cor de destaque)
   bars = [
-    { h: '60%', c: '#2E7DD1', l: 'Modelo A' },
-    { h: '45%', c: '#CFE0EF', l: 'Modelo B' },
-    { h: '75%', c: '#2E7DD1', l: 'Modelo C' }
+    { h: '60%', strong: true, l: 'Modelo A' },
+    { h: '45%', strong: false, l: 'Modelo B' },
+    { h: '75%', strong: true, l: 'Modelo C' }
   ];
 
   // O que a plataforma oferece
@@ -123,7 +114,22 @@ export class LandingComponent {
     { n: 'Pedro Pereira dos Santos' },
   ];
 
-  // Rola até a seção indicada (ids: problema, proposta, funciona, diferencial, impacto)
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  @HostListener('document:keydown.escape')
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
+  // Links de navegação: rola suave até a seção (ids: problema, proposta, funciona, diferencial, impacto)
+  goTo(event: Event, id: string): void {
+    event.preventDefault();
+    this.closeMenu();
+    this.scrollTo(id);
+  }
+
   scrollTo(id: string): void {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
