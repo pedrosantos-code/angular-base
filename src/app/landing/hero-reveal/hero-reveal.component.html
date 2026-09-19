@@ -4,6 +4,8 @@
     <img class="layer base" alt="" aria-hidden="true"
          src="hero-reveal/1x/base.webp"
          srcset="hero-reveal/1x/base.webp 1024w, hero-reveal/2x/base.webp 2048w" sizes="(min-width: 900px) 1400px, 94vw" />
+    <!-- Escurece só o carro (recortado pela silhueta), sem tocar no fundo: nada de "caixa" ao redor -->
+    <div class="dim" aria-hidden="true"></div>
     <img class="layer outline" alt="" aria-hidden="true"
          src="hero-reveal/1x/outline.webp"
          srcset="hero-reveal/1x/outline.webp 1024w, hero-reveal/2x/outline.webp 2048w" sizes="(min-width: 900px) 1400px, 94vw" />
@@ -25,10 +27,6 @@
     <!-- Scanner SEIA: linha azul fina, só sobre a silhueta do carro -->
     <div class="scan" aria-hidden="true"></div>
   </div>
-
-  <!-- Névoa lateral: fora do quadro, para não criar emenda na borda da imagem -->
-  <div class="fog fog--l" aria-hidden="true"></div>
-  <div class="fog fog--r" aria-hidden="true"></div>
 
   <p class="tag" aria-hidden="true">Ford F-150 Raptor R · Identificado</p>
 

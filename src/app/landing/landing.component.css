@@ -57,7 +57,7 @@
 
 /* Cabeçalho escuro: mesma cor da cena do Hero enquanto ele está sob o cabeçalho */
 .site-header { transition: background-color .25s ease, border-color .25s ease; }
-.site-header--dark { background: #06070a; border-bottom-color: #06070a; }
+.site-header--dark { background: #050709; border-bottom-color: #050709; }
 .site-header--dark .brand__name { color: #fff; }
 .site-header--dark .brand__tag { color: #8496AA; }
 .site-header--dark .nav-link { color: #C7D3E0; }
@@ -81,7 +81,7 @@
 
 /* ===== Hero (scroll reveal) ===== */
 /* Ajustes do componente: altura do header sticky, duração da sequência em scroll e cor de fundo da cena */
-app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #06070a; }
+app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #050709; }
 .hero { display: block; width: 100%; }
 .split__text, .showcase__side { min-width: 0; }
 /* Texto sobre a cena escura */
