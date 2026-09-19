@@ -57,7 +57,7 @@
 
 /* Cabeçalho escuro: mesma cor da cena do Hero enquanto ele está sob o cabeçalho */
 .site-header { transition: background-color .25s ease, border-color .25s ease; }
-.site-header--dark { background: #050709; border-bottom-color: #050709; }
+.site-header--dark { background: var(--header-bg, #050709); border-bottom-color: var(--header-bg, #050709); }
 .site-header--dark .brand__name { color: #fff; }
 .site-header--dark .brand__tag { color: #8496AA; }
 .site-header--dark .nav-link { color: #C7D3E0; }
@@ -66,7 +66,7 @@
 .site-header--dark .btn--primary:hover { background: #dbe7f5; }
 .site-header--dark .menu-toggle { border-color: rgba(255,255,255,.3); }
 .site-header--dark .menu-toggle span { background: #fff; }
-.site-header--dark .menu-panel { background: #0b0d12; border-bottom-color: rgba(255,255,255,.08); }
+.site-header--dark .menu-panel { background: var(--header-bg, #050709); border-bottom-color: rgba(255,255,255,.08); }
 .site-header--dark .menu-panel__link { color: #C7D3E0; border-bottom-color: rgba(255,255,255,.08); }
 
 /* Menu mobile */

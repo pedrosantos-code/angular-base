@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <!-- Cabeçalho -->
-  <header class="site-header" [class.site-header--dark]="headerDark()">
+  <header class="site-header" [class.site-header--dark]="headerBg() !== null" [style.--header-bg]="headerBg()">
     <div class="site-header__inner">
       <div class="brand">
         <img src="favicon.ico" alt="" class="brand__logo">
@@ -38,7 +38,7 @@
   </header>
 
   <!-- Hero: scroll reveal cinematográfico (camadas de imagem + CSS, sem 3D) -->
-  <app-hero-reveal class="hero" (underHeader)="headerDark.set($event)">
+  <app-hero-reveal class="hero" data-header-bg="#050709">
     <div class="eyebrow" data-reveal-step="1">
       <span class="eyebrow__line"></span>
       <span class="eyebrow__text">Recomendação de veículos com IA</span>
@@ -52,7 +52,7 @@
   </app-hero-reveal>
 
   <!-- Marquee -->
-  <div class="marquee" aria-hidden="true">
+  <div class="marquee" aria-hidden="true" data-header-bg="#001730">
     <div class="marquee__track">
       <div class="marquee__group">
         @for (k of keywords; track $index) {<span class="marquee__item">{{ k }}</span>}
@@ -135,7 +135,7 @@
   </div>
 
   <!-- Banner de largura total -->
-  <div class="banner">
+  <div class="banner" data-header-bg="#001d3a">
     <img src="fundo.png" alt="" class="banner__img" loading="lazy" decoding="async">
     <div class="banner__shade"></div>
     <div class="banner__content">
@@ -268,7 +268,7 @@
   </div>
 
   <!-- Call to Action final -->
-  <div class="cta">
+  <div class="cta" data-header-bg="#143a63">
     <img src="explorer.jpeg" alt="" class="cta__photo" loading="lazy" decoding="async">
     <div class="cta__grid"></div>
     <div class="cta__inner">
@@ -284,7 +284,7 @@
   </div>
 
   <!-- Rodapé -->
-  <footer class="footer">
+  <footer class="footer" data-header-bg="#001730">
     <div class="footer__inner">
       <div class="footer__top" appReveal>
         <div class="footer__brand">

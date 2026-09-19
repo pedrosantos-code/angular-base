@@ -7,7 +7,6 @@ import {
   NgZone,
   PLATFORM_ID,
   inject,
-  output,
   viewChild
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -33,11 +32,7 @@ export class HeroRevealComponent implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private stage = viewChild.required<ElementRef<HTMLElement>>('stage');
 
-  /** true enquanto a seção do Hero ainda está sob o cabeçalho (o cabeçalho pode acompanhar a cor da cena). */
-  underHeader = output<boolean>();
-
   private frame = 0;
-  private lastUnder: boolean | null = null;
   private lastProgress = -1;
 
   ngAfterViewInit(): void {
@@ -81,11 +76,6 @@ export class HeroRevealComponent implements AfterViewInit {
     const stage = this.stage().nativeElement;
     const stickyTop = parseFloat(getComputedStyle(stage).top) || 0;
     const rect = el.getBoundingClientRect();
-    const under = rect.bottom > stickyTop + 1;
-    if (under !== this.lastUnder) {
-      this.lastUnder = under;
-      this.zone.run(() => this.underHeader.emit(under));
-    }
     const scrollable = el.offsetHeight - stage.offsetHeight;
     if (scrollable <= 0) return;
     const p = Math.min(1, Math.max(0, (stickyTop - rect.top) / scrollable));

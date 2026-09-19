@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, HostListener, afterNextRender, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../shared/reveal.directive';
@@ -15,6 +15,7 @@ import { HeroVehicleStageComponent } from './hero-vehicle-stage/hero-vehicle-sta
 export class LandingComponent {
   private host = inject<ElementRef<HTMLElement>>(ElementRef);
   private destroyRef = inject(DestroyRef);
+  private zone = inject(NgZone);
 
   constructor() {
     // O palco do Hero gruda logo abaixo do cabeçalho: sincroniza --reveal-top com a altura real dele
@@ -23,7 +24,9 @@ export class LandingComponent {
       const root = this.host.nativeElement;
       const header = root.querySelector<HTMLElement>('.site-header');
       const hero = root.querySelector<HTMLElement>('app-hero-reveal');
-      if (!header || !hero || typeof ResizeObserver === 'undefined') return;
+      if (!header) return;
+      this.trackHeaderColor(root, header);
+      if (!hero || typeof ResizeObserver === 'undefined') return;
       const sync = () => {
         hero.style.setProperty('--reveal-top', `${header.getBoundingClientRect().height}px`);
         window.dispatchEvent(new Event('resize'));
@@ -37,8 +40,8 @@ export class LandingComponent {
   // Menu do cabeçalho no mobile
   menuOpen = signal(false);
 
-  // Cabeçalho escuro enquanto o Hero (scroll reveal) está sob ele
-  headerDark = signal(true);
+  // Cor de fundo do cabeçalho: acompanha a seção escura que está por trás dele (null = branco normal)
+  headerBg = signal<string | null>('#050709');
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
@@ -139,6 +142,39 @@ export class LandingComponent {
     { n: 'Nicolle Pelligrino Jelinski' },
     { n: 'Pedro Pereira dos Santos' },
   ];
+
+  /**
+   * O cabeçalho pega a cor da seção que passa por baixo dele: as seções escuras/azuis declaram
+   * data-header-bg="#hex". Sem seção escura sob ele, volta ao branco. O cálculo roda fora do Angular
+   * e só entra na zona quando a cor muda.
+   */
+  private trackHeaderColor(root: HTMLElement, header: HTMLElement): void {
+    const sections = Array.from(root.querySelectorAll<HTMLElement>('[data-header-bg]'));
+    let frame = 0;
+    const evaluate = () => {
+      frame = 0;
+      const line = header.getBoundingClientRect().bottom - 1;
+      const under = sections.find((s) => {
+        const r = s.getBoundingClientRect();
+        return r.top <= line && r.bottom > line;
+      });
+      const bg = under?.dataset['headerBg'] ?? null;
+      if (bg !== this.headerBg()) this.zone.run(() => this.headerBg.set(bg));
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(evaluate);
+    };
+    this.zone.runOutsideAngular(() => {
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule, { passive: true });
+    });
+    this.destroyRef.onDestroy(() => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      if (frame) cancelAnimationFrame(frame);
+    });
+    schedule();
+  }
 
   toggleMenu(): void {
     this.menuOpen.update((aberto) => !aberto);
