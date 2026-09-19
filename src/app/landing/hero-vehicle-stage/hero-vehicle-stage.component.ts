@@ -81,8 +81,26 @@ export class HeroVehicleStageComponent {
         this.useFallback();
         return;
       }
-      this.start();
+      this.startWhenNear();
     });
+  }
+
+  /** O modelo pesa ~3 MB: só começa a carregar quando o palco está perto de aparecer na tela. */
+  private startWhenNear(): void {
+    if (typeof IntersectionObserver === 'undefined') {
+      this.start();
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.disconnect();
+        this.start();
+      },
+      { rootMargin: '400px 0px' }
+    );
+    io.observe(this.host.nativeElement);
+    this.destroyRef.onDestroy(() => io.disconnect());
   }
 
   setPaint(index: number): void {

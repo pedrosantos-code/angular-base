@@ -2,21 +2,19 @@ import { Component, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../shared/reveal.directive';
+import { HeroRevealComponent } from './hero-reveal/hero-reveal.component';
 import { HeroVehicleStageComponent } from './hero-vehicle-stage/hero-vehicle-stage.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink, RevealDirective, HeroVehicleStageComponent],
+  imports: [CommonModule, RouterLink, RevealDirective, HeroRevealComponent, HeroVehicleStageComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
   // Menu do cabeçalho no mobile
   menuOpen = signal(false);
-
-  // Vira true quando o palco 3D identifica o veículo: libera a entrada do texto do Hero
-  heroRevealed = signal(false);
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
@@ -60,14 +58,6 @@ export class LandingComponent {
     { k: '01 / RECOMENDAÇÃO', t: 'Descreva seu uso', d: 'Conte sua rotina, passageiros, estrada e orçamento. A IA indica os modelos Ford que mais combinam.' },
     { k: '02 / TRANSPARÊNCIA', t: 'Nota com regra pública', d: 'Cada modelo recebe uma nota e um motivo. A página "Como a IA decide" mostra a conta.' },
     { k: '03 / AÇÃO', t: 'Compare e agende', d: 'Compare modelos lado a lado, encontre uma concessionária e agende o test-drive.' }
-  ];
-
-  // Um modelo para cada uso (galeria da seção 02)
-  useCases = [
-    { use: 'Família e viagem', model: 'Territory', img: 'territory.jpeg', alt: 'Ford Territory cinza parado em um terreno claro' },
-    { use: 'Aventura e trilha', model: 'Bronco Sport', img: 'bronco-sport.jpeg', alt: 'Ford Bronco Sport vermelho em uma trilha de terra' },
-    { use: 'Trabalho e carga', model: 'F-150', img: 'f150.jpg', alt: 'Ford F-150 vermelha em uma estrada de terra' },
-    { use: 'Cidade e elétrico', model: 'Mustang Mach-E', img: 'mach-e.jpg', alt: 'Ford Mustang Mach-E verde com montanhas ao fundo' }
   ];
 
   // Etapas de funcionamento (Seção 03)

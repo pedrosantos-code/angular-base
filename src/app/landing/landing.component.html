@@ -37,24 +37,19 @@
     }
   </header>
 
-  <!-- Hero -->
-  <section class="hero hero--cinematic" [class.is-revealed]="heroRevealed()">
-    <!-- Palco 3D: fica acima do texto (carro ↓ conteúdo) -->
-    <app-hero-vehicle-stage class="hero__stage" (revealed)="heroRevealed.set(true)" />
-
-    <div class="hero__content">
-      <div class="eyebrow">
-        <span class="eyebrow__line"></span>
-        <span class="eyebrow__text">Recomendação de veículos com IA</span>
-      </div>
-      <h1 class="hero__title">Dados precisos,<br>carro perfeito.</h1>
-      <p class="hero__lead">Descreva como você usa o carro. O SEIA compara com o perfil de uso de cada modelo Ford e mostra quais combinam com você, e por quê.</p>
-      <div class="actions">
-        <button type="button" (click)="scrollTo('funciona')" class="btn btn--primary">VER COMO FUNCIONA</button>
-        <a routerLink="/login" class="btn btn--ghost">ACESSAR</a>
-      </div>
+  <!-- Hero: scroll reveal cinematográfico (camadas de imagem + CSS, sem 3D) -->
+  <app-hero-reveal class="hero">
+    <div class="eyebrow" data-reveal-step="1">
+      <span class="eyebrow__line"></span>
+      <span class="eyebrow__text">Recomendação de veículos com IA</span>
     </div>
-  </section>
+    <h1 class="hero__title" data-reveal-step="2">Dados precisos,<br>carro perfeito.</h1>
+    <p class="hero__lead" data-reveal-step="3">Descreva como você usa o carro. O SEIA compara com o perfil de uso de cada modelo Ford e mostra quais combinam com você, e por quê.</p>
+    <div class="actions" data-reveal-step="4">
+      <button type="button" (click)="scrollTo('funciona')" class="btn btn--primary">VER COMO FUNCIONA</button>
+      <a routerLink="/login" class="btn btn--ghost">ACESSAR</a>
+    </div>
+  </app-hero-reveal>
 
   <!-- Marquee -->
   <div class="marquee" aria-hidden="true">
@@ -133,16 +128,9 @@
       }
     </div>
     <div class="usecases-head" appReveal>Um modelo para cada uso</div>
-    <div class="usecases">
-      @for (u of useCases; track u.model) {
-        <figure class="usecase" appReveal [revealDelay]="$index * 100">
-          <img [src]="u.img" [alt]="u.alt" class="usecase__img" loading="lazy" decoding="async">
-          <figcaption class="usecase__cap">
-            <span class="usecase__use">{{ u.use }}</span>
-            <span class="usecase__model">{{ u.model }}</span>
-          </figcaption>
-        </figure>
-      }
+    <!-- Modelo 3D interativo: arraste para girar 360° e escolha a cor -->
+    <div class="model-stage" appReveal="zoom">
+      <app-hero-vehicle-stage />
     </div>
   </div>
 
