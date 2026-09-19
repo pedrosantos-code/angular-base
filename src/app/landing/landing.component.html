@@ -38,8 +38,11 @@
   </header>
 
   <!-- Hero -->
-  <section class="hero">
-    <div class="hero__text" appReveal="left">
+  <section class="hero hero--cinematic" [class.is-revealed]="heroRevealed()">
+    <!-- Palco 3D: fica acima do texto (carro ↓ conteúdo) -->
+    <app-hero-vehicle-stage class="hero__stage" (revealed)="heroRevealed.set(true)" />
+
+    <div class="hero__content">
       <div class="eyebrow">
         <span class="eyebrow__line"></span>
         <span class="eyebrow__text">Recomendação de veículos com IA</span>
@@ -49,22 +52,6 @@
       <div class="actions">
         <button type="button" (click)="scrollTo('funciona')" class="btn btn--primary">VER COMO FUNCIONA</button>
         <a routerLink="/login" class="btn btn--ghost">ACESSAR</a>
-      </div>
-    </div>
-    <div class="hero__visual" appReveal="right" [revealDelay]="150">
-      <div class="hero__frame">
-        <img src="hero-truck.png" alt="Picape Ford em um corredor de servidores, representando a análise por IA" class="hero__img">
-        <div class="hero__tint"></div>
-        <div class="hero__grid"></div>
-        <div class="hero__scan"></div>
-        <div class="hero__caption">
-          <div class="hero__kicker">SEU USO → O MODELO CERTO</div>
-          <div class="hero__tagline">Você descreve.<br>A IA mostra a conta.</div>
-        </div>
-      </div>
-      <div class="hero__stat">
-        <div class="hero__stat-num">4</div>
-        <div class="hero__stat-label">etapas<br><span class="hero__stat-sub">da descrição ao test-drive</span></div>
       </div>
     </div>
   </section>

@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  /* Altura ajustável de fora: .hero__stage { --stage-h: clamp(320px, 60vh, 660px); } */
+  --stage-h: clamp(300px, 52vh, 600px);
+}
+
+.stage { position: relative; width: 100%; height: var(--stage-h); overflow: hidden; }
+
+.stage__fallback,
+.stage__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.stage__fallback { object-fit: cover; opacity: .55; filter: saturate(.7); transition: opacity .6s ease; }
+.stage__canvas { opacity: 0; transition: opacity .6s ease; }
+
+/* Com o 3D pronto, a imagem some e o canvas aparece */
+.stage[data-phase='scanning'] .stage__canvas,
+.stage[data-phase='identified'] .stage__canvas { opacity: 1; }
+.stage[data-phase='scanning'] .stage__fallback,
+.stage[data-phase='identified'] .stage__fallback { opacity: 0; }
+.stage[data-phase='fallback'] .stage__fallback { opacity: 1; filter: none; }
+
+/* HUD de status */
+.stage__hud {
+  position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  background: rgba(0, 23, 48, .82); color: #fff; border-radius: 2px;
+  font-family: var(--display, 'Archivo', sans-serif); font-weight: 700; font-size: 11.5px;
+  letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; max-width: calc(100% - 24px);
+}
+.stage__dot { width: 8px; height: 8px; border-radius: 50%; background: #7FB3E4; animation: stage-pulse 1.2s ease-in-out infinite; }
+.stage__status--ok { color: #cfe4f8; }
+.stage[data-phase='identified'] .stage__dot { background: #5fd38d; animation: none; }
+.stage__bar { width: 72px; height: 3px; background: rgba(255, 255, 255, .22); }
+.stage__bar > span { display: block; height: 100%; background: #7FB3E4; transition: width .2s linear; }
+
+.stage__credit {
+  position: absolute; right: 8px; top: 8px; margin: 0;
+  font-size: 10.5px; letter-spacing: .02em; color: #55677A;
+}
+
+@keyframes stage-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: .6; }
+}
+
+@media (max-width: 560px) {
+  .stage__hud { font-size: 10px; letter-spacing: .1em; padding: 7px 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage__dot { animation: none; }
+  .stage__fallback, .stage__canvas { transition: none; }
+}

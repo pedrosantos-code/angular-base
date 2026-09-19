@@ -1,0 +1,25 @@
+<div class="stage" [attr.data-phase]="phase()" role="img" aria-label="Ford F-150 Raptor R em 3D">
+  <!-- Imagem de fallback: aparece sem WebGL, se o modelo falhar e enquanto o 3D carrega -->
+  <img class="stage__fallback" [src]="fallbackSrc()" alt="Picape Ford F-150 em uma estrada de terra" />
+
+  <canvas #canvas class="stage__canvas" aria-hidden="true"></canvas>
+
+  @if (phase() !== 'fallback') {
+    <div class="stage__hud" aria-live="polite">
+      <span class="stage__dot" aria-hidden="true"></span>
+      @switch (phase()) {
+        @case ('loading') {
+          <span class="stage__status">Carregando modelo</span>
+          <span class="stage__bar" aria-hidden="true"><span [style.width.%]="progress() * 100"></span></span>
+        }
+        @case ('scanning') {
+          <span class="stage__status">Identificando veículo…</span>
+        }
+        @case ('identified') {
+          <span class="stage__status stage__status--ok">Identificado · Ford F-150 Raptor R</span>
+        }
+      }
+    </div>
+    <p class="stage__credit">Modelo 3D: Ddiaz Design · CC BY-NC-SA 4.0</p>
+  }
+</div>

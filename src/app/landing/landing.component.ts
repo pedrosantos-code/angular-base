@@ -2,17 +2,21 @@ import { Component, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../shared/reveal.directive';
+import { HeroVehicleStageComponent } from './hero-vehicle-stage/hero-vehicle-stage.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink, RevealDirective],
+  imports: [CommonModule, RouterLink, RevealDirective, HeroVehicleStageComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
   // Menu do cabeçalho no mobile
   menuOpen = signal(false);
+
+  // Vira true quando o palco 3D identifica o veículo: libera a entrada do texto do Hero
+  heroRevealed = signal(false);
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
