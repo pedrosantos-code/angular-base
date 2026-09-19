@@ -15,6 +15,14 @@ import {
 import { isPlatformBrowser } from '@angular/common';
 import type { HeroScene } from './hero-vehicle-scene';
 
+export interface PaintOption {
+  label: string;
+  /** Hex aplicado à pintura; null = cor original do modelo. */
+  hex: string | null;
+  /** Cor mostrada no botão. */
+  swatch: string;
+}
+
 export type StagePhase = 'loading' | 'scanning' | 'identified' | 'fallback';
 
 // Se o modelo demorar (rede lenta), o texto do Hero não pode ficar escondido para sempre.
@@ -36,6 +44,16 @@ export class HeroVehicleStageComponent {
   fallbackSrc = input('f150.jpg');
   modelSrc = input('models/f150-raptor-r.glb');
   revealed = output<void>();
+
+  paints: PaintOption[] = [
+    { label: 'Vermelho Rapid (original)', hex: null, swatch: '#a3121f' },
+    { label: 'Azul Velocity', hex: '#1f5fbf', swatch: '#1f5fbf' },
+    { label: 'Branco Oxford', hex: '#f1f1ee', swatch: '#f1f1ee' },
+    { label: 'Preto Ágata', hex: '#15171a', swatch: '#15171a' },
+    { label: 'Cinza Carbonizado', hex: '#6b7076', swatch: '#6b7076' },
+    { label: 'Laranja Code', hex: '#e2621b', swatch: '#e2621b' }
+  ];
+  selectedPaint = signal(0);
 
   phase = signal<StagePhase>('loading');
   progress = signal(0);
@@ -65,6 +83,11 @@ export class HeroVehicleStageComponent {
       }
       this.start();
     });
+  }
+
+  setPaint(index: number): void {
+    this.selectedPaint.set(index);
+    this.scene?.setPaint(this.paints[index].hex);
   }
 
   private hasWebGL(): boolean {
@@ -112,6 +135,7 @@ export class HeroVehicleStageComponent {
         return;
       }
       this.scene = scene;
+      scene.setPaint(this.paints[this.selectedPaint()].hex);
       this.observe(scene);
     } catch {
       if (!this.destroyed) this.useFallback();

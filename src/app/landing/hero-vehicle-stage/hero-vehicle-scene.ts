@@ -11,6 +11,8 @@ export interface HeroSceneOptions {
 }
 
 export interface HeroScene {
+  /** Muda a cor da pintura (hex) ou volta à cor original (null). */
+  setPaint(hex: string | null): void;
   /** Liga/desliga o loop de render (usado quando o palco sai da tela). */
   setActive(active: boolean): void;
   resize(): void;
@@ -22,6 +24,11 @@ const CAR_LENGTH = 5;
 // Giro do modelo para que a frente aponte para +X.
 const FRONT_YAW = Math.PI;
 const SWEEP_SECONDS = 2.2;
+// Ponto que a câmera mira na vista frontal (perto do capô) e nome do material da pintura no GLB.
+const FRONT_TARGET_X = -CAR_LENGTH / 2 + 1.4;
+const PAINT_MATERIAL = 'RaptorPaaint';
+const DRAG_RAD_PER_PX = 0.009;
+const AUTO_RETURN_AFTER = 5;
 
 const ease = (t: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
@@ -57,7 +64,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
 
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
   // Enquadramento só na frente da picape (a frente aponta para -X).
-  const target = new THREE.Vector3(-CAR_LENGTH / 2 + 1.4, 0.95, 0);
+  const target = new THREE.Vector3(FRONT_TARGET_X, 0.95, 0);
 
   const key = new THREE.DirectionalLight(0xffffff, 1.7);
   key.position.set(1.5, 8, 3);
@@ -148,12 +155,58 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
   canvas.addEventListener('webglcontextlost', onContextLost);
 
   // Distância que enquadra a picape em qualquer proporção de tela.
-  const fitDistance = () => {
+  // `side` (0 = de frente/de trás, 1 = de lado): de lado a picape ocupa mais largura.
+  const fitDistance = (side: number) => {
     const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
     const byHeight = 1.3 / tan;
-    const byWidth = 1.7 / (tan * camera.aspect);
+    const byWidth = lerp(1.7, 2.8, side) / (tan * camera.aspect);
     return Math.max(byHeight, byWidth);
   };
+
+  // Giro 360° por arraste (com inércia). Depois de uns segundos parado, volta para a vista frontal.
+  let dragAz = 0;
+  let dragVel = 0;
+  let dragging = false;
+  let dragLastX = 0;
+  let idleSince = 0;
+  let engage = 0;
+
+  const onDown = (e: PointerEvent) => {
+    if (!identified || e.button > 0) return;
+    dragging = true;
+    dragVel = 0;
+    dragLastX = e.clientX;
+    canvas.setPointerCapture(e.pointerId);
+    canvas.style.cursor = 'grabbing';
+  };
+  const onDragMove = (e: PointerEvent) => {
+    if (!dragging) return;
+    const delta = (e.clientX - dragLastX) * DRAG_RAD_PER_PX;
+    dragLastX = e.clientX;
+    dragAz += delta;
+    dragVel = delta / Math.max(frameDt, 0.008);
+    if (!raf) renderFrame();
+  };
+  const onUp = (e: PointerEvent) => {
+    if (!dragging) return;
+    dragging = false;
+    idleSince = elapsed;
+    canvas.style.cursor = 'grab';
+    if (canvas.hasPointerCapture(e.pointerId)) canvas.releasePointerCapture(e.pointerId);
+    if (reducedMotion) dragVel = 0;
+  };
+  canvas.style.cursor = 'grab';
+  canvas.style.touchAction = 'pan-y';
+  canvas.addEventListener('pointerdown', onDown);
+  canvas.addEventListener('pointermove', onDragMove);
+  canvas.addEventListener('pointerup', onUp);
+  canvas.addEventListener('pointercancel', onUp);
+
+  // Cor da pintura: recolore só os pixels "vermelhos" da textura da pintura (mantém sombras,
+  // detalhes pretos e o adesivo laranja) via uniforms, sem recriar o material.
+  const paintUniforms = { uPaint: { value: new THREE.Color(1, 1, 1) }, uMix: { value: 0 } };
+  const paintTarget = new THREE.Color();
+  let mixTarget = 0;
 
   const placeCamera = (azimuth: number, elevation: number, distance: number) => {
     camera.position.set(
@@ -194,8 +247,38 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
     }
   };
 
+  const hookPaint = (mat: import('three').MeshStandardMaterial) => {
+    mat.onBeforeCompile = (shader) => {
+      shader.uniforms['uPaint'] = paintUniforms.uPaint;
+      shader.uniforms['uMix'] = paintUniforms.uMix;
+      shader.fragmentShader = shader.fragmentShader
+        .replace('#include <common>', '#include <common>\nuniform vec3 uPaint;\nuniform float uMix;')
+        .replace(
+          '#include <map_fragment>',
+          `#include <map_fragment>
+          {
+            float mx = max(diffuseColor.r, 0.002);
+            // Pintura = tom vermelho (g/r e b/r baixos), mesmo em áreas sombreadas.
+            // Preto (texto/detalhes: g≈r) e laranja (adesivo: g/r alto) ficam de fora.
+            float notOrange = 1.0 - smoothstep(0.32, 0.5, diffuseColor.g / mx);
+            float notGrey = 1.0 - smoothstep(0.4, 0.6, diffuseColor.b / mx);
+            float m = notOrange * notGrey * uMix;
+            vec3 painted = uPaint * clamp(diffuseColor.r / 0.45, 0.25, 1.15);
+            diffuseColor.rgb = mix(diffuseColor.rgb, painted, m);
+          }`
+        );
+    };
+    mat.customProgramCacheKey = () => 'seia-paint';
+    mat.needsUpdate = true;
+  };
+
   const renderFrame = () => {
-    const dist = fitDistance();
+    // Transição suave da cor
+    const kc = 1 - Math.exp(-frameDt * 8);
+    paintUniforms.uPaint.value.lerp(paintTarget, kc);
+    paintUniforms.uMix.value += (mixTarget - paintUniforms.uMix.value) * kc;
+
+    const dist = fitDistance(0.2);
     // Pose final: de frente para a picape, levemente girada e elevada.
     const restAz = THREE.MathUtils.degToRad(-78);
     const restEl = THREE.MathUtils.degToRad(7);
@@ -204,6 +287,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
       if (sweepStart < 0) sweepStart = elapsed;
       const t = (elapsed - sweepStart) / SWEEP_SECONDS;
       const p = ease(t);
+      target.x = FRONT_TARGET_X;
       const x = lerp(-CAR_LENGTH / 2 - 0.2, -CAR_LENGTH / 2 + 3.4, p);
       clip.constant = x + 0.06;
       bar.position.x = x;
@@ -219,8 +303,26 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
       const k = 1 - Math.exp(-frameDt * 7);
       pointer.sx += (pointer.x - pointer.sx) * k;
       pointer.sy += (pointer.y - pointer.sy) * k;
+
+      if (!dragging && !reducedMotion) {
+        dragAz += dragVel * frameDt;
+        dragVel *= Math.exp(-frameDt * 3);
+        if (Math.abs(dragVel) < 0.05 && elapsed - idleSince > AUTO_RETURN_AFTER) {
+          const home = Math.round(dragAz / (Math.PI * 2)) * Math.PI * 2;
+          dragAz += (home - dragAz) * (1 - Math.exp(-frameDt * 2));
+        }
+      }
+      // "engage": depois que o usuário gira, o balanço automático e o mouse param de mexer na câmera.
+      const rotated = dragging || Math.abs(dragVel) > 0.05 || Math.abs(dragAz - Math.round(dragAz / (Math.PI * 2)) * Math.PI * 2) > 0.03;
+      engage += ((rotated ? 1 : 0) - engage) * (1 - Math.exp(-frameDt * 4));
+      const free = 1 - engage;
+
       const sway = reducedMotion ? 0 : Math.sin(elapsed * 0.6) * 0.18;
-      placeCamera(restAz + sway + pointer.sx * 0.55, restEl - pointer.sy * 0.08, dist);
+      const az = restAz + dragAz + (sway + pointer.sx * 0.55) * free;
+      // phi = 0 de frente, π de trás, ±π/2 de lado: o alvo e a distância acompanham a órbita.
+      const phi = az + Math.PI / 2;
+      target.x = FRONT_TARGET_X * Math.cos(phi);
+      placeCamera(az, restEl - pointer.sy * 0.08 * free, fitDistance(Math.abs(Math.sin(phi))));
     }
     renderer.render(scene, camera);
   };
@@ -252,6 +354,10 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
     stop();
     window.removeEventListener('pointermove', onPointer);
     canvas.removeEventListener('webglcontextlost', onContextLost);
+    canvas.removeEventListener('pointerdown', onDown);
+    canvas.removeEventListener('pointermove', onDragMove);
+    canvas.removeEventListener('pointerup', onUp);
+    canvas.removeEventListener('pointercancel', onUp);
     scene.traverse((o: Object3D) => {
       const mesh = o as Mesh;
       mesh.geometry?.dispose();
@@ -280,7 +386,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
     const gltf = await loader.loadAsync(opts.modelUrl, (e) => {
       if (e.lengthComputable && e.total) opts.onProgress(e.loaded / e.total);
     });
-    if (disposed) return { setActive() {}, resize() {}, dispose };
+    if (disposed) return { setPaint() {}, setActive() {}, resize() {}, dispose };
 
     const model = gltf.scene;
     const box = new THREE.Box3().setFromObject(model);
@@ -297,6 +403,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
       // um vidro translúcido comum fica quase igual e custa bem menos.
       const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
       for (const m of materials) {
+        if (m.name === PAINT_MATERIAL) hookPaint(m as import('three').MeshStandardMaterial);
         const phys = m as import('three').MeshPhysicalMaterial;
         if (phys.transmission > 0) {
           phys.transmission = 0;
@@ -316,7 +423,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
     renderer.shadowMap.needsUpdate = true;
   } catch {
     if (!disposed) opts.onError();
-    return { setActive() {}, resize() {}, dispose };
+    return { setPaint() {}, setActive() {}, resize() {}, dispose };
   }
 
   opts.onLoaded();
@@ -333,6 +440,21 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
   }
 
   return {
+    setPaint(hex: string | null) {
+      if (hex) {
+        paintTarget.set(hex);
+        // Saindo da cor original: começa já na cor nova (só o mix faz a transição).
+        if (paintUniforms.uMix.value < 0.01) paintUniforms.uPaint.value.copy(paintTarget);
+        mixTarget = 1;
+      } else {
+        mixTarget = 0;
+      }
+      if (reducedMotion) {
+        paintUniforms.uPaint.value.copy(paintTarget);
+        paintUniforms.uMix.value = mixTarget;
+      }
+      if (!raf) renderFrame();
+    },
     setActive(value: boolean) {
       active = value;
       if (value && !reducedMotion) start();

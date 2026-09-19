@@ -20,6 +20,16 @@
         }
       }
     </div>
+    @if (phase() === 'identified') {
+      <div class="stage__paints" role="group" aria-label="Cor da picape">
+        <span class="stage__hint">Arraste para girar 360°</span>
+        @for (p of paints; track p.label; let i = $index) {
+          <button type="button" class="stage__swatch" [style.background]="p.swatch"
+                  [class.is-active]="selectedPaint() === i" [attr.aria-pressed]="selectedPaint() === i"
+                  [attr.aria-label]="p.label" [title]="p.label" (click)="setPaint(i)"></button>
+        }
+      </div>
+    }
     <p class="stage__credit">Modelo 3D: Ddiaz Design · CC BY-NC-SA 4.0</p>
   }
 </div>

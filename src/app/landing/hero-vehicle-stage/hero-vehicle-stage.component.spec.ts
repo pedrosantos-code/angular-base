@@ -27,4 +27,19 @@ describe('HeroVehicleStageComponent', () => {
     expect(el.querySelector('.stage__hud')).toBeNull();
     expect(el.querySelector('.stage__credit')).toBeNull();
   });
+
+  it('setPaint troca a cor selecionada (a original é a primeira, sem cor forçada)', () => {
+    const { fixture } = criar();
+    const c = fixture.componentInstance;
+    expect(c.paints[0].hex).toBeNull();
+    expect(c.selectedPaint()).toBe(0);
+
+    c.setPaint(2);
+    expect(c.selectedPaint()).toBe(2);
+  });
+
+  it('no fallback os botões de cor não aparecem', () => {
+    const { el } = criar();
+    expect(el.querySelector('.stage__paints')).toBeNull();
+  });
 });
