@@ -16,8 +16,23 @@ html, body, :host {
     overflow-x: hidden;
 }
 
-seia-topbar {
+seia-topbar,
+seia-rodape {
     width: 100%;
+}
+
+/* O container usa align-items: center; sem isso o rodapé encolhe até a largura do conteúdo. */
+seia-rodape {
+    flex: none;
+    margin-top: auto;
+}
+
+/* No celular o botão flutuante do chat cobriria os links; abre espaço embaixo com a mesma cor do rodapé. */
+@media (max-width: 900px) {
+    seia-rodape {
+        padding-bottom: 84px;
+        background: #001730;
+    }
 }
 
 /* --- CONTAINER DO FUNDO (Corrigido para flex-start para não empurrar para cima) --- */

@@ -58,6 +58,14 @@ export class LandingComponent {
     { k: '03 / AÇÃO', t: 'Compare e agende', d: 'Compare modelos lado a lado, encontre uma concessionária e agende o test-drive.' }
   ];
 
+  // Um modelo para cada uso (galeria da seção 02)
+  useCases = [
+    { use: 'Família e viagem', model: 'Territory', img: 'territory.jpeg', alt: 'Ford Territory cinza parado em um terreno claro' },
+    { use: 'Aventura e trilha', model: 'Bronco Sport', img: 'bronco-sport.jpeg', alt: 'Ford Bronco Sport vermelho em uma trilha de terra' },
+    { use: 'Trabalho e carga', model: 'F-150', img: 'f150.jpg', alt: 'Ford F-150 vermelha em uma estrada de terra' },
+    { use: 'Cidade e elétrico', model: 'Mustang Mach-E', img: 'mach-e.jpg', alt: 'Ford Mustang Mach-E verde com montanhas ao fundo' }
+  ];
+
   // Etapas de funcionamento (Seção 03)
   steps = [
     { n: '01', t: 'Descreva', d: 'Escreva como você usa o carro ou escolha um atalho.' },

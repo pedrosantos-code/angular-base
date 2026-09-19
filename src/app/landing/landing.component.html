@@ -145,6 +145,18 @@
         </div>
       }
     </div>
+    <div class="usecases-head" appReveal>Um modelo para cada uso</div>
+    <div class="usecases">
+      @for (u of useCases; track u.model) {
+        <figure class="usecase" appReveal [revealDelay]="$index * 100">
+          <img [src]="u.img" [alt]="u.alt" class="usecase__img" loading="lazy" decoding="async">
+          <figcaption class="usecase__cap">
+            <span class="usecase__use">{{ u.use }}</span>
+            <span class="usecase__model">{{ u.model }}</span>
+          </figcaption>
+        </figure>
+      }
+    </div>
   </div>
 
   <!-- Banner de largura total -->
@@ -282,6 +294,7 @@
 
   <!-- Call to Action final -->
   <div class="cta">
+    <img src="explorer.jpeg" alt="" class="cta__photo" loading="lazy" decoding="async">
     <div class="cta__grid"></div>
     <div class="cta__inner">
       <div class="cta__copy" appReveal="left">

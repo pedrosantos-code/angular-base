@@ -149,6 +149,8 @@ button.l-chip:hover { border-color: #0B57A4; color: #fff; background: #0B57A4; }
   padding: 20px 0;
   border-bottom: 1px solid #EDF1F5;
 }
+.l-result-card--foto { grid-template-columns: 148px 1fr 260px; }
+.l-result-foto { width: 148px; height: 96px; object-fit: cover; border-radius: 2px; background: #EDF1F5; }
 .l-result-modelo { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 19px; color: #001730; }
 .l-result-motivo { font-size: 14px; color: #67788A; margin-top: 4px; }
 button.l-result-ficha {
@@ -231,6 +233,7 @@ button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset
   display: flex;
   flex-direction: column;
 }
+.l-model-foto { display: block; width: calc(100% + 40px); height: 132px; margin: -20px -20px 16px; object-fit: cover; background: #EDF1F5; }
 .l-model-segmento { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: #55677A; letter-spacing: .05em; }
 .l-model-nome { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 17px; margin: 6px 0 4px; }
 .l-model-preco { font-size: 13.5px; color: #5B6B7C; margin-bottom: 16px; flex: 1; }
@@ -300,7 +303,8 @@ button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset
 }
 
 @media (max-width: 768px) {
-  .l-result-card { grid-template-columns: 1fr; text-align: left; }
+  .l-result-card, .l-result-card--foto { grid-template-columns: 1fr; text-align: left; }
+  .l-result-foto { width: 100%; height: 160px; }
   .l-result-score { text-align: left; margin-top: 8px; }
   .l-score-info { justify-content: flex-start; }
   .l-search-box { flex-direction: column; }

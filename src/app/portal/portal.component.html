@@ -46,7 +46,10 @@
       </div>
       
       @for (r of resultados; track r.modelo) {
-        <div class="l-result-card">
+        <div class="l-result-card" [class.l-result-card--foto]="foto(r.modelo)">
+          @if (foto(r.modelo); as src) {
+            <img class="l-result-foto" [src]="src" [alt]="'Ford ' + r.modelo" loading="lazy" decoding="async">
+          }
           <div class="l-result-info">
             <h3 class="l-result-modelo">{{ r.modelo }}</h3>
             <p class="l-result-motivo">{{ r.motivo }}</p>
@@ -88,6 +91,9 @@
       <div class="l-models-grid">
         @for (m of modelos; track m.nome) {
           <div class="l-model-card">
+            @if (foto(m.nome); as src) {
+              <img class="l-model-foto" [src]="src" [alt]="'Ford ' + m.nome" loading="lazy" decoding="async">
+            }
             <span class="l-model-segmento">{{ m.segmento }}</span>
             <h3 class="l-model-nome">{{ m.nome }}</h3>
             <p class="l-model-preco">{{ m.preco }}</p>

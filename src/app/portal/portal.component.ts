@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ICONES, ITENS_PRINCIPAIS, ITENS_ATENDIMENTO, ITENS_SOBRE, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { fotoDoModelo } from '../shared/fotos-modelos';
 import { calcularNota, detectarOrcamento, detectarTags, formatarPerfil } from '../shared/recomendacao-ia';
 import { AuthService } from '../auth.service';
 
@@ -83,6 +84,9 @@ export class PortalComponent {
   /** Nota de corte para cor da barra de progresso */
   readonly corteFraco = 60;
 
+
+  /** Foto do modelo (ou null quando não há). */
+  readonly foto = fotoDoModelo;
 
   readonly principais = ITENS_PRINCIPAIS;
   readonly atendimento = ITENS_ATENDIMENTO;

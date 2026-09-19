@@ -97,7 +97,7 @@ input:focus {
   background: #001730;
   overflow: hidden;
   display: flex;
-  background-image: url('../../../public/hero-truck.png');
+  background-image: url('../../../public/mustang-login.jpg');
   background-size: cover;
   background-position: center;
   flex-direction: column;

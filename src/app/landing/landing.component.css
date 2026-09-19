@@ -141,6 +141,16 @@
 .card__title { margin: 0; font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.14; }
 .card__text { margin: 0; font-size: 14.5px; line-height: 1.55; color: #546474; }
 
+/* Galeria: um modelo para cada uso */
+.usecases-head { margin: 56px 0 16px; padding-bottom: 12px; border-bottom: 2px solid var(--navy); font-family: var(--display); font-weight: 900; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
+.usecases { display: grid; grid-template-columns: repeat(auto-fit,minmax(230px,1fr)); gap: 16px; }
+.usecase { position: relative; margin: 0; overflow: hidden; aspect-ratio: 4 / 3; background: var(--navy); border-radius: 2px; }
+.usecase__img { width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.usecase:hover .usecase__img { transform: scale(1.05); }
+.usecase__cap { position: absolute; inset: auto 0 0; display: flex; flex-direction: column; gap: 2px; padding: 56px 18px 16px; background: linear-gradient(180deg,transparent,rgba(0,23,48,.94)); color: #fff; }
+.usecase__use { font-size: 11px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #9FC4E8; }
+.usecase__model { font-family: var(--display); font-weight: 800; font-size: 19px; }
+
 /* Banner */
 .banner { position: relative; width: 100%; height: 340px; margin-top: 88px; overflow: hidden; background: var(--navy); }
 .banner__img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 38%; filter: brightness(1.55) saturate(1.15); }
@@ -210,6 +220,7 @@
 
 /* CTA final */
 .cta { position: relative; width: 100%; margin-top: 88px; overflow: hidden; background: var(--brand); }
+.cta__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .16; filter: grayscale(1); }
 .cta__grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px); background-size: 56px 56px; }
 .cta__inner { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 44px; max-width: 1180px; width: 100%; margin: 0 auto; padding: 80px 28px; }
 .cta__copy { flex: 1; min-width: 280px; }
