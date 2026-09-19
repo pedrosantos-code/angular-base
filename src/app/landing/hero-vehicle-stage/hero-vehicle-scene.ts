@@ -128,6 +128,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
   let active = true;
   let raf = 0;
   let elapsed = 0;
+  let frameDt = 0.016;
   let last = performance.now();
   let identified = false;
   let sweepStart = -1;
@@ -169,6 +170,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
     const dt = Math.min(0.25, (now - last) / 1000);
     last = now;
     elapsed += dt;
+    frameDt = dt;
     adaptQuality(dt);
     renderFrame();
     raf = requestAnimationFrame(frame);
@@ -213,10 +215,12 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
         opts.onIdentified();
       }
     } else {
-      pointer.sx += (pointer.x - pointer.sx) * 0.05;
-      pointer.sy += (pointer.y - pointer.sy) * 0.05;
-      const sway = reducedMotion ? 0 : Math.sin(elapsed * 0.35) * 0.1;
-      placeCamera(restAz + sway + pointer.sx * 0.12, restEl - pointer.sy * 0.03, dist);
+      // Suavização por tempo (não por frame), para responder rápido mesmo com FPS baixo.
+      const k = 1 - Math.exp(-frameDt * 7);
+      pointer.sx += (pointer.x - pointer.sx) * k;
+      pointer.sy += (pointer.y - pointer.sy) * k;
+      const sway = reducedMotion ? 0 : Math.sin(elapsed * 0.6) * 0.18;
+      placeCamera(restAz + sway + pointer.sx * 0.55, restEl - pointer.sy * 0.08, dist);
     }
     renderer.render(scene, camera);
   };
