@@ -1,6 +1,5 @@
 <seia-topbar
-  (navegar)="onNavegar($event)"
-  (abrirPerfil)="irPerfil()"
+  (navegar)="onNavegar($event)"
   (sair)="sair()" />
 
 <header class="l-db-hero">
@@ -16,6 +15,8 @@
         class="l-db-input"
         type="text"
         name="nomeCarro"
+        aria-label="Nome do modelo Ford"
+        autocomplete="off"
         placeholder="Ex: Mustang, Ranger, Territory…"
         [ngModel]="nomeCarro()"
         (ngModelChange)="nomeCarro.set($event)"
@@ -38,17 +39,17 @@
   <div class="l-db-inner">
 
     @if (erroBusca()) {
-      <p class="l-db-erro">{{ erroBusca() }}</p>
+      <p class="l-db-erro" role="alert">{{ erroBusca() }}</p>
     }
 
     @if (resultados().length > 0) {
-      <p class="l-db-total">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford</p>
+      <p class="l-db-total" role="status">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford</p>
     }
 
     <!-- Sempre no DOM (só escondido) — se ficasse dentro do @if acima, o @ViewChild só existiria
          depois do primeiro resultado chegar, tarde demais pra desenhar o gráfico na hora. -->
     <div class="l-db-card l-db-chart-card" [hidden]="resultados().length === 0">
-      <canvas #graficoCanvas></canvas>
+      <canvas #graficoCanvas role="img" aria-label="Gráfico comparando potência e velocidade máxima das versões encontradas"></canvas>
     </div>
 
     @if (resultados().length > 0) {

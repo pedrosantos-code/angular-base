@@ -69,7 +69,7 @@ button.l-md-filter.is-on { color: #fff; font-weight: 500; background: rgba(46,12
 .l-md-title { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(24px,2.6vw,32px); letter-spacing: -.025em; }
 .l-md-count {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12.5px; color: #8493A3; margin: 7px 0 0;
+  font-size: 12.5px; color: #55677A; margin: 7px 0 0;
 }
 
 .l-md-tools { margin-left: auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
@@ -79,7 +79,7 @@ button.l-md-filter.is-on { color: #fff; font-weight: 500; background: rgba(46,12
 }
 .l-md-search:focus-visible { outline: none; background: #fff; border-color: #2E7DD1; box-shadow: 0 0 0 3px rgba(46,125,209,.18); }
 
-.l-md-sort { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #8493A3; }
+.l-md-sort { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #55677A; }
 button.l-md-sort-option { font-size: 13px; color: #5B6B7C; padding-bottom: 3px; border-bottom: 2px solid transparent; }
 .l-md-sort-option:hover { color: #001730; }
 .l-md-sort-option.is-on { color: #001730; font-weight: 600; border-bottom-color: #2E7DD1; }
@@ -92,7 +92,7 @@ button.l-md-sort-option { font-size: 13px; color: #5B6B7C; padding-bottom: 3px; 
   gap: 1px; background: #E2EAF2;
   border-top: 1px solid #E2EAF2; border-bottom: 1px solid #E2EAF2;
 }
-.l-md-blank { grid-column: 1 / -1; background: #fff; padding: 28px 26px; font-size: 14.5px; color: #8493A3; margin: 0; }
+.l-md-blank { grid-column: 1 / -1; background: #fff; padding: 28px 26px; font-size: 14.5px; color: #55677A; margin: 0; }
 
 .l-md-card { background: #fff; position: relative; }
 .l-md-card.is-selected { outline: 2px solid #2E7DD1; outline-offset: -2px; z-index: 1; }
@@ -123,14 +123,14 @@ button.l-md-vistas:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2
 .l-md-segment {
   display: block;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #8493A3;
+  font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #55677A;
 }
 .l-md-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 18px; margin: 9px 0 5px; }
 .l-md-price { display: block; font-size: 14px; color: #3C4B5B; }
 .l-md-spec {
   display: block;
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12px; line-height: 1.7; color: #8493A3; margin-top: 9px;
+  font-size: 12px; line-height: 1.7; color: #55677A; margin-top: 9px;
 }
 
 .l-md-score {
@@ -139,7 +139,7 @@ button.l-md-vistas:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2
 }
 .l-md-card-footer > .l-md-score:first-child { margin-top: 0; }
 .l-md-score strong { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 23px; line-height: 1; color: #002B5C; }
-.l-md-score span { font-size: 11.5px; color: #8493A3; }
+.l-md-score span { font-size: 11.5px; color: #55677A; }
 .l-md-track { display: block; height: 4px; background: #E7EDF3; margin-top: 8px; }
 .l-md-fill { display: block; height: 100%; background: #2E7DD1; }
 .l-md-fill.is-fraco { background: #8FB8E2; }
@@ -158,7 +158,7 @@ button.l-md-favorito {
   position: absolute; left: 12px; top: 12px; z-index: 1;
   width: 32px; height: 32px; display: grid; place-items: center;
   background: rgba(255,255,255,.94); border: 1px solid #C8D5E2; border-radius: 50%;
-  color: #8493A3; transition: color .16s, border-color .16s, background .16s;
+  color: #55677A; transition: color .16s, border-color .16s, background .16s;
 }
 button.l-md-favorito svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 button.l-md-favorito:hover { color: #C0392B; border-color: #E8B4AC; }
@@ -220,7 +220,7 @@ button.l-md-modal-close { font-size: 16px; color: #6E8CA8; padding: 4px 8px; }
 }
 .l-md-compare-table tbody th {
   font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px;
-  letter-spacing: .04em; text-transform: uppercase; color: #8493A3;
+  letter-spacing: .04em; text-transform: uppercase; color: #55677A;
   white-space: nowrap; font-weight: 700;
 }
 .l-md-ct-cap { text-transform: capitalize; }
@@ -233,7 +233,7 @@ button.l-md-modal-close { font-size: 16px; color: #6E8CA8; padding: 4px 8px; }
 .l-md-ct-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 15px; color: #001730; }
 .l-md-ct-segment {
   display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10.5px; text-transform: uppercase; color: #8493A3; margin-top: 3px;
+  font-size: 10.5px; text-transform: uppercase; color: #55677A; margin-top: 3px;
 }
 button.l-md-ct-remove {
   margin-top: 8px; font-size: 11.5px; color: #C0392B; text-decoration: underline; text-underline-offset: 2px;

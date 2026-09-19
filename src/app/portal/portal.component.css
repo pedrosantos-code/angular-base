@@ -80,7 +80,7 @@
   background: #fff;
   color: #001730;
 }
-.l-search-input::placeholder { color: #93A2B2; }
+.l-search-input::placeholder { color: #66788A; }
 .l-search-input:focus-visible { outline: none; }
 
 button.l-btn-primary {
@@ -139,7 +139,7 @@ button.l-chip:hover { border-color: #0B57A4; color: #fff; background: #0B57A4; }
   text-transform: uppercase;
   color: #2E7DD1;
 }
-.l-results-subtitle { font-size: 13.5px; color: #8493A3; }
+.l-results-subtitle { font-size: 13.5px; color: #55677A; }
 
 .l-result-card {
   display: grid;
@@ -162,7 +162,7 @@ button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset
 .l-result-score { text-align: right; }
 .l-score-info { display: flex; align-items: baseline; justify-content: flex-end; gap: 6px; }
 .l-score-number { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 30px; color: #002B5C; line-height: 1; }
-.l-score-label { font-size: 11.5px; color: #8493A3; text-transform: uppercase; letter-spacing: .05em; }
+.l-score-label { font-size: 11.5px; color: #55677A; text-transform: uppercase; letter-spacing: .05em; }
 
 /* Barra de progresso de compatibilidade */
 .l-progress-bar {
@@ -231,7 +231,7 @@ button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset
   display: flex;
   flex-direction: column;
 }
-.l-model-segmento { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: #8493A3; letter-spacing: .05em; }
+.l-model-segmento { font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; text-transform: uppercase; color: #55677A; letter-spacing: .05em; }
 .l-model-nome { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 17px; margin: 6px 0 4px; }
 .l-model-preco { font-size: 13.5px; color: #5B6B7C; margin-bottom: 16px; flex: 1; }
 .l-btn-secondary {

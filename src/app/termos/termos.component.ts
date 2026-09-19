@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -27,7 +27,6 @@ export class TermosComponent {
   private authService = inject(AuthService);
 
   ir(chave: string): void {
-    this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
     if (rota) this.router.navigateByUrl(rota);
   }
@@ -36,9 +35,6 @@ export class TermosComponent {
     void this.authService.logout();
   }
 
-  @Output() navegar = new EventEmitter<string>();
-  @Output() aceitoEContinuar = new EventEmitter<void>();
-  @Output() baixarPdfSolicitado = new EventEmitter<void>();
 
   compartilharConcessionarias = false;
   compartilharConcessionariasDesde: string | null = null;
@@ -111,7 +107,6 @@ export class TermosComponent {
   }
 
   baixarPdf(): void {
-    this.baixarPdfSolicitado.emit();
     window.print();
   }
 
@@ -134,7 +129,6 @@ export class TermosComponent {
       // localStorage indisponível — o aceite vale só para esta sessão.
     }
 
-    this.aceitoEContinuar.emit();
     this.router.navigateByUrl('/portal');
   }
 }

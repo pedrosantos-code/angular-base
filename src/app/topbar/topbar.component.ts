@@ -98,8 +98,6 @@ export class TopbarComponent {
   }
 
   @Output() navegar = new EventEmitter<string>();
-  @Output() abrirPerfil = new EventEmitter<void>();
-  @Output() abrirConfiguracoes = new EventEmitter<void>();
   @Output() sair = new EventEmitter<void>();
 
   readonly icones = ICONES;
@@ -128,7 +126,6 @@ export class TopbarComponent {
   }
 
   irPerfil(): void {
-    this.abrirPerfil.emit();
     this.fechar();
     this.router.navigateByUrl('/perfil');
   }

@@ -64,6 +64,7 @@
           <label class="l-switch">
             <input
               type="checkbox"
+              aria-label="Compartilhar preferências com concessionárias"
               [(ngModel)]="compartilharConcessionarias"
               (ngModelChange)="alternarCompartilhar($event)">
             <span class="l-slider"></span>
@@ -80,6 +81,7 @@
           <label class="l-switch">
             <input
               type="checkbox"
+              aria-label="Consentimento para test-drives"
               [(ngModel)]="consentimentoTestDrive"
               (ngModelChange)="alternarConsentimentoTestDrive($event)">
             <span class="l-slider"></span>

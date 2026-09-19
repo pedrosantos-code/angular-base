@@ -1,6 +1,6 @@
-import { Component, DestroyRef, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
@@ -54,6 +54,7 @@ export interface Agendamento {
 })
 export class AgendamentosComponent {
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private authService = inject(AuthService);
 
   /** Meia-noite do dia atual. Reavaliado a cada minuto para o calendário virar sozinho quando o dia muda. */
@@ -65,6 +66,10 @@ export class AgendamentosComponent {
       if (agora.getTime() !== this.hoje().getTime()) this.hoje.set(agora);
     }, 60000);
     inject(DestroyRef).onDestroy(() => clearInterval(id));
+
+    // Vindo de /concessionarias ("Agendar aqui"), já deixa a unidade escolhida.
+    const unidadeDaUrl = this.route.snapshot.queryParamMap.get('unidade');
+    if (unidadeDaUrl && this.unidades.some((u) => u.id === unidadeDaUrl)) this.unidadeId = unidadeDaUrl;
 
     try {
       const salvo = localStorage.getItem(this.chaveAgendamentos);
@@ -81,7 +86,6 @@ export class AgendamentosComponent {
   }
 
   ir(chave: string): void {
-    this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
     if (rota) this.router.navigateByUrl(rota);
   }
@@ -91,15 +95,9 @@ export class AgendamentosComponent {
   }
 
   /** Dispare o carregamento da agenda da unidade escolhida. */
-  @Output() carregarAgenda = new EventEmitter<{ unidadeId: string; tipo: string }>();
   /** Dispare o carregamento dos horários do dia escolhido. */
-  @Output() carregarHorarios = new EventEmitter<{ unidadeId: string; dia: string }>();
-  @Output() confirmar = new EventEmitter<{ tipo: string; unidadeId: string; modelo: string; dia: string; hora: string }>();
-  @Output() remarcar = new EventEmitter<string>();
-  @Output() cancelar = new EventEmitter<string>();
-  @Output() navegar = new EventEmitter<string>();
 
-  @Input() tipos: TipoAtendimento[] = [
+  tipos: TipoAtendimento[] = [
     { chave: 'test-drive', rotulo: 'Test-drive' },
     { chave: 'revisao', rotulo: 'Revisão' },
     { chave: 'avaliacao', rotulo: 'Avaliação de usado' },
@@ -107,7 +105,7 @@ export class AgendamentosComponent {
   ];
 
   /** Mesmas unidades cadastradas em /concessionarias (mesmo id, nome e endereço) — veja ConcessionariasComponent.unidades. */
-  @Input() unidades: Unidade[] = [
+  unidades: Unidade[] = [
     { id: 'caoa-ibirapuera', nome: 'Ford Caoa - Ibirapuera - SP', endereco: 'Av. Ibirapuera, 2400', distanciaKm: 3.5, horariosLivres: 12 },
     { id: 'caoa-jabaquara', nome: 'Ford CAOA - Jabaquara - SP', endereco: 'Av. Jabaquara, 2207', distanciaKm: 6.8, horariosLivres: 8 },
     { id: 'caoa-ceasa', nome: 'Ford CAOA - Ceasa - SP', endereco: 'Av. Dr. Gastão Vidigal, 1250', distanciaKm: 9.4, horariosLivres: 5 },
@@ -115,7 +113,7 @@ export class AgendamentosComponent {
     { id: 'ford-sao-paulo', nome: 'Ford For São Paulo - SP', endereco: 'Av. das Nações Unidas, 21883', distanciaKm: 15.6, horariosLivres: 3 },
   ];
 
-  @Input() modelo: ModeloDisponivel = { nome: 'Territory Titanium', nota: 94, disponivel: true };
+  modelo: ModeloDisponivel = { nome: 'Territory Titanium', nota: 94, disponivel: true };
 
   /** Quantidade de dias exibidos, sempre a partir de hoje — 4 semanas fecham exatamente as linhas da grade de 7 colunas. */
   private readonly janelaDias = 28;
@@ -166,7 +164,7 @@ export class AgendamentosComponent {
     return dias;
   }
 
-  @Input() horarios: Horario[] = [
+  horarios: Horario[] = [
     { hora: '09:00', livre: false }, { hora: '09:30', livre: true },
     { hora: '10:00', livre: false }, { hora: '10:30', livre: true },
     { hora: '11:00', livre: true }, { hora: '14:00', livre: false },
@@ -174,12 +172,12 @@ export class AgendamentosComponent {
   ];
 
   /** Começa vazio de propósito — só aparece agendamento aqui depois de confirmar um pelo formulário. */
-  @Input() agendamentos: Agendamento[] = [];
+  agendamentos: Agendamento[] = [];
 
   private readonly chaveAgendamentos = 'seia-agendamentos';
 
   /** Requisitos exibidos antes da confirmação, por tipo de atendimento. */
-  @Input() requisitos: Record<string, string> = {
+  requisitos: Record<string, string> = {
     'test-drive': 'leve CNH válida e em dia',
     revisao: 'leve o documento do veículo',
     avaliacao: 'leve documento do veículo e CNH',
@@ -215,20 +213,17 @@ export class AgendamentosComponent {
   escolherTipo(chave: string): void {
     this.tipo = chave;
     this.limparQuando();
-    this.carregarAgenda.emit({ unidadeId: this.unidadeId, tipo: chave });
   }
 
   escolherUnidade(id: string): void {
     this.unidadeId = id;
     this.limparQuando();
-    this.carregarAgenda.emit({ unidadeId: id, tipo: this.tipo });
   }
 
   escolherDia(d: Dia): void {
     if (d.status !== 'livre') return;
     this.dia = d.iso;
     this.hora = null;
-    this.carregarHorarios.emit({ unidadeId: this.unidadeId, dia: d.iso });
   }
 
   escolherHora(h: Horario): void {
@@ -258,13 +253,6 @@ export class AgendamentosComponent {
     this.agendamentos = [novo, ...this.agendamentos];
     this.salvarAgendamentos();
 
-    this.confirmar.emit({
-      tipo: this.tipo,
-      unidadeId: this.unidadeId,
-      modelo: this.exigeModelo ? this.modelo.nome : '',
-      dia: this.dia!,
-      hora: this.hora!,
-    });
 
     this.limparQuando();
   }
@@ -274,7 +262,18 @@ export class AgendamentosComponent {
     if (!confirm(`Cancelar "${a.titulo}" em ${a.quando}?`)) return;
     this.agendamentos = this.agendamentos.filter((item) => item.id !== a.id);
     this.salvarAgendamentos();
-    this.cancelar.emit(a.id);
+  }
+
+  /** Libera o horário atual e leva a pessoa de volta ao formulário para escolher outro. */
+  remarcar(a: Agendamento): void {
+    if (!confirm(`Remarcar "${a.titulo}"? O horário atual será liberado e você poderá escolher outro.`)) return;
+    this.agendamentos = this.agendamentos.filter((item) => item.id !== a.id);
+    this.salvarAgendamentos();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  verComparacao(): void {
+    this.router.navigate(['/modelos'], { queryParams: { ultimaComparacao: '1' } });
   }
 
   private salvarAgendamentos(): void {

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -78,8 +78,10 @@ export class PerfilComponent {
   private authService = inject(AuthService);
 
   private readonly chavePerfilSalvo = 'seia-perfil-salvo';
+  private readonly chaveConsentimento = 'seia-consentimento-concessionaria';
 
   constructor() {
+    this.carregarConsentimento();
     this.carregarSalvo();
     this.usoOriginal = structuredClone(this.uso);
     this.contaOriginal = structuredClone(this.conta);
@@ -109,6 +111,22 @@ export class PerfilComponent {
     }
   }
 
+  private carregarConsentimento(): void {
+    try {
+      this.compartilhaComConcessionaria = localStorage.getItem(this.chaveConsentimento) === '1';
+    } catch {
+      // localStorage indisponível — começa desligado.
+    }
+  }
+
+  salvarConsentimento(ligado: boolean): void {
+    try {
+      localStorage.setItem(this.chaveConsentimento, ligado ? '1' : '0');
+    } catch {
+      // localStorage indisponível — a escolha vale só para esta sessão.
+    }
+  }
+
   private persistir(): void {
     try {
       localStorage.setItem(this.chavePerfilSalvo, JSON.stringify({ uso: this.uso, conta: this.conta }));
@@ -118,7 +136,6 @@ export class PerfilComponent {
   }
 
   ir(chave: string): void {
-    this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
     if (rota) this.router.navigateByUrl(rota);
   }
@@ -127,16 +144,13 @@ export class PerfilComponent {
     void this.authService.logout();
   }
 
-  @Output() salvarPerfil = new EventEmitter<{ uso: PerfilUso; conta: DadosConta }>();
-  @Output() navegar = new EventEmitter<string>();
-  @Output() alternarConsentimento = new EventEmitter<boolean>();
 
   readonly opcoesUso = ['Cidade', 'Estrada', 'Off-road', 'Trabalho'];
   readonly opcoesPassageiros = ['1 ou 2', '3 ou 4', '5 ou mais'];
   readonly opcoesPrioridade = ['Consumo', 'Espaço', 'Conforto', 'Potência'];
   readonly maxPrioridades = 2;
 
-  @Input() uso: PerfilUso = {
+  uso: PerfilUso = {
     uso: 'Cidade',
     passageiros: '3 ou 4',
     rodagem: '',
@@ -144,7 +158,7 @@ export class PerfilComponent {
     prioridades: ['Consumo', 'Espaço'],
   };
 
-  @Input() conta: DadosConta = {
+  conta: DadosConta = {
     nome: '',
     telefone: '',
     email: '',
@@ -245,7 +259,6 @@ export class PerfilComponent {
   }
 
   irAtalho(chave: string): void {
-    this.navegar.emit(chave);
     if (chave === 'favoritos') {
       this.router.navigate(['/modelos'], { queryParams: { favoritos: '1' } });
     } else if (chave === 'comparacoes') {
@@ -253,7 +266,7 @@ export class PerfilComponent {
     }
   }
 
-  @Input() compartilhaComConcessionaria = false;
+  compartilhaComConcessionaria = false;
 
   private usoOriginal: PerfilUso = structuredClone(this.uso);
   private contaOriginal: DadosConta = structuredClone(this.conta);
@@ -316,6 +329,5 @@ export class PerfilComponent {
     this.usoOriginal = structuredClone(this.uso);
     this.contaOriginal = structuredClone(this.conta);
     this.persistir();
-    this.salvarPerfil.emit({ uso: this.uso, conta: this.conta });
   }
 }

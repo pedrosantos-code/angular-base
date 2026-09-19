@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, EventEmitter, Input, OnDestroy, Output, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, OnDestroy, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -131,29 +131,27 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
   }
 
   ir(chave: string): void {
-    this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
     if (rota) this.router.navigateByUrl(rota);
+  }
+
+  agendarEm(u: Unidade): void {
+    this.router.navigate(['/agendamentos'], { queryParams: { unidade: u.id } });
   }
 
   sair(): void {
     void this.authService.logout();
   }
 
-  @Output() buscar = new EventEmitter<{ local: string; raioKm: number }>();
-  @Output() usarLocalizacao = new EventEmitter<void>();
-  @Output() selecionar = new EventEmitter<string>();
-  @Output() agendar = new EventEmitter<string>();
-  @Output() navegar = new EventEmitter<string>();
 
-  @Input() local = 'São Paulo, SP';
-  @Input() raioKm = 20;
+  local = 'São Paulo, SP';
+  raioKm = 20;
   readonly raios = [5, 10, 20, 50];
 
   /** Ponto de origem. Sem ele não há distância — é a causa do "0 km" em todas as unidades. */
-  @Input() origem: Coordenada | null = null;
+  origem: Coordenada | null = null;
 
-  @Input() unidades: Unidade[] = [
+  unidades: Unidade[] = [
     {
       id: 'caoa-ceasa',
       nome: 'Ford CAOA - Ceasa - SP',
@@ -205,7 +203,7 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
       proximaVaga: null,
     },
   ];
-  @Input() selecionada: string | null = null;
+  selecionada: string | null = null;
 
   /** Vazio = mostra todas as unidades. Preenchido = só as que oferecem ao menos um dos serviços marcados. */
   filtroServicos = new Set<string>();
@@ -344,7 +342,6 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
     const consulta = this.local.trim();
     if (!consulta) return;
 
-    this.buscar.emit({ local: this.local, raioKm: this.raioKm });
     this.buscando = true;
     this.erroBusca = null;
 
@@ -364,7 +361,6 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
 
   escolher(u: Unidade): void {
     this.selecionada = u.id;
-    this.selecionar.emit(u.id);
     this.atualizarMarcadores();
 
     const marcador = this.marcadores.get(u.id);
@@ -393,7 +389,6 @@ export class ConcessionariasComponent implements AfterViewInit, OnDestroy {
   }
 
   usarMinhaLocalizacao(): void {
-    this.usarLocalizacao.emit();
     if (!navigator.geolocation) return;
 
     navigator.geolocation.getCurrentPosition(

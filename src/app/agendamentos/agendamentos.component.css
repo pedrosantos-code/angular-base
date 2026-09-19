@@ -40,7 +40,7 @@ h1.l-ag-title {
 .l-ag-step-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; flex-wrap: wrap; }
 .l-ag-step-n { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 12px; letter-spacing: .14em; color: #2E7DD1; }
 .l-ag-step-title { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 17px; }
-.l-ag-step-aside { margin-left: auto; font-size: 13px; color: #8493A3; }
+.l-ag-step-aside { margin-left: auto; font-size: 13px; color: #55677A; }
 
 .l-ag-chips { display: flex; gap: 9px; flex-wrap: wrap; }
 .l-ag-chip {
@@ -64,7 +64,7 @@ h1.l-ag-title {
 .l-ag-unit.is-on { background: #F1F7FD; border-left-color: #2E7DD1; }
 .l-ag-unit:focus-visible { outline: 2px solid #2E7DD1; outline-offset: -2px; }
 .l-ag-unit-name { display: block; font-size: 15px; font-weight: 500; }
-.l-ag-unit-address { display: block; font-size: 13px; color: #8493A3; margin-top: 3px; }
+.l-ag-unit-address { display: block; font-size: 13px; color: #55677A; margin-top: 3px; }
 .l-ag-unit-slots {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 12.5px; color: #15803D; white-space: nowrap;
@@ -79,7 +79,7 @@ h1.l-ag-title {
 .l-ag-model-note { display: block; font-size: 13px; color: #67788A; margin-top: 3px; }
 .l-ag-model-score { display: flex; align-items: baseline; gap: 4px; }
 .l-ag-model-score strong { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 24px; line-height: 1; color: #002B5C; }
-.l-ag-model-score span { font-size: 11.5px; color: #8493A3; }
+.l-ag-model-score span { font-size: 11.5px; color: #55677A; }
 
 /* ===== Dias ===== */
 .l-ag-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 7px; margin-bottom: 16px; }
@@ -90,7 +90,7 @@ h1.l-ag-title {
 }
 .l-ag-day:hover:not(:disabled) { border-color: #8FA6BC; }
 .l-ag-day:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
-.l-ag-day-week { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #8493A3; }
+.l-ag-day-week { display: block; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #55677A; }
 .l-ag-day-number { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 19px; margin: 4px 0 6px; }
 .l-ag-day-slots { display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #15803D; }
 
@@ -117,7 +117,7 @@ h1.l-ag-title {
 .l-ag-slot.is-on { background: #2E7DD1; border-color: #2E7DD1; color: #fff; font-weight: 500; }
 .l-ag-slot.is-taken { background: #F7F9FB; color: #C3CEDA; text-decoration: line-through; cursor: default; }
 
-.l-ag-empty { font-size: 14px; color: #8493A3; margin: 4px 0 0; }
+.l-ag-empty { font-size: 14px; color: #55677A; margin: 4px 0 0; }
 
 /* ===== Confirmação ===== */
 .l-ag-summary {
@@ -141,7 +141,7 @@ h1.l-ag-title {
 .l-ag-rail-label {
   font-family: 'Archivo', sans-serif; font-weight: 800;
   font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
-  color: #8493A3; margin-bottom: 14px;
+  color: #55677A; margin-bottom: 14px;
 }
 .l-ag-card {
   background: #fff; border: 1px solid #E2EAF2; border-top: 3px solid #2E7DD1;
@@ -160,7 +160,7 @@ h1.l-ag-title {
 }
 .l-ag-action { font-size: 13px; font-weight: 600; color: #0B57A4; }
 .l-ag-action:hover { text-decoration: underline; text-underline-offset: 3px; }
-.l-ag-action.is-muted { color: #8493A3; font-weight: 400; }
+.l-ag-action.is-muted { color: #55677A; font-weight: 400; }
 .l-ag-action:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 
 /* ===== Responsivo ===== */

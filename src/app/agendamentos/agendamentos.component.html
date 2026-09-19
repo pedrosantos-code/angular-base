@@ -146,10 +146,10 @@
         <p class="l-ag-card-unit">{{ a.unidade }}<br />{{ a.detalhe }}</p>
         <div class="l-ag-card-actions">
           @if (!a.passado) {
-            <button type="button" class="l-ag-action" (click)="remarcar.emit(a.id)">Remarcar</button>
+            <button type="button" class="l-ag-action" (click)="remarcar(a)">Remarcar</button>
             <button type="button" class="l-ag-action is-muted" (click)="excluirAgendamento(a)">Cancelar</button>
           } @else {
-            <button type="button" class="l-ag-action" (click)="navegar.emit('comparacoes')">Ver comparação</button>
+            <button type="button" class="l-ag-action" (click)="verComparacao()">Ver comparação</button>
           }
         </div>
       </article>

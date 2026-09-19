@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -75,7 +75,7 @@ export class PortalComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  @Input() ativo = 'recomendacao';
+  ativo = 'recomendacao';
 
   /** Termo digitado na caixa de busca (vinculado via ngModel) */
   termo = '';
@@ -83,11 +83,6 @@ export class PortalComponent {
   /** Nota de corte para cor da barra de progresso */
   readonly corteFraco = 60;
 
-  @Output() navegar = new EventEmitter<string>();
-  @Output() abrirPerfil = new EventEmitter<void>();
-  @Output() abrirConfiguracoes = new EventEmitter<void>();
-  @Output() modeloSelecionado = new EventEmitter<string>();
-  @Output() buscaRealizada = new EventEmitter<string>();
 
   readonly principais = ITENS_PRINCIPAIS;
   readonly atendimento = ITENS_ATENDIMENTO;
@@ -141,7 +136,6 @@ export class PortalComponent {
   ];
 
   ir(chave: string): void {
-    this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
     if (!rota) return;
 
@@ -164,7 +158,6 @@ export class PortalComponent {
   }
 
   selecionarModelo(nomeModelo: string): void {
-    this.modeloSelecionado.emit(nomeModelo);
     this.router.navigate(['/modelos'], { queryParams: { termo: nomeModelo } });
   }
 
@@ -177,7 +170,6 @@ export class PortalComponent {
     const texto = this.termo.trim();
     if (!texto) return;
 
-    this.buscaRealizada.emit(texto);
     const { resultado, perfil, tags, orcamento } = this.calcularRecomendacao(texto);
     this.resultadoCalculado = resultado;
     this.perfilDetectado = perfil;

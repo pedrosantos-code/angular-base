@@ -102,7 +102,7 @@
             </svg>
           </button>
 
-          <button class="l-md-card-open" type="button" (click)="abrirModelo.emit(m.id)">
+          <button class="l-md-card-open" type="button" (click)="abrirFicha(m)">
             <span class="l-md-photo">
               @if (m.imagem) {
                 <img [src]="m.imagem" [alt]="m.nome" loading="lazy" />

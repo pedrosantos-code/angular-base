@@ -3,8 +3,8 @@
   <div class="login-hero">
     <div class="login-hero__overlay"></div>
 
-    <button type="button" class="login-hero__brand" (click)="goSite.emit()" routerLink="/">
-      <img src="favicon.ico" alt="Logo" class="login-hero__logo">
+    <button type="button" class="login-hero__brand" routerLink="/">
+      <img src="favicon.ico" alt="" class="login-hero__logo">
       <div class="login-hero__brand-name">Ford · SEIA</div>
     </button>
 
@@ -36,28 +36,24 @@
 
       <!-- Exibição de mensagem de erro dinâmica -->
       @if (errorMessage()) {
-        <div class="login-error-alert" style="color: #ff4d4d; background: rgba(255, 77, 77, 0.1); padding: 10px; border-radius: 4px; margin-bottom: 1rem; font-size: 0.85rem;">
+        <div class="login-error-alert" role="alert">
           {{ errorMessage() }}
         </div>
       }
 
-      <label class="login-form__label" for="email">E-mail</label>
-      <input class="login-form__input" id="email" #emailInput type="email" placeholder="E-mail">
+      <form (submit)="onSubmit($event, emailInput.value, passwordInput.value)" novalidate>
+        <label class="login-form__label" for="email">E-mail</label>
+        <input class="login-form__input" id="email" #emailInput type="email" name="email" autocomplete="username"
+               placeholder="E-mail" [attr.aria-invalid]="errorMessage() ? true : null">
 
-      <label class="login-form__label" for="senha">Senha</label>
-      <input class="login-form__input" id="senha" #passwordInput type="password" placeholder="Senha">
+        <label class="login-form__label" for="senha">Senha</label>
+        <input class="login-form__input" id="senha" #passwordInput type="password" name="senha" autocomplete="current-password"
+               placeholder="Senha" [attr.aria-invalid]="errorMessage() ? true : null">
 
-      <div class="login-form__row">
-        <label class="login-form__checkbox">
-          <input type="checkbox">
-          Manter conectado
-        </label>
-        <a href="#" (click)="$event.preventDefault()">Esqueci a senha</a>
-      </div>
-
-      <button type="button" class="login" (click)="onLogin(emailInput.value, passwordInput.value)">
-        {{ isLoading() ? 'ENTRANDO...' : 'ENTRAR' }}
-      </button> 
+        <button type="submit" class="login" [disabled]="isLoading()">
+          {{ isLoading() ? 'ENTRANDO...' : 'ENTRAR' }}
+        </button>
+      </form>
       <div class="login-register-link">
         <p>Ainda não tem conta? <a routerLink="/cadastro">Criar conta</a></p>
       </div>

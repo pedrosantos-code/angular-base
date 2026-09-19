@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
@@ -27,7 +27,6 @@ export class SobreIaComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
 
-  @Output() navegar = new EventEmitter<string>();
 
   readonly entradas: Entrada[] = [
     { ordem: 'Entrada 01', titulo: 'O que você escreve', texto: 'Rotina, passageiros, tipo de estrada e teto de orçamento, em texto livre.' },
@@ -35,7 +34,7 @@ export class SobreIaComponent {
     { ordem: 'Entrada 03', titulo: 'Perfil de cada modelo', texto: 'Cada modelo Ford do catálogo tem etiquetas de uso. Exemplo: Territory = família, viagem, estrada, cidade.' },
   ];
 
-  @Input() exemplo: ExemploNota = {
+  exemplo: ExemploNota = {
     modelo: 'Territory',
     perfil: 'família · estrada · até R$ 250 mil',
     pesos: 'Preço a partir de R$ 219.900: dentro do teto, sem desconto na nota',
@@ -81,7 +80,6 @@ export class SobreIaComponent {
 
   // Método para tratar o evento de navegação sem conflito de tipo de evento nativo
   onNavegar(chave: string): void {
-    this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
     if (rota) this.router.navigateByUrl(rota);
   }

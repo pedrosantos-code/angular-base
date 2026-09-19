@@ -64,7 +64,7 @@
   font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
   color: #1E3A55; margin-bottom: 9px;
 }
-.l-pf-hint { font-size: 12.5px; color: #8493A3; margin: 7px 0 0; }
+.l-pf-hint { font-size: 12.5px; color: #55677A; margin: 7px 0 0; }
 
 .l-pf-chips { display: flex; gap: 9px; flex-wrap: wrap; }
 .l-pf-chip {
@@ -83,7 +83,7 @@
   font-size: 15px; color: #001730;
   transition: border-color .16s, background .16s, box-shadow .16s;
 }
-.l-pf-input::placeholder { color: #93A2B2; }
+.l-pf-input::placeholder { color: #66788A; }
 .l-pf-input:focus-visible { outline: none; }
 
 .l-pf-locked {
@@ -92,7 +92,7 @@
   background: #F4F7FA; border: 1px dashed #D4DEE9;
   font-size: 15px; color: #67788A;
 }
-.l-pf-locked svg { width: 16px; height: 16px; flex: none; color: #8493A3; }
+.l-pf-locked svg { width: 16px; height: 16px; flex: none; color: #55677A; }
 
 /* ===== Painel lateral ===== */
 .l-pf-preview { background: #001730; padding: 18px; margin-bottom: 20px; }
@@ -117,7 +117,7 @@
 .l-pf-rail-label {
   font-family: 'Archivo', sans-serif; font-weight: 800;
   font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase;
-  color: #8493A3; margin: 24px 0 4px;
+  color: #55677A; margin: 24px 0 4px;
 }
 .l-pf-link {
   width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px;
@@ -126,7 +126,7 @@
 }
 .l-pf-link:hover { color: #0B57A4; }
 .l-pf-link:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
-.l-pf-count { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #8493A3; }
+.l-pf-count { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12.5px; color: #55677A; }
 
 .l-pf-consent { display: flex; align-items: center; gap: 10px; padding: 12px 0; cursor: pointer; }
 .l-pf-switch-input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }

@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../shared/reveal.directive';
@@ -12,7 +12,7 @@ import { RevealDirective } from '../shared/reveal.directive';
 })
 export class LandingComponent {
   // Menu do cabeçalho no mobile
-  menuOpen = false;
+  menuOpen = signal(false);
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
@@ -115,12 +115,12 @@ export class LandingComponent {
   ];
 
   toggleMenu(): void {
-    this.menuOpen = !this.menuOpen;
+    this.menuOpen.update((aberto) => !aberto);
   }
 
   @HostListener('document:keydown.escape')
   closeMenu(): void {
-    this.menuOpen = false;
+    this.menuOpen.set(false);
   }
 
   // Links de navegação: rola suave até a seção (ids: problema, proposta, funciona, diferencial, impacto)

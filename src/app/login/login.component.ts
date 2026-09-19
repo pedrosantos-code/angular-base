@@ -1,4 +1,4 @@
-import { Component, signal, inject, output } from '@angular/core'; // 1. Adicione 'output' aqui
+import { Component, signal, inject } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -13,11 +13,15 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
 
-  // 2. Declare o output para se comunicar com o componente pai (se necessário)
-  goSite = output<void>();
 
   errorMessage = signal<string | null>(null);
   isLoading = signal(false);
+
+  /** Envio do formulário (botão ou Enter). */
+  onSubmit(event: Event, email: string, password: string): void {
+    event.preventDefault();
+    this.onLogin(email.trim(), password);
+  }
 
   onLogin(email: string, password: string): void {
     this.errorMessage.set(null);

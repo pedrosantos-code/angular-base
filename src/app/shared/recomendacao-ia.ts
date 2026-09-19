@@ -6,7 +6,7 @@ export const DICIONARIO_TAGS: Record<string, string[]> = {
     'avô', 'netos', 'cadeirinha',
   ],
   viagem: [
-    'viagem', 'viajo', 'viajar', 'longa distância', 'longa distancia', 'road trip', 'passeio',
+    'viagem', 'viagens', 'viajo', 'viajar', 'longa distância', 'longa distancia', 'road trip', 'passeio',
     'passear', 'praia', 'litoral', 'interior', 'excursão', 'excursao', 'fora da cidade',
   ],
   estrada: ['estrada', 'rodovia', 'pista', 'asfalto', 'br-', 'rodovias'],
@@ -36,17 +36,34 @@ export const DICIONARIO_TAGS: Record<string, string[]> = {
   eletrico: ['elétrico', 'eletrico', 'elétrica', 'eletrica', 'híbrido', 'hibrido', 'híbrida', 'hibrida', 'carregar', 'tomada', 'sustentável', 'sustentavel'],
 };
 
+/**
+ * Monta o regex de uma palavra do dicionário. A palavra precisa começar no início de uma palavra
+ * do texto ("filhos" acha "filho", mas "avo" não acha "favorito"). Palavras curtas (até 5 letras)
+ * também precisam terminar ali, aceitando plural ("pais" não acha "paisagem", "app" não acha "apple").
+ */
+function regexDaPalavra(palavra: string): RegExp {
+  const escapada = palavra.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const fim = palavra.length <= 5 ? 's?(?![\\p{L}])' : '';
+  return new RegExp(`(?<![\\p{L}])${escapada}${fim}`, 'u');
+}
+
+const REGEX_POR_TAG: [string, RegExp[]][] = Object.entries(DICIONARIO_TAGS).map(([tag, palavras]) => [
+  tag,
+  palavras.map(regexDaPalavra),
+]);
+
 /** Quais tags do dicionário aparecem no texto livre digitado pela pessoa. */
 export function detectarTags(texto: string): string[] {
   const textoNormalizado = texto.toLowerCase();
-  return Object.entries(DICIONARIO_TAGS)
-    .filter(([, palavras]) => palavras.some((p) => textoNormalizado.includes(p)))
+  return REGEX_POR_TAG
+    .filter(([, regexes]) => regexes.some((r) => r.test(textoNormalizado)))
     .map(([tag]) => tag);
 }
 
 /** Extrai um orçamento tipo "250 mil" / "R$ 250 mil" do texto livre, se houver. */
 export function detectarOrcamento(texto: string): number | null {
-  const match = texto.toLowerCase().match(/r?\$?\s*(\d+)\s*mil/);
+  // "mil" precisa ser a palavra inteira: "60 milhas" e "1 milhão" não são orçamento.
+  const match = texto.toLowerCase().match(/r?\$?\s*(\d+)\s*mil(?![\p{L}])/u);
   return match ? Number(match[1]) * 1000 : null;
 }
 

@@ -88,10 +88,6 @@ input:focus {
     margin-bottom: 24px;
   }
 
-  .login-form__row {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
 }
 
 /* ===== Coluna esquerda (hero) ===== */
@@ -273,33 +269,7 @@ input:focus {
 }
 
 .login-form__input:last-of-type {
-  margin-bottom: 14px;
-}
-
-.login-form__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   margin-bottom: 28px;
-}
-
-.login-form__checkbox {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 13px;
-  color: #5B6B7C;
-}
-
-.login-form__checkbox input {
-  accent-color: #002B5C;
-  width: 15px;
-  height: 15px;
-}
-
-.login-form__row a {
-  font-size: 13px;
-  font-weight: 600;
 }
 
 /* ===== Botão Entrar ===== */
@@ -368,4 +338,17 @@ input:focus {
 @keyframes seia-pulse {
   0%, 100% { opacity: .35; }
   50% { opacity: 1; }
+}
+.login-error-alert {
+  margin-bottom: 1rem;
+  padding: 10px 12px;
+  border-left: 3px solid #C2402F;
+  background: #FBEDEB;
+  color: #8C2F22;
+  font-size: 13.5px;
+}
+
+.login:disabled {
+  cursor: progress;
+  filter: grayscale(.4) brightness(1.2);
 }

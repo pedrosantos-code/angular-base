@@ -1,4 +1,4 @@
-import { Component, signal, inject, Output, EventEmitter } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import {
@@ -35,8 +35,6 @@ export function camposIguais(campo: string, confirmacao: string): ValidatorFn {
   styleUrl: './cadastro.component.css',
 })
 export class CadastroComponent {
-  @Output() cadastrar = new EventEmitter<CadastroPayload>();
-  @Output() goSite = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
@@ -105,9 +103,8 @@ export class CadastroComponent {
     const { nome, email, senha } = this.registerForm.getRawValue();
 
     // Emite para o componente pai caso ele escute o evento
-    this.cadastrar.emit({ nome, email, senha });
 
-    this.authService.register(email, senha).subscribe({
+    this.authService.register(email, senha, nome).subscribe({
       next: (response) => {
         this.enviando = false;
         if (response.error) {

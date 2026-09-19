@@ -10,8 +10,8 @@
 :host ul { list-style: none; margin: 0; padding: 0; }
 :host svg { fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 
-/* ===== Topbar + gaveta — classes t-01 a t-18 ===== */
-.t-01 {
+/* ===== Topbar + gaveta — classes topbar a icon-action ===== */
+.topbar {
   position: sticky; top: 0; z-index: 90;
   height: 60px; padding: 0 16px;
   background: #001730;
@@ -19,20 +19,18 @@
 }
 
 /* Botão de ícone — sem contorno, sem fundo */
-button.t-02 {
+button.topbar-btn {
   width: 40px; height: 40px; flex: none;
   display: grid; place-items: center;
   background: transparent; border: none; border-radius: 50%;
   color: #BBD3E9; cursor: pointer;
   transition: color .16s, background .16s;
 }
-.t-02 svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-.t-17 { width: 19px !important; height: 19px !important; }
-.t-18 { width: 20px; height: 20px; }
-button.t-02:hover { color: #fff; background: rgba(255,255,255,.1); }
-button.t-02:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
-
-.t-03 { width: 1px; height: 20px; background: rgba(255,255,255,.16); margin: 0 8px; flex: none; }
+.topbar-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.icon-menu { width: 19px !important; height: 19px !important; }
+.icon-action { width: 20px; height: 20px; }
+button.topbar-btn:hover { color: #fff; background: rgba(255,255,255,.1); }
+button.topbar-btn:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
 
 .l-sidebar-header { display: flex; align-items: center; gap: 4px; width: 100%; }
 .l-header-left { display: flex; align-items: center; gap: 4px; }
@@ -44,23 +42,18 @@ button.t-02:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
 .l-brand-ford { height: 22px; width: auto; flex: none; }
 .l-header-right { display: flex; align-items: center; gap: 4px; }
 
-.t-06 {
-  width: 28px; height: 28px; flex: none;
-  border: 2px solid #2E7DD1; display: grid; place-items: center;
-  object-fit: cover;
-}
-.t-07 { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; white-space: nowrap; }
+.brand-plus--header { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #fff; white-space: nowrap; }
 
 /* Véu */
-.t-08 {
+.overlay {
   position: fixed; inset: 0; z-index: 70;
   background: rgba(0,12,26,.5);
   opacity: 0; pointer-events: none; transition: opacity .2s;
 }
-.t-09 { opacity: 1; pointer-events: auto; }
+.overlay--visible { opacity: 1; pointer-events: auto; }
 
 /* Gaveta */
-.t-10 {
+.drawer {
   position: fixed; left: 0; top: 0; bottom: 0; z-index: 80;
   width: 268px; max-width: 82vw;
   background: #001730; border-right: 1px solid rgba(255,255,255,.12);
@@ -68,43 +61,43 @@ button.t-02:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
   transform: translateX(-100%); transition: transform .22s ease;
   overflow-y: auto;
 }
-.t-11 { transform: translateX(0); }
+.drawer--open { transform: translateX(0); }
 
 .l-drawer-brand { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 0 20px 4px; width: 100%; }
 .l-drawer-brand .l-brand-seia { height: 24px; width: auto; }
 .l-drawer-brand .l-brand-plus { color: #fff; font-weight: 800; font-size: 14px; }
 .l-drawer-brand .l-brand-ford { height: 24px; width: auto; }
 
-.t-12 { padding: 14px 20px 0; }
-.t-16 { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #5C7691; margin-bottom: 10px; }
+.drawer-group { padding: 14px 20px 0; }
+.drawer-group-title { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: #5C7691; margin-bottom: 10px; }
 
-button.t-13 {
+button.drawer-link {
   width: 100%; display: flex; align-items: center; gap: 12px;
   padding: 10px 0; background: transparent; border: none; border-radius: 0;
   font-family: inherit; font-size: 14px; color: #fff; text-align: left; cursor: pointer;
   transition: color .16s;
 }
-.t-13 svg { width: 19px; height: 19px; flex: none; fill: none; stroke: #CFE3F7; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; transition: stroke .16s; }
-button.t-13:hover { color: #fff; }
-.t-13:hover svg { stroke: #fff; }
-button.t-13:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px; }
+.drawer-link svg { width: 19px; height: 19px; flex: none; fill: none; stroke: #CFE3F7; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; transition: stroke .16s; }
+button.drawer-link:hover { color: #fff; }
+.drawer-link:hover svg { stroke: #fff; }
+button.drawer-link:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px; }
 
-button.t-14 { color: #fff; margin-left: -20px; padding-left: 16px; border-left: 4px solid #2E7DD1; }
-.t-14 svg { stroke: #2E7DD1; }
+button.drawer-link--active { color: #fff; margin-left: -20px; padding-left: 16px; border-left: 4px solid #2E7DD1; }
+.drawer-link--active svg { stroke: #2E7DD1; }
 
-.t-15 { height: 1px; background: rgba(255,255,255,.1); margin: 14px 20px 0; }
+.drawer-divider { height: 1px; background: rgba(255,255,255,.1); margin: 14px 20px 0; }
 
 @media (prefers-reduced-motion: reduce) {
-  .t-08, .t-10 { transition: none; }
+  .overlay, .drawer { transition: none; }
 }
 
 @media (max-width: 520px) {
-  .t-01 { padding: 0 8px; }
-  .t-07 { display: none; }
+  .topbar { padding: 0 8px; }
+  .brand-plus--header { display: none; }
 }
 
 @media (max-width: 400px) {
-  button.t-02 { width: 36px; height: 36px; }
+  button.topbar-btn { width: 36px; height: 36px; }
   .l-brand-wrapper { gap: 6px; }
   .l-brand-seia, .l-brand-ford { height: 18px; }
 }

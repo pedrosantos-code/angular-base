@@ -131,7 +131,7 @@
         type="checkbox"
         class="l-pf-switch-input"
         [(ngModel)]="compartilhaComConcessionaria"
-        (ngModelChange)="alternarConsentimento.emit($event)" />
+        (ngModelChange)="salvarConsentimento($event)" />
       <span class="l-pf-switch" aria-hidden="true"></span>
       <span>Compartilhar preferências com concessionárias</span>
     </label>

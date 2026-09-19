@@ -1,9 +1,7 @@
 <div class="l-seia-container">
 
   <seia-topbar
-    (navegar)="ir($event)"
-    (abrirPerfil)="abrirPerfil.emit()"
-    (abrirConfiguracoes)="abrirConfiguracoes.emit()"
+    (navegar)="ir($event)"
     (sair)="sair()" />
 
   <!-- Conteúdo Principal da Página -->
@@ -16,8 +14,8 @@
       <p class="l-subtitle">Descreva como você usa o carro. Comparamos com o perfil de uso de cada modelo Ford e mostramos o quanto cada um combina com você.</p>
       
       <!-- Caixa de Busca -->
-      <div class="l-search-box">
-        <input type="text" [(ngModel)]="termo" placeholder="Ex: rodo 60 km por dia na cidade e viajo com..." class="l-search-input" (keyup.enter)="enviar()">
+      <div class="l-search-box" role="search">
+        <input type="text" [(ngModel)]="termo" aria-label="Descreva como você usa o carro" autocomplete="off" placeholder="Ex: rodo 60 km por dia na cidade e viajo com..." class="l-search-input" (keyup.enter)="enviar()">
         <button type="button" class="l-btn-primary" (click)="enviar()">ENCONTRAR MEU FORD</button>
       </div>
 
@@ -27,7 +25,7 @@
         <div class="l-chips">
           @for (a of atalhos; track a.chave) {
             <button type="button" class="l-chip" (click)="selecionarAtalho(a.chave)">
-              <svg class="l-chip-icon" width="14" height="14" viewBox="0 0 24 24">
+              <svg class="l-chip-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
                 <path *ngFor="let pathData of a.icone" [attr.d]="pathData"></path>
               </svg>
               {{ a.rotulo }}
@@ -41,7 +39,7 @@
     </section>
 
     <!-- Resultados da IA com barra de progresso -->
-    <section class="l-results-section">
+    <section class="l-results-section" aria-live="polite">
       <div class="l-results-header">
         <span class="l-results-title">{{ tituloResultados }}</span>
         <span class="l-results-subtitle">{{ subtituloResultados }}</span>

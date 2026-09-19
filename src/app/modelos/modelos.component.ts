@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -44,21 +44,22 @@ export class ModelosComponent {
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
 
-  @Output() abrirModelo = new EventEmitter<string>();
-  @Output() compararSelecionados = new EventEmitter<string[]>();
-  @Output() navegar = new EventEmitter<string>();
 
   ir(chave: string): void {
-    this.navegar.emit(chave);
     const rota = ROTAS_MENU[chave];
     if (rota) this.router.navigateByUrl(rota);
+  }
+
+  /** Abre a ficha técnica do modelo no Dashboard, que busca na API da Ford. */
+  abrirFicha(m: Modelo): void {
+    this.router.navigate(['/dashboard'], { queryParams: { modelo: m.nome } });
   }
 
   sair(): void {
     void this.authService.logout();
   }
 
-  @Input() modelos: Modelo[] = [
+  modelos: Modelo[] = [
     { id: 'bronco-sport', nome: 'Bronco Sport', segmento: 'SUV compacto', categoria: 'suv', motorizacao: 'combustao', precoDe: 249900, ficha: ['1.5 EcoBoost turbo · 182 cv', 'Tração 4x2 · 5 lugares'], nota: 81, imagem: 'bronco-sport.jpeg', imagemVistas: 'bronco-sport-vistas.jpg', tags: ['offroad', 'aventura', 'familia'] },
     { id: 'explorer', nome: 'Explorer', segmento: 'SUV grande', categoria: 'suv', motorizacao: 'combustao', precoDe: 429900, ficha: ['2.3 EcoBoost turbo · 300 cv', 'Tração 4x2 · 7 lugares'], nota: 42, imagem: 'explorer.jpeg', imagemVistas: 'explorer-vistas.jpg', tags: ['familia', 'viagem', 'estrada'] },
     { id: 'territory', nome: 'Territory', segmento: 'SUV médio', categoria: 'suv', motorizacao: 'combustao', precoDe: 219900, ficha: ['1.5 turbo · 177 cv', 'Tração 4x2 · 5 lugares'], nota: 94, imagem: 'territory.jpeg', imagemVistas: 'territory-vistas.jpg', tags: ['familia', 'viagem', 'estrada', 'cidade'] },
@@ -78,7 +79,7 @@ export class ModelosComponent {
     { id: 'transit-minibus', nome: 'Transit Minibus', segmento: 'Van de passageiros', categoria: 'comercial', motorizacao: 'combustao', precoDe: 239900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Até 16 lugares'], nota: 74, imagem: 'transit-minibus.jpeg', imagemVistas: 'transit-minibus-vistas.jpg', tags: ['trabalho', 'viagem'] },
   ];
   /** Resumo do perfil, exibido sob o título. Nulo esconde a linha. */
-  @Input() perfil: string | null = 'família · estrada · até R$ 250 mil';
+  perfil: string | null = 'família · estrada · até R$ 250 mil';
 
   readonly categorias: Categoria[] = [
     { chave: 'todos', rotulo: 'Todos' },
@@ -237,7 +238,6 @@ export class ModelosComponent {
   comparar(): void {
     if (this.selecionados.size < 2) return;
     this.compararAtivo = true;
-    this.compararSelecionados.emit([...this.selecionados]);
 
     try {
       localStorage.setItem(this.chaveUltimaComparacao, JSON.stringify([...this.selecionados]));

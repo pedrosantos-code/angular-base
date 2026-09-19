@@ -67,10 +67,10 @@ button.l-cc-go:disabled { background: #35506E; color: #8FA6BC; cursor: default; 
 .l-cc-list { border-right: 1px solid #E7EDF3; background: #FAFCFE; overflow-y: auto; }
 .l-cc-count {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12px; color: #8493A3;
+  font-size: 12px; color: #55677A;
   margin: 0; padding: 14px 18px 12px; border-bottom: 1px solid #E7EDF3;
 }
-.l-cc-empty { font-size: 14px; color: #8493A3; padding: 20px 18px; margin: 0; }
+.l-cc-empty { font-size: 14px; color: #55677A; padding: 20px 18px; margin: 0; }
 
 .l-cc-filtros { display: flex; gap: 6px; flex-wrap: wrap; padding: 12px 18px 14px; border-bottom: 1px solid #E7EDF3; }
 button.l-cc-filtro {
@@ -118,7 +118,7 @@ button.l-cc-filtro:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2
 }
 
 .l-cc-unit-body { padding: 0 18px 16px 48px; }
-.l-cc-address { font-size: 13px; line-height: 1.45; color: #8493A3; margin: 7px 0 0; }
+.l-cc-address { font-size: 13px; line-height: 1.45; color: #55677A; margin: 7px 0 0; }
 
 .l-cc-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
 .l-cc-tag {

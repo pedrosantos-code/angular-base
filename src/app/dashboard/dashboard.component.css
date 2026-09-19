@@ -89,7 +89,7 @@ button.l-db-chip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 /* ===== Resultados ===== */
 .l-db-total {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12.5px; color: #8493A3;
+  font-size: 12.5px; color: #55677A;
   margin: 28px 0 14px;
 }
 
@@ -109,13 +109,13 @@ button.l-db-chip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 
 .l-db-row-model { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; }
 .l-db-row-model strong { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 14.5px; color: #001730; }
-.l-db-row-model span { font-size: 12.5px; color: #8493A3; }
+.l-db-row-model span { font-size: 12.5px; color: #55677A; }
 
 .l-db-row-stat {
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
   font-size: 13px; color: #3C4B5B; white-space: nowrap;
 }
-.l-db-row-stat small { color: #8493A3; }
+.l-db-row-stat small { color: #55677A; }
 .l-db-row-gearbox { text-transform: capitalize; }
 
 /* ===== Semelhantes ===== */

@@ -20,14 +20,14 @@
       <a routerLink="/login" class="btn btn--primary btn--header">ENTRAR</a>
       <a routerLink="/cadastro" class="btn btn--accent btn--header btn--header-register">CADASTRAR</a>
 
-      <button type="button" class="menu-toggle" [class.is-open]="menuOpen" (click)="toggleMenu()"
-              [attr.aria-expanded]="menuOpen" aria-controls="menu-mobile"
-              [attr.aria-label]="menuOpen ? 'Fechar menu' : 'Abrir menu'">
+      <button type="button" class="menu-toggle" [class.is-open]="menuOpen()" (click)="toggleMenu()"
+              [attr.aria-expanded]="menuOpen()" aria-controls="menu-mobile"
+              [attr.aria-label]="menuOpen() ? 'Fechar menu' : 'Abrir menu'">
         <span></span><span></span><span></span>
       </button>
     </div>
 
-    @if (menuOpen) {
+    @if (menuOpen()) {
       <nav id="menu-mobile" class="menu-panel" aria-label="Seções da página">
         @for (link of navLinks; track link.id) {
           <a [href]="'#' + link.id" class="menu-panel__link" (click)="goTo($event, link.id)">{{ link.label }}</a>
