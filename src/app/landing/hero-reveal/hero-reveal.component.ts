@@ -7,6 +7,7 @@ import {
   NgZone,
   PLATFORM_ID,
   inject,
+  output,
   viewChild
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
@@ -32,7 +33,11 @@ export class HeroRevealComponent implements AfterViewInit {
   private destroyRef = inject(DestroyRef);
   private stage = viewChild.required<ElementRef<HTMLElement>>('stage');
 
+  /** true enquanto a seção do Hero ainda está sob o cabeçalho (o cabeçalho pode acompanhar a cor da cena). */
+  underHeader = output<boolean>();
+
   private frame = 0;
+  private lastUnder: boolean | null = null;
   private lastProgress = -1;
 
   ngAfterViewInit(): void {
@@ -44,6 +49,7 @@ export class HeroRevealComponent implements AfterViewInit {
       // Sem animação: estado final estático, sem scroll "preso".
       el.classList.add('is-static');
       this.apply(1);
+      requestAnimationFrame(() => this.update());
       return;
     }
 
@@ -65,7 +71,8 @@ export class HeroRevealComponent implements AfterViewInit {
       if (this.frame) cancelAnimationFrame(this.frame);
     });
     this.apply(0);
-    this.update();
+    // O primeiro cálculo (e o aviso ao pai) vai para o próximo frame, fora do ciclo de detecção atual.
+    schedule();
   }
 
   /** Progresso 0..1 do scroll dentro da seção (o palco fica fixo enquanto ela passa). */
@@ -73,9 +80,15 @@ export class HeroRevealComponent implements AfterViewInit {
     const el = this.host.nativeElement;
     const stage = this.stage().nativeElement;
     const stickyTop = parseFloat(getComputedStyle(stage).top) || 0;
+    const rect = el.getBoundingClientRect();
+    const under = rect.bottom > stickyTop + 1;
+    if (under !== this.lastUnder) {
+      this.lastUnder = under;
+      this.zone.run(() => this.underHeader.emit(under));
+    }
     const scrollable = el.offsetHeight - stage.offsetHeight;
     if (scrollable <= 0) return;
-    const p = Math.min(1, Math.max(0, (stickyTop - el.getBoundingClientRect().top) / scrollable));
+    const p = Math.min(1, Math.max(0, (stickyTop - rect.top) / scrollable));
     if (Math.abs(p - this.lastProgress) < 0.0005) return;
     this.apply(p);
   }

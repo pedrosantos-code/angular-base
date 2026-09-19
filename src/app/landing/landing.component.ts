@@ -1,4 +1,4 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, afterNextRender, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../shared/reveal.directive';
@@ -13,8 +13,32 @@ import { HeroVehicleStageComponent } from './hero-vehicle-stage/hero-vehicle-sta
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private destroyRef = inject(DestroyRef);
+
+  constructor() {
+    // O palco do Hero gruda logo abaixo do cabeçalho: sincroniza --reveal-top com a altura real dele
+    // (desktop e celular têm alturas diferentes), sem degrau nem faixa entre os dois.
+    afterNextRender(() => {
+      const root = this.host.nativeElement;
+      const header = root.querySelector<HTMLElement>('.site-header');
+      const hero = root.querySelector<HTMLElement>('app-hero-reveal');
+      if (!header || !hero || typeof ResizeObserver === 'undefined') return;
+      const sync = () => {
+        hero.style.setProperty('--reveal-top', `${header.getBoundingClientRect().height}px`);
+        window.dispatchEvent(new Event('resize'));
+      };
+      const ro = new ResizeObserver(sync);
+      ro.observe(header);
+      this.destroyRef.onDestroy(() => ro.disconnect());
+    });
+  }
+
   // Menu do cabeçalho no mobile
   menuOpen = signal(false);
+
+  // Cabeçalho escuro enquanto o Hero (scroll reveal) está sob ele
+  headerDark = signal(true);
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [

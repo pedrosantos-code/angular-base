@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <!-- Cabeçalho -->
-  <header class="site-header">
+  <header class="site-header" [class.site-header--dark]="headerDark()">
     <div class="site-header__inner">
       <div class="brand">
         <img src="favicon.ico" alt="" class="brand__logo">
@@ -38,7 +38,7 @@
   </header>
 
   <!-- Hero: scroll reveal cinematográfico (camadas de imagem + CSS, sem 3D) -->
-  <app-hero-reveal class="hero">
+  <app-hero-reveal class="hero" (underHeader)="headerDark.set($event)">
     <div class="eyebrow" data-reveal-step="1">
       <span class="eyebrow__line"></span>
       <span class="eyebrow__text">Recomendação de veículos com IA</span>
