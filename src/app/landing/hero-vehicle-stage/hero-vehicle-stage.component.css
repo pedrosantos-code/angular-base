@@ -9,7 +9,7 @@
 .stage__fallback,
 .stage__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .stage__fallback { object-fit: cover; opacity: .55; filter: saturate(.7); transition: opacity .6s ease; }
-.stage__canvas { opacity: 0; transition: opacity .6s ease; }
+.stage__canvas { opacity: 0; transition: opacity .6s ease; -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent 100%); mask-image: linear-gradient(180deg, #000 86%, transparent 100%); }
 
 /* Com o 3D pronto, a imagem some e o canvas aparece */
 .stage[data-phase='scanning'] .stage__canvas,
@@ -20,7 +20,7 @@
 
 /* HUD de status */
 .stage__hud {
-  position: absolute; left: 50%; bottom: 8px; transform: translateX(-50%);
+  position: absolute; left: 8px; top: 8px;
   display: flex; align-items: center; gap: 10px; padding: 8px 16px;
   background: rgba(0, 23, 48, .82); color: #fff; border-radius: 2px;
   font-family: var(--display, 'Archivo', sans-serif); font-weight: 700; font-size: 11.5px;
