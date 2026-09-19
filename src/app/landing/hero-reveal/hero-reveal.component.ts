@@ -89,6 +89,8 @@ export class HeroRevealComponent implements AfterViewInit {
     set('--outline', s.outline);
     set('--sil', s.sil);
     set('--rev', s.rev);
+    set('--bright', s.bright);
+    set('--tag', s.tag);
     set('--drl', s.drl);
     set('--bloom', s.bloom);
     set('--head', s.head);

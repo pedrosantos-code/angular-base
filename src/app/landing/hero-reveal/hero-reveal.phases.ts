@@ -23,6 +23,10 @@ export interface RevealPhases {
   sil: number;
   /** Raio da máscara que revela a carroceria a partir da grade */
   rev: number;
+  /** Brilho da carroceria: começa quase apagada e vai acendendo */
+  bright: number;
+  /** Selo "identificado" (fim do scanner) */
+  tag: number;
   /** DRLs (curva de LED) e bloom */
   drl: number;
   bloom: number;
@@ -43,7 +47,7 @@ export function revealPhases(progress: number): RevealPhases {
   const outlineIn = range(s, 0.1, 0.3);
   // O contorno some conforme a carroceria surge (fica só um resto discreto).
   const outlineOut = range(s, 0.45, 0.6);
-  const outline = (0.18 + 0.82 * outlineIn) * (1 - 0.9 * outlineOut) * (1 - range(s, 0.9, 1));
+  const outline = (0.1 + 0.5 * outlineIn) * (1 - 0.9 * outlineOut) * (1 - range(s, 0.9, 1));
 
   const scanT = clamp01((s - 0.9) / 0.08);
 
@@ -53,7 +57,9 @@ export function revealPhases(progress: number): RevealPhases {
     hint: 1 - range(s, 0, 0.06),
     outline,
     sil: outlineIn * 0.1 * (1 - range(s, 0.4, 0.55)),
-    rev: range(s, 0.28, 0.52),
+    rev: range(s, 0.22, 0.5),
+    bright: 0.1 + 0.9 * range(s, 0.12, 0.55),
+    tag: range(s, 0.97, 1),
     drl: range(s, 0.55, 0.7),
     bloom: range(s, 0.58, 0.72),
     head: range(s, 0.8, 0.9),

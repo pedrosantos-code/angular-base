@@ -10,7 +10,7 @@
   background: var(--reveal-bg, #06070a);
   color: #fff;
   /* estado inicial (antes do primeiro cálculo de scroll) */
-  --hint: 1; --outline: .18; --sil: 0; --rev: 0; --drl: 0; --bloom: 0; --head: 0;
+  --hint: 1; --outline: .1; --bright: .1; --tag: 0; --sil: 0; --rev: 0; --drl: 0; --bloom: 0; --head: 0;
   --scan: 0; --scan-o: 0; --recede: 0; --t1: 0; --t2: 0; --t3: 0; --t4: 0;
 }
 
@@ -21,18 +21,24 @@
   height: calc(100svh - var(--reveal-top, 0px));
   overflow: hidden;
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   place-items: center;
 }
 
 /* Todas as camadas dividem o mesmo quadro (mesma proporção da imagem) */
 .frame {
+  /* Centralizado mesmo quando o quadro é mais largo que a tela (celular) */
   position: relative;
+  justify-self: start;
+  left: 50%;
+  translate: -50% 0;
   width: min(94vw, calc((100svh - var(--reveal-top, 0px)) * 1.75), 1500px);
   aspect-ratio: 2048 / 1117;
   /* Mesmo fundo da cena: as luzes (imagens pretas, plus-lighter) não escurecem as bordas da base */
   background: var(--reveal-bg, #06070a);
-  transform: translateY(calc(var(--recede) * -9%)) scale(calc(1 - var(--recede) * .16));
-  transform-origin: 50% 45%;
+  /* No fim o carro sobe e encolhe para o texto ficar ABAIXO dele, sem cobrir */
+  transform: translateY(calc(var(--recede) * var(--ry, -11%))) scale(calc(1 - var(--recede) * var(--rs, .3)));
+  transform-origin: 50% 0;
   will-change: transform;
 }
 .layer { position: absolute; inset: 0; width: 100%; height: 100%; display: block; user-select: none; pointer-events: none; }
@@ -42,6 +48,7 @@
 
 /* A escuridão recua a partir da grade: a base só aparece dentro de um círculo que cresce */
 .base {
+  filter: brightness(var(--bright));
   --r: calc(var(--rev) * 118% - 18%);
   /* Círculo que cresce a partir da grade + bordas suavizadas (o fundo da imagem nunca "emoldura") */
   -webkit-mask-image:
@@ -106,15 +113,22 @@
 .hint i { width: 10px; height: 10px; border-right: 2px solid #8FB8E2; border-bottom: 2px solid #8FB8E2; transform: rotate(45deg); animation: hint-bob 1.6s ease-in-out infinite; }
 @keyframes hint-bob { 0%, 100% { transform: translateY(0) rotate(45deg); } 50% { transform: translateY(5px) rotate(45deg); } }
 
-/* Conteúdo projetado: fica em cima do carro, com um degradê para garantir a leitura */
+/* Conteúdo projetado: fica embaixo do carro (o carro sobe e encolhe para dar lugar) */
 .content {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
-  padding: clamp(80px, 16vh, 150px) 24px clamp(24px, 6vh, 56px);
+  padding: 48px 24px clamp(20px, 5vh, 48px);
   text-align: center; pointer-events: none;
-  background: linear-gradient(to top, rgba(6, 7, 10, .94) 0%, rgba(6, 7, 10, .78) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(6, 7, 10, .92) 0%, rgba(6, 7, 10, .6) 60%, transparent 100%);
   opacity: var(--t1);
 }
 :host(.has-text) .content { pointer-events: auto; }
+
+/* Selo de identificação (fim do scanner) */
+.tag {
+  position: absolute; top: 10px; left: 0; right: 0; margin: 0; text-align: center; pointer-events: none;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: #8FB8E2;
+  opacity: var(--tag);
+}
 
 /* Entrada em 4 passos (ordem = data-reveal-step) */
 :host ::ng-deep [data-reveal-step] { will-change: opacity, transform; }
@@ -133,6 +147,6 @@
 }
 
 @media (max-width: 700px) {
-  .frame { width: 150vw; max-width: none; }
+  .frame { width: 180vw; max-width: none; --ry: -37%; --rs: .12; }
   .content { padding-left: 16px; padding-right: 16px; }
 }

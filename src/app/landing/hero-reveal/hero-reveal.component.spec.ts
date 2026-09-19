@@ -22,12 +22,13 @@ describe('revealPhases', () => {
     expect(s.head).toBe(0);
     expect(s.t).toEqual([0, 0, 0, 0]);
     expect(s.outline).toBeGreaterThan(0);
-    expect(s.outline).toBeLessThan(0.3);
+    expect(s.outline).toBeLessThan(0.2);
+    expect(s.bright).toBeLessThan(0.2);
   });
 
   it('segue a ordem do roteiro: silhueta, revelação, DRLs, faróis, scanner, texto', () => {
     const at = (p: number) => revealPhases(p * HOLD_START);
-    expect(at(0.3).outline).toBeGreaterThan(0.9);
+    expect(at(0.3).outline).toBeGreaterThan(0.5);
     expect(at(0.4).rev).toBeGreaterThan(0);
     expect(at(0.4).drl).toBe(0);
     expect(at(0.52).rev).toBeCloseTo(1, 1);
@@ -42,6 +43,8 @@ describe('revealPhases', () => {
   it('no fim tudo está aceso e o texto inteiro visível; o estado final é segurado', () => {
     const end = revealPhases(HOLD_START);
     expect(end.rev).toBe(1);
+    expect(end.bright).toBe(1);
+    expect(end.tag).toBe(1);
     expect(end.drl).toBe(1);
     expect(end.head).toBe(1);
     expect(end.recede).toBe(1);
@@ -53,7 +56,7 @@ describe('revealPhases', () => {
   it('valores ficam sempre entre 0 e 1', () => {
     for (let p = -0.2; p <= 1.2; p += 0.05) {
       const s = revealPhases(p);
-      for (const v of [s.hint, s.outline, s.sil, s.rev, s.drl, s.bloom, s.head, s.scan, s.scanO, s.recede, ...s.t]) {
+      for (const v of [s.hint, s.outline, s.sil, s.rev, s.bright, s.tag, s.drl, s.bloom, s.head, s.scan, s.scanO, s.recede, ...s.t]) {
         expect(v).toBeGreaterThanOrEqual(0);
         expect(v).toBeLessThanOrEqual(1);
       }
