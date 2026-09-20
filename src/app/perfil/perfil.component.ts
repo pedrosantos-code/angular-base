@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
+import { ProfileService, UserProfileRecord } from '../profile.service';
 
 export interface PerfilUso {
   uso: string;
@@ -20,6 +21,8 @@ export interface DadosConta {
   telefone: string;
   /** Identificador da conta — não editável por aqui. */
   email: string;
+  idade: number | null;
+  genero: string;
   criadaEm: string;
 }
 
@@ -76,9 +79,14 @@ const TAG_POR_USO: Record<string, string> = {
 export class PerfilComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
 
   private readonly chavePerfilSalvo = 'seia-perfil-salvo';
   private readonly chaveConsentimento = 'seia-consentimento-concessionaria';
+  readonly opcoesGenero = ['Feminino', 'Masculino', 'Não binário', 'Prefiro não informar'];
+  carregandoPerfil = true;
+  salvandoPerfil = false;
+  erroBanco: string | null = null;
 
   constructor() {
     this.carregarConsentimento();
@@ -94,8 +102,47 @@ export class PerfilComponent {
         this.conta.email = email;
         this.contaOriginal.email = email;
       },
-      error: () => {},
+      error: () => { },
     });
+
+    this.profileService.carregar().subscribe({
+      next: (perfil) => {
+        if (perfil) this.aplicarPerfilRemoto(perfil);
+        this.usoOriginal = structuredClone(this.uso);
+        this.contaOriginal = structuredClone(this.conta);
+        this.carregandoPerfil = false;
+      },
+      error: () => {
+        this.erroBanco = 'Não foi possível carregar o perfil salvo. As alterações locais continuam disponíveis.';
+        this.carregandoPerfil = false;
+      },
+    });
+  }
+
+  private aplicarPerfilRemoto(perfil: UserProfileRecord): void {
+    this.uso = {
+      uso: perfil.uso_principal || this.uso.uso,
+      passageiros: perfil.passageiros || this.uso.passageiros,
+      rodagem: perfil.rodagem_mensal || '',
+      orcamento: perfil.orcamento || '',
+      prioridades: Array.isArray(perfil.prioridades) ? perfil.prioridades : [],
+    };
+    this.conta = {
+      ...this.conta,
+      nome: perfil.nome,
+      telefone: perfil.telefone,
+      email: perfil.email || this.conta.email,
+      idade: perfil.idade,
+      genero: perfil.genero,
+    };
+
+    try {
+      localStorage.setItem(this.chaveFavoritos, JSON.stringify(perfil.carros_favoritos ?? []));
+      localStorage.setItem(this.chaveComparacoesUltima, JSON.stringify(perfil.carros_comparados ?? []));
+    } catch {
+      // O perfil remoto continua disponível mesmo sem acesso ao localStorage.
+    }
+    this.sincronizarComModelos();
   }
 
   /** Restaura o que foi salvo antes — sem isso, um F5 devolveria os campos a zero mesmo depois de "Salvar". */
@@ -162,6 +209,8 @@ export class PerfilComponent {
     nome: '',
     telefone: '',
     email: '',
+    idade: null,
+    genero: '',
     criadaEm: '',
   };
 
@@ -292,6 +341,8 @@ export class PerfilComponent {
     if (!this.mesmoConjunto(this.uso.prioridades, this.usoOriginal.prioridades)) n++;
     if (this.conta.nome !== this.contaOriginal.nome) n++;
     if (this.conta.telefone !== this.contaOriginal.telefone) n++;
+    if (this.conta.idade !== this.contaOriginal.idade) n++;
+    if (this.conta.genero !== this.contaOriginal.genero) n++;
     return n;
   }
 
@@ -328,8 +379,45 @@ export class PerfilComponent {
 
   salvar(): void {
     if (!this.alteracoes) return;
-    this.usoOriginal = structuredClone(this.uso);
-    this.contaOriginal = structuredClone(this.conta);
+    this.salvandoPerfil = true;
+    this.erroBanco = null;
     this.persistir();
+
+    const favoritos = this.lerIds(this.chaveFavoritos);
+    const comparados = this.lerIds(this.chaveComparacoesUltima);
+    this.profileService.salvar({
+      nome: this.conta.nome,
+      email: this.conta.email,
+      idade: this.conta.idade,
+      genero: this.conta.genero,
+      telefone: this.conta.telefone,
+      uso_principal: this.uso.uso,
+      passageiros: this.uso.passageiros,
+      rodagem_mensal: this.uso.rodagem,
+      orcamento: this.uso.orcamento,
+      prioridades: this.uso.prioridades,
+      carros_favoritos: favoritos,
+      carros_comparados: comparados,
+      compartilha_com_concessionaria: this.compartilhaComConcessionaria,
+    }).subscribe({
+      next: () => {
+        this.usoOriginal = structuredClone(this.uso);
+        this.contaOriginal = structuredClone(this.conta);
+        this.salvandoPerfil = false;
+      },
+      error: () => {
+        this.salvandoPerfil = false;
+        this.erroBanco = 'Não foi possível salvar no banco. Confira se a migration de perfis foi aplicada no Supabase.';
+      },
+    });
+  }
+
+  private lerIds(chave: string): string[] {
+    try {
+      const valor = JSON.parse(localStorage.getItem(chave) ?? '[]') as unknown;
+      return Array.isArray(valor) && valor.every((id): id is string => typeof id === 'string') ? valor : [];
+    } catch {
+      return [];
+    }
   }
 }

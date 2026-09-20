@@ -16,6 +16,8 @@ export interface CadastroPayload {
   nome: string;
   email: string;
   senha: string;
+  idade: number;
+  genero: string;
 }
 
 export function camposIguais(campo: string, confirmacao: string): ValidatorFn {
@@ -67,6 +69,8 @@ export class CadastroComponent {
     {
       nome: ['', [Validators.required, Validators.minLength(3)]],
       email: ['', [Validators.required, Validators.email]],
+      idade: ['', [Validators.required, Validators.min(13), Validators.max(120)]],
+      genero: ['', Validators.required],
       senha: ['', [Validators.required, Validators.minLength(8)]],
       confirmacao: ['', Validators.required],
       termos: [false, Validators.requiredTrue],
@@ -100,11 +104,11 @@ export class CadastroComponent {
     }
 
     this.enviando = true;
-    const { nome, email, senha } = this.registerForm.getRawValue();
+    const { nome, email, senha, idade, genero } = this.registerForm.getRawValue();
 
     // Emite para o componente pai caso ele escute o evento
 
-    this.authService.register(email, senha, nome).subscribe({
+    this.authService.register(email, senha, nome, Number(idade), genero).subscribe({
       next: (response) => {
         this.enviando = false;
         if (response.error) {

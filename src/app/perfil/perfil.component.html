@@ -14,19 +14,16 @@
 
     <p class="l-pf-kicker">Prévia da recomendação</p>
     <h2 class="l-pf-heading">Perfil de uso</h2>
-    <p class="l-pf-lead">Estas respostas geram a prévia de compatibilidade ao lado. A busca do portal usa o texto que você escrever lá.</p>
+    <p class="l-pf-lead">Estas respostas geram a prévia de compatibilidade ao lado. A busca do portal usa o texto que
+      você escrever lá.</p>
 
     <div class="l-pf-group">
       <div class="l-pf-field">
         <span class="l-pf-label" id="lb-uso">Uso principal</span>
         <div class="l-pf-chips" role="group" aria-labelledby="lb-uso">
           @for (o of opcoesUso; track o) {
-            <button
-              class="l-pf-chip"
-              type="button"
-              [class.is-on]="uso.uso === o"
-              [attr.aria-pressed]="uso.uso === o"
-              (click)="escolherUso(o)">{{ o }}</button>
+          <button class="l-pf-chip" type="button" [class.is-on]="uso.uso === o" [attr.aria-pressed]="uso.uso === o"
+            (click)="escolherUso(o)">{{ o }}</button>
           }
         </div>
       </div>
@@ -35,12 +32,8 @@
         <span class="l-pf-label" id="lb-pax">Pessoas a bordo no dia a dia</span>
         <div class="l-pf-chips" role="group" aria-labelledby="lb-pax">
           @for (o of opcoesPassageiros; track o) {
-            <button
-              class="l-pf-chip"
-              type="button"
-              [class.is-on]="uso.passageiros === o"
-              [attr.aria-pressed]="uso.passageiros === o"
-              (click)="escolherPassageiros(o)">{{ o }}</button>
+          <button class="l-pf-chip" type="button" [class.is-on]="uso.passageiros === o"
+            [attr.aria-pressed]="uso.passageiros === o" (click)="escolherPassageiros(o)">{{ o }}</button>
           }
         </div>
       </div>
@@ -48,11 +41,13 @@
       <div class="l-pf-two">
         <div class="l-pf-field">
           <label class="l-pf-label" for="rodagem">Rodagem mensal</label>
-          <input class="l-pf-input" id="rodagem" name="rodagem" placeholder="Ex: 1.200 km" [(ngModel)]="uso.rodagem" (ngModelChange)="aoDigitarUso()" />
+          <input class="l-pf-input" id="rodagem" name="rodagem" placeholder="Ex: 1.200 km" [(ngModel)]="uso.rodagem"
+            (ngModelChange)="aoDigitarUso()" />
         </div>
         <div class="l-pf-field">
           <label class="l-pf-label" for="orcamento">Teto de orçamento</label>
-          <input class="l-pf-input" id="orcamento" name="orcamento" placeholder="Ex: R$ 250.000" [(ngModel)]="uso.orcamento" (ngModelChange)="aoDigitarUso()" />
+          <input class="l-pf-input" id="orcamento" name="orcamento" placeholder="Ex: R$ 250.000"
+            [(ngModel)]="uso.orcamento" (ngModelChange)="aoDigitarUso()" />
         </div>
       </div>
 
@@ -60,12 +55,8 @@
         <span class="l-pf-label" id="lb-prio">O que mais pesa pra você</span>
         <div class="l-pf-chips" role="group" aria-labelledby="lb-prio">
           @for (o of opcoesPrioridade; track o) {
-            <button
-              class="l-pf-chip"
-              type="button"
-              [class.is-on]="prioritario(o)"
-              [attr.aria-pressed]="prioritario(o)"
-              (click)="alternarPrioridade(o)">{{ o }}</button>
+          <button class="l-pf-chip" type="button" [class.is-on]="prioritario(o)" [attr.aria-pressed]="prioritario(o)"
+            (click)="alternarPrioridade(o)">{{ o }}</button>
           }
         </div>
         <p class="l-pf-hint">Escolha até {{ maxPrioridades }}. Eles recebem peso dobrado na nota.</p>
@@ -81,24 +72,49 @@
         <div class="l-pf-two">
           <div class="l-pf-field">
             <label class="l-pf-label" for="nome">Nome completo</label>
-            <input class="l-pf-input" id="nome" name="nome" autocomplete="name" placeholder="Seu nome completo" [(ngModel)]="conta.nome" />
+            <input class="l-pf-input" id="nome" name="nome" autocomplete="name" placeholder="Seu nome completo"
+              [(ngModel)]="conta.nome" />
           </div>
           <div class="l-pf-field">
             <label class="l-pf-label" for="telefone">Telefone</label>
-            <input class="l-pf-input" id="telefone" name="telefone" autocomplete="tel" placeholder="(00) 00000-0000" [(ngModel)]="conta.telefone" />
+            <input class="l-pf-input" id="telefone" name="telefone" autocomplete="tel" placeholder="(00) 00000-0000"
+              [(ngModel)]="conta.telefone" />
+          </div>
+        </div>
+
+        <div class="l-pf-two">
+          <div class="l-pf-field">
+            <label class="l-pf-label" for="idade">Idade</label>
+            <input class="l-pf-input" id="idade" name="idade" type="number" min="13" max="120"
+              [(ngModel)]="conta.idade" />
+          </div>
+          <div class="l-pf-field">
+            <span class="l-pf-label" id="lb-genero">Gênero</span>
+            <div class="l-pf-chips" role="group" aria-labelledby="lb-genero">
+              @for (opcao of opcoesGenero; track opcao) {
+              <button class="l-pf-chip" type="button" [class.is-on]="conta.genero === opcao"
+                [attr.aria-pressed]="conta.genero === opcao" (click)="conta.genero = opcao">{{ opcao }}</button>
+              }
+            </div>
           </div>
         </div>
 
         <div class="l-pf-field">
           <span class="l-pf-label">E-mail da conta</span>
           <div class="l-pf-locked">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 1 1 8 0v4" /></svg>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 11h14v10H5zM8 11V7a4 4 0 1 1 8 0v4" />
+            </svg>
             {{ conta.email }}
           </div>
           <p class="l-pf-hint">É o identificador da sua conta. Para trocar, fale com o suporte.</p>
         </div>
       </div>
     </div>
+
+    @if (erroBanco) {
+    <p class="l-pf-hint l-pf-save-error" role="alert">{{ erroBanco }}</p>
+    }
   </main>
 
   <aside class="l-pf-rail">
@@ -112,25 +128,22 @@
         <div class="l-pf-preview-fill" [style.width.%]="previa.nota"></div>
       </div>
       @for (o of previa.outros; track o.modelo) {
-        <div class="l-pf-preview-other"><span>{{ o.modelo }}</span><span>{{ o.nota }}%</span></div>
+      <div class="l-pf-preview-other"><span>{{ o.modelo }}</span><span>{{ o.nota }}%</span></div>
       }
       <p class="l-pf-preview-note">Atualiza na hora conforme você ajusta o perfil de uso abaixo.</p>
     </div>
 
     <div class="l-pf-rail-label">Atalhos</div>
     @for (a of atalhos; track a.chave) {
-      <button class="l-pf-link" type="button" (click)="irAtalho(a.chave)">
-        <span>{{ a.rotulo }}</span>
-        <span class="l-pf-count">{{ a.contagem }}</span>
-      </button>
+    <button class="l-pf-link" type="button" (click)="irAtalho(a.chave)">
+      <span>{{ a.rotulo }}</span>
+      <span class="l-pf-count">{{ a.contagem }}</span>
+    </button>
     }
 
     <div class="l-pf-rail-label">Consentimento</div>
     <label class="l-pf-consent">
-      <input
-        type="checkbox"
-        class="l-pf-switch-input"
-        [(ngModel)]="compartilhaComConcessionaria"
+      <input type="checkbox" class="l-pf-switch-input" [(ngModel)]="compartilhaComConcessionaria"
         (ngModelChange)="salvarConsentimento($event)" />
       <span class="l-pf-switch" aria-hidden="true"></span>
       <span>Compartilhar preferências com concessionárias</span>
@@ -141,14 +154,16 @@
 <div class="l-pf-save" [class.is-idle]="!alteracoes">
   <div class="l-pf-save-state">
     @if (alteracoes) {
-      <strong>{{ alteracoes }}</strong> {{ alteracoes === 1 ? 'alteração' : 'alterações' }} não {{ alteracoes === 1 ? 'salva' : 'salvas' }}
+    <strong>{{ alteracoes }}</strong> {{ alteracoes === 1 ? 'alteração' : 'alterações' }} não {{ alteracoes === 1 ?
+    'salva' : 'salvas' }}
     } @else {
-      Tudo salvo
+    Tudo salvo
     }
   </div>
   <div class="l-pf-save-actions">
     <button class="l-pf-ghost" type="button" [disabled]="!alteracoes" (click)="descartar()">Descartar</button>
-    <button class="l-pf-primary" type="button" [disabled]="!alteracoes" (click)="salvar()">Salvar perfil</button>
+    <button class="l-pf-primary" type="button" [disabled]="!alteracoes || salvandoPerfil" (click)="salvar()">{{
+      salvandoPerfil ? 'Salvando...' : 'Salvar perfil' }}</button>
   </div>
 </div>
 

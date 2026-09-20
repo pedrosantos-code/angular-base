@@ -13,8 +13,12 @@ export class AuthService {
 
     supabase = createClient(environment.supabaseUrl, environment.supabaseKey);
 
-    register(email: string, password: string, nome?: string): Observable<AuthResponse> {
-        const promise = this.supabase.auth.signUp({ email, password, options: { data: { nome } } });
+    register(email: string, password: string, nome?: string, idade?: number, genero?: string): Observable<AuthResponse> {
+        const promise = this.supabase.auth.signUp({
+            email,
+            password,
+            options: { data: { nome, idade, genero } },
+        });
         return from(promise);
     }
 
