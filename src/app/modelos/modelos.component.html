@@ -2,7 +2,15 @@
 
 <div class="l-md-shell">
 
-  <aside class="l-md-rail">
+  <!-- Só no celular: os filtros ficam recolhidos para a lista aparecer logo; no computador o painel é fixo -->
+  <button type="button" class="l-md-filters-toggle" [attr.aria-expanded]="filtrosAbertos" aria-controls="l-md-rail"
+          (click)="filtrosAbertos = !filtrosAbertos">
+    Filtros
+    @if (filtrosAtivos) { <span class="l-md-filters-badge">{{ filtrosAtivos }}</span> }
+    <span class="l-md-filters-chevron" aria-hidden="true">{{ filtrosAbertos ? '−' : '+' }}</span>
+  </button>
+
+  <aside class="l-md-rail" id="l-md-rail" [class.is-open]="filtrosAbertos">
     <div class="l-md-rail-label">Categoria</div>
     @for (c of categorias; track c.chave) {
       <button
@@ -54,6 +62,10 @@
       <input type="checkbox" [(ngModel)]="soFavoritos" />
       Só favoritos ({{ favoritos.size }})
     </label>
+
+    <button type="button" class="l-md-filters-done" (click)="filtrosAbertos = false">
+      Ver {{ filtrados.length }} {{ filtrados.length === 1 ? 'modelo' : 'modelos' }}
+    </button>
   </aside>
 
   <main class="l-md-main">

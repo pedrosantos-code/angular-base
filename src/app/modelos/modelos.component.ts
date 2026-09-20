@@ -109,6 +109,8 @@ export class ModelosComponent {
   motorizacoesAtivas = new Set<Motorizacao>();
   tetoPreco = 599900;
   soCompativeis = false;
+  /** Só no celular: o painel de filtros fica recolhido até tocar em "Filtros". */
+  filtrosAbertos = false;
   /** Pré-preenchido quando se chega aqui pelo "Ver ficha" do portal (?termo=Nome+do+modelo). */
   termo = this.route.snapshot.queryParamMap.get('termo') ?? '';
   ordem: Ordenacao = 'compatibilidade';
@@ -170,6 +172,17 @@ export class ModelosComponent {
 
   get precoMinimo(): number {
     return this.modelos.length ? Math.min(...this.modelos.map((m) => m.precoDe)) : 0;
+  }
+
+  /** Quantos filtros estão ligados (mostrado no botão "Filtros" do celular). */
+  get filtrosAtivos(): number {
+    return (
+      (this.categoria !== 'todos' ? 1 : 0) +
+      this.motorizacoesAtivas.size +
+      (this.tetoPreco < this.precoMaximo ? 1 : 0) +
+      (this.soCompativeis ? 1 : 0) +
+      (this.soFavoritos ? 1 : 0)
+    );
   }
 
   get precoMaximo(): number {

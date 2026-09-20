@@ -37,6 +37,9 @@
   .l-md-main { grid-column: 2; }
   seia-rodape { position: relative; z-index: 2; }
 }
+/* Botão e atalho de fechar só existem no celular (ver @media abaixo) */
+.l-md-filters-toggle, .l-md-filters-done { display: none; }
+
 .l-md-rail-label {
   font-family: 'Archivo', sans-serif; font-weight: 800;
   font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
@@ -264,7 +267,22 @@ button.l-md-ct-remove {
   .l-md-shell { grid-template-columns: 1fr; }
 
   /* Filtros viram chips que quebram linha, em vez de uma lista comprida antes dos modelos */
-  .l-md-rail { position: static; height: auto; overflow: visible; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 20px 18px; }
+  button.l-md-filters-toggle {
+    display: flex; align-items: center; gap: 10px; width: 100%; min-height: 50px; padding: 12px 20px;
+    background: #001730; color: #fff; border-bottom: 1px solid rgba(255,255,255,.1);
+    font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+  }
+  .l-md-filters-badge { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #2E7DD1; font-size: 12px; letter-spacing: 0; }
+  .l-md-filters-chevron { margin-left: auto; font-size: 20px; line-height: 1; color: #7FB3E4; }
+  .l-md-filters-toggle:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
+
+  /* Recolhido por padrão; abre pelo botão "Filtros" */
+  .l-md-rail { display: none; position: static; height: auto; overflow: visible; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 20px 18px; }
+  .l-md-rail.is-open { display: flex; }
+  button.l-md-filters-done {
+    display: block; width: 100%; min-height: 44px; margin-top: 14px; padding: 10px 16px; border-radius: 2px; background: #2E7DD1; color: #fff; text-align: center;
+    font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 12.5px; letter-spacing: .07em; text-transform: uppercase;
+  }
   .l-md-rail-label { width: 100%; padding: 0; margin: 12px 0 0; }
   .l-md-rail-label:first-child { margin-top: 0; }
   button.l-md-filter, button.l-md-filter.is-on {
