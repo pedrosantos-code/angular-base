@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <!-- Cabeçalho -->
-  <header class="site-header" [class.site-header--dark]="headerBg() !== null" [style.--header-bg]="headerBg()">
+  <header class="site-header" [class.site-header--dark]="headerBg() !== null" [class.site-header--fade]="headerFade() && !menuOpen()" [style.--header-bg]="headerBg()">
     <div class="site-header__inner">
       <div class="brand">
         <img src="favicon.ico" alt="" class="brand__logo">
@@ -135,7 +135,7 @@
   </div>
 
   <!-- Banner de largura total -->
-  <div class="banner" data-header-bg="#001d3a">
+  <div class="banner" data-header-bg="#001d3a" data-header-fade>
     <img src="fundo.png" alt="" class="banner__img" loading="lazy" decoding="async">
     <div class="banner__shade"></div>
     <div class="banner__content">
@@ -268,7 +268,7 @@
   </div>
 
   <!-- Call to Action final -->
-  <div class="cta" data-header-bg="#143a63">
+  <div class="cta" data-header-bg="#143a63" data-header-fade>
     <img src="explorer.jpeg" alt="" class="cta__photo" loading="lazy" decoding="async">
     <div class="cta__grid"></div>
     <div class="cta__inner">

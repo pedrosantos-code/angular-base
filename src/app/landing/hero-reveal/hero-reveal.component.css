@@ -89,14 +89,10 @@
 }
 .halo--l { left: 32.7%; }
 .halo--r { left: 67.3%; }
-
-/* Piso e reflexo azul */
-.floor {
-  position: absolute; mix-blend-mode: plus-lighter; left: 6%; right: 6%; bottom: 0; height: 34%; opacity: var(--head); pointer-events: none;
-  background:
-    radial-gradient(ellipse 46% 42% at 50% 34%, rgba(60, 115, 235, .42), transparent 72%),
-    radial-gradient(ellipse 60% 30% at 50% 78%, rgba(30, 60, 140, .35), transparent 76%);
-}
+/* Luzes baixas do para-choque: centros medidos na imagem, halo pequeno para não virar mancha entre os pneus */
+.halo--fl, .halo--fr { top: 74.9%; width: 9%; opacity: calc(var(--head) * .55); filter: blur(4px); }
+.halo--fl { left: 40.1%; }
+.halo--fr { left: 59.9%; }
 
 /* Scanner: linha fina, recortada pela silhueta do carro */
 .scan {

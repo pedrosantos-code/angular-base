@@ -58,6 +58,8 @@
 /* Cabeçalho escuro: mesma cor da cena do Hero enquanto ele está sob o cabeçalho */
 .site-header { transition: background-color .25s ease, border-color .25s ease; }
 .site-header--dark { background: var(--header-bg, #050709); border-bottom-color: var(--header-bg, #050709); }
+.site-header--fade::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 56px; pointer-events: none; background: linear-gradient(to bottom, var(--header-bg, #fff), transparent); }
+.site-header--fade:not(.site-header--dark) { border-bottom-color: transparent; }
 .site-header--dark .brand__name { color: #fff; }
 .site-header--dark .brand__tag { color: #8496AA; }
 .site-header--dark .nav-link { color: #C7D3E0; }

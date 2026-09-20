@@ -42,6 +42,8 @@ export class LandingComponent {
 
   // Cor de fundo do cabeçalho: acompanha a seção escura que está por trás dele (null = branco normal)
   headerBg = signal<string | null>('#050709');
+  // Transição suave entre a borda do cabeçalho e o conteúdo: no branco e nas seções com data-header-fade
+  headerFade = signal(false);
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
@@ -161,7 +163,14 @@ export class LandingComponent {
         return r.top <= line && r.bottom > line;
       });
       const bg = under?.dataset['headerBg'] ?? null;
-      if (bg !== this.headerBg()) this.zone.run(() => this.headerBg.set(bg));
+      // Sobre fundo branco (nenhuma seção escura sob o cabeçalho) a transição suave também vale
+      const fade = under ? under.hasAttribute('data-header-fade') : true;
+      if (bg !== this.headerBg() || fade !== this.headerFade()) {
+        this.zone.run(() => {
+          this.headerBg.set(bg);
+          this.headerFade.set(fade);
+        });
+      }
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(evaluate);
