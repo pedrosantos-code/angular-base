@@ -29,7 +29,7 @@ export type StagePhase = 'loading' | 'scanning' | 'identified' | 'fallback';
 const REVEAL_TIMEOUT_MS = 7000;
 
 /**
- * Palco 3D do Hero: mostra a F-150 Raptor R e emite `revealed` quando o veículo
+ * Palco 3D do Hero: mostra o Ford Mustang GT e emite `revealed` quando o veículo
  * é "identificado" (ou imediatamente quando cai no fallback com imagem).
  */
 @Component({
@@ -41,13 +41,13 @@ const REVEAL_TIMEOUT_MS = 7000;
 })
 export class HeroVehicleStageComponent {
   /** Imagem usada quando não há WebGL, o modelo falha ou até o 3D ficar pronto. */
-  fallbackSrc = input('f150.jpg');
-  modelSrc = input('models/f150-raptor-r.glb');
+  fallbackSrc = input('mustang.jpg');
+  modelSrc = input('models/mustang-gt.glb');
   revealed = output<void>();
 
   paints: PaintOption[] = [
-    { label: 'Vermelho Rapid (original)', hex: null, swatch: '#a3121f' },
-    { label: 'Azul Velocity', hex: '#1f5fbf', swatch: '#1f5fbf' },
+    { label: 'Azul Vapor (original)', hex: null, swatch: '#5d82af' },
+    { label: 'Vermelho Rapid', hex: '#a3121f', swatch: '#a3121f' },
     { label: 'Branco Oxford', hex: '#f1f1ee', swatch: '#f1f1ee' },
     { label: 'Preto Ágata', hex: '#15171a', swatch: '#15171a' },
     { label: 'Cinza Carbonizado', hex: '#6b7076', swatch: '#6b7076' },

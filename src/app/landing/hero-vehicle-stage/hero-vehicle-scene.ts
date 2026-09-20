@@ -20,13 +20,13 @@ export interface HeroScene {
 }
 
 // Comprimento da picape na cena (a escala real do GLB é minúscula e é normalizada).
-const CAR_LENGTH = 5;
+const CAR_LENGTH = 4.8;
 // Giro do modelo para que a frente aponte para +X.
 const FRONT_YAW = Math.PI;
 const SWEEP_SECONDS = 2.2;
 // Ponto que a câmera mira na vista frontal (perto do capô) e nome do material da pintura no GLB.
 const FRONT_TARGET_X = -CAR_LENGTH / 2 + 1.4;
-const PAINT_MATERIAL = 'RaptorPaaint';
+const PAINT_MATERIAL = 'Ford_MustangGT_2024PaintA_Material';
 const DRAG_RAD_PER_PX = 0.009;
 const AUTO_RETURN_AFTER = 5;
 
@@ -34,7 +34,7 @@ const ease = (t: number) => 1 - Math.pow(1 - Math.min(1, Math.max(0, t)), 3);
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 
 /**
- * Cena three.js do palco: carrega a Raptor R, revela o veículo com uma varredura
+ * Cena three.js do palco: carrega o Mustang GT, revela o veículo com uma varredura
  * de "scanner" e depois deixa a câmera oscilando devagar. O three.js é importado
  * dinamicamente para ficar num chunk separado do bundle inicial.
  */
@@ -50,7 +50,7 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
   renderer.setClearColor(0x000000, 0);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.05;
+  renderer.toneMappingExposure = 0.85;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   // O carro é estático: a sombra é calculada uma vez (após o load) em vez de a cada frame.
@@ -64,9 +64,9 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
 
   const camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
   // Enquadramento só na frente da picape (a frente aponta para -X).
-  const target = new THREE.Vector3(FRONT_TARGET_X, 0.95, 0);
+  const target = new THREE.Vector3(FRONT_TARGET_X, 0.7, 0);
 
-  const key = new THREE.DirectionalLight(0xffffff, 1.7);
+  const key = new THREE.DirectionalLight(0xffffff, 1.4);
   key.position.set(1.5, 8, 3);
   key.castShadow = true;
   key.shadow.mapSize.set(1024, 1024);
@@ -202,8 +202,8 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
   canvas.addEventListener('pointerup', onUp);
   canvas.addEventListener('pointercancel', onUp);
 
-  // Cor da pintura: recolore só os pixels "vermelhos" da textura da pintura (mantém sombras,
-  // detalhes pretos e o adesivo laranja) via uniforms, sem recriar o material.
+  // Cor da pintura: recolore a textura da pintura (mantém sombras e as linhas pretas de junção)
+  // via uniforms, sem recriar o material.
   const paintUniforms = { uPaint: { value: new THREE.Color(1, 1, 1) }, uMix: { value: 0 } };
   const paintTarget = new THREE.Color();
   let mixTarget = 0;
@@ -257,13 +257,11 @@ export async function createHeroScene(opts: HeroSceneOptions): Promise<HeroScene
           '#include <map_fragment>',
           `#include <map_fragment>
           {
-            float mx = max(diffuseColor.r, 0.002);
-            // Pintura = tom vermelho (g/r e b/r baixos), mesmo em áreas sombreadas.
-            // Preto (texto/detalhes: g≈r) e laranja (adesivo: g/r alto) ficam de fora.
-            float notOrange = 1.0 - smoothstep(0.32, 0.5, diffuseColor.g / mx);
-            float notGrey = 1.0 - smoothstep(0.4, 0.6, diffuseColor.b / mx);
-            float m = notOrange * notGrey * uMix;
-            vec3 painted = uPaint * clamp(diffuseColor.r / 0.45, 0.25, 1.15);
+            // O material já é só a pintura: recolore tudo o que não é preto (as linhas de junção das peças
+            // ficam pretas) e mantém o brilho relativo da textura original.
+            float lum = dot(diffuseColor.rgb, vec3(0.2126, 0.7152, 0.0722));
+            float m = smoothstep(0.03, 0.09, lum) * uMix;
+            vec3 painted = uPaint * clamp(lum / 0.16, 0.25, 1.15);
             diffuseColor.rgb = mix(diffuseColor.rgb, painted, m);
           }`
         );

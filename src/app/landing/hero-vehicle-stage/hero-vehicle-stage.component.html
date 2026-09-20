@@ -1,6 +1,6 @@
-<div class="stage" [attr.data-phase]="phase()" role="img" aria-label="Ford F-150 Raptor R em 3D">
+<div class="stage" [attr.data-phase]="phase()" role="img" aria-label="Ford Mustang GT em 3D">
   <!-- Imagem de fallback: aparece sem WebGL, se o modelo falhar e enquanto o 3D carrega -->
-  <img class="stage__fallback" [src]="fallbackSrc()" alt="Picape Ford F-150 em uma estrada de terra" />
+  <img class="stage__fallback" [src]="fallbackSrc()" alt="Ford Mustang GT" />
 
   <canvas #canvas class="stage__canvas" aria-hidden="true"></canvas>
 
@@ -16,7 +16,7 @@
           <span class="stage__status">Identificando veículo…</span>
         }
         @case ('identified') {
-          <span class="stage__status stage__status--ok">Identificado · Ford F-150 Raptor R</span>
+          <span class="stage__status stage__status--ok">Identificado · Ford Mustang GT</span>
         }
       }
     </div>
