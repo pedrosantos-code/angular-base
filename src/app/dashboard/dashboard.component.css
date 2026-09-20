@@ -143,8 +143,7 @@ button.l-db-link:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px
 /* ===== Responsivo ===== */
 @media (max-width: 640px) {
   .l-db-inner { padding: 0 20px; }
-  .l-db-hero { padding: 40px 0 90px; }
-  .l-db-search { margin-top: -58px; }
+  .l-db-hero { padding: 40px 0 48px; }
   .l-db-row { flex-wrap: wrap; row-gap: 6px; }
   .l-db-input { min-width: 0; flex: 1 1 100%; }
   .l-db-go, button.l-db-go { flex: 1 1 100%; }
