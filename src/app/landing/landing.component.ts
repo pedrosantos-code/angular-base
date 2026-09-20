@@ -44,6 +44,8 @@ export class LandingComponent {
   headerBg = signal<string | null>('#050709');
   // Transição suave entre a borda do cabeçalho e o conteúdo: no branco e nas seções com data-header-fade
   headerFade = signal(false);
+  // Altura do degradê (null = padrão do CSS); o valor vem de data-header-fade="20px" na seção
+  headerFadeH = signal<string | null>(null);
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
@@ -165,10 +167,12 @@ export class LandingComponent {
       const bg = under?.dataset['headerBg'] ?? null;
       // Sobre fundo branco (nenhuma seção escura sob o cabeçalho) a transição suave também vale
       const fade = under ? under.hasAttribute('data-header-fade') : true;
-      if (bg !== this.headerBg() || fade !== this.headerFade()) {
+      const fadeH = under?.dataset['headerFade'] || null;
+      if (bg !== this.headerBg() || fade !== this.headerFade() || fadeH !== this.headerFadeH()) {
         this.zone.run(() => {
           this.headerBg.set(bg);
           this.headerFade.set(fade);
+          this.headerFadeH.set(fadeH);
         });
       }
     };

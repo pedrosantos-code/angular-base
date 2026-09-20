@@ -61,6 +61,14 @@
   .stage__hint { display: none; }
   .stage__paints { gap: 8px; padding: 7px 12px; }
   .stage__hud { font-size: 10px; letter-spacing: .1em; padding: 7px 12px; }
+  /* O crédito desce para debaixo do HUD: lado a lado os dois se sobrepunham em telas estreitas */
+  .stage__credit { top: 46px; left: 8px; right: auto; }
+}
+
+/* Alvo de toque confortável nos botões de cor */
+@media (pointer: coarse) {
+  .stage__swatch { width: 32px; height: 32px; }
+  .stage__paints { gap: 8px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

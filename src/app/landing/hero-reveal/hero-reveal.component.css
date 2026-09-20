@@ -128,7 +128,7 @@
 
 /* Selo de identificação (fim do scanner) */
 .tag {
-  position: absolute; top: 10px; left: 0; right: 0; margin: 0; text-align: center; pointer-events: none;
+  position: absolute; top: 24px; left: 0; right: 0; margin: 0; text-align: center; pointer-events: none;
   font-size: 10.5px; font-weight: 600; letter-spacing: .24em; text-transform: uppercase; color: #8FB8E2;
   opacity: var(--tag);
 }

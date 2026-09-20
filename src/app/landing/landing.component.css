@@ -58,7 +58,7 @@
 /* Cabeçalho escuro: mesma cor da cena do Hero enquanto ele está sob o cabeçalho */
 .site-header { transition: background-color .25s ease, border-color .25s ease; }
 .site-header--dark { background: var(--header-bg, #050709); border-bottom-color: var(--header-bg, #050709); }
-.site-header--fade::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 56px; pointer-events: none; background: linear-gradient(to bottom, var(--header-bg, #fff), transparent); }
+.site-header--fade::after { content: ''; position: absolute; left: 0; right: 0; top: 100%; height: var(--fade-h, 56px); pointer-events: none; background: linear-gradient(to bottom, var(--header-bg, #fff), transparent); }
 .site-header--fade:not(.site-header--dark) { border-bottom-color: transparent; }
 .site-header--dark .brand__name { color: #fff; }
 .site-header--dark .brand__tag { color: #8496AA; }
@@ -340,6 +340,15 @@ app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #050709; }
   .demo__cell { padding: 9px 8px; }
   .demo__bars { gap: 10px; }
   .demo__title { font-size: 10.5px; letter-spacing: .06em; }
+
+  /* Tabela de diferenciais: cada linha vira um cartão, com o nome da coluna antes de cada valor */
+  .diff { overflow-x: visible; }
+  .diff__head { display: none; }
+  .diff__row { display: block; min-width: 0; padding: 16px 0; }
+  .diff__key { padding: 0 0 10px; font-family: var(--display); font-weight: 800; font-size: 16px; }
+  .diff__td { display: grid; grid-template-columns: 116px 1fr; gap: 12px; align-items: baseline; padding: 9px 12px; }
+  .diff__td::before { content: attr(data-label); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #8496AA; }
+  .diff__td--seia::before { color: var(--accent); }
 
   .metrics { gap: 24px; }
   .values { gap: 28px; }

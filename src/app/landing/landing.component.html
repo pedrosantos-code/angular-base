@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <!-- Cabeçalho -->
-  <header class="site-header" [class.site-header--dark]="headerBg() !== null" [class.site-header--fade]="headerFade() && !menuOpen()" [style.--header-bg]="headerBg()">
+  <header class="site-header" [class.site-header--dark]="headerBg() !== null" [class.site-header--fade]="headerFade() && !menuOpen()" [style.--header-bg]="headerBg()" [style.--fade-h]="headerFadeH()">
     <div class="site-header__inner">
       <div class="brand">
         <img src="favicon.ico" alt="" class="brand__logo">
@@ -38,7 +38,7 @@
   </header>
 
   <!-- Hero: scroll reveal cinematográfico (camadas de imagem + CSS, sem 3D) -->
-  <app-hero-reveal class="hero" data-header-bg="#050709">
+  <app-hero-reveal class="hero" data-header-bg="#050709" data-header-fade="20px">
     <div class="eyebrow" data-reveal-step="1">
       <span class="eyebrow__line"></span>
       <span class="eyebrow__text">Recomendação de veículos com IA</span>
@@ -229,9 +229,9 @@
       @for (c of compare; track $index) {
         <div class="diff__row" appReveal [revealDelay]="($index + 1) * 120">
           <div class="diff__key">{{ c.k }}</div>
-          <div class="diff__td">{{ c.a }}</div>
-          <div class="diff__td">{{ c.b }}</div>
-          <div class="diff__td diff__td--seia">{{ c.c }}</div>
+          <div class="diff__td" data-label="Busca manual">{{ c.a }}</div>
+          <div class="diff__td" data-label="Sites genéricos">{{ c.b }}</div>
+          <div class="diff__td diff__td--seia" data-label="SEIA">{{ c.c }}</div>
         </div>
       }
     </div>
