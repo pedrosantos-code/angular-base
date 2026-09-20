@@ -228,7 +228,9 @@ app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #050709; }
 .values__item { padding-left: 16px; border-left: 2px solid #DCE6EF; font-size: 15px; line-height: 1.5; color: #4A5A6A; }
 
 /* CTA final */
-.cta { position: relative; width: 100%; margin-top: 88px; overflow: hidden; background: var(--brand); }
+/* margin-top + padding-top = 88px: a imagem sobe 40px para dentro da margem, assim o cabeçalho já tinge
+   quando ela o alcança e não sobra faixa branca entre os dois. */
+.cta { position: relative; width: 100%; margin-top: 48px; padding-top: 40px; overflow: hidden; background: var(--brand); }
 .cta__photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: .16; filter: grayscale(1); }
 .cta__grid { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px), linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px); background-size: 56px 56px; }
 .cta__inner { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 44px; max-width: 1180px; width: 100%; margin: 0 auto; padding: 80px 28px; }
@@ -302,7 +304,7 @@ app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #050709; }
   .section { padding: 60px 20px 0; }
   .banner { margin-top: 60px; }
   .banner__content { margin: 0; padding: 0 20px; }
-  .cta { margin-top: 60px; }
+  .cta { margin-top: 20px; padding-top: 40px; }
   .cta__inner { padding: 56px 20px; gap: 28px; }
   .footer__inner { padding: 48px 20px 28px; }
 

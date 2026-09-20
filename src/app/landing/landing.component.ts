@@ -153,7 +153,9 @@ export class LandingComponent {
     let frame = 0;
     const evaluate = () => {
       frame = 0;
-      const line = header.getBoundingClientRect().bottom - 1;
+      // 1px abaixo do cabeçalho: no topo da página o Hero começa exatamente na borda dele (top === bottom),
+      // e com a linha 1px acima nenhuma seção era encontrada e o cabeçalho ficava branco até o primeiro scroll.
+      const line = header.getBoundingClientRect().bottom + 1;
       const under = sections.find((s) => {
         const r = s.getBoundingClientRect();
         return r.top <= line && r.bottom > line;
