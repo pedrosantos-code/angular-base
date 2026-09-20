@@ -6,7 +6,11 @@
    ========================================================= */
 
 :host {
-  display: block;
+  /* Coluna de altura mínima da tela: o conteúdo cresce e o rodapé fica sempre no fim, mesmo com a página curta */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: #fff;
   color: #001730;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
@@ -50,7 +54,7 @@ h1.l-db-title {
 .l-db-subtitle { font-size: 15.5px; line-height: 1.55; color: #9FC4E8; margin: 0 0 26px; max-width: 560px; }
 
 /* ===== Busca (dentro do hero) ===== */
-.l-db-body { padding: 30px 0 60px; min-height: 140px; }
+.l-db-body { flex: 1 0 auto; padding: 30px 0 60px; min-height: 140px; }
 
 .l-db-search { display: flex; gap: 10px; flex-wrap: wrap; }
 .l-db-input {
