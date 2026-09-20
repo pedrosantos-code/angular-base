@@ -144,3 +144,8 @@ button.l-db-chip:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
   .l-db-go, button.l-db-go { flex: 1 1 100%; }
   .l-db-chart-card { height: 300px; padding: 12px; }
 }
+
+/* iOS Safari dá zoom na página ao focar um campo com fonte menor que 16px; no celular o campo passa a ter 16px */
+@media (pointer: coarse), (max-width: 640px) {
+  input.l-db-input, .l-db-input { font-size: 16px; }
+}

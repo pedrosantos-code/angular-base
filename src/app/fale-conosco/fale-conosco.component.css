@@ -592,3 +592,7 @@ seia-rodape {
   }
 }
 
+/* iOS Safari dá zoom na página ao focar um campo com fonte menor que 16px; no celular o campo passa a ter 16px */
+@media (pointer: coarse), (max-width: 640px) {
+  .search-box input { font-size: 16px; }
+}

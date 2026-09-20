@@ -331,3 +331,8 @@ button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset
   button.l-result-ficha, button.l-btn-secondary { min-height: 40px; padding-top: 8px; padding-bottom: 8px; }
   button.l-footer-link { min-height: 36px; }
 }
+
+/* iOS Safari dá zoom na página ao focar um campo com fonte menor que 16px; no celular o campo passa a ter 16px */
+@media (pointer: coarse), (max-width: 640px) {
+  input.l-search-input, .l-search-input { font-size: 16px; }
+}

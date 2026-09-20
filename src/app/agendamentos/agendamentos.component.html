@@ -123,7 +123,7 @@
       }
     </section>
 
-    <div class="l-ag-summary">
+    <div class="l-ag-summary" [class.is-ready]="completo">
       <p class="l-ag-summary-text">
         @if (completo) {
           <strong>{{ tipoRotulo }}@if (exigeModelo) { do {{ modelo.nome }} }</strong><br />

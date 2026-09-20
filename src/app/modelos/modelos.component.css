@@ -303,3 +303,8 @@ button.l-md-ct-remove {
   button.l-md-filter, button.l-md-filter.is-on { min-height: 40px; }
   button.l-md-sort-option { min-height: 36px; padding-left: 6px; padding-right: 6px; }
 }
+
+/* iOS Safari dá zoom na página ao focar um campo com fonte menor que 16px; no celular o campo passa a ter 16px */
+@media (pointer: coarse), (max-width: 640px) {
+  input.l-md-search, .l-md-search { font-size: 16px; }
+}
