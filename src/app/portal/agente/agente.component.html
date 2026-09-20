@@ -248,13 +248,116 @@
 
         <div class="ag-narrativa">
           <div class="ag-narrativa-topo">
-            <h3 class="ag-bloco-titulo">Texto para o slide</h3>
+            <h3 class="ag-bloco-titulo">Resumo</h3>
             <button type="button" class="ag-btn-texto" (click)="copiarNarrativa()">
               {{ copiado() ? 'Copiado ✓' : 'Copiar' }}
             </button>
           </div>
           <p class="ag-narrativa-texto">{{ narrativa() }}</p>
           <p class="ag-narrativa-comprador"><strong>Comprador típico:</strong> {{ l.compradorTipico }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- Camada de IA -->
+    @if (iaConfigurada) {
+      <div class="ag-ia" appReveal="up">
+        <div class="ag-premissas-topo">
+          <div>
+            <h3 class="ag-bloco-titulo">Opinião da IA</h3>
+            <p class="ag-grafico-nota">
+              Um modelo de linguagem lê o resultado acima e elabora o argumento. Os números continuam
+              vindo do motor determinístico — a IA não calcula nada e é instruída a não inventar dados.
+            </p>
+          </div>
+          @if (!insights() && !carregandoInsights()) {
+            <button type="button" class="ag-btn-primario ag-btn-ia" (click)="gerarInsights()">
+              Gerar leitura executiva
+            </button>
+          }
+        </div>
+
+        @if (carregandoInsights()) {
+          <div class="ag-estado"><span class="ag-spinner" aria-hidden="true"></span> A IA está analisando…</div>
+        }
+
+        @if (erroIa(); as erro) {
+          <div class="ag-estado ag-estado--erro">{{ erro }}</div>
+        }
+
+        @if (insights(); as i) {
+          <div class="ag-veredito" [class.ag-veredito--discorda]="!i.concordaComRanking">
+            <span class="ag-veredito-selo">{{ i.concordaComRanking ? 'Concorda com o ranking' : 'Discorda do ranking' }}</span>
+            <p class="ag-veredito-texto">{{ i.veredito }}</p>
+          </div>
+
+          <div class="ag-ia-bloco">
+            <h4 class="ag-ia-subtitulo">Leitura do perfil</h4>
+            <p class="ag-ia-texto">{{ i.leituraPerfil }}</p>
+          </div>
+
+          <div class="ag-ia-grid">
+            <div class="ag-ia-bloco">
+              <h4 class="ag-ia-subtitulo">Riscos</h4>
+              @for (r of i.riscos; track r.titulo) {
+                <div class="ag-ia-item ag-ia-item--risco">
+                  <strong>{{ r.titulo }}</strong>
+                  <p>{{ r.texto }}</p>
+                </div>
+              }
+            </div>
+            <div class="ag-ia-bloco">
+              <h4 class="ag-ia-subtitulo">Argumentos de venda</h4>
+              @for (a of i.argumentosVenda; track a.titulo) {
+                <div class="ag-ia-item">
+                  <strong>{{ a.titulo }}</strong>
+                  <p>{{ a.texto }}</p>
+                </div>
+              }
+            </div>
+          </div>
+
+          @if (i.perguntasDoGestor.length) {
+            <div class="ag-ia-bloco">
+              <h4 class="ag-ia-subtitulo">O gestor provavelmente vai perguntar</h4>
+              @for (p of i.perguntasDoGestor; track p.pergunta) {
+                <details class="ag-ia-qa">
+                  <summary>{{ p.pergunta }}</summary>
+                  <p>{{ p.resposta }}</p>
+                </details>
+              }
+            </div>
+          }
+        }
+
+        <!-- Pergunta livre -->
+        <div class="ag-ia-chat">
+          <h4 class="ag-ia-subtitulo">Pergunte sobre esta análise</h4>
+
+          @for (t of conversa(); track $index) {
+            <div class="ag-chat-turno">
+              <p class="ag-chat-pergunta">{{ t.pergunta }}</p>
+              <p class="ag-chat-resposta">{{ t.resposta }}</p>
+            </div>
+          }
+
+          @if (carregandoPergunta()) {
+            <div class="ag-estado"><span class="ag-spinner" aria-hidden="true"></span> Pensando…</div>
+          }
+
+          <div class="ag-chat-entrada">
+            <input
+              type="text"
+              class="ag-chat-input"
+              [(ngModel)]="pergunta"
+              (keyup.enter)="enviarPergunta()"
+              [disabled]="carregandoPergunta()"
+              aria-label="Pergunta sobre a análise"
+              placeholder="Ex: e se o orçamento subir para 400 mil?">
+            <button type="button" class="ag-btn-primario" (click)="enviarPergunta()" [disabled]="!pergunta.trim() || carregandoPergunta()">
+              Perguntar
+            </button>
+          </div>
         </div>
       </div>
     }

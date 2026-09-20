@@ -45,3 +45,8 @@ Thumbs.db
 
 # Environment variables
 src/environments/environment*.ts
+
+# Segredos das Edge Functions (chave da Anthropic) — nunca versionar
+supabase/functions/.env.local
+supabase/.env
+supabase/.temp/

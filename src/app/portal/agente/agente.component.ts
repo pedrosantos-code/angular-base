@@ -14,6 +14,7 @@ import {
   fatosDoPerfil, formatarReais, interpretarPerfil, narrativaExecutiva, pesosDoPerfil, ranquear,
 } from '../../shared/agente-perfil';
 import { RevealDirective } from '../../shared/reveal.directive';
+import { AnaliseIaError, AnaliseIaService, Insights } from '../../shared/analise-ia.service';
 
 Chart.register(...registerables);
 
@@ -99,6 +100,7 @@ function potenciaPublicada(c: Car): number | null {
 export class AgenteComponent implements OnDestroy {
   private fonte = inject(FONTE_VEICULOS);
   private router = inject(Router);
+  private ia = inject(AnaliseIaService);
 
   readonly avisoMercado = AVISO_BASE_MERCADO;
   readonly nomeFonte = this.fonte.nome;
@@ -211,6 +213,7 @@ export class AgenteComponent implements OnDestroy {
     this.matches.set([]);
     this.fichas.set([]);
     this.erroApi.set(null);
+    this.limparIa();
   }
 
   analisar(): void {
@@ -224,8 +227,80 @@ export class AgenteComponent implements OnDestroy {
     this.fatos.set(fatosDoPerfil(perfil));
     this.pesos.set(pesosDoPerfil(perfil));
     this.matches.set(ranking);
+    this.limparIa(); // a leitura anterior não vale para o novo cliente
 
     this.buscarFichas(ranking.slice(0, 3).map((m) => m.modelo));
+  }
+
+  // ---- Camada de IA -------------------------------------------------------
+
+  readonly iaConfigurada = this.ia.configurada;
+
+  insights = signal<Insights | null>(null);
+  carregandoInsights = signal<boolean>(false);
+  erroIa = signal<string | null>(null);
+
+  pergunta = '';
+  conversa = signal<{ pergunta: string; resposta: string }[]>([]);
+  carregandoPergunta = signal<boolean>(false);
+
+  private limparIa(): void {
+    this.insights.set(null);
+    this.conversa.set([]);
+    this.erroIa.set(null);
+    this.pergunta = '';
+  }
+
+  async gerarInsights(): Promise<void> {
+    if (this.carregandoInsights()) return;
+    this.carregandoInsights.set(true);
+    this.erroIa.set(null);
+
+    try {
+      this.insights.set(await this.ia.gerarInsights(this.payloadParaIa()));
+    } catch (e) {
+      this.erroIa.set(e instanceof AnaliseIaError ? e.message : 'Falha inesperada ao consultar a IA.');
+    } finally {
+      this.carregandoInsights.set(false);
+    }
+  }
+
+  async enviarPergunta(): Promise<void> {
+    const texto = this.pergunta.trim();
+    if (!texto || this.carregandoPergunta()) return;
+
+    this.carregandoPergunta.set(true);
+    this.erroIa.set(null);
+    this.pergunta = '';
+
+    try {
+      const resposta = await this.ia.perguntar(this.payloadParaIa(), texto);
+      this.conversa.update((c) => [...c, { pergunta: texto, resposta }]);
+    } catch (e) {
+      this.pergunta = texto; // devolve o texto para a pessoa não perder o que digitou
+      this.erroIa.set(e instanceof AnaliseIaError ? e.message : 'Falha inesperada ao consultar a IA.');
+    } finally {
+      this.carregandoPergunta.set(false);
+    }
+  }
+
+  /**
+   * O que a IA enxerga. Só o resultado já calculado — ela elabora o argumento,
+   * nunca os números. A marcação de estimativa vai junto para o modelo saber o
+   * que pode tratar como fato e o que precisa qualificar.
+   */
+  private payloadParaIa(): unknown {
+    return {
+      descricaoDoCliente: this.descricao.trim(),
+      fatosLidos: this.fatos(),
+      pesosPorEixo: this.pesos(),
+      eixos: EIXOS,
+      ranking: this.matches().slice(0, 5),
+      fichaTecnicaDaApi: this.fichas(),
+      fonteDaFichaTecnica: this.nomeFonte,
+      avisoSobreDadosDeMercado: this.avisoMercado,
+      nenhumModeloCabeNoOrcamento: this.nenhumCabe(),
+    };
   }
 
   /** Puxa a ficha técnica real dos três finalistas na fonte configurada. */
