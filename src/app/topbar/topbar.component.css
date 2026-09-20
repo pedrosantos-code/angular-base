@@ -1,5 +1,8 @@
 :host {
   display: block;
+  /* Fixa o topbar no topo de verdade: o sticky do .topbar sozinho só vale dentro deste elemento, que tem a altura
+     dele, então ele saía da tela ao rolar. No host, o sticky vale dentro da página inteira. */
+  position: sticky; top: 0; z-index: 90;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
@@ -100,4 +103,10 @@ button.drawer-link--active { color: #fff; margin-left: -20px; padding-left: 16px
   button.topbar-btn { width: 36px; height: 36px; }
   .l-brand-wrapper { gap: 6px; }
   .l-brand-seia, .l-brand-ford { height: 18px; }
+}
+
+/* Alvos de toque confortáveis (~40px) em tela de toque ou estreita; só aumenta a área clicável */
+@media (pointer: coarse), (max-width: 640px) {
+  .l-brand-wrapper { min-height: 44px; padding: 0 6px; }
+  .l-drawer-brand { min-height: 44px; }
 }

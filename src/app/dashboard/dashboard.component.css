@@ -6,9 +6,12 @@
    ========================================================= */
 
 :host {
+
+  /* Coluna de altura mínima da tela: o conteúdo cresce e o rodapé fica sempre no fim, mesmo com a página curta */
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 
   background: #fff;
   color: #001730;
@@ -89,10 +92,15 @@ h1.l-db-title {
 }
 
 /* ===== Busca (dentro do hero) ===== */
-.l-db-body {
-  flex: 1;
-  padding: 30px 0 60px;
-  min-height: 140px;
+
+.l-db-body { flex: 1 0 auto; padding: 30px 0 60px; min-height: 140px; }
+
+.l-db-search { display: flex; gap: 10px; flex-wrap: wrap; }
+.l-db-input {
+  flex: 1; min-width: 220px;
+  background: #fff; border: 1px solid #2E7DD1; border-radius: 2px;
+  padding: 14px 16px; font-size: 15px;
+
 }
 
 .l-db-search {
@@ -285,79 +293,19 @@ button.l-db-chip:focus-visible {
   white-space: nowrap;
 }
 
-/* ===== Rodapé institucional ===== */
-.l-db-footer {
-  background: #001730;
-  padding: 30px 16px 34px;
-  text-align: center;
-}
-
-.l-db-footer-links {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 4px 20px;
-}
-
-.l-db-link,
-button.l-db-link {
-  font-size: 13.5px;
-  color: #BBD3E9;
-  cursor: pointer;
-  padding: 6px 0;
-}
-
-button.l-db-link:hover {
-  color: #fff;
-  text-decoration: underline;
-}
-
-button.l-db-link:focus-visible {
-  outline: 2px solid #7FB3E4;
-  outline-offset: 2px;
-}
-
-.l-db-link.is-inert {
-  cursor: default;
-}
-
-.l-db-footer-copy {
-  font-size: 12.5px;
-  color: #6F8499;
-  margin: 14px 0 0;
-}
-
 /* ===== Responsivo ===== */
 @media (max-width: 640px) {
-  .l-db-inner {
-    padding: 0 20px;
-  }
+  .l-db-inner { padding: 0 20px; }
+  .l-db-hero { padding: 40px 0 48px; }
+  .l-db-row { flex-wrap: wrap; row-gap: 6px; }
+  .l-db-input { min-width: 0; flex: 1 1 100%; }
+  .l-db-go, button.l-db-go { flex: 1 1 100%; }
+  .l-db-chart-card { height: 300px; padding: 12px; }
+}
 
-  .l-db-hero {
-    padding: 40px 0 90px;
-  }
-
-  .l-db-search {
-    margin-top: -58px;
-  }
-
-  .l-db-row {
-    flex-wrap: wrap;
-    row-gap: 6px;
-  }
-
-  .l-db-input {
-    min-width: 0;
-    flex: 1 1 100%;
-  }
-
-  .l-db-go,
-  button.l-db-go {
-    flex: 1 1 100%;
-  }
-
-  .l-db-chart-card {
-    height: 300px;
-    padding: 12px;
-  }
+/* iOS Safari dá zoom na página ao focar um campo com fonte menor que 16px; no celular o campo passa a ter 16px */
+@media (pointer: coarse), (max-width: 640px) {
+  input.l-db-input, .l-db-input { font-size: 16px; }
+  button.l-db-chip { min-height: 40px; padding-left: 14px; padding-right: 14px; }
+  button.l-db-go { min-height: 48px; }
 }

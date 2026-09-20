@@ -52,44 +52,6 @@ input:focus {
   overflow: hidden;
 }
 
-@media (max-width: 860px) {
-  .login-page {
-    grid-template-columns: 1fr;
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
-  }
-
-  /* Hero vira uma faixa compacta para o formulário aparecer sem rolar muito */
-  .login-hero {
-    height: auto;
-    gap: 28px;
-    padding: 24px 20px 32px;
-  }
-
-  .login-hero__stats {
-    display: none;
-  }
-
-  .login-form-wrap {
-    height: auto;
-    overflow: visible;
-    padding: 32px 20px 40px;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 480px) {
-  .login-form h2 {
-    font-size: 26px;
-  }
-
-  .login-form__subtitle {
-    margin-bottom: 24px;
-  }
-
-}
-
 /* ===== Coluna esquerda (hero) ===== */
 
 .login-hero {
@@ -351,4 +313,43 @@ input:focus {
 .login:disabled {
   cursor: progress;
   filter: grayscale(.4) brightness(1.2);
+}
+
+/* ===== Responsivo (no fim do arquivo: precisa vir depois das regras base para vencer a cascata) ===== */
+@media (max-width: 860px) {
+  .login-page {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  /* Hero vira uma faixa compacta para o formulário aparecer sem rolar muito */
+  .login-hero {
+    height: auto;
+    gap: 28px;
+    padding: 24px 20px 32px;
+  }
+
+  .login-hero__stats {
+    display: none;
+  }
+
+  .login-form-wrap {
+    height: auto;
+    overflow: visible;
+    padding: 32px 20px 40px;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-form h2 {
+    font-size: 26px;
+  }
+
+  .login-form__subtitle {
+    margin-bottom: 24px;
+  }
+
 }

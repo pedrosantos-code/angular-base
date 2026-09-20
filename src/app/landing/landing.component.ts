@@ -1,18 +1,54 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, NgZone, afterNextRender, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RevealDirective } from '../shared/reveal.directive';
+import { HeroRevealComponent } from './hero-reveal/hero-reveal.component';
+import { HeroVehicleStageComponent } from './hero-vehicle-stage/hero-vehicle-stage.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, RouterLink, RevealDirective],
+  imports: [CommonModule, RouterLink, RevealDirective, HeroRevealComponent, HeroVehicleStageComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.css'
 })
 export class LandingComponent {
+  private host = inject<ElementRef<HTMLElement>>(ElementRef);
+  private destroyRef = inject(DestroyRef);
+  private zone = inject(NgZone);
+
+  constructor() {
+    // O palco do Hero gruda logo abaixo do cabeçalho: sincroniza --reveal-top com a altura real dele
+    // (desktop e celular têm alturas diferentes), sem degrau nem faixa entre os dois.
+    afterNextRender(() => {
+      const root = this.host.nativeElement;
+      const header = root.querySelector<HTMLElement>('.site-header');
+      const hero = root.querySelector<HTMLElement>('app-hero-reveal');
+      if (!header) return;
+      this.trackHeaderColor(root, header);
+      if (!hero || typeof ResizeObserver === 'undefined') return;
+      const sync = () => {
+        hero.style.setProperty('--reveal-top', `${header.getBoundingClientRect().height}px`);
+        window.dispatchEvent(new Event('resize'));
+      };
+      const ro = new ResizeObserver(sync);
+      ro.observe(header);
+      this.destroyRef.onDestroy(() => ro.disconnect());
+    });
+  }
+
   // Menu do cabeçalho no mobile
   menuOpen = signal(false);
+
+  // Cor de fundo do cabeçalho: acompanha a seção escura que está por trás dele (null = branco normal)
+  headerBg = signal<string | null>('#050709');
+  // Transição suave entre a borda do cabeçalho e o conteúdo: no branco e nas seções com data-header-fade
+  headerFade = signal(false);
+  // Altura do degradê (null = padrão do CSS); o valor vem de data-header-fade="20px" na seção
+  headerFadeH = signal<string | null>(null);
+
+  // Seção do menu que está na tela agora (destaca o link correspondente)
+  activeId = signal<string | null>(null);
 
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
@@ -56,14 +92,6 @@ export class LandingComponent {
     { k: '01 / RECOMENDAÇÃO', t: 'Descreva seu uso', d: 'Conte sua rotina, passageiros, estrada e orçamento. A IA indica os modelos Ford que mais combinam.' },
     { k: '02 / TRANSPARÊNCIA', t: 'Nota com regra pública', d: 'Cada modelo recebe uma nota e um motivo. A página "Como a IA decide" mostra a conta.' },
     { k: '03 / AÇÃO', t: 'Compare e agende', d: 'Compare modelos lado a lado, encontre uma concessionária e agende o test-drive.' }
-  ];
-
-  // Um modelo para cada uso (galeria da seção 02)
-  useCases = [
-    { use: 'Família e viagem', model: 'Territory', img: 'territory.jpeg', alt: 'Ford Territory cinza parado em um terreno claro' },
-    { use: 'Aventura e trilha', model: 'Bronco Sport', img: 'bronco-sport.jpeg', alt: 'Ford Bronco Sport vermelho em uma trilha de terra' },
-    { use: 'Trabalho e carga', model: 'F-150', img: 'f150.jpg', alt: 'Ford F-150 vermelha em uma estrada de terra' },
-    { use: 'Cidade e elétrico', model: 'Mustang Mach-E', img: 'mach-e.jpg', alt: 'Ford Mustang Mach-E verde com montanhas ao fundo' }
   ];
 
   // Etapas de funcionamento (Seção 03)
@@ -121,6 +149,60 @@ export class LandingComponent {
     { n: 'Nicolle Pelligrino Jelinski' },
     { n: 'Pedro Pereira dos Santos' },
   ];
+
+  /**
+   * O cabeçalho pega a cor da seção que passa por baixo dele: as seções escuras/azuis declaram
+   * data-header-bg="#hex". Sem seção escura sob ele, volta ao branco. O cálculo roda fora do Angular
+   * e só entra na zona quando a cor muda.
+   */
+  private trackHeaderColor(root: HTMLElement, header: HTMLElement): void {
+    const sections = Array.from(root.querySelectorAll<HTMLElement>('[data-header-bg]'));
+    let frame = 0;
+    const evaluate = () => {
+      frame = 0;
+      // 1px abaixo do cabeçalho: no topo da página o Hero começa exatamente na borda dele (top === bottom),
+      // e com a linha 1px acima nenhuma seção era encontrada e o cabeçalho ficava branco até o primeiro scroll.
+      const line = header.getBoundingClientRect().bottom + 1;
+      const under = sections.find((s) => {
+        const r = s.getBoundingClientRect();
+        return r.top <= line && r.bottom > line;
+      });
+      const bg = under?.dataset['headerBg'] ?? null;
+      // Sobre fundo branco (nenhuma seção escura sob o cabeçalho) a transição suave também vale
+      // Link ativo: a última seção do menu cujo topo já passou da borda do cabeçalho (folga de 40px)
+      let active: string | null = null;
+      for (const l of this.navLinks) {
+        const el = document.getElementById(l.id);
+        if (el && el.getBoundingClientRect().top <= line + 40) active = l.id;
+      }
+      // Depois do Impacto (CTA e rodapé) nenhum link fica marcado
+      const impacto = document.getElementById('impacto');
+      if (impacto && impacto.getBoundingClientRect().bottom <= line) active = null;
+      if (active !== this.activeId()) this.zone.run(() => this.activeId.set(active));
+      const fade = under ? under.hasAttribute('data-header-fade') : true;
+      const fadeH = under?.dataset['headerFade'] || null;
+      if (bg !== this.headerBg() || fade !== this.headerFade() || fadeH !== this.headerFadeH()) {
+        this.zone.run(() => {
+          this.headerBg.set(bg);
+          this.headerFade.set(fade);
+          this.headerFadeH.set(fadeH);
+        });
+      }
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(evaluate);
+    };
+    this.zone.runOutsideAngular(() => {
+      window.addEventListener('scroll', schedule, { passive: true });
+      window.addEventListener('resize', schedule, { passive: true });
+    });
+    this.destroyRef.onDestroy(() => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', schedule);
+      if (frame) cancelAnimationFrame(frame);
+    });
+    schedule();
+  }
 
   toggleMenu(): void {
     this.menuOpen.update((aberto) => !aberto);

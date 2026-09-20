@@ -1,13 +1,20 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { FONTE_VEICULOS, fonteVazia } from '../shared/fonte-veiculos';
 import { PortalComponent } from './portal.component';
 
 describe('PortalComponent · fotos', () => {
   function criar() {
     TestBed.configureTestingModule({
       imports: [PortalComponent],
-      providers: [provideRouter([]), { provide: AuthService, useValue: { logout: async () => {} } }],
+      providers: [
+        provideRouter([]),
+        { provide: AuthService, useValue: { logout: async () => {} } },
+        // O portal renderiza o Agente de Perfil, que depende de uma fonte de veículos.
+        // A fonte vazia mantém o teste sem rede — aqui só se verificam as fotos.
+        { provide: FONTE_VEICULOS, useValue: fonteVazia('stub de teste') },
+      ],
     });
     const fixture = TestBed.createComponent(PortalComponent);
     fixture.detectChanges();

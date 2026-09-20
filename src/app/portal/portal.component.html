@@ -1,7 +1,7 @@
 <div class="l-seia-container">
 
   <seia-topbar
-    (navegar)="ir($event)"
+    (navegar)="ir($event)"
     (sair)="sair()" />
 
   <!-- Conteúdo Principal da Página -->
@@ -15,7 +15,7 @@
       
       <!-- Caixa de Busca -->
       <div class="l-search-box" role="search">
-        <input type="text" [(ngModel)]="termo" aria-label="Descreva como você usa o carro" autocomplete="off" placeholder="Ex: rodo 60 km por dia na cidade e viajo com..." class="l-search-input" (keyup.enter)="enviar()">
+        <input type="text" [(ngModel)]="termo" aria-label="Descreva como você usa o carro" autocomplete="off" placeholder="Ex: rodo 60 km/dia na cidade e viajo…" class="l-search-input" (keyup.enter)="enviar()">
         <button type="button" class="l-btn-primary" (click)="enviar()">ENCONTRAR MEU FORD</button>
       </div>
 
@@ -69,6 +69,9 @@
         </div>
       }
     </section>
+
+    <!-- Agente de Perfil: análise de cliente para o time comercial -->
+    <seia-agente />
 
     <!-- Como a recomendação funciona -->
     <section class="l-steps-section">

@@ -1,0 +1,42 @@
+<div class="stage" [attr.data-phase]="phase()" role="img" aria-label="Ford Mustang GT em 3D">
+  <!-- Imagem de fallback: só aparece sem WebGL ou se o modelo falhar (não durante o carregamento) -->
+  @if (phase() === 'fallback') {
+    <img class="stage__fallback" [src]="fallbackSrc()" alt="Ford Mustang GT" />
+  }
+
+  <canvas #canvas class="stage__canvas" aria-hidden="true"></canvas>
+
+  @if (phase() !== 'fallback') {
+    <div class="stage__hud" aria-live="polite">
+      <span class="stage__dot" aria-hidden="true"></span>
+      @switch (phase()) {
+        @case ('loading') {
+          <span class="stage__status">Carregando modelo</span>
+          <span class="stage__bar" aria-hidden="true"><span [style.width.%]="progress() * 100"></span></span>
+        }
+        @case ('scanning') {
+          <span class="stage__status">Ford Mustang GT</span>
+        }
+        @case ('identified') {
+          <span class="stage__status stage__status--ok">Ford Mustang GT · Modelo 3D</span>
+        }
+      }
+    </div>
+    @if (phase() === 'identified') {
+      <div class="stage__paints" role="group" aria-label="Cor do carro">
+        <span class="stage__color" aria-live="polite">{{ paints[selectedPaint()].label }}</span>
+        <span class="stage__hint">Arraste para girar 360°</span>
+        @for (p of paints; track p.label; let i = $index) {
+          <button type="button" class="stage__swatch" [style.background]="p.swatch"
+                  [class.is-active]="selectedPaint() === i" [attr.aria-pressed]="selectedPaint() === i"
+                  [attr.aria-label]="p.label" [title]="p.label" (click)="setPaint(i)"></button>
+        }
+      </div>
+    }
+    <p class="stage__credit">
+      <a href="https://sketchfab.com/3d-models/2024-ford-mustang-gt-16f0753d26a04a089223f2d9107a777f" target="_blank" rel="noopener">2024 Ford Mustang GT</a>
+      por <a href="https://sketchfab.com/ddiaz-design" target="_blank" rel="noopener">Ddiaz Design</a> ·
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener">CC BY-NC-SA 4.0</a> · otimizado para a web
+    </p>
+  }
+</div>

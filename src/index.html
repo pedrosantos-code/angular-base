@@ -11,6 +11,19 @@
       href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <script>
+      // Só na landing: começa a baixar a imagem principal do Hero antes de o Angular montar a página
+      // (sem isso ela só é descoberta depois do JavaScript, e as outras rotas nem usam essa imagem).
+      if (location.pathname === '/') {
+        var l = document.createElement('link');
+        l.rel = 'preload';
+        l.as = 'image';
+        l.setAttribute('fetchpriority', 'high');
+        l.setAttribute('imagesrcset', 'hero-reveal/1x/base.webp 1024w, hero-reveal/2x/base.webp 2048w');
+        l.setAttribute('imagesizes', '(min-width: 900px) 1400px, 94vw');
+        document.head.appendChild(l);
+      }
+    </script>
   </head>
   <body>
     <app-root></app-root>

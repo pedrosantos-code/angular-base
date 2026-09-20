@@ -1,0 +1,38 @@
+<div class="stage" #stage>
+  <div class="frame">
+    <img class="layer sil" src="hero-reveal/1x/sil.webp" alt="" aria-hidden="true" />
+    <img class="layer base" alt="" aria-hidden="true" fetchpriority="high"
+         src="hero-reveal/1x/base.webp"
+         srcset="hero-reveal/1x/base.webp 1024w, hero-reveal/2x/base.webp 2048w" sizes="(min-width: 900px) 1400px, 94vw" />
+    <!-- Escurece só o carro (recortado pela silhueta), sem tocar no fundo: nada de "caixa" ao redor -->
+    <div class="dim" aria-hidden="true"></div>
+    <img class="layer outline" alt="" aria-hidden="true"
+         src="hero-reveal/1x/outline.webp"
+         srcset="hero-reveal/1x/outline.webp 1024w, hero-reveal/2x/outline.webp 2048w" sizes="(min-width: 900px) 1400px, 94vw" />
+
+    <!-- Luzes: somam (plus-lighter) sobre a base de luzes apagadas -->
+    <img class="layer light drl" alt="" aria-hidden="true"
+         src="hero-reveal/1x/drl.webp"
+         srcset="hero-reveal/1x/drl.webp 1024w, hero-reveal/2x/drl.webp 2048w" sizes="(min-width: 900px) 1400px, 94vw" />
+    <img class="layer light bloom" src="hero-reveal/1x/drl.webp" alt="" aria-hidden="true" />
+    <img class="layer light head" alt="" aria-hidden="true"
+         src="hero-reveal/1x/head.webp"
+         srcset="hero-reveal/1x/head.webp 1024w, hero-reveal/2x/head.webp 2048w" sizes="(min-width: 900px) 1400px, 94vw" />
+    <div class="halo halo--l" aria-hidden="true"></div>
+    <div class="halo halo--r" aria-hidden="true"></div>
+    <!-- Luzes baixas do para-choque (só um brilho pequeno em cada uma) -->
+    <div class="halo halo--fl" aria-hidden="true"></div>
+    <div class="halo halo--fr" aria-hidden="true"></div>
+
+    <!-- Scanner SEIA: linha azul fina, só sobre a silhueta do carro -->
+    <div class="scan" aria-hidden="true"></div>
+  </div>
+
+  <p class="tag" aria-hidden="true">Ford F-150 Raptor R</p>
+
+  <p class="hint" aria-hidden="true"><span>Role para iniciar</span><i></i></p>
+
+  <div class="content">
+    <ng-content />
+  </div>
+</div>

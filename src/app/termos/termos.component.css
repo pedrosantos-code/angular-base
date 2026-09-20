@@ -1,3 +1,5 @@
+:host { display: block; font-family: 'IBM Plex Sans', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+
 .l-termos-container {
   background-color: #f4f6f9;
   color: #1e293b;
@@ -21,15 +23,16 @@
 }
 
 .l-main-title {
+  font-family: 'Archivo', sans-serif;
   font-size: 32px;
-  font-weight: 300;
+  font-weight: 700;
   color: #071d41;
   margin: 0 0 4px 0;
   letter-spacing: -0.5px;
 }
 
 .l-main-title strong {
-  font-weight: 700;
+  font-weight: 900;
   color: #071d41;
 }
 

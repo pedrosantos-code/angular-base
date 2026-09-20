@@ -1,7 +1,7 @@
 <div class="page-wrapper">
 
   <!-- Cabeçalho -->
-  <header class="site-header">
+  <header class="site-header" [class.site-header--dark]="headerBg() !== null" [class.site-header--fade]="headerFade() && !menuOpen()" [style.--header-bg]="headerBg()" [style.--fade-h]="headerFadeH()">
     <div class="site-header__inner">
       <div class="brand">
         <img src="favicon.ico" alt="" class="brand__logo">
@@ -13,7 +13,7 @@
 
       <nav class="site-nav" aria-label="Seções da página">
         @for (link of navLinks; track link.id) {
-          <a [href]="'#' + link.id" class="nav-link" (click)="goTo($event, link.id)">{{ link.label }}</a>
+          <a [href]="'#' + link.id" class="nav-link" [class.nav-link--active]="activeId() === link.id" [attr.aria-current]="activeId() === link.id ? 'location' : null" (click)="goTo($event, link.id)">{{ link.label }}</a>
         }
       </nav>
 
@@ -37,40 +37,22 @@
     }
   </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <div class="hero__text" appReveal="left">
-      <div class="eyebrow">
-        <span class="eyebrow__line"></span>
-        <span class="eyebrow__text">Recomendação de veículos com IA</span>
-      </div>
-      <h1 class="hero__title">Dados precisos,<br>carro perfeito.</h1>
-      <p class="hero__lead">Descreva como você usa o carro. O SEIA compara com o perfil de uso de cada modelo Ford e mostra quais combinam com você, e por quê.</p>
-      <div class="actions">
-        <button type="button" (click)="scrollTo('funciona')" class="btn btn--primary">VER COMO FUNCIONA</button>
-        <a routerLink="/login" class="btn btn--ghost">ACESSAR</a>
-      </div>
+  <!-- Hero: scroll reveal cinematográfico (camadas de imagem + CSS, sem 3D) -->
+  <app-hero-reveal class="hero" data-header-bg="#050709" data-header-fade="20px">
+    <div class="eyebrow" data-reveal-step="1">
+      <span class="eyebrow__line"></span>
+      <span class="eyebrow__text">Recomendação de veículos com IA</span>
     </div>
-    <div class="hero__visual" appReveal="right" [revealDelay]="150">
-      <div class="hero__frame">
-        <img src="hero-truck.png" alt="Picape Ford em um corredor de servidores, representando a análise por IA" class="hero__img">
-        <div class="hero__tint"></div>
-        <div class="hero__grid"></div>
-        <div class="hero__scan"></div>
-        <div class="hero__caption">
-          <div class="hero__kicker">SEU USO → O MODELO CERTO</div>
-          <div class="hero__tagline">Você descreve.<br>A IA mostra a conta.</div>
-        </div>
-      </div>
-      <div class="hero__stat">
-        <div class="hero__stat-num">4</div>
-        <div class="hero__stat-label">etapas<br><span class="hero__stat-sub">da descrição ao test-drive</span></div>
-      </div>
+    <h1 class="hero__title" data-reveal-step="2">Dados precisos,<br>carro perfeito.</h1>
+    <p class="hero__lead" data-reveal-step="3">Descreva como você usa o carro. O SEIA compara com o perfil de uso de cada modelo Ford e mostra quais combinam com você, e por quê.</p>
+    <div class="actions" data-reveal-step="4">
+      <button type="button" (click)="scrollTo('funciona')" class="btn btn--primary">VER COMO FUNCIONA</button>
+      <a routerLink="/login" class="btn btn--ghost">ACESSAR</a>
     </div>
-  </section>
+  </app-hero-reveal>
 
   <!-- Marquee -->
-  <div class="marquee" aria-hidden="true">
+  <div class="marquee" aria-hidden="true" data-header-bg="#001730">
     <div class="marquee__track">
       <div class="marquee__group">
         @for (k of keywords; track $index) {<span class="marquee__item">{{ k }}</span>}
@@ -87,7 +69,7 @@
       <div class="split__text" appReveal="left">
         <div class="section-label">
           <span class="section-label__num">01</span>
-          <span class="section-label__text">Qual problema resolvemos</span>
+          <span class="section-label__text">Problema</span>
         </div>
         <h2 class="section-title section-title--tight">Escolher um carro dá trabalho.</h2>
         <p class="section-text">As informações estão espalhadas em vários sites, em formatos diferentes. Hoje você pesquisa, copia e compara à mão.</p>
@@ -132,7 +114,7 @@
   <div id="proposta" class="section">
     <div class="section-label" appReveal>
       <span class="section-label__num">02</span>
-      <span class="section-label__text">Qual é a proposta</span>
+      <span class="section-label__text">Proposta</span>
     </div>
     <h2 class="section-title section-title--lead" appReveal [revealDelay]="80">Uma plataforma que entende como você usa o carro e recomenda o Ford certo.</h2>
     <p class="section-text section-text--wide" appReveal [revealDelay]="160">Você descreve rotina, passageiros, estrada e orçamento. O SEIA dá uma nota de compatibilidade por modelo, e a regra do cálculo é pública.</p>
@@ -145,22 +127,10 @@
         </div>
       }
     </div>
-    <div class="usecases-head" appReveal>Um modelo para cada uso</div>
-    <div class="usecases">
-      @for (u of useCases; track u.model) {
-        <figure class="usecase" appReveal [revealDelay]="$index * 100">
-          <img [src]="u.img" [alt]="u.alt" class="usecase__img" loading="lazy" decoding="async">
-          <figcaption class="usecase__cap">
-            <span class="usecase__use">{{ u.use }}</span>
-            <span class="usecase__model">{{ u.model }}</span>
-          </figcaption>
-        </figure>
-      }
-    </div>
   </div>
 
   <!-- Banner de largura total -->
-  <div class="banner">
+  <div class="banner" data-header-bg="#001d3a" data-header-fade>
     <img src="fundo.png" alt="" class="banner__img" loading="lazy" decoding="async">
     <div class="banner__shade"></div>
     <div class="banner__content">
@@ -235,13 +205,18 @@
         <a routerLink="/sobre-ia" class="btn btn--ghost btn--small btn--spaced">COMO A IA DECIDE →</a>
       </div>
     </div>
+    <div class="usecases-head" appReveal>Veja o modelo em 3D</div>
+    <!-- Modelo 3D interativo: arraste para girar 360° e escolha a cor (fecha o passo "Compare": ver o carro antes de agendar o test-drive) -->
+    <div class="model-stage" appReveal="zoom">
+      <app-hero-vehicle-stage />
+    </div>
   </div>
 
   <!-- Seção Diferencial -->
   <div id="diferencial" class="section">
     <div class="section-label" appReveal>
       <span class="section-label__num">04</span>
-      <span class="section-label__text">Qual o diferencial</span>
+      <span class="section-label__text">Diferencial</span>
     </div>
     <h2 class="section-title" appReveal [revealDelay]="80">Do interesse ao test-drive em um só lugar.</h2>
     <div class="diff">
@@ -254,9 +229,9 @@
       @for (c of compare; track $index) {
         <div class="diff__row" appReveal [revealDelay]="($index + 1) * 120">
           <div class="diff__key">{{ c.k }}</div>
-          <div class="diff__td">{{ c.a }}</div>
-          <div class="diff__td">{{ c.b }}</div>
-          <div class="diff__td diff__td--seia">{{ c.c }}</div>
+          <div class="diff__td" data-label="Busca manual">{{ c.a }}</div>
+          <div class="diff__td" data-label="Sites genéricos">{{ c.b }}</div>
+          <div class="diff__td diff__td--seia" data-label="SEIA">{{ c.c }}</div>
         </div>
       }
     </div>
@@ -266,7 +241,7 @@
   <div id="impacto" class="section">
     <div class="section-label" appReveal>
       <span class="section-label__num">05</span>
-      <span class="section-label__text">Qual o impacto esperado</span>
+      <span class="section-label__text">Impacto</span>
     </div>
     <h2 class="section-title" appReveal [revealDelay]="80">Menos tempo pesquisando, mais confiança na escolha.</h2>
     <div class="metrics">
@@ -293,13 +268,13 @@
   </div>
 
   <!-- Call to Action final -->
-  <div class="cta">
+  <div class="cta" data-header-bg="#143a63" data-header-fade>
     <img src="explorer.jpeg" alt="" class="cta__photo" loading="lazy" decoding="async">
     <div class="cta__grid"></div>
     <div class="cta__inner">
       <div class="cta__copy" appReveal="left">
         <h2 class="cta__title">Descubra o seu<br>próximo Ford.</h2>
-        <p class="cta__sub">Squad SEIA + Ford</p>
+        <p class="cta__sub">Descreva como você usa o carro e veja quais modelos Ford combinam com você.</p>
       </div>
       <div class="actions" appReveal="right" [revealDelay]="150">
         <a routerLink="/login" class="btn btn--light">ENTRAR NA PLATAFORMA</a>
@@ -309,7 +284,7 @@
   </div>
 
   <!-- Rodapé -->
-  <footer class="footer">
+  <footer class="footer" data-header-bg="#001730">
     <div class="footer__inner">
       <div class="footer__top" appReveal>
         <div class="footer__brand">

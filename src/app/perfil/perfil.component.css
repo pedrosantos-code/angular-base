@@ -159,10 +159,10 @@
 .l-pf-save-state strong { color: #001730; font-weight: 600; }
 .l-pf-save-actions { margin-left: auto; display: flex; align-items: center; gap: 14px; }
 
-.l-pf-ghost { font-size: 14px; color: #67788A; text-decoration: underline; text-underline-offset: 3px; }
+button.l-pf-ghost { font-size: 14px; color: #67788A; text-decoration: underline; text-underline-offset: 3px; }
 .l-pf-ghost:disabled { color: #B4C1CE; cursor: default; text-decoration: none; }
 
-.l-pf-primary {
+button.l-pf-primary {
   background: #0B3D75; color: #fff;
   padding: 14px 24px; border-radius: 2px;
   font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
@@ -184,4 +184,14 @@
 @media (max-width: 560px) {
   .l-pf-two { grid-template-columns: 1fr; }
   .l-pf-save-actions { width: 100%; margin-left: 0; justify-content: space-between; }
+}
+
+/* Alvos de toque confortáveis (~40px) em tela de toque ou estreita; só aumenta a área clicável */
+@media (pointer: coarse), (max-width: 640px) {
+  .l-pf-ghost { min-height: 42px; padding: 0 10px; }
+}
+
+/* iOS Safari dá zoom na página ao focar um campo com fonte menor que 16px; no celular o campo passa a ter 16px */
+@media (pointer: coarse), (max-width: 640px) {
+  .l-pf-input, input.l-pf-input { font-size: 16px; }
 }

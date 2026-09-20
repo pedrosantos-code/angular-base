@@ -1,0 +1,84 @@
+:host {
+  display: block;
+  /* Altura ajustável de fora: .hero__stage { --stage-h: clamp(320px, 60vh, 660px); } */
+  --stage-h: clamp(300px, 52vh, 600px);
+}
+
+.stage { position: relative; width: 100%; height: var(--stage-h); overflow: hidden; }
+
+.stage__fallback,
+.stage__canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.stage__fallback { object-fit: cover; opacity: .55; filter: saturate(.7); transition: opacity .6s ease; }
+.stage__canvas { opacity: 0; transition: opacity .6s ease; -webkit-mask-image: linear-gradient(180deg, #000 86%, transparent 100%); mask-image: linear-gradient(180deg, #000 86%, transparent 100%); }
+
+/* Com o 3D pronto, a imagem some e o canvas aparece */
+.stage[data-phase='scanning'] .stage__canvas,
+.stage[data-phase='identified'] .stage__canvas { opacity: 1; }
+.stage[data-phase='scanning'] .stage__fallback,
+.stage[data-phase='identified'] .stage__fallback { opacity: 0; }
+.stage[data-phase='fallback'] .stage__fallback { opacity: 1; filter: none; }
+
+/* HUD de status */
+.stage__hud {
+  position: absolute; left: 8px; top: 8px;
+  display: flex; align-items: center; gap: 10px; padding: 8px 16px;
+  background: rgba(0, 23, 48, .82); color: #fff; border-radius: 2px;
+  font-family: var(--display, 'Archivo', sans-serif); font-weight: 700; font-size: 11.5px;
+  letter-spacing: .16em; text-transform: uppercase; white-space: nowrap; max-width: calc(100% - 24px);
+}
+.stage__dot { width: 8px; height: 8px; border-radius: 50%; background: #7FB3E4; animation: stage-pulse 1.2s ease-in-out infinite; }
+.stage__status--ok { color: #cfe4f8; }
+.stage[data-phase='identified'] .stage__dot { background: #5fd38d; animation: none; }
+.stage__bar { width: 72px; height: 3px; background: rgba(255, 255, 255, .22); }
+.stage__bar > span { display: block; height: 100%; background: #7FB3E4; transition: width .2s linear; }
+
+.stage__paints {
+  position: absolute; left: 50%; bottom: 4px; transform: translateX(-50%); z-index: 1;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 10px;
+  width: max-content; max-width: calc(100% - 16px); padding: 8px 16px 10px;
+  background: rgba(255, 255, 255, .86); border: 1px solid #dbe4ee; border-radius: 22px;
+  backdrop-filter: blur(6px);
+}
+/* Nome da cor escolhida: ocupa a linha de cima, então trocar de cor não desloca os botões */
+.stage__color { flex: 1 0 100%; text-align: center; font-size: 11.5px; font-weight: 700; letter-spacing: .04em; color: #0B2F58; }
+.stage__hint { margin-right: 4px; font-size: 11px; font-weight: 600; letter-spacing: .04em; color: #55677A; white-space: nowrap; }
+.stage__swatch {
+  width: 24px; height: 24px; padding: 0; border-radius: 50%; border: 2px solid #fff; cursor: pointer;
+  box-shadow: 0 0 0 1px rgba(0, 23, 48, .25); transition: transform .15s, box-shadow .15s;
+}
+.stage__swatch:hover { transform: scale(1.12); }
+.stage__swatch.is-active { box-shadow: 0 0 0 2px #0B57A4; transform: scale(1.12); }
+.stage__swatch:focus-visible { outline: 3px solid #2E7DD1; outline-offset: 2px; }
+
+.stage__credit {
+  position: absolute; right: 8px; top: 8px; margin: 0;
+  font-size: 10.5px; letter-spacing: .02em; color: #55677A;
+}
+
+/* Links do crédito discretos, mas reconhecíveis (a licença exige atribuição com link) */
+.stage__credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+.stage__credit a:hover { color: #0B57A4; }
+
+@keyframes stage-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: .6; }
+}
+
+@media (max-width: 560px) {
+  .stage__hint { display: none; }
+  /* Largura fixa: as 11 cores quebram em duas linhas equilibradas (6 + 5), sem um botão sozinho embaixo */
+  .stage__paints { gap: 6px; padding: 7px 12px 9px; width: 250px; }
+  .stage__hud { font-size: 10px; letter-spacing: .1em; padding: 7px 12px; }
+  /* O crédito desce para debaixo do HUD: lado a lado os dois se sobrepunham em telas estreitas */
+  .stage__credit { top: 46px; left: 8px; right: auto; }
+}
+
+/* Alvo de toque confortável nos botões de cor */
+@media (pointer: coarse) {
+  .stage__swatch { width: 32px; height: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stage__dot { animation: none; }
+  .stage__fallback, .stage__canvas { transition: none; }
+}
