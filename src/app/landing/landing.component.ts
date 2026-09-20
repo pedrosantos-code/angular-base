@@ -47,6 +47,9 @@ export class LandingComponent {
   // Altura do degradê (null = padrão do CSS); o valor vem de data-header-fade="20px" na seção
   headerFadeH = signal<string | null>(null);
 
+  // Seção do menu que está na tela agora (destaca o link correspondente)
+  activeId = signal<string | null>(null);
+
   // Links de navegação do cabeçalho, do menu mobile e do rodapé (id da seção de destino)
   navLinks = [
     { label: 'Problema', id: 'problema' },
@@ -166,6 +169,16 @@ export class LandingComponent {
       });
       const bg = under?.dataset['headerBg'] ?? null;
       // Sobre fundo branco (nenhuma seção escura sob o cabeçalho) a transição suave também vale
+      // Link ativo: a última seção do menu cujo topo já passou da borda do cabeçalho (folga de 40px)
+      let active: string | null = null;
+      for (const l of this.navLinks) {
+        const el = document.getElementById(l.id);
+        if (el && el.getBoundingClientRect().top <= line + 40) active = l.id;
+      }
+      // Depois do Impacto (CTA e rodapé) nenhum link fica marcado
+      const impacto = document.getElementById('impacto');
+      if (impacto && impacto.getBoundingClientRect().bottom <= line) active = null;
+      if (active !== this.activeId()) this.zone.run(() => this.activeId.set(active));
       const fade = under ? under.hasAttribute('data-header-fade') : true;
       const fadeH = under?.dataset['headerFade'] || null;
       if (bg !== this.headerBg() || fade !== this.headerFade() || fadeH !== this.headerFadeH()) {

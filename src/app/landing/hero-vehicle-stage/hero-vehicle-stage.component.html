@@ -15,15 +15,15 @@
           <span class="stage__bar" aria-hidden="true"><span [style.width.%]="progress() * 100"></span></span>
         }
         @case ('scanning') {
-          <span class="stage__status">Identificando veículo…</span>
+          <span class="stage__status">Ford Mustang GT</span>
         }
         @case ('identified') {
-          <span class="stage__status stage__status--ok">Identificado · Ford Mustang GT</span>
+          <span class="stage__status stage__status--ok">Ford Mustang GT · Modelo 3D</span>
         }
       }
     </div>
     @if (phase() === 'identified') {
-      <div class="stage__paints" role="group" aria-label="Cor da picape">
+      <div class="stage__paints" role="group" aria-label="Cor do carro">
         <span class="stage__hint">Arraste para girar 360°</span>
         @for (p of paints; track p.label; let i = $index) {
           <button type="button" class="stage__swatch" [style.background]="p.swatch"

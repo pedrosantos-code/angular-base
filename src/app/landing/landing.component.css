@@ -52,8 +52,9 @@
 .brand__name { font-family: var(--display); font-weight: 800; font-size: 15px; line-height: 1.1; }
 .brand__tag { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
 .site-nav { display: flex; align-items: center; gap: 26px; }
-.nav-link { font-size: 13.5px; font-weight: 500; color: #3C4B5B; text-decoration: none; transition: color .18s; }
+.nav-link { white-space: nowrap; font-size: 13.5px; font-weight: 500; color: #3C4B5B; text-decoration: none; transition: color .18s; }
 .nav-link:hover { color: var(--accent); }
+.nav-link--active { color: var(--accent); box-shadow: 0 2px 0 var(--accent); }
 
 /* Cabeçalho escuro: mesma cor da cena do Hero enquanto ele está sob o cabeçalho */
 .site-header { transition: background-color .25s ease, border-color .25s ease; }
@@ -64,6 +65,7 @@
 .site-header--dark .brand__tag { color: #8496AA; }
 .site-header--dark .nav-link { color: #C7D3E0; }
 .site-header--dark .nav-link:hover { color: #fff; }
+.site-header--dark .nav-link--active { color: #fff; box-shadow: 0 2px 0 #7FB3E4; }
 .site-header--dark .btn--primary { background: #fff; color: var(--navy); }
 .site-header--dark .btn--primary:hover { background: #dbe7f5; }
 .site-header--dark .menu-toggle { border-color: rgba(255,255,255,.3); }
@@ -159,7 +161,7 @@ app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #050709; }
 
 /* Galeria: um modelo para cada uso */
 .usecases-head { margin: 56px 0 16px; padding-bottom: 12px; border-bottom: 2px solid var(--navy); font-family: var(--display); font-weight: 900; font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); }
-.model-stage { position: relative; overflow: hidden; background: #fff; border: 1px solid #EDF1F5; border-radius: 2px; }
+.model-stage { position: relative; overflow: hidden; background: #fff; }
 .model-stage app-hero-vehicle-stage { --stage-h: clamp(340px, 52vh, 560px); }
 
 /* Banner */
@@ -288,8 +290,15 @@ app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #050709; }
 .reveal-zoom { transform: scale(calc(.94 + .06 * var(--p, 0))); }
 
 /* ===== Responsividade ===== */
-@media (min-width: 861px) {
+@media (min-width: 1021px) {
   .menu-panel { display: none; }
+}
+
+/* Cabeçalho: até 1020px os 5 links + 2 botões não cabem numa linha, então o menu vira hambúrguer */
+@media (max-width: 1020px) {
+  .site-header__inner { padding: 12px 20px; gap: 12px; }
+  .site-nav { display: none; }
+  .menu-toggle { display: flex; }
 }
 
 @media (max-width: 860px) {
