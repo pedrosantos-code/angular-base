@@ -62,7 +62,8 @@
 
 @media (max-width: 560px) {
   .stage__hint { display: none; }
-  .stage__paints { gap: 6px 8px; padding: 7px 12px 9px; }
+  /* Largura fixa: as 11 cores quebram em duas linhas equilibradas (6 + 5), sem um botão sozinho embaixo */
+  .stage__paints { gap: 6px; padding: 7px 12px 9px; width: 250px; }
   .stage__hud { font-size: 10px; letter-spacing: .1em; padding: 7px 12px; }
   /* O crédito desce para debaixo do HUD: lado a lado os dois se sobrepunham em telas estreitas */
   .stage__credit { top: 46px; left: 8px; right: auto; }
