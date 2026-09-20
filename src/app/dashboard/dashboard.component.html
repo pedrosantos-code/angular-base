@@ -1,5 +1,6 @@
 <seia-topbar
-  (navegar)="onNavegar($event)"
+  (navegar)="onNavegar($event)"
+
   (sair)="sair()" />
 
 <header class="l-db-hero">
@@ -89,16 +90,4 @@
   </div>
 </main>
 
-<footer class="l-db-footer">
-  <div class="l-db-footer-links">
-    <button type="button" class="l-db-link" (click)="irRodape('cookies')">Política de Cookies</button>
-    <button type="button" class="l-db-link" (click)="irRodape('privacidade')">Política de Privacidade</button>
-    <button type="button" class="l-db-link" (click)="irRodape('contato')">Fale conosco</button>
-    <span class="l-db-link is-inert">Regulamentos</span>
-    <span class="l-db-link is-inert">ford.com</span>
-    <span class="l-db-link is-inert">Declaração sobre acessibilidade</span>
-    <span class="l-db-link is-inert">Código de Ética</span>
-    <span class="l-db-link is-inert">Mapa do site</span>
-  </div>
-  <p class="l-db-footer-copy">Copyright (c) 2026 Ford. Todos os direitos reservados.</p>
-</footer>
+<seia-rodape />

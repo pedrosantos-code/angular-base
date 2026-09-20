@@ -27,7 +27,9 @@
 /* align-self: start pra não esticar o fundo escuro além do próprio conteúdo — mas .l-md-main
    (coluna ao lado) continua no stretch padrão, senão a barra "sticky" de comparar desalinha
    quando a lista filtrada fica mais curta que a barra lateral. */
-.l-md-rail { align-self: start; background: #001730; padding: 22px 0 30px; }
+/* Sticky sob o topbar (60px) e com a altura da tela: o fundo escuro acompanha a rolagem da lista,
+   em vez de terminar no meio dela deixando um vazio branco ao lado dos modelos. */
+.l-md-rail { align-self: start; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; background: #001730; padding: 22px 0 30px; }
 .l-md-rail-label {
   font-family: 'Archivo', sans-serif; font-weight: 800;
   font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
@@ -255,7 +257,7 @@ button.l-md-ct-remove {
   .l-md-shell { grid-template-columns: 1fr; }
 
   /* Filtros viram chips que quebram linha, em vez de uma lista comprida antes dos modelos */
-  .l-md-rail { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 20px 18px; }
+  .l-md-rail { position: static; height: auto; overflow: visible; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 20px 18px; }
   .l-md-rail-label { width: 100%; padding: 0; margin: 12px 0 0; }
   .l-md-rail-label:first-child { margin-top: 0; }
   button.l-md-filter, button.l-md-filter.is-on {

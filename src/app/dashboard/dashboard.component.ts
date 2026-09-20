@@ -4,13 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { Chart, registerables } from 'chart.js';
 import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
 
 Chart.register(...registerables);
 
 @Component({
   selector: 'app-dashboard',
-  imports: [FormsModule, TopbarComponent],
+  imports: [FormsModule, TopbarComponent, RodapeComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -27,18 +28,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   onNavegar(chave: string): void {
     const rota = ROTAS_MENU[chave];
-    if (rota) this.router.navigateByUrl(rota);
-  }
-
-  /** Rotas dos links de rodapé que não fazem parte do menu principal da gaveta. */
-  private readonly rotasRodape: Record<string, string> = {
-    cookies: '/termos',
-    privacidade: '/termos',
-    contato: '/fale-conosco',
-  };
-
-  irRodape(chave: string): void {
-    const rota = this.rotasRodape[chave];
     if (rota) this.router.navigateByUrl(rota);
   }
 
