@@ -67,7 +67,7 @@ export class AgendamentosComponent {
     }, 60000);
     inject(DestroyRef).onDestroy(() => clearInterval(id));
 
-    // Vindo de /concessionarias ("Agendar aqui"), já deixa a unidade escolhida.
+    // Com ?unidade=<id> na URL, já deixa a unidade escolhida.
     const unidadeDaUrl = this.route.snapshot.queryParamMap.get('unidade');
     if (unidadeDaUrl && this.unidades.some((u) => u.id === unidadeDaUrl)) this.unidadeId = unidadeDaUrl;
 
@@ -104,7 +104,7 @@ export class AgendamentosComponent {
     { chave: 'comercial', rotulo: 'Atendimento comercial' },
   ];
 
-  /** Mesmas unidades cadastradas em /concessionarias (mesmo id, nome e endereço) — veja ConcessionariasComponent.unidades. */
+  /** Unidades disponíveis para agendamento. */
   unidades: Unidade[] = [
     { id: 'caoa-ibirapuera', nome: 'Ford Caoa - Ibirapuera - SP', endereco: 'Av. Ibirapuera, 2400', distanciaKm: 3.5, horariosLivres: 12 },
     { id: 'caoa-jabaquara', nome: 'Ford CAOA - Jabaquara - SP', endereco: 'Av. Jabaquara, 2207', distanciaKm: 6.8, horariosLivres: 8 },

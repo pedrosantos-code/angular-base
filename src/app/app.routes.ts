@@ -15,7 +15,6 @@ export const routes: Routes = [
     { path: 'dashboard', title: 'Dashboard detalhado · SEIA + Ford', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent), canActivate: [authGuard] },
     { path: 'modelos', title: 'Modelos Ford · SEIA + Ford', loadComponent: () => import('./modelos/modelos.component').then(m => m.ModelosComponent), canActivate: [authGuard] },
     { path: 'agendamentos', title: 'Meus agendamentos · SEIA + Ford', loadComponent: () => import('./agendamentos/agendamentos.component').then(m => m.AgendamentosComponent), canActivate: [authGuard] },
-    { path: 'concessionarias', title: 'Concessionárias · SEIA + Ford', loadComponent: () => import('./concessionarias/concessionarias.component').then(m => m.ConcessionariasComponent), canActivate: [authGuard] },
     { path: 'fale-conosco', title: 'Fale conosco · SEIA + Ford', loadComponent: () => import('./fale-conosco/fale-conosco.component').then(m => m.FaleConoscoComponent), canActivate: [authGuard] },
     { path: 'perfil', title: 'Meu perfil · SEIA + Ford', loadComponent: () => import('./perfil/perfil.component').then(m => m.PerfilComponent), canActivate: [authGuard] }
 ];

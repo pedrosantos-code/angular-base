@@ -31,7 +31,6 @@ const ROTEIRO: Record<string, PassoChat> = {
     opcoes: [
       { rotulo: 'Escolher um modelo', proximo: 'modelos' },
       { rotulo: 'Agendar test-drive ou revisão', proximo: 'agenda' },
-      { rotulo: 'Encontrar uma concessionária', proximo: 'concessionarias' },
       { rotulo: 'Entender a nota da IA', proximo: 'ia' },
       { rotulo: 'Falar com uma pessoa', proximo: 'humano' },
     ],
@@ -101,31 +100,6 @@ const ROTEIRO: Record<string, PassoChat> = {
     opcoes: [
       { rotulo: 'Ir para Agendamentos', rota: '/agendamentos' },
       { rotulo: 'Outro agendamento', proximo: 'agenda' },
-      VOLTAR,
-    ],
-  },
-
-  concessionarias: {
-    texto: 'O que você precisa?',
-    opcoes: [
-      { rotulo: 'Achar uma unidade perto de mim', proximo: 'conc-buscar' },
-      { rotulo: 'Agendar em uma unidade', proximo: 'conc-agendar' },
-      VOLTAR,
-    ],
-  },
-  'conc-buscar': {
-    texto: 'Em Concessionárias, informe CEP ou cidade e o raio. A lista mostra a distância, se está aberta e como chegar.',
-    opcoes: [
-      { rotulo: 'Ir para Concessionárias', rota: '/concessionarias' },
-      { rotulo: 'Outra dúvida sobre unidades', proximo: 'concessionarias' },
-      VOLTAR,
-    ],
-  },
-  'conc-agendar': {
-    texto: 'Na lista de Concessionárias, use "Agendar aqui" na unidade que escolher. Nem toda unidade tem agenda online.',
-    opcoes: [
-      { rotulo: 'Ir para Concessionárias', rota: '/concessionarias' },
-      { rotulo: 'Outra dúvida sobre unidades', proximo: 'concessionarias' },
       VOLTAR,
     ],
   },
