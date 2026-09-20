@@ -43,7 +43,6 @@ export const ITENS_PRINCIPAIS: ItemMenu[] = [
 
 export const ITENS_ATENDIMENTO: ItemMenu[] = [
   { chave: 'agendamentos', rotulo: 'Meus agendamentos', icone: 'agenda' },
-  { chave: 'concessionarias', rotulo: 'Concessionárias', icone: 'local' },
   { chave: 'contato', rotulo: 'Fale conosco', icone: 'telefone' },
 ];
 
@@ -58,7 +57,6 @@ export const ROTAS_MENU: Record<string, string> = {
   modelos: '/modelos',
   comparacoes: '/dashboard',
   agendamentos: '/agendamentos',
-  concessionarias: '/concessionarias',
   contato: '/fale-conosco',
   ia: '/sobre-ia',
   termos: '/termos',
