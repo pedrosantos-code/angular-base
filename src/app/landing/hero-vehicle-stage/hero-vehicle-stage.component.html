@@ -24,6 +24,7 @@
     </div>
     @if (phase() === 'identified') {
       <div class="stage__paints" role="group" aria-label="Cor do carro">
+        <span class="stage__color" aria-live="polite">{{ paints[selectedPaint()].label }}</span>
         <span class="stage__hint">Arraste para girar 360°</span>
         @for (p of paints; track p.label; let i = $index) {
           <button type="button" class="stage__swatch" [style.background]="p.swatch"

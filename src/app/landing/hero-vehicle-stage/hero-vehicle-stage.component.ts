@@ -45,14 +45,22 @@ export class HeroVehicleStageComponent {
   modelSrc = input('models/mustang-gt.glb');
   revealed = output<void>();
 
+  // Cores oficiais do Mustang GT 2024 (a Blue Ember é exclusiva do Dark Horse e fica de fora).
+  // Os hex são aproximações para o render; o Vapor Blue é a cor original da textura do modelo.
   paints: PaintOption[] = [
-    { label: 'Azul Vapor (original)', hex: null, swatch: '#5d82af' },
-    { label: 'Vermelho Rapid', hex: '#a3121f', swatch: '#a3121f' },
-    { label: 'Branco Oxford', hex: '#f1f1ee', swatch: '#f1f1ee' },
-    { label: 'Preto Ágata', hex: '#15171a', swatch: '#15171a' },
-    { label: 'Cinza Carbonizado', hex: '#6b7076', swatch: '#6b7076' },
-    { label: 'Laranja Code', hex: '#e2621b', swatch: '#e2621b' }
+    { label: 'Vapor Blue', hex: null, swatch: '#5d82af' },
+    { label: 'Atlas Blue', hex: '#2b5ea3', swatch: '#2b5ea3' },
+    { label: 'Grabber Blue', hex: '#1b95dd', swatch: '#1b95dd' },
+    { label: 'Race Red', hex: '#c8102e', swatch: '#c8102e' },
+    { label: 'Rapid Red', hex: '#9c1421', swatch: '#9c1421' },
+    { label: 'Yellow Splash', hex: '#f0c419', swatch: '#f0c419' },
+    { label: 'Oxford White', hex: '#f2f2ee', swatch: '#f2f2ee' },
+    { label: 'Iconic Silver', hex: '#b6b9bd', swatch: '#b6b9bd' },
+    { label: 'Carbonized Gray', hex: '#6a6f75', swatch: '#6a6f75' },
+    { label: 'Dark Matter Gray', hex: '#3b3f43', swatch: '#3b3f43' },
+    { label: 'Shadow Black', hex: '#111214', swatch: '#111214' }
   ];
+
   selectedPaint = signal(0);
 
   phase = signal<StagePhase>('loading');
