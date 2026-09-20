@@ -1,6 +1,8 @@
 <div class="stage" [attr.data-phase]="phase()" role="img" aria-label="Ford Mustang GT em 3D">
-  <!-- Imagem de fallback: aparece sem WebGL, se o modelo falhar e enquanto o 3D carrega -->
-  <img class="stage__fallback" [src]="fallbackSrc()" alt="Ford Mustang GT" />
+  <!-- Imagem de fallback: só aparece sem WebGL ou se o modelo falhar (não durante o carregamento) -->
+  @if (phase() === 'fallback') {
+    <img class="stage__fallback" [src]="fallbackSrc()" alt="Ford Mustang GT" />
+  }
 
   <canvas #canvas class="stage__canvas" aria-hidden="true"></canvas>
 
