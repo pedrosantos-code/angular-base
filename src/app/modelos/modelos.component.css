@@ -27,9 +27,16 @@
 /* align-self: start pra não esticar o fundo escuro além do próprio conteúdo — mas .l-md-main
    (coluna ao lado) continua no stretch padrão, senão a barra "sticky" de comparar desalinha
    quando a lista filtrada fica mais curta que a barra lateral. */
-/* Sticky sob o topbar (60px) e com a altura da tela: o fundo escuro acompanha a rolagem da lista,
-   em vez de terminar no meio dela deixando um vazio branco ao lado dos modelos. */
-.l-md-rail { align-self: start; position: sticky; top: 60px; height: calc(100vh - 60px); overflow-y: auto; background: #001730; padding: 22px 0 30px; }
+/* Fixo logo abaixo do topbar (60px, também fixo) e com a altura restante da tela: as categorias ficam paradas em
+   cima enquanto a lista rola, e o fundo escuro acompanha a lista sem deixar vazio branco ao lado dos modelos. */
+.l-md-rail { align-self: start; position: sticky; top: 60px; height: calc(100vh - 60px); height: calc(100dvh - 60px); overflow-y: auto; background: #001730; padding: 22px 0 30px; }
+/* No computador o painel é fixo de verdade (não só sticky): sticky sai da tela junto com a lista quando o rodapé
+   chega. Fixo ele nunca se mexe, e o rodapé passa por cima dele. */
+@media (min-width: 901px) {
+  .l-md-rail { position: fixed; top: 60px; left: 0; width: 208px; z-index: 1; }
+  .l-md-main { grid-column: 2; }
+  seia-rodape { position: relative; z-index: 2; }
+}
 .l-md-rail-label {
   font-family: 'Archivo', sans-serif; font-weight: 800;
   font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
@@ -271,4 +278,10 @@ button.l-md-ct-remove {
   .l-md-search { width: 100%; }
   .l-md-compare-bar { padding: 14px 20px; }
   .l-md-compare-actions { width: 100%; margin-left: 0; justify-content: space-between; }
+}
+
+/* Alvos de toque confortáveis (~40px) em tela de toque ou estreita; só aumenta a área clicável */
+@media (pointer: coarse), (max-width: 640px) {
+  button.l-md-filter, button.l-md-filter.is-on { min-height: 40px; }
+  button.l-md-sort-option { min-height: 36px; padding-left: 6px; padding-right: 6px; }
 }

@@ -186,3 +186,10 @@ button.l-cc-locate:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2
   .l-cc-map { height: 240px; }
   .l-cc-unit-body { padding: 0 16px 16px 16px; }
 }
+
+/* Alvos de toque confortáveis (~40px) em tela de toque ou estreita; só aumenta a área clicável */
+@media (pointer: coarse), (max-width: 640px) {
+  button.l-cc-filtro { min-height: 38px; padding-left: 14px; padding-right: 14px; }
+  button.l-cc-primary { min-height: 42px; }
+  a.l-cc-secondary { display: inline-flex; align-items: center; min-height: 42px; padding: 0 6px; }
+}

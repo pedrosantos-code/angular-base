@@ -185,3 +185,8 @@
   .l-pf-two { grid-template-columns: 1fr; }
   .l-pf-save-actions { width: 100%; margin-left: 0; justify-content: space-between; }
 }
+
+/* Alvos de toque confortáveis (~40px) em tela de toque ou estreita; só aumenta a área clicável */
+@media (pointer: coarse), (max-width: 640px) {
+  .l-pf-ghost { min-height: 42px; padding: 0 10px; }
+}

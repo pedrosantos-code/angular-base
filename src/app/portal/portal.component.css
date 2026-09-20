@@ -324,3 +324,10 @@ button.l-result-ficha:focus-visible { outline: 2px solid #2E7DD1; outline-offset
   .l-footer { padding: 36px 20px 20px; }
   .l-footer-grid { grid-template-columns: 1fr; gap: 24px; }
 }
+
+/* Alvos de toque confortáveis (~40px) em tela de toque ou estreita; só aumenta a área clicável */
+@media (pointer: coarse), (max-width: 640px) {
+  button.l-chip { min-height: 40px; }
+  button.l-result-ficha, button.l-btn-secondary { min-height: 40px; padding-top: 8px; padding-bottom: 8px; }
+  button.l-footer-link { min-height: 36px; }
+}

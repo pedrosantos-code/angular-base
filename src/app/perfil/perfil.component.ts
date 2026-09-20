@@ -272,12 +272,14 @@ export class PerfilComponent {
   private contaOriginal: DadosConta = structuredClone(this.conta);
 
   get iniciais(): string {
-    return this.conta.nome
+    const iniciais = this.conta.nome
       .split(' ')
       .filter(Boolean)
       .slice(0, 2)
       .map((p) => p[0]?.toUpperCase() ?? '')
       .join('');
+    // Sem nome ainda (conta nova ou carregando): usa a primeira letra do e-mail em vez de um quadrado vazio
+    return iniciais || (this.conta.email?.[0]?.toUpperCase() ?? '');
   }
 
   /** Quantos campos divergem do que está salvo. Alimenta a barra de ação. */
