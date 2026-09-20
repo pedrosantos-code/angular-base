@@ -4,7 +4,7 @@ import { AuthService } from '../auth.service';
 import { FONTE_VEICULOS, fonteVazia } from '../shared/fonte-veiculos';
 import { PortalComponent } from './portal.component';
 
-describe('PortalComponent · fotos', () => {
+describe('PortalComponent', () => {
   function criar() {
     TestBed.configureTestingModule({
       imports: [PortalComponent],
@@ -12,7 +12,7 @@ describe('PortalComponent · fotos', () => {
         provideRouter([]),
         { provide: AuthService, useValue: { logout: async () => {} } },
         // O portal renderiza o Agente de Perfil, que depende de uma fonte de veículos.
-        // A fonte vazia mantém o teste sem rede — aqui só se verificam as fotos.
+        // A fonte vazia mantém o teste sem rede.
         { provide: FONTE_VEICULOS, useValue: fonteVazia('stub de teste') },
       ],
     });
@@ -21,21 +21,15 @@ describe('PortalComponent · fotos', () => {
     return { fixture, el: fixture.nativeElement as HTMLElement };
   }
 
-  it('mostra a foto de cada modelo do resultado de exemplo', () => {
+  it('mostra o Agente de Perfil', () => {
     const { el } = criar();
-    const fotos = Array.from(el.querySelectorAll<HTMLImageElement>('.l-result-foto'));
-    expect(fotos.length).toBe(3);
-    expect(fotos.map((f) => f.alt)).toEqual(['Ford Territory', 'Ford Ranger', 'Ford Bronco Sport']);
-    expect(fotos[0].getAttribute('src')).toBe('territory.jpeg');
+    expect(el.querySelectorAll('seia-agente').length).toBe(1);
   });
 
-  it('mostra a foto nos destaques da linha', () => {
+  it('não mostra mais a busca "Qual é o seu próximo Ford?" nem os resultados de exemplo', () => {
     const { el } = criar();
-    expect(el.querySelectorAll('.l-model-foto').length).toBe(4);
-  });
-
-  it('usa o layout com foto só nos cards que têm foto', () => {
-    const { el } = criar();
-    expect(el.querySelectorAll('.l-result-card--foto').length).toBe(3);
+    expect(el.querySelector('.l-hero-section')).toBeNull();
+    expect(el.querySelector('.l-search-box')).toBeNull();
+    expect(el.querySelector('.l-result-card')).toBeNull();
   });
 });

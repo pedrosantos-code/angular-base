@@ -48,7 +48,8 @@
 .site-header { position: sticky; top: 0; z-index: 40; width: 100%; background: #fff; /* sólido: translúcido ficava cinza sobre o hero escuro */ border-bottom: 1px solid #EDF1F5; }
 .site-header__inner { max-width: 1180px; width: 100%; margin: 0 auto; padding: 16px 28px; display: flex; align-items: center; gap: 26px; }
 .brand { display: flex; align-items: center; gap: 12px; margin-right: auto; }
-.brand__logo { width: 32px; height: 32px; background: var(--brand); object-fit: cover; }
+.brand__logo { width: 32px; height: 32px; object-fit: contain; /* ícone com fundo transparente */ }
+.site-header--dark .brand__logo { filter: brightness(0) invert(1); }
 .brand__name { font-family: var(--display); font-weight: 800; font-size: 15px; line-height: 1.1; }
 .brand__tag { font-size: 10px; letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
 .site-nav { display: flex; align-items: center; gap: 26px; }
@@ -249,7 +250,7 @@ app-hero-reveal { --reveal-top: 65px; --reveal-h: 300vh; --reveal-bg: #050709; }
 .footer__top { display: grid; grid-template-columns: minmax(260px,1.4fr) minmax(160px,1fr) minmax(200px,1fr); gap: 40px; align-items: start; padding-bottom: 36px; border-bottom: 1px solid rgba(255,255,255,.14); }
 .footer__brand { max-width: 320px; }
 .footer__logo-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.footer__logo { width: 32px; height: 32px; border: 2px solid var(--sky); }
+.footer__logo { width: 32px; height: 32px; object-fit: contain; filter: brightness(0) invert(1); }
 .footer__name { font-family: var(--display); font-weight: 800; font-size: 16px; }
 .footer__tagline { max-width: 280px; margin: 0 0 20px; font-size: 14px; line-height: 1.6; color: #8FA6BC; }
 .footer__pitch { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; background: var(--accent); border-radius: 2px; font-size: 13px; font-weight: 700; letter-spacing: .04em; color: #fff; text-decoration: none; transition: background .18s; }

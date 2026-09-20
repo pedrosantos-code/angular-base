@@ -7,69 +7,6 @@
   <!-- Conteúdo Principal da Página -->
   <main class="l-main-content">
     
-    <!-- Hero / Recomendação por IA -->
-    <section class="l-hero-section">
-      <span class="l-tag">recomendação por ia</span>
-      <h1 class="l-title">Qual é o seu próximo Ford?</h1>
-      <p class="l-subtitle">Descreva como você usa o carro. Comparamos com o perfil de uso de cada modelo Ford e mostramos o quanto cada um combina com você.</p>
-      
-      <!-- Caixa de Busca -->
-      <div class="l-search-box" role="search">
-        <input type="text" [(ngModel)]="termo" aria-label="Descreva como você usa o carro" autocomplete="off" placeholder="Ex: rodo 60 km/dia na cidade e viajo…" class="l-search-input" (keyup.enter)="enviar()">
-        <button type="button" class="l-btn-primary" (click)="enviar()">ENCONTRAR MEU FORD</button>
-      </div>
-
-      <!-- Atalhos / Chips -->
-      <div class="l-shortcuts">
-        <span>Ou comece por aqui:</span>
-        <div class="l-chips">
-          @for (a of atalhos; track a.chave) {
-            <button type="button" class="l-chip" (click)="selecionarAtalho(a.chave)">
-              <svg class="l-chip-icon" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-                <path *ngFor="let pathData of a.icone" [attr.d]="pathData"></path>
-              </svg>
-              {{ a.rotulo }}
-            </button>
-          }
-        </div>
-      </div>
-      <div class="l-example">
-        <small>Exemplo de resultado perfil: família, estrada, até R$ 250 mil</small>
-      </div>
-    </section>
-
-    <!-- Resultados da IA com barra de progresso -->
-    <section class="l-results-section" aria-live="polite">
-      <div class="l-results-header">
-        <span class="l-results-title">{{ tituloResultados }}</span>
-        <span class="l-results-subtitle">{{ subtituloResultados }}</span>
-      </div>
-      
-      @for (r of resultados; track r.modelo) {
-        <div class="l-result-card" [class.l-result-card--foto]="foto(r.modelo)">
-          @if (foto(r.modelo); as src) {
-            <img class="l-result-foto" [src]="src" [alt]="'Ford ' + r.modelo" loading="lazy" decoding="async">
-          }
-          <div class="l-result-info">
-            <h3 class="l-result-modelo">{{ r.modelo }}</h3>
-            <p class="l-result-motivo">{{ r.motivo }}</p>
-            @if (r.disponivelNoDashboard) {
-              <button type="button" class="l-result-ficha" (click)="verFichaTecnica(r.modelo)">Ver ficha técnica →</button>
-            }
-          </div>
-          <div class="l-result-score">
-            <div class="l-score-info">
-              <span class="l-score-number">{{ r.nota }}</span>
-              <span class="l-score-label">% compatível</span>
-            </div>
-            <div class="l-progress-bar">
-              <div class="l-progress-fill" [style.width.%]="r.nota" [style.background-color]="r.nota < corteFraco ? '#8FB8E2' : '#2E7DD1'"></div>
-            </div>
-          </div>
-        </div>
-      }
-    </section>
-
     <!-- Agente de Perfil: análise de cliente para o time comercial -->
     <seia-agente />
 
@@ -83,24 +20,6 @@
             <span class="l-step-number">{{ p.n }}</span>
             <h3 class="l-step-titulo">{{ p.titulo }}</h3>
             <p class="l-step-texto">{{ p.texto }}</p>
-          </div>
-        }
-      </div>
-    </section>
-
-    <!-- A linha completa -->
-    <section class="l-line-section">
-      <h2>Destaques da linha</h2>
-      <div class="l-models-grid">
-        @for (m of modelos; track m.nome) {
-          <div class="l-model-card">
-            @if (foto(m.nome); as src) {
-              <img class="l-model-foto" [src]="src" [alt]="'Ford ' + m.nome" loading="lazy" decoding="async">
-            }
-            <span class="l-model-segmento">{{ m.segmento }}</span>
-            <h3 class="l-model-nome">{{ m.nome }}</h3>
-            <p class="l-model-preco">{{ m.preco }}</p>
-            <button type="button" class="l-btn-secondary" (click)="selecionarModelo(m.nome)">Ver ficha</button>
           </div>
         }
       </div>
