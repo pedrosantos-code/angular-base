@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ICONES, ITENS_PRINCIPAIS, ITENS_ATENDIMENTO, ITENS_SOBRE, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { AgenteComponent } from './agente/agente.component';
 import { fotoDoModelo } from '../shared/fotos-modelos';
 import { calcularNota, detectarOrcamento, detectarTags, formatarPerfil } from '../shared/recomendacao-ia';
 import { AuthService } from '../auth.service';
@@ -68,7 +69,7 @@ export interface PassoFuncionamento {
 @Component({
   selector: 'seia-portal',
   standalone: true,
-  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent, AgenteComponent],
   templateUrl: './portal.component.html',
   styleUrl: './portal.component.css',
 })

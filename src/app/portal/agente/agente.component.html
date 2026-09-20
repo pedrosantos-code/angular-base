@@ -1,0 +1,341 @@
+<section class="ag-secao" id="agente">
+
+  <!-- Cabeçalho -->
+  <header class="ag-cabecalho" appReveal="up">
+    <div>
+      <span class="ag-tag">agente de perfil</span>
+      <h2 class="ag-titulo">Quem é o cliente? Eu digo qual Ford e por quê.</h2>
+      <p class="ag-sub">
+        Descreva o cliente em uma frase. O agente extrai os fatos, pontua a linha inteira,
+        puxa a ficha técnica real da API e devolve o argumento pronto para a reunião.
+      </p>
+    </div>
+    <div class="ag-fonte-badge" [title]="nomeFonte">
+      <span class="ag-fonte-ponto" aria-hidden="true"></span>
+      <div>
+        <strong>Fonte de dados</strong>
+        <span>{{ nomeFonte }}</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Entrada -->
+  <div class="ag-entrada" appReveal="up" [revealDelay]="60">
+    <label class="ag-label" for="ag-descricao">Perfil do cliente</label>
+    <textarea
+      id="ag-descricao"
+      class="ag-textarea"
+      rows="3"
+      [(ngModel)]="descricao"
+      (keydown.control.enter)="analisar()"
+      placeholder="Ex: Cliente solteiro, 20 anos, sem filhos, residente em cidade grande."></textarea>
+
+    <div class="ag-acoes">
+      <button type="button" class="ag-btn-primario" (click)="analisar()" [disabled]="!descricao.trim()">
+        Analisar perfil
+      </button>
+      @if (analisou()) {
+        <button type="button" class="ag-btn-texto" (click)="limpar()">Limpar</button>
+      }
+      <span class="ag-dica">Ctrl + Enter</span>
+    </div>
+
+    <div class="ag-personas">
+      <span class="ag-personas-titulo">Personas prontas:</span>
+      @for (p of personas; track p.rotulo) {
+        <button type="button" class="ag-persona" (click)="usarPersona(p)">{{ p.rotulo }}</button>
+      }
+    </div>
+  </div>
+
+  @if (analisou()) {
+
+    <!-- Premissas que o agente leu -->
+    <div class="ag-premissas" appReveal="up">
+      <div class="ag-premissas-topo">
+        <h3 class="ag-bloco-titulo">O que o agente leu</h3>
+        <button type="button" class="ag-btn-texto" (click)="mostrarPesos.set(!mostrarPesos())">
+          {{ mostrarPesos() ? 'Ocultar' : 'Ver' }} pesos por eixo
+        </button>
+      </div>
+      <p class="ag-premissas-nota">
+        Campo em azul foi lido da sua frase. Campo em cinza é premissa que o agente assumiu —
+        escreva o dado na descrição para substituí-la.
+      </p>
+
+      <div class="ag-fatos">
+        @for (f of fatos(); track f.rotulo; let i = $index) {
+          <div class="ag-fato" [class.ag-fato--assumido]="!f.lido" [style.animation-delay.ms]="i * 45">
+            <span class="ag-fato-rotulo">{{ f.rotulo }}</span>
+            <strong class="ag-fato-valor">{{ f.valor }}</strong>
+            @if (!f.lido) { <span class="ag-fato-selo">assumido</span> }
+          </div>
+        }
+      </div>
+
+      @if (mostrarPesos() && pesos(); as p) {
+        <div class="ag-pesos">
+          @for (e of eixos; track e.chave) {
+            <div class="ag-peso">
+              <div class="ag-peso-topo">
+                <span [title]="e.descricao">{{ e.rotulo }}</span>
+                <strong>{{ p[e.chave] }}</strong>
+              </div>
+              <div class="ag-peso-trilho"><div class="ag-peso-fill" [style.width.%]="p[e.chave]"></div></div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    @if (nenhumCabe() && perfil(); as p) {
+      <div class="ag-alerta-orcamento" appReveal="up" role="status">
+        <strong>Nenhum modelo da linha cabe no teto de {{ formatarReais(p.orcamento) }}.</strong>
+        <span>
+          O ranking abaixo mostra o mais próximo do alcance, já com o desconto de preço aplicado.
+          @if (p.orcamentoEstimado) {
+            Esse teto foi estimado pelo agente — informe o orçamento real na descrição para recalcular.
+          }
+        </span>
+      </div>
+    }
+
+    <!-- Destaque do líder -->
+    @if (lider(); as l) {
+      <div class="ag-lider" appReveal="up">
+        <div class="ag-lider-principal">
+          <span class="ag-lider-selo">melhor aderência</span>
+          <h3 class="ag-lider-nome">{{ l.modelo }}</h3>
+          <p class="ag-lider-segmento">{{ l.segmento }} · a partir de {{ formatarReais(l.precoDe) }}</p>
+          <p class="ag-lider-diferencial">{{ l.diferencial }}</p>
+          <button type="button" class="ag-btn-secundario" (click)="verFichaTecnica(l.modelo)">
+            Abrir no Dashboard →
+          </button>
+        </div>
+
+        <div class="ag-kpis">
+          <div class="ag-kpi ag-kpi--heroi">
+            <span class="ag-kpi-rotulo">Aderência ao perfil</span>
+            <span class="ag-kpi-valor">{{ l.score }}<small>/100</small></span>
+            <div class="ag-kpi-trilho"><div class="ag-kpi-fill" [style.width.%]="l.score"></div></div>
+          </div>
+          <div class="ag-kpi">
+            <span class="ag-kpi-rotulo">Share estimado da linha</span>
+            <span class="ag-kpi-valor ag-kpi-valor--medio">{{ l.shareLinha }}<small>%</small></span>
+          </div>
+          <div class="ag-kpi">
+            <span class="ag-kpi-rotulo">Ranking de vendas</span>
+            <span class="ag-kpi-valor ag-kpi-valor--medio">{{ l.posicaoVendas }}<small>º</small></span>
+          </div>
+          <div class="ag-kpi">
+            <span class="ag-kpi-rotulo">Preço vs. teto</span>
+            <span class="ag-kpi-valor ag-kpi-valor--medio" [class.ag-acima]="!l.dentroDoOrcamento">
+              {{ l.dentroDoOrcamento ? 'cabe' : 'acima' }}
+            </span>
+            @if (!l.dentroDoOrcamento) {
+              <span class="ag-kpi-nota">−{{ -l.ajustePreco }} pts aplicados</span>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Pódio com as razões -->
+    <div class="ag-podio" appReveal="up">
+      <h3 class="ag-bloco-titulo">Por que estes três</h3>
+      <div class="ag-podio-grid">
+        @for (m of podio(); track m.modelo; let i = $index) {
+          <article class="ag-card" [style.animation-delay.ms]="i * 90">
+            <header class="ag-card-topo">
+              <span class="ag-card-pos" [style.background]="cores[i]" aria-hidden="true"></span>
+              <div>
+                <h4 class="ag-card-nome">{{ m.modelo }}</h4>
+                <span class="ag-card-segmento">{{ m.segmento }}</span>
+              </div>
+              <span class="ag-card-score">{{ m.score }}</span>
+            </header>
+
+            <ul class="ag-razoes">
+              @for (r of m.razoes; track r.eixo) {
+                <li class="ag-razao">
+                  <div class="ag-razao-topo">
+                    <span class="ag-razao-eixo">{{ rotuloEixo(r.eixo) }}</span>
+                    <span class="ag-razao-pts">+{{ r.contribuicao }} pts</span>
+                  </div>
+                  <p class="ag-razao-texto">{{ r.texto }}</p>
+                </li>
+              }
+            </ul>
+
+            @if (m.atencao; as a) {
+              <div class="ag-atencao">
+                <span class="ag-atencao-rotulo">Atenção · {{ rotuloEixo(a.eixo) }}</span>
+                <p class="ag-razao-texto">{{ a.texto }}</p>
+              </div>
+            }
+
+            <footer class="ag-card-rodape">
+              <span class="ag-card-preco">{{ formatarReais(m.precoDe) }}</span>
+              @if (!m.dentroDoOrcamento) { <span class="ag-selo-alerta">acima do teto</span> }
+            </footer>
+          </article>
+        }
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="ag-graficos" appReveal="up">
+
+      <figure class="ag-grafico">
+        <figcaption>
+          <h3 class="ag-bloco-titulo">Aderência por eixo de necessidade</h3>
+          <p class="ag-grafico-nota">Cada eixo vai de 0 a 100. Quanto mais preenchida a área, mais o modelo cobre o que este perfil pede.</p>
+        </figcaption>
+        <div class="ag-canvas-wrap ag-canvas-wrap--radar">
+          <canvas #radarCanvas aria-label="Gráfico radar comparando os três modelos nos seis eixos de necessidade"></canvas>
+        </div>
+      </figure>
+
+      <figure class="ag-grafico">
+        <figcaption>
+          <div class="ag-grafico-topo">
+            <div>
+              <h3 class="ag-bloco-titulo">Ficha técnica — dado real da API</h3>
+              <p class="ag-grafico-nota">{{ metricaSelecionada().rotulo }} em {{ metricaSelecionada().unidade }}, da variante com ficha mais completa de cada modelo.</p>
+            </div>
+            <div class="ag-metricas" role="group" aria-label="Escolher métrica">
+              @for (m of metricas; track m.chave) {
+                <button
+                  type="button"
+                  class="ag-metrica"
+                  [class.ag-metrica--ativa]="metricaAtiva() === m.chave"
+                  [attr.aria-pressed]="metricaAtiva() === m.chave"
+                  (click)="metricaAtiva.set(m.chave)">{{ m.rotulo }}</button>
+              }
+            </div>
+          </div>
+        </figcaption>
+
+        @if (carregandoApi()) {
+          <div class="ag-estado"><span class="ag-spinner" aria-hidden="true"></span> Consultando a fonte de dados…</div>
+        } @else if (erroApi()) {
+          <div class="ag-estado ag-estado--erro">{{ erroApi() }}</div>
+        } @else {
+          <div class="ag-canvas-wrap ag-canvas-wrap--barras">
+            <canvas #fichaCanvas [attr.aria-label]="'Gráfico de barras: ' + metricaSelecionada().rotulo + ' por modelo'"></canvas>
+          </div>
+          @if (semDadoNaMetrica() > 0) {
+            <p class="ag-grafico-aviso">
+              {{ semDadoNaMetrica() }} modelo(s) fora do gráfico: a API não publica {{ metricaSelecionada().rotulo.toLowerCase() }} para eles. Nada foi estimado.
+            </p>
+          }
+        }
+      </figure>
+    </div>
+
+    <!-- Drivers + narrativa -->
+    @if (lider(); as l) {
+      <div class="ag-massa" appReveal="up">
+        <figure class="ag-grafico">
+          <figcaption>
+            <h3 class="ag-bloco-titulo">Por que a massa escolhe o {{ l.modelo }}</h3>
+            <p class="ag-grafico-nota">% dos compradores do modelo que citam o fator como decisivo.</p>
+          </figcaption>
+          <div class="ag-canvas-wrap ag-canvas-wrap--drivers">
+            <canvas #driversCanvas [attr.aria-label]="'Fatores de decisão dos compradores do ' + l.modelo"></canvas>
+          </div>
+        </figure>
+
+        <div class="ag-narrativa">
+          <div class="ag-narrativa-topo">
+            <h3 class="ag-bloco-titulo">Texto para o slide</h3>
+            <button type="button" class="ag-btn-texto" (click)="copiarNarrativa()">
+              {{ copiado() ? 'Copiado ✓' : 'Copiar' }}
+            </button>
+          </div>
+          <p class="ag-narrativa-texto">{{ narrativa() }}</p>
+          <p class="ag-narrativa-comprador"><strong>Comprador típico:</strong> {{ l.compradorTipico }}</p>
+        </div>
+      </div>
+    }
+
+    <!-- Tabela de dados -->
+    <div class="ag-tabela-bloco" appReveal="up">
+      <div class="ag-premissas-topo">
+        <h3 class="ag-bloco-titulo">Ranking completo</h3>
+        <button type="button" class="ag-btn-texto" (click)="mostrarTabela.set(!mostrarTabela())">
+          {{ mostrarTabela() ? 'Ocultar tabela' : 'Ver tabela de dados' }}
+        </button>
+      </div>
+
+      @if (mostrarTabela()) {
+        <div class="ag-tabela-scroll">
+          <table class="ag-tabela">
+            <caption class="ag-sr">Ranking de aderência com score, ajuste de preço e share estimado</caption>
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">Segmento</th>
+                <th scope="col" class="ag-num">Score</th>
+                <th scope="col" class="ag-num">Bruto</th>
+                <th scope="col" class="ag-num">Ajuste preço</th>
+                <th scope="col" class="ag-num">Preço</th>
+                <th scope="col" class="ag-num">Share est.</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of matches(); track m.modelo; let i = $index) {
+                <tr [class.ag-linha-podio]="i < 3">
+                  <td>{{ i + 1 }}</td>
+                  <td><strong>{{ m.modelo }}</strong></td>
+                  <td class="ag-celula-suave">{{ m.segmento }}</td>
+                  <td class="ag-num"><strong>{{ m.score }}</strong></td>
+                  <td class="ag-num ag-celula-suave">{{ m.scoreBruto }}</td>
+                  <td class="ag-num" [class.ag-acima]="m.ajustePreco < 0">{{ m.ajustePreco === 0 ? '—' : m.ajustePreco }}</td>
+                  <td class="ag-num ag-celula-suave">{{ formatarReais(m.precoDe) }}</td>
+                  <td class="ag-num ag-celula-suave">{{ m.shareLinha }}%</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (fichas().length) {
+          <div class="ag-tabela-scroll">
+            <table class="ag-tabela">
+              <caption class="ag-sr">Ficha técnica dos finalistas, dados da API</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Modelo</th>
+                  <th scope="col">Variante na API</th>
+                  <th scope="col">Combustível</th>
+                  <th scope="col" class="ag-num">Potência</th>
+                  <th scope="col" class="ag-num">Comprimento</th>
+                  <th scope="col" class="ag-num">Altura</th>
+                  <th scope="col" class="ag-num">Tanque</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (f of fichas(); track f.modelo) {
+                  <tr>
+                    <td><strong>{{ f.modelo }}</strong></td>
+                    <td class="ag-celula-suave">{{ f.variante }}</td>
+                    <td class="ag-celula-suave">{{ f.combustivel }}</td>
+                    <td class="ag-num">{{ f.potencia !== null ? f.potencia + ' cv' : '—' }}</td>
+                    <td class="ag-num">{{ f.comprimento !== null ? f.comprimento + ' mm' : '—' }}</td>
+                    <td class="ag-num">{{ f.altura !== null ? f.altura + ' mm' : '—' }}</td>
+                    <td class="ag-num">{{ f.tanque !== null ? f.tanque + ' L' : '—' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      }
+    </div>
+
+    <p class="ag-aviso">{{ avisoMercado }}</p>
+  }
+
+</section>
