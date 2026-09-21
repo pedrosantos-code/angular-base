@@ -3,33 +3,35 @@
 <div class="l-md-shell">
 
   <header class="l-md-hero">
-    <div class="l-md-hero-text">
-      <h1 class="l-md-title">Escolha o seu<br /><span>próximo Ford.</span></h1>
-      <p class="l-md-count">
-        @if (perfil) { perfil: {{ perfil }} } @else { <button type="button" class="l-md-clear" (click)="ir('recomendacao')">Descreva seu uso para ver a compatibilidade</button> }
-      </p>
-    </div>
-    <div class="l-md-hero-total" role="status" aria-live="polite">
-      <strong>{{ filtrados.length }}</strong>
-      <span>{{ filtrados.length === 1 ? 'modelo na seleção' : 'modelos na seleção' }}</span>
+    <p class="l-md-eyebrow"><i aria-hidden="true"></i>Catálogo SEIA + Ford · {{ modelos.length }} modelos</p>
+    <h1 class="l-md-title" aria-label="Escolha o seu próximo Ford.">
+      <span class="l-md-line l-md-shine" aria-hidden="true">Escolha o seu</span>
+      <span class="l-md-line l-md-shine2" aria-hidden="true">próximo Ford.</span>
+    </h1>
+    <p class="l-md-count">
+      @if (perfil) { perfil: {{ perfil }} } @else { <button type="button" class="l-md-clear" (click)="ir('recomendacao')">Descreva seu uso para ver a compatibilidade</button> }
+    </p>
+
+    <div class="l-md-cats" role="group" aria-label="Categoria">
+      @for (c of categorias; track c.chave) {
+        <button
+          class="l-md-pill l-md-filter"
+          type="button"
+          [class.is-on]="categoria === c.chave"
+          [attr.aria-pressed]="categoria === c.chave"
+          (click)="categoria = c.chave">
+          {{ c.rotulo }} <span class="l-md-filter-count">{{ contagem(c.chave) }}</span>
+        </button>
+      }
     </div>
   </header>
 
   <section class="l-md-controls" aria-label="Filtros de modelos">
 
     <div class="l-md-bar">
-      <div class="l-md-cats" role="group" aria-label="Categoria">
-        @for (c of categorias; track c.chave) {
-          <button
-            class="l-md-pill l-md-filter"
-            type="button"
-            [class.is-on]="categoria === c.chave"
-            [attr.aria-pressed]="categoria === c.chave"
-            (click)="categoria = c.chave">
-            {{ c.rotulo }} <span class="l-md-filter-count">{{ contagem(c.chave) }}</span>
-          </button>
-        }
-      </div>
+      <p class="l-md-status" role="status" aria-live="polite">
+        <strong>{{ filtrados.length }}</strong> {{ filtrados.length === 1 ? 'modelo na seleção' : 'modelos na seleção' }}
+      </p>
 
       <div class="l-md-tools">
         <input
@@ -58,7 +60,6 @@
         </button>
       </div>
     </div>
-
     <div class="l-md-rail" id="l-md-rail" [class.is-open]="filtrosAbertos">
       <div class="l-md-group">
         <span class="l-md-rail-label">Motorização</span>
