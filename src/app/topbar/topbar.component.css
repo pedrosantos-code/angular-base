@@ -22,11 +22,26 @@
 }
 
 /* Tema claro (tema="claro"): barra branca com ícones e logo escuros. A gaveta continua escura. */
-:host(.tema-claro) .topbar { background: #fff; }
-/* Em vez de um filete duro, a barra some numa sombra que se dissolve suavemente sobre o conteúdo */
+:host(.tema-claro) .topbar {
+  background: #fff;
+  transition: background-color .3s ease, backdrop-filter .3s ease, -webkit-backdrop-filter .3s ease;
+}
+/* Em vez de um filete duro, a barra some numa sombra que se dissolve suavemente sobre o conteúdo.
+   No topo a sombra é discreta; ao rolar, ela aparece por inteiro e a barra vira um vidro fosco (transição leve). */
 :host(.tema-claro) .topbar::after {
-  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 18px; pointer-events: none;
-  background: linear-gradient(to bottom, rgba(0,23,48,.07), rgba(0,23,48,.025) 45%, rgba(0,23,48,0));
+  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 22px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,23,48,.09), rgba(0,23,48,.03) 45%, rgba(0,23,48,0));
+  opacity: .45;
+  transition: opacity .3s ease;
+}
+:host(.tema-claro.is-rolado) .topbar {
+  background: rgba(255,255,255,.88);
+  -webkit-backdrop-filter: saturate(160%) blur(12px);
+  backdrop-filter: saturate(160%) blur(12px);
+}
+:host(.tema-claro.is-rolado) .topbar::after { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  :host(.tema-claro) .topbar, :host(.tema-claro) .topbar::after { transition: none; }
 }
 :host(.tema-claro) button.topbar-btn { color: #1E2B3D; }
 :host(.tema-claro) button.topbar-btn:hover { color: #001730; background: #EEF2F7; }

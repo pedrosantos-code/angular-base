@@ -115,8 +115,6 @@
 /* ===== Filtros ===== */
 .l-md-controls { padding: 22px var(--l-md-pad) 6px; }
 .l-md-bar { display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap; }
-.l-md-status { margin: 0; font-size: 13.5px; color: #55677A; }
-.l-md-status strong { color: #001730; font-weight: 700; }
 .l-md-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
 /* Pílula: base dos filtros, da ordenação e do botão "Filtros" */

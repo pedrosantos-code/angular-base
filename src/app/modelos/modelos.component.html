@@ -48,9 +48,6 @@
   <section class="l-md-controls" aria-label="Filtros de modelos">
 
     <div class="l-md-bar">
-      <p class="l-md-status" role="status" aria-live="polite">
-        <strong>{{ filtrados.length }}</strong> {{ filtrados.length === 1 ? 'modelo na seleção' : 'modelos na seleção' }}
-      </p>
 
       <div class="l-md-tools">
         <input
@@ -127,7 +124,7 @@
       </div>
     </div>
 
-    <p class="l-md-summary">
+    <p class="l-md-summary" role="status" aria-live="polite">
       {{ categoria === 'todos' ? 'Todos os veículos' : rotuloCategoria }} · {{ filtrados.length }} de {{ modelos.length }} modelos
     </p>
   </section>

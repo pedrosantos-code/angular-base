@@ -73,7 +73,7 @@ const CHAVE_POR_ROTA: Record<string, string> = Object.fromEntries(
   imports: [CommonModule],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css',
-  host: { '[class.tema-claro]': "tema === 'claro'" },
+  host: { '[class.tema-claro]': "tema === 'claro'", '[class.is-rolado]': 'rolado' },
 })
 export class TopbarComponent {
   private router = inject(Router);
@@ -109,6 +109,9 @@ export class TopbarComponent {
 
   aberto = false;
 
+  /** true quando a página já rolou um pouco: o cabeçalho ganha sombra e vidro fosco, com transição suave (ver o CSS). */
+  rolado = false;
+
   alternar(): void {
     this.aberto = !this.aberto;
   }
@@ -130,6 +133,12 @@ export class TopbarComponent {
   irPerfil(): void {
     this.fechar();
     this.router.navigateByUrl('/perfil');
+  }
+
+  @HostListener('window:scroll')
+  aoRolar(): void {
+    const rolou = window.scrollY > 6;
+    if (rolou !== this.rolado) this.rolado = rolou;
   }
 
   @HostListener('document:keydown.escape')
