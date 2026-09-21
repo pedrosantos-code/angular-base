@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { TopbarComponent, ITENS_PRINCIPAIS, ITENS_ATENDIMENTO, ITENS_SOBRE, ROTAS_MENU } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AgenteComponent } from './agente/agente.component';
 import { AuthService } from '../auth.service';
@@ -23,10 +23,6 @@ export class PortalComponent {
   private authService = inject(AuthService);
 
   ativo = 'recomendacao';
-
-  readonly principais = ITENS_PRINCIPAIS;
-  readonly atendimento = ITENS_ATENDIMENTO;
-  readonly sobre = ITENS_SOBRE;
 
   // Passos de funcionamento da IA
   readonly passos: PassoFuncionamento[] = [
