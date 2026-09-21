@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 import { calcularNota, formatarPerfil } from '../shared/recomendacao-ia';
 import { AuthService } from '../auth.service';
 import { ProfileService } from '../profile.service';
@@ -51,7 +52,7 @@ export interface Categoria { chave: string; rotulo: string; }
 @Component({
   selector: 'seia-modelos',
   standalone: true,
-  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './modelos.component.html',
   styleUrl: './modelos.component.css',
 })
@@ -66,21 +67,6 @@ export class ModelosComponent {
     const rota = ROTAS_MENU[chave];
     if (rota) this.router.navigateByUrl(rota);
   }
-
-  /**
-   * As 7 linhas de luz do fundo. Cada uma tem curva, velocidade (7 s a 14,5 s), atraso negativo (já começa no meio do caminho,
-   * então nunca estão todas sincronizadas) e espessura (1,1 ou 1,6) diferentes: por isso o movimento parece orgânico.
-   * As curvas começam e terminam fora da tela (-100 e 1700), então a luz entra e sai sem aparecer cortada.
-   */
-  readonly linhasDeLuz: { d: string; duracao: number; atraso: number; espessura: number }[] = [
-    { d: 'M -100 200 C 400 120, 1100 300, 1700 180', duracao: 8, atraso: -2, espessura: 1.6 },
-    { d: 'M -100 620 C 300 720, 900 520, 1700 660', duracao: 11, atraso: -3.4, espessura: 1.1 },
-    { d: 'M -100 420 C 500 330, 1000 560, 1700 400', duracao: 7.5, atraso: -5, espessura: 1.6 },
-    { d: 'M -100 90 C 350 200, 1200 20, 1700 120', duracao: 14.5, atraso: -1, espessura: 1.1 },
-    { d: 'M -100 780 C 450 700, 1150 860, 1700 760', duracao: 9.5, atraso: -6.5, espessura: 1.6 },
-    { d: 'M -100 320 C 250 460, 1250 240, 1700 500', duracao: 12, atraso: -4, espessura: 1.1 },
-    { d: 'M -100 520 C 600 620, 950 400, 1700 560', duracao: 13, atraso: -8, espessura: 1.6 },
-  ];
 
   /** Abre a ficha técnica do modelo no Dashboard, que busca na API da Ford. */
   abrirFicha(m: Modelo): void {

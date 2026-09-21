@@ -31,21 +31,6 @@
 
 .l-md-shell { min-height: calc(100vh - 60px); }
 
-/* ===== Linhas de luz (fundo) ===== */
-.l-md-streams { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
-/* Um traço curto (90 de 1000) deslocado ao longo da curva: parece um pulso de luz correndo pela linha */
-.l-md-stream {
-  stroke-dasharray: 90 910;
-  animation: l-md-flow linear infinite;
-  filter: drop-shadow(0 0 3px rgba(31,91,224,.45));
-}
-@keyframes l-md-flow {
-  from { stroke-dashoffset: 1000; }
-  to   { stroke-dashoffset: 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .l-md-stream { animation: none; stroke-dashoffset: 550; }
-}
 /* ===== Cabeçalho ===== */
 .l-md-hero {
   position: relative; isolation: isolate;

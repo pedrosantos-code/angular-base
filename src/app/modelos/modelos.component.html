@@ -1,23 +1,7 @@
 <seia-topbar tema="claro" (navegar)="ir($event)" (sair)="sair()" />
 
-<!-- Linhas de luz atrás de tudo: SVG do tamanho da tela, animado só com CSS (ver .l-md-stream) -->
-<svg class="l-md-streams" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-  <defs>
-    <!-- some no começo, azul no meio, ciano na ponta -->
-    <linearGradient id="l-md-sg" x1="0" x2="1">
-      <stop offset="0" stop-color="#1F5BE0" stop-opacity="0" />
-      <stop offset=".55" stop-color="#1F5BE0" />
-      <stop offset="1" stop-color="#06B6D4" />
-    </linearGradient>
-  </defs>
-  @for (l of linhasDeLuz; track $index) {
-    <!-- trilho fixo, quase invisível -->
-    <path [attr.d]="l.d" fill="none" stroke="rgba(31,91,224,.07)" stroke-width="1" />
-    <!-- a luz que corre por cima -->
-    <path class="l-md-stream" [attr.d]="l.d" fill="none" stroke="url(#l-md-sg)" [attr.stroke-width]="l.espessura"
-          stroke-linecap="round" pathLength="1000" [style.animation-duration]="l.duracao + 's'" [style.animation-delay]="l.atraso + 's'" />
-  }
-</svg>
+<!-- Linhas de luz atrás de tudo (componente compartilhado) -->
+<seia-linhas-de-luz />
 
 <div class="l-md-shell">
 

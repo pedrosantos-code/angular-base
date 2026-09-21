@@ -2,22 +2,32 @@
 
 <header class="l-ia-hero">
   <div class="l-ia-inner l-ia-hero-row">
-    <div>
+    <div class="l-ia-hero-text">
       <p class="l-ia-tag"><span aria-hidden="true"></span>Transparência</p>
       <h1 class="l-ia-title">Como a IA <span>decide.</span></h1>
+      <p class="l-ia-subtitle">
+        Toda recomendação é uma conta com critérios visíveis. Esta página mostra a conta.
+      </p>
     </div>
-    <p class="l-ia-subtitle">
-      Toda recomendação é uma conta com critérios visíveis. Esta página mostra a conta.
-    </p>
+
+    <!-- A regra, em poucas linhas: os mesmos números da fórmula que calcula a nota -->
+    <figure class="l-ia-code" aria-label="A regra da nota, em forma de código">
+      <span class="l-ia-code-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <pre><code><span class="c">// a regra, sem caixa-preta</span>
+<span class="k">nota</span> = <span class="k">partida</span>
+     + <span class="n">{{ regra.pontos }}</span> × etiquetas que batem
+     − <span class="n">{{ regra.desconto }}</span> se passar do teto
+<span class="c">// mín. {{ regra.minimo }} · máx. {{ regra.maximo }}</span></code></pre>
+    </figure>
   </div>
 </header>
 
 <main class="l-ia-page">
 
-  <!-- 1 · O que entra na conta -->
+  <!-- 01 · O que entra na conta -->
   <section class="l-ia-section" aria-labelledby="ia-ingredientes">
     <div class="l-ia-inner">
-      <p class="l-ia-kicker">O que entra na conta</p>
+      <p class="l-ia-kicker"><b>01</b>O que entra na conta</p>
       <h2 class="l-ia-heading" id="ia-ingredientes">Três ingredientes.</h2>
       <div class="l-ia-inputs">
         @for (e of entradas; track e.ordem) {
@@ -31,49 +41,99 @@
     </div>
   </section>
 
-  <!-- 2 · Exemplo de cálculo -->
+  <!-- 02 · A conta aberta -->
   <section class="l-ia-section" aria-labelledby="ia-exemplo">
     <div class="l-ia-inner">
+      <div class="l-ia-heading-row">
+        <div>
+          <p class="l-ia-kicker"><b>02</b>Exemplo de cálculo</p>
+          <h2 class="l-ia-heading" id="ia-exemplo">Ford {{ modelo }}, conta aberta.</h2>
+        </div>
+        <p class="l-ia-heading-note">Ligue e desligue as etiquetas para ver a nota mudar.</p>
+      </div>
+
       <div class="l-ia-score">
         <div class="l-ia-score-main">
-          <p class="l-ia-kicker">Exemplo de cálculo</p>
-          <h2 class="l-ia-score-model" id="ia-exemplo">Ford {{ exemplo.modelo }}</h2>
-          <ul class="l-ia-profile" aria-label="Perfil usado no exemplo">
-            @for (p of perfilItens; track p) { <li>{{ p }}</li> }
-          </ul>
 
-          <div class="l-ia-criteria">
-            @for (c of exemplo.criterios; track c.rotulo) {
-              <div class="l-ia-criterion">
-                <span class="l-ia-criterion-label">{{ c.rotulo }}</span>
-                <span class="l-ia-criterion-track">
-                  <span
-                    class="l-ia-criterion-fill"
-                    [class.is-fraco]="proporcao(c) < corteFraco"
-                    [style.width.%]="proporcao(c) * 100"></span>
-                </span>
-                <span class="l-ia-criterion-points">+{{ c.pontos }}</span>
-              </div>
+          <p class="l-ia-label">Se a pessoa escreve…</p>
+          <div class="l-ia-chips" role="group" aria-label="Etiquetas do texto da pessoa">
+            @for (e of etiquetas; track e.chave) {
+              <button
+                type="button"
+                class="l-ia-chip"
+                [class.is-on]="escolhidas.has(e.chave)"
+                [class.is-pontua]="pontua(e.chave)"
+                [attr.aria-pressed]="escolhidas.has(e.chave)"
+                (click)="alternarEtiqueta(e.chave)">
+                {{ e.rotulo }}
+                @if (pontua(e.chave)) { <span class="l-ia-chip-pts">+{{ regra.pontos }}</span> }
+              </button>
+            }
+          </div>
+          <p class="l-ia-hint">O {{ modelo }} tem as etiquetas: {{ etiquetasDoModeloTexto }}.</p>
+
+          <p class="l-ia-label">…e o teto de orçamento é</p>
+          <div class="l-ia-chips" role="group" aria-label="Teto de orçamento">
+            @for (t of tetos; track t.rotulo) {
+              <button type="button" class="l-ia-chip" [class.is-on]="teto === t.valor" [attr.aria-pressed]="teto === t.valor" (click)="escolherTeto(t.valor)">{{ t.rotulo }}</button>
             }
           </div>
 
-          <p class="l-ia-score-sum"><span aria-hidden="true">✓</span>{{ exemplo.pesos }}</p>
+          <p class="l-ia-label">A conta</p>
+          <ol class="l-ia-eq">
+            @for (p of parcelas; track $index; let i = $index) {
+              @if (i > 0) { <li class="l-ia-op" aria-hidden="true">{{ p.sinal }}</li> }
+              <li class="l-ia-term" [class.is-desconto]="p.tipo === 'desconto'">
+                <strong>{{ p.valor }}</strong>
+                <small>{{ p.legenda }}</small>
+              </li>
+            }
+            <li class="l-ia-op" aria-hidden="true">=</li>
+            <li class="l-ia-term l-ia-term--final">
+              <strong>{{ conta.nota }}</strong>
+              <small>nota final</small>
+            </li>
+          </ol>
+
+          <div class="l-ia-bar" aria-hidden="true">
+            <span class="l-ia-bar-seg is-partida" [style.width.%]="barra.partida"></span>
+            @for (w of barra.etiquetas; track $index; let i = $index) {
+              <span class="l-ia-bar-seg is-etiqueta" [class.is-alt]="i % 2 === 1" [style.width.%]="w"></span>
+            }
+            @if (barra.desconto; as d) {
+              <span class="l-ia-bar-desconto" [style.left.%]="d.inicio" [style.width.%]="d.largura"></span>
+            }
+          </div>
+
+          @if (avisoDeLimite; as aviso) {
+            <p class="l-ia-warn"><span aria-hidden="true">!</span>{{ aviso }}</p>
+          }
+          @if (conta.semEtiqueta.length > 0) {
+            <p class="l-ia-hint">Não pontuam (o {{ modelo }} não tem essas etiquetas): {{ semEtiquetaTexto }}.</p>
+          }
+
+          <p class="l-ia-score-sum" [class.is-alerta]="notaDoPreco.alerta">
+            <span aria-hidden="true">{{ notaDoPreco.alerta ? '!' : '✓' }}</span>{{ notaDoPreco.texto }}
+          </p>
         </div>
 
-        <div class="l-ia-ring" [style.--p]="total" role="img" [attr.aria-label]="'Nota ' + total + ' de ' + maximo">
-          <div class="l-ia-ring-inner">
-            <strong>{{ total }}</strong>
-            <span>de {{ maximo }}</span>
+        <div class="l-ia-ring-wrap">
+          <div class="l-ia-ring" [style.--p]="conta.nota" role="img" [attr.aria-label]="'Nota ' + conta.nota + ' de ' + escala">
+            <div class="l-ia-ring-inner">
+              <strong>{{ conta.nota }}</strong>
+              <span>de {{ escala }}</span>
+            </div>
           </div>
+          <p class="l-ia-ring-caption">nota do {{ modelo }} para este texto</p>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 3 · O que entra e o que não entra -->
+  <!-- 03 · O que entra e o que não entra -->
   <section class="l-ia-section" aria-labelledby="ia-regras">
     <div class="l-ia-inner">
-      <p class="l-ia-kicker">Regras da conta</p>
+      <p class="l-ia-kicker"><b>03</b>Regras da conta</p>
       <h2 class="l-ia-heading" id="ia-regras">O que entra e o que não entra.</h2>
       <div class="l-ia-split">
         <div class="l-ia-cell is-sim">
@@ -98,10 +158,10 @@
     </div>
   </section>
 
-  <!-- 4 · O que a IA não faz -->
+  <!-- 04 · O que a IA não faz -->
   <section class="l-ia-section l-ia-section--last" aria-labelledby="ia-limites">
     <div class="l-ia-inner">
-      <p class="l-ia-kicker">Limites</p>
+      <p class="l-ia-kicker"><b>04</b>Limites</p>
       <h2 class="l-ia-heading" id="ia-limites">O que a IA não faz.</h2>
       <div class="l-ia-limits-grid">
         @for (l of limites; track l.titulo) {
@@ -111,6 +171,13 @@
             <span>{{ l.texto }}</span>
           </article>
         }
+
+        <!-- Convite para tirar dúvidas: fecha a grade de limites -->
+        <button type="button" class="l-ia-cta" (click)="perguntarParaSeia()">
+          <span class="l-ia-cta-kicker">Ficou com dúvida?</span>
+          <span class="l-ia-cta-title">Pergunte para a SEIA</span>
+          <span class="l-ia-cta-arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6" /></svg></span>
+        </button>
       </div>
     </div>
   </section>

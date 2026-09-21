@@ -1,8 +1,9 @@
 import { Component, ElementRef, ViewChild, computed, signal, inject } from '@angular/core';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
-import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 
 export interface MensagemChat {
   autor: 'seia' | 'usuario';
@@ -141,7 +142,7 @@ const ROTEIRO: Record<string, PassoChat> = {
 @Component({
   selector: 'app-fale-conosco',
   standalone: true,
-  imports: [RouterLink, TopbarComponent, RodapeComponent],
+  imports: [RouterLink, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './fale-conosco.component.html',
   styleUrl: './fale-conosco.component.css',
 })
@@ -165,10 +166,12 @@ export class FaleConoscoComponent {
     { numero: '0800 000 0001', tel: '08000000001', horario: 'Seg–Sex · 8h–20h' },
   ];
 
+  readonly icones = ICONES;
+
   readonly atalhos = [
-    { rotulo: 'Agendar visita', rota: '/agendamentos' },
-    { rotulo: 'Ver modelos', rota: '/modelos' },
-    { rotulo: 'Como a IA decide', rota: '/sobre-ia' },
+    { rotulo: 'Agendar visita', rota: '/agendamentos', icone: 'agenda', tag: 'Agenda' },
+    { rotulo: 'Ver modelos', rota: '/modelos', icone: 'carro', tag: 'Catálogo' },
+    { rotulo: 'Como a IA decide', rota: '/sobre-ia', icone: 'cerebro', tag: 'IA' },
   ];
 
   abrirChatSeia(): void {

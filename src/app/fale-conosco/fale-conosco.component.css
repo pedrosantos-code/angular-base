@@ -12,7 +12,9 @@
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #F3F5F9;
+  /* Contexto próprio: as linhas de luz (z-index -1) ficam acima deste fundo e abaixo do conteúdo */
+  isolation: isolate;
+  background: linear-gradient(180deg, #EDF3FB 0, #F6F9FD 420px, #F3F5F9 720px);
   color: #001730;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -29,14 +31,23 @@
 
 /* ===== Cabeçalho ===== */
 .fc-hero {
-  background: #fff; padding: 34px var(--fc-pad);
+  position: relative; isolation: isolate; padding: 40px var(--fc-pad) 32px;
   display: flex; align-items: flex-end; justify-content: space-between; gap: 24px 48px; flex-wrap: wrap;
 }
-.fc-eyebrow {
-  display: flex; align-items: center; gap: 10px; margin: 0 0 14px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6B7A8C;
+/* Grade suave que se desfaz nas bordas, atrás do título */
+.fc-hero::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(rgba(46,125,209,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(46,125,209,.08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 55% 100% at 25% 30%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse 55% 100% at 25% 30%, #000 20%, transparent 75%);
 }
-.fc-eyebrow span { width: 22px; height: 2px; background: #2E7DD1; }
+.fc-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 20px; padding: 7px 14px;
+  border: 1px solid #DCE6F3; border-radius: 999px; background: rgba(255,255,255,.85);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #55677A;
+}
+.fc-eyebrow i { flex: none; width: 7px; height: 7px; background: #2E7DD1; }
 h1.fc-title {
   font-family: 'Archivo', sans-serif; font-weight: 900; line-height: .95; letter-spacing: -.04em;
   font-size: clamp(44px, 7vw, 80px); color: #001730;
@@ -47,86 +58,115 @@ h1.fc-title span { color: #0B57A4; }
 /* ===== Corpo ===== */
 .fc-main {
   display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 20px; align-items: stretch;
-  padding: 26px var(--fc-pad) 56px;
+  padding: 8px var(--fc-pad) 64px;
 }
 .fc-side { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 
-/* Cartão escuro do assistente */
+/* Cartão do assistente: claro, com a "bolinha" azul da SEIA */
 .fc-seia {
-  display: flex; flex-direction: column; min-height: 440px;
-  background: #0B1424; color: #fff; border-radius: 24px; padding: 28px;
+  display: flex; flex-direction: column; min-height: 460px;
+  background: #fff; border-radius: 28px; padding: 28px 30px 30px;
+  box-shadow: 0 1px 2px rgba(0,23,48,.05), 0 24px 56px rgba(11,87,164,.10);
 }
 .fc-seia-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.fc-seia-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: #2E7DD1; color: #fff; }
-.fc-seia-icon svg { width: 20px; height: 20px; }
+.fc-seia-who { display: flex; align-items: center; gap: 14px; }
+.fc-orb {
+  flex: none; width: 46px; height: 46px; border-radius: 50%;
+  background: radial-gradient(circle at 32% 26%, #A9D3FF 0%, #2E7DD1 46%, #0B57A4 100%);
+  box-shadow: 0 8px 22px rgba(46,125,209,.45), inset 0 -5px 9px rgba(0,23,48,.28);
+  animation: fc-flutuar 4.5s ease-in-out infinite;
+}
+@keyframes fc-flutuar { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+.fc-seia-name { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; line-height: 1.1; }
+.fc-seia-name strong { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 16px; color: #001730; }
+.fc-seia-name small { padding: 3px 9px; border-radius: 999px; background: #EAF1FB; color: #0B57A4; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; }
 .fc-online {
-  display: inline-flex; align-items: center; gap: 8px; padding: 5px 12px; border: 1px solid rgba(74,222,128,.4); border-radius: 999px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #4ADE80;
+  display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 999px; background: #EAF7EF;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #15803D;
 }
-.fc-online i, .fc-widget-text i { width: 7px; height: 7px; border-radius: 50%; background: #4ADE80; }
-.fc-seia-kicker {
-  margin: 30px 0 0; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #7C8DA6;
-}
-.fc-seia-title { margin: 10px 0 12px; font-family: 'Archivo', sans-serif; font-weight: 900; letter-spacing: -.03em; line-height: 1.02; font-size: clamp(30px, 3.6vw, 46px); color: #fff; }
-.fc-seia-text { margin: 0; max-width: 420px; font-size: 15px; line-height: 1.55; color: #9FC4E8; }
+.fc-online i, .fc-widget-text i { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; }
+.fc-seia-title { margin: 28px 0 22px; font-family: 'Archivo', sans-serif; font-weight: 900; letter-spacing: -.035em; line-height: 1; font-size: clamp(36px, 4.4vw, 58px); color: #001730; }
+.fc-seia-title span { color: #0B57A4; }
 
-.fc-seia-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 22px 0 32px; }
+/* Balão de conversa da SEIA */
+.fc-bubble {
+  position: relative; margin: 0; max-width: 520px; padding: 16px 20px; border-radius: 22px 22px 22px 6px; background: #F1F4F9;
+  font-size: 15px; line-height: 1.55; color: #3C4B5B;
+}
+.fc-dots { display: inline-flex; gap: 4px; margin-left: 6px; vertical-align: middle; }
+.fc-dots i { width: 5px; height: 5px; border-radius: 50%; background: #2E7DD1; animation: fc-digitando 1s infinite ease-in-out; }
+.fc-dots i:nth-child(2) { animation-delay: .15s; }
+.fc-dots i:nth-child(3) { animation-delay: .3s; }
+
+.fc-seia-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 32px; }
 button.fc-chip {
-  padding: 8px 14px; border: 1px solid rgba(255,255,255,.2); border-radius: 999px;
-  font-size: 13px; color: #D6E4F5; transition: background .16s, border-color .16s;
+  padding: 9px 16px; border: 1px solid #E1E7EF; border-radius: 999px; background: #fff;
+  font-size: 13.5px; font-weight: 500; color: #1E2B3D; transition: background .16s, border-color .16s, color .16s;
 }
-button.fc-chip:hover { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.35); }
-button.fc-chip:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px; }
+button.fc-chip:hover { border-color: #2E7DD1; background: #F5F9FF; color: #0B57A4; }
+button.fc-chip:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 
+/* Campo "Pergunte algo": o cartão todo abre o chat */
 .fc-seia-ask {
-  margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  background: #fff; border-radius: 999px; padding: 6px 6px 6px 22px;
+  margin-top: auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; cursor: text;
+  background: #fff; border: 1px solid #E6ECF3; border-radius: 999px; padding: 6px 6px 6px 24px;
+  box-shadow: 0 10px 26px rgba(11,87,164,.10); transition: border-color .16s, box-shadow .16s;
 }
+.fc-seia-ask:hover { border-color: #B5C4D6; }
 .fc-seia-placeholder { font-size: 14px; color: #8A97A8; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 button.fc-seia-go {
-  display: inline-flex; align-items: center; gap: 8px; flex: none; padding: 12px 20px; border-radius: 999px; background: #2E7DD1; color: #fff;
-  font-size: 14px; font-weight: 600; transition: background .16s;
+  display: inline-flex; align-items: center; gap: 8px; flex: none; padding: 13px 22px; border-radius: 999px; background: #0B57A4; color: #fff;
+  font-size: 14px; font-weight: 700; transition: background .16s;
 }
-button.fc-seia-go:hover { background: #0B57A4; }
-button.fc-seia-go:focus-visible { outline: 2px solid #0B1424; outline-offset: 2px; }
+button.fc-seia-go:hover { background: #0B4682; }
+button.fc-seia-go:focus-visible { outline: 2px solid #001730; outline-offset: 2px; }
 .fc-seia-go svg { width: 16px; height: 16px; }
 
 /* Cartões brancos da lateral */
-.fc-card { background: #fff; border-radius: 20px; padding: 22px; box-shadow: 0 1px 2px rgba(0,23,48,.04); }
+.fc-card { background: #fff; border-radius: 24px; padding: 22px 24px; box-shadow: 0 1px 2px rgba(0,23,48,.05), 0 14px 34px rgba(11,87,164,.07); }
+.fc-card--grow { flex: 1; }
 .fc-card-head { display: flex; align-items: flex-start; gap: 12px; }
-.fc-card-head--split { align-items: baseline; justify-content: space-between; flex-wrap: wrap; }
-.fc-card-icon { display: grid; place-items: center; flex: none; width: 36px; height: 36px; border-radius: 50%; background: #EEF2F7; color: #1E2B3D; }
-.fc-card-icon svg { width: 18px; height: 18px; }
+.fc-card-head--split { align-items: flex-start; justify-content: space-between; gap: 8px 14px; flex-wrap: wrap; }
 .fc-card-title { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 17px; letter-spacing: -.01em; color: #001730; }
 .fc-card-sub { margin: 4px 0 0; font-size: 13px; line-height: 1.45; color: #6B7A8C; }
-.fc-card-aside { font-size: 12.5px; color: #6B7A8C; }
+.fc-card-aside { font-size: 12.5px; color: #8A99AB; }
+
+/* Etiquetas pequenas em fonte mono */
+.fc-tag {
+  display: inline-block; padding: 4px 10px; border-radius: 999px; background: #F1F5FA; color: #6B7A8C;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap;
+}
+.fc-tag--azul { background: #EAF1FB; color: #0B57A4; }
 
 .fc-phones { list-style: none; margin: 16px 0 0; padding: 0; display: grid; gap: 10px; }
 .fc-phone {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  padding: 12px 14px; border: 1px solid #E6ECF3; border-radius: 14px;
+  padding: 14px 16px; border: 1px solid #E6ECF3; border-radius: 18px; background: #fff;
 }
-.fc-phone strong { display: block; font-size: 16px; font-weight: 700; letter-spacing: .01em; color: #001730; }
-.fc-phone small { display: block; margin-top: 3px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #6B7A8C; }
+.fc-phone strong { display: block; font-family: 'Archivo', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -.01em; color: #001730; }
+.fc-phone small { display: block; margin-top: 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #8A99AB; }
 .fc-phone-call {
-  display: grid; place-items: center; flex: none; width: 36px; height: 36px; border: 1px solid #E1E7EF; border-radius: 50%; color: #1E2B3D;
-  transition: background .16s, border-color .16s;
+  display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: #EAF1FB; color: #0B57A4;
+  transition: background .16s, color .16s;
 }
-.fc-phone-call:hover { background: #EEF2F7; border-color: #B5C4D6; }
+.fc-phone-call:hover { background: #0B57A4; color: #fff; }
 .fc-phone-call:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
-.fc-phone-call svg { width: 16px; height: 16px; }
+.fc-phone-call svg { width: 17px; height: 17px; }
 
 .fc-shortcuts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 16px; }
 a.fc-shortcut {
-  display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end; gap: 22px;
-  min-height: 108px; padding: 12px; border: 1px solid #E6ECF3; border-radius: 14px; text-decoration: none; color: #001730;
-  transition: background .16s, border-color .16s;
+  display: flex; flex-direction: column; justify-content: space-between; gap: 22px;
+  min-height: 124px; padding: 12px 12px 14px; border: 1px solid #E6ECF3; border-radius: 18px; text-decoration: none; color: #001730;
+  transition: background .16s, border-color .16s, transform .16s;
 }
-a.fc-shortcut:hover { background: #F7F9FC; border-color: #B5C4D6; }
+a.fc-shortcut:hover { background: #F7FAFF; border-color: #A9C4F5; transform: translateY(-2px); }
 a.fc-shortcut:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
-.fc-shortcut svg { width: 16px; height: 16px; color: #6B7A8C; }
-.fc-shortcut span { align-self: flex-start; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 14px; line-height: 1.2; }
-
+.fc-shortcut-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.fc-shortcut-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 12px; background: #F1F5FA; color: #55677A; }
+.fc-shortcut-icon svg { width: 18px; height: 18px; }
+.fc-shortcut-label { display: flex; align-items: flex-end; justify-content: space-between; gap: 6px; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 14px; line-height: 1.2; }
+.fc-shortcut-label svg { flex: none; width: 15px; height: 15px; color: #2E7DD1; transition: transform .16s; }
+a.fc-shortcut:hover .fc-shortcut-label svg { transform: translateX(3px); }
 /* ===== Widget flutuante ===== */
 button.fc-widget {
   position: fixed; right: 24px; bottom: 24px; z-index: 1000;
@@ -188,10 +228,10 @@ button.fc-option:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px
 /* ===== Responsivo ===== */
 @media (max-width: 900px) {
   :host { --fc-pad: 20px; }
-  .fc-hero { padding-top: 26px; padding-bottom: 26px; }
+  .fc-hero { padding-top: 28px; padding-bottom: 22px; }
   .fc-hero-lead { max-width: 480px; }
   .fc-main { grid-template-columns: 1fr; padding-top: 18px; padding-bottom: 40px; }
-  .fc-seia { min-height: 0; padding: 22px; border-radius: 22px; }
+  .fc-seia { min-height: 0; padding: 22px; border-radius: 24px; }
   /* O botão flutuante cobriria os links do rodapé; abre espaço embaixo com a mesma cor do rodapé */
   seia-rodape { display: block; padding-bottom: 84px; background: #001730; }
 }
@@ -207,6 +247,6 @@ button.fc-option:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fc-msg--typing span { animation: none; }
-  button.fc-widget { transition: none; }
+  .fc-msg--typing span, .fc-dots i, .fc-orb { animation: none; }
+  button.fc-widget, a.fc-shortcut, .fc-shortcut-label svg { transition: none; }
 }
