@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 import { AuthService } from '../auth.service';
 import { fotoDoModelo } from '../shared/fotos-modelos';
 import { lerModeloRecomendado } from '../shared/modelo-recomendado';
@@ -59,9 +60,10 @@ export interface Agendamento {
 @Component({
   selector: 'seia-agendamentos',
   standalone: true,
-  imports: [CommonModule, TopbarComponent, RodapeComponent],
+  imports: [CommonModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './agendamentos.component.html',
   styleUrl: './agendamentos.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class AgendamentosComponent {
   private router = inject(Router);

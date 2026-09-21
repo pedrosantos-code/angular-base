@@ -12,9 +12,6 @@
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  /* Contexto próprio: as linhas de luz (z-index -1) ficam acima deste fundo e abaixo do conteúdo */
-  isolation: isolate;
-  background: linear-gradient(180deg, #EDF3FB 0, #F6F9FD 420px, #F3F5F9 720px);
   color: #001730;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -31,16 +28,8 @@
 
 /* ===== Cabeçalho ===== */
 .fc-hero {
-  position: relative; isolation: isolate; padding: 40px var(--fc-pad) 32px;
+  padding: 40px var(--fc-pad) 32px;
   display: flex; align-items: flex-end; justify-content: space-between; gap: 24px 48px; flex-wrap: wrap;
-}
-/* Grade suave que se desfaz nas bordas, atrás do título */
-.fc-hero::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image: linear-gradient(rgba(46,125,209,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(46,125,209,.08) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 55% 100% at 25% 30%, #000 20%, transparent 75%);
-  mask-image: radial-gradient(ellipse 55% 100% at 25% 30%, #000 20%, transparent 75%);
 }
 .fc-eyebrow {
   display: inline-flex; align-items: center; gap: 9px; margin: 0 0 20px; padding: 7px 14px;
@@ -171,17 +160,17 @@ a.fc-shortcut:hover .fc-shortcut-label svg { transform: translateX(3px); }
 button.fc-widget {
   position: fixed; right: 24px; bottom: 24px; z-index: 1000;
   display: inline-flex; align-items: center; gap: 10px; padding: 8px 20px 8px 8px; border-radius: 999px;
-  background: #0B1424; color: #fff; box-shadow: 0 10px 30px rgba(0,23,48,.35);
-  transition: transform .18s;
+  background: #fff; color: #001730; border: 1px solid #E3EAF8;
+  box-shadow: 0 12px 32px rgba(11,87,164,.22), 0 2px 6px rgba(0,23,48,.08);
+  transition: transform .18s, border-color .18s, box-shadow .18s;
 }
-button.fc-widget:hover { transform: translateY(-2px); }
-button.fc-widget:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 3px; }
-.fc-widget-icon { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: #2E7DD1; }
-.fc-widget-icon svg { width: 18px; height: 18px; }
+button.fc-widget:hover { transform: translateY(-2px); border-color: #A9C4F5; box-shadow: 0 16px 38px rgba(11,87,164,.30), 0 2px 6px rgba(0,23,48,.08); }
+button.fc-widget:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 3px; }
+/* Bolinha azul menor (botão flutuante e cabeçalho do chat) */
+.fc-orb--pequena { width: 38px; height: 38px; animation: none; box-shadow: 0 5px 14px rgba(46,125,209,.42), inset 0 -4px 7px rgba(0,23,48,.26); }
 .fc-widget-text { display: flex; flex-direction: column; line-height: 1.15; }
-.fc-widget-text strong { font-size: 13px; font-weight: 700; }
-.fc-widget-text small { display: inline-flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #4ADE80; }
-
+.fc-widget-text strong { font-family: 'Archivo', sans-serif; font-size: 14px; font-weight: 800; color: #001730; }
+.fc-widget-text small { display: inline-flex; align-items: center; gap: 6px; margin-top: 2px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; color: #15803D; }
 /* ===== Painel de chat ===== */
 .fc-chat {
   position: fixed; right: 24px; bottom: 24px; z-index: 1000;
@@ -189,16 +178,14 @@ button.fc-widget:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 3px
   display: flex; flex-direction: column; overflow: hidden;
   background: #fff; border-radius: 22px; box-shadow: 0 18px 48px rgba(0,23,48,.3);
 }
-.fc-chat-head { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #0B1424; color: #fff; }
+.fc-chat-head { flex: none; display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 12px 16px; background: #fff; color: #001730; border-bottom: 1px solid #EDF1F5; }
 .fc-chat-who { display: flex; align-items: center; gap: 10px; }
-.fc-chat-icon { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #2E7DD1; }
-.fc-chat-icon svg { width: 17px; height: 17px; }
 .fc-chat-name { display: flex; flex-direction: column; line-height: 1.2; }
-.fc-chat-name strong { font-size: 14px; }
-.fc-chat-name small { font-size: 12px; color: #9FC4E8; }
-button.fc-chat-close { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; color: #fff; }
-button.fc-chat-close:hover { background: rgba(255,255,255,.12); }
-button.fc-chat-close:focus-visible { outline: 2px solid #7FB3E4; outline-offset: 2px; }
+.fc-chat-name strong { font-family: 'Archivo', sans-serif; font-size: 15px; font-weight: 800; }
+.fc-chat-name small { font-size: 12px; color: #6B7A8C; }
+button.fc-chat-close { display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #F1F4F8; color: #3C4B5B; transition: background .16s; }
+button.fc-chat-close:hover { background: #E4EAF1; }
+button.fc-chat-close:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 .fc-chat-close svg { width: 16px; height: 16px; }
 
 .fc-chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 16px; background: #F3F5F9; }

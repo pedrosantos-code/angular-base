@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 import { AuthService } from '../auth.service';
 import { ProfileService, UserProfileRecord } from '../profile.service';
 import { fotoDoModelo } from '../shared/fotos-modelos';
@@ -110,9 +111,10 @@ const TAG_POR_USO: Record<string, string> = {
 @Component({
   selector: 'seia-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './perfil.component.html',
   styleUrl: './perfil.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class PerfilComponent {
   private router = inject(Router);

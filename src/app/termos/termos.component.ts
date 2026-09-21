@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 import { AuthService } from '../auth.service';
 
 export interface Termo {
@@ -43,9 +44,10 @@ export interface VersaoHistorico {
 @Component({
   selector: 'seia-termos',
   standalone: true,
-  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent],
+  imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './termos.component.html',
   styleUrl: './termos.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class TermosComponent {
   private router = inject(Router);

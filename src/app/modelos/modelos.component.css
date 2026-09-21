@@ -12,9 +12,6 @@
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  /* Cria um contexto próprio: o SVG de fundo (z-index -1) fica acima deste fundo e abaixo do conteúdo */
-  isolation: isolate;
-  background: linear-gradient(180deg, #EDF3FB 0, #FAFCFF 480px, #F3F5F9 760px);
   color: #001730;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -33,20 +30,9 @@
 
 /* ===== Cabeçalho ===== */
 .l-md-hero {
-  position: relative; isolation: isolate;
   display: flex; flex-direction: column; align-items: center; text-align: center;
   padding: 44px var(--l-md-pad) 30px;
   /* Sem fundo próprio: o degradê fica no :host para as linhas de luz aparecerem por trás */
-}
-/* Grade suave que se desfaz nas bordas, atrás do título */
-.l-md-hero::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image:
-    linear-gradient(rgba(46,125,209,.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(46,125,209,.08) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 60% 90% at 50% 35%, #000 25%, transparent 78%);
-  mask-image: radial-gradient(ellipse 60% 90% at 50% 35%, #000 25%, transparent 78%);
 }
 .l-md-eyebrow {
   display: inline-flex; align-items: center; gap: 9px; margin: 0 0 22px; padding: 7px 14px;
@@ -58,40 +44,7 @@
   font-family: 'Archivo', sans-serif; font-weight: 900; line-height: .98; letter-spacing: -.035em;
   font-size: clamp(38px, 6.4vw, 72px);
 }
-/* Brilho que atravessa as letras: só CSS. O degradê é 2,5× mais largo que o texto e a animação o desliza da direita para a esquerda;
-   background-clip: text recorta o fundo no formato das letras. */
 .l-md-title .l-md-line { display: block; width: fit-content; margin: 0 auto; }
-.l-md-shine {
-  color: #0A1426;
-  background: linear-gradient(100deg,
-    #0A1426 0%, #0A1426 38%,   /* azul-marinho */
-    #1F5BE0 50%,               /* a faixa de luz */
-    #0A1426 62%, #0A1426 100%);
-  background-size: 250% 100%;
-  animation: shine 7s ease-in-out infinite;
-}
-/* "próximo Ford.": duas camadas — a de cima é só a faixa de luz que se move, a de baixo é o degradê fixo, que só clareia da esquerda para a direita (marinho → azul → azul-céu), sem mudar de tom: cada letra é um pouco mais clara que a anterior */
-.l-md-shine2 {
-  color: #2A7FE8;
-  background-image:
-    linear-gradient(100deg, transparent 40%, #A8E6FF 50%, transparent 60%),
-    linear-gradient(90deg, #0A2A6B 0%, #1B4FBF 40%, #2A7FE8 72%, #3B9EF5 100%);
-  background-size: 250% 100%, 100% 100%;
-  background-repeat: no-repeat;
-  animation: shine 7s ease-in-out infinite;
-  animation-delay: .5s;
-}
-/* Sem suporte a background-clip: text o texto ficaria invisível; só recorta onde há suporte */
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .l-md-shine, .l-md-shine2 { -webkit-background-clip: text; background-clip: text; color: transparent; }
-}
-@keyframes shine {
-  0%   { background-position: 100% 0; }
-  100% { background-position: -150% 0; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .l-md-shine, .l-md-shine2 { animation: none; background-position: 0 0; }
-}
 .l-md-count { margin: 16px 0 0; font-size: 13.5px; color: #55677A; }
 .l-md-cats { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 26px; }
 /* Categoria ativa: azul-claro com contorno (a escura fica para os filtros abaixo) */

@@ -5,6 +5,7 @@ import { forkJoin, map } from 'rxjs';
 import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 import { AuthService } from '../auth.service';
 import { fotoDoModelo } from '../shared/fotos-modelos';
 import { Comparacao, ItemComparacao, SEGMENTOS, chaveRival, modeloDaBusca, montarComparacao } from '../shared/comparacao-linha';
@@ -29,9 +30,10 @@ const FOTO_DO_MODELO: Record<string, string> = { Mustang: 'Mustang GT', Maverick
 
 @Component({
   selector: 'app-dashboard',
-  imports: [FormsModule, TopbarComponent, RodapeComponent],
+  imports: [FormsModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class DashboardComponent implements AfterViewInit {
   protected readonly title = signal('meu-projeto');

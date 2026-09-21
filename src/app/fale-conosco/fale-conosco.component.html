@@ -3,10 +3,10 @@
 <!-- Linhas de luz atrás de tudo (componente compartilhado com o /modelos) -->
 <seia-linhas-de-luz />
 
-<header class="fc-hero">
+<header class="fc-hero seia-topo">
   <div class="fc-hero-text">
     <p class="fc-eyebrow"><i aria-hidden="true"></i>Atendimento · SEIA + Ford</p>
-    <h1 class="fc-title">Fale <span>conosco.</span></h1>
+    <h1 class="fc-title"><span class="seia-brilho-marinho">Fale</span> <span class="seia-brilho-azul">conosco.</span></h1>
   </div>
   <p class="fc-hero-lead">Tire dúvidas com a SEIA na hora ou fale com um atendente da Central de Relacionamento Ford.</p>
 </header>
@@ -107,9 +107,7 @@
 <!-- Widget flutuante da SEIA -->
 @if (!chatAberto()) {
   <button type="button" class="fc-widget" (click)="abrirChatSeia()" aria-label="Conversar com a SEIA">
-    <span class="fc-widget-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24"><path d="M12 3.5V7" /><path d="M6 7h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z" /><path d="M9 12.5h.01M15 12.5h.01" /><path d="M9.5 15.5h5" /></svg>
-    </span>
+    <span class="fc-orb fc-orb--pequena" aria-hidden="true"></span>
     <span class="fc-widget-text"><strong>SEIA</strong><small><i aria-hidden="true"></i>online</small></span>
   </button>
 }
@@ -119,9 +117,7 @@
   <div class="fc-chat" role="dialog" aria-label="Chat com a SEIA">
     <div class="fc-chat-head">
       <div class="fc-chat-who">
-        <span class="fc-chat-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24"><path d="M12 3.5V7" /><path d="M6 7h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z" /><path d="M9 12.5h.01M15 12.5h.01" /><path d="M9.5 15.5h5" /></svg>
-        </span>
+        <span class="fc-orb fc-orb--pequena" aria-hidden="true"></span>
         <span class="fc-chat-name"><strong>SEIA</strong><small>assistente Ford · online</small></span>
       </div>
       <button type="button" class="fc-chat-close" (click)="fecharChat()" aria-label="Fechar chat">

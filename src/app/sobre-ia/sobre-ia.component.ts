@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 import { AuthService } from '../auth.service';
 import { ContaDaNota, NOTA_MAXIMA, NOTA_MINIMA, PENALIDADE_ACIMA_DO_TETO, PONTOS_POR_ETIQUETA, contaDaNota } from '../shared/conta-da-nota';
 
@@ -17,9 +18,10 @@ export interface Parcela { sinal: '' | '+' | '−'; valor: number; legenda: stri
 @Component({
   selector: 'seia-sobre-ia',
   standalone: true,
-  imports: [CommonModule, TopbarComponent, RodapeComponent],
+  imports: [CommonModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './sobre-ia.component.html',
   styleUrl: './sobre-ia.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class SobreIaComponent {
   private router = inject(Router);

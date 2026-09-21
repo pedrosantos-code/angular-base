@@ -145,6 +145,7 @@ const ROTEIRO: Record<string, PassoChat> = {
   imports: [RouterLink, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './fale-conosco.component.html',
   styleUrl: './fale-conosco.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class FaleConoscoComponent {
   protected readonly title = signal('meu-projeto');

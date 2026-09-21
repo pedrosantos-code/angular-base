@@ -29,3 +29,57 @@ app-root {
 seia-rodape {
   margin-top: auto;
 }
+
+/* =========================================================
+   Páginas de dentro: o mesmo fundo do /modelos e o brilho nos títulos
+   ========================================================= */
+
+/* Fundo da página (classe no :host): degradê azul-claro no topo. Precisa de "isolation" para as linhas de luz
+   (<seia-linhas-de-luz />, z-index -1) ficarem acima deste fundo e abaixo do conteúdo. */
+.seia-pagina {
+  isolation: isolate;
+  background: linear-gradient(180deg, #EDF3FB 0, #F6F9FD 480px, #F3F5F9 760px) !important;
+}
+
+/* Topo (hero) sem fundo próprio, com uma grade suave que se desfaz nas bordas, atrás do título */
+.seia-topo { position: relative; isolation: isolate; background: transparent !important; }
+.seia-topo::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: linear-gradient(rgba(46, 125, 209, .08) 1px, transparent 1px), linear-gradient(90deg, rgba(46, 125, 209, .08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 100% at 30% 30%, #000 20%, transparent 75%);
+  mask-image: radial-gradient(ellipse 60% 100% at 30% 30%, #000 20%, transparent 75%);
+}
+
+/* Brilho que atravessa as letras: só CSS. O degradê é 2,5× mais largo que o texto e a animação o desliza da direita para a
+   esquerda; background-clip: text recorta o fundo no formato das letras.
+   .seia-brilho-marinho: palavras escuras do título (azul-marinho com a faixa de luz azul).
+   .seia-brilho-azul: palavras azuis (degradê marinho → azul → azul-céu, com uma faixa de luz por cima; começa 0,5 s depois). */
+.seia-brilho-marinho {
+  color: #0A1426;
+  background: linear-gradient(100deg, #0A1426 0%, #0A1426 38%, #1F5BE0 50%, #0A1426 62%, #0A1426 100%);
+  background-size: 250% 100%;
+  animation: seia-brilho 7s ease-in-out infinite;
+}
+.seia-brilho-azul {
+  color: #2A7FE8;
+  background-image:
+    linear-gradient(100deg, transparent 40%, #A8E6FF 50%, transparent 60%),
+    linear-gradient(90deg, #0A2A6B 0%, #1B4FBF 40%, #2A7FE8 72%, #3B9EF5 100%);
+  background-size: 250% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  animation: seia-brilho 7s ease-in-out infinite;
+  animation-delay: .5s;
+}
+/* Sem suporte a background-clip: text o texto ficaria invisível; só recorta onde há suporte. O !important vence o
+   "color" que cada página põe nas palavras azuis do título. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .seia-brilho-marinho, .seia-brilho-azul { -webkit-background-clip: text; background-clip: text; color: transparent !important; }
+}
+@keyframes seia-brilho {
+  0% { background-position: 100% 0; }
+  100% { background-position: -150% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .seia-brilho-marinho, .seia-brilho-azul { animation: none; background-position: 0 0; }
+}

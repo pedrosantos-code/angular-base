@@ -30,18 +30,7 @@
 .tm-inner { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 24px; }
 
 /* ===== Cabeçalho ===== */
-.tm-hero {
-  position: relative; isolation: isolate; padding: 44px 0 34px;
-  background: linear-gradient(180deg, #EDF3FB 0%, #F3F5F9 100%);
-}
-/* Grade suave que se desfaz nas bordas, atrás do título */
-.tm-hero::before {
-  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background-image: linear-gradient(rgba(46,125,209,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(46,125,209,.08) 1px, transparent 1px);
-  background-size: 56px 56px;
-  -webkit-mask-image: radial-gradient(ellipse 60% 100% at 30% 30%, #000 20%, transparent 75%);
-  mask-image: radial-gradient(ellipse 60% 100% at 30% 30%, #000 20%, transparent 75%);
-}
+.tm-hero { padding: 44px 0 34px; }
 .tm-eyebrow {
   display: inline-flex; align-items: center; gap: 9px; margin-bottom: 20px; padding: 7px 14px;
   border: 1px solid #DCE6F3; border-radius: 999px; background: rgba(255,255,255,.85);

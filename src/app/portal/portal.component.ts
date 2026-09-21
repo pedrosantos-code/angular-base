@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
+import { LinhasDeLuzComponent } from '../shared/linhas-de-luz.component';
 import { AgenteComponent } from './agente/agente.component';
 import { AuthService } from '../auth.service';
 
@@ -14,9 +15,10 @@ export interface PassoFuncionamento {
 @Component({
   selector: 'seia-portal',
   standalone: true,
-  imports: [TopbarComponent, RodapeComponent, AgenteComponent],
+  imports: [TopbarComponent, RodapeComponent, LinhasDeLuzComponent, AgenteComponent],
   templateUrl: './portal.component.html',
   styleUrl: './portal.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class PortalComponent {
   private router = inject(Router);

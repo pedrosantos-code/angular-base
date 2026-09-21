@@ -55,6 +55,7 @@ export interface Categoria { chave: string; rotulo: string; }
   imports: [CommonModule, FormsModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
   templateUrl: './modelos.component.html',
   styleUrl: './modelos.component.css',
+  host: { class: 'seia-pagina' },
 })
 export class ModelosComponent {
   private router = inject(Router);
