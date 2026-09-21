@@ -24,11 +24,40 @@ export interface DadosConta {
   criadaEm: string;
 }
 
-export interface Previa {
+/** Um carro da prévia: quanto do preço "a partir de" o orçamento cobre e quanto falta. */
+export interface ItemPrevia {
   modelo: string;
-  nota: number;
-  outros: { modelo: string; nota: number }[];
+  /** Porcentagem do preço coberta pelo orçamento (0 a 100); null quando o usuário não informou orçamento. */
+  cobertura: number | null;
+  /** Reais que faltam para chegar ao preço; 0 quando o orçamento cobre o carro (ou não há orçamento). */
+  falta: number;
 }
+
+export interface Previa extends ItemPrevia {
+  outros: ItemPrevia[];
+}
+
+/**
+ * Quanto do preço "a partir de" o orçamento cobre, em %: (orçamento ÷ preço) × 100, com teto de 100.
+ * Arredonda sempre para baixo, para nunca mostrar mais do que a pessoa realmente tem.
+ */
+export function coberturaDoOrcamento(preco: number, orcamento: number): number {
+  if (orcamento >= preco) return 100;
+  return Math.floor((orcamento / preco) * 100);
+}
+
+/**
+ * Nota de orçamento (0 a 100) usada só para ORDENAR os carros, pelo preço "a partir de" contra o teto:
+ * até o teto = 100; até 10% acima cai de 100 para 50; de 10% a 30% acima cai de 50 para 0; além disso, 0.
+ */
+export function notaDeOrcamento(preco: number, teto: number): number {
+  const excesso = (preco - teto) / teto;
+  if (excesso <= 0) return 100;
+  if (excesso <= 0.1) return 100 - (excesso / 0.1) * 50;
+  if (excesso <= 0.3) return 50 - ((excesso - 0.1) / 0.2) * 50;
+  return 0;
+}
+
 
 interface ModeloAvaliado {
   /** Mesmo id usado em /modelos — é o que vira favorito/comparação lá. */
@@ -167,7 +196,7 @@ export class PerfilComponent {
   };
 
   /** Ranking completo (14 modelos) recalculado a cada ajuste no perfil de uso — não espera "Salvar". */
-  private calcularRanking(): { id: string; modelo: string; nota: number; combinaComUso: boolean }[] {
+  private calcularRanking(): { id: string; modelo: string; combinaComUso: boolean; cobertura: number | null; falta: number }[] {
     const orcamento = this.orcamentoNumero();
     const tagDeUso = TAG_POR_USO[this.uso.uso];
 
@@ -186,21 +215,32 @@ export class PerfilComponent {
         if (p === 'Potência' && m.potenciaBoa) nota += 20;
       }
 
-      if (orcamento) {
-        if (m.precoDe > orcamento) nota -= 35;
-        else if (m.precoDe <= orcamento * 0.8) nota += 5;
-      }
+      const notaDeUso = Math.max(15, Math.min(97, Math.round(nota)));
 
-      return { id: m.id, modelo: m.nome, nota: Math.max(15, Math.min(97, Math.round(nota))), combinaComUso };
+      // Ordem: a MENOR entre a nota de uso e a de orçamento, então um carro acima do teto nunca sobe por combinar com o uso.
+      const ordem = orcamento ? Math.min(notaDeUso, notaDeOrcamento(m.precoDe, orcamento)) : notaDeUso;
+
+      // O que aparece é quanto do preço o orçamento cobre — sem orçamento informado não há porcentagem.
+      const cobertura = orcamento ? coberturaDoOrcamento(m.precoDe, orcamento) : null;
+      const falta = orcamento && orcamento < m.precoDe ? m.precoDe - orcamento : 0;
+
+      return { id: m.id, modelo: m.nome, combinaComUso, cobertura, falta, ordem: Math.floor(ordem), precoDe: m.precoDe };
     });
 
-    pontuados.sort((a, b) => b.nota - a.nota);
-    return pontuados;
+    // Empate na ordem (comum quando o teto é irreal e tudo cai a 0): sobe o mais barato, o que mais chega perto do teto.
+    pontuados.sort((a, b) => b.ordem - a.ordem || a.precoDe - b.precoDe);
+    return pontuados.map(({ ordem, precoDe, ...resto }) => resto);
   }
 
   get previa(): Previa {
     const [primeiro, ...resto] = this.calcularRanking();
-    return { modelo: primeiro.modelo, nota: primeiro.nota, outros: resto.slice(0, 2) };
+    const item = (r: { modelo: string; cobertura: number | null; falta: number }): ItemPrevia => ({ modelo: r.modelo, cobertura: r.cobertura, falta: r.falta });
+    return { ...item(primeiro), outros: resto.slice(0, 2).map(item) };
+  }
+
+  /** Valor em reais no formato brasileiro, ex.: "R$ 30.100". */
+  real(valor: number): string {
+    return 'R$ ' + Math.round(valor).toLocaleString('pt-BR');
   }
 
   /** Foto do modelo mais compatível (ou null quando não há foto dele). */
@@ -321,9 +361,26 @@ export class PerfilComponent {
     this.sincronizarComModelos();
   }
 
-  /** Rodagem e orçamento são texto livre — chamado pelo (ngModelChange) desses dois campos. */
-  aoDigitarUso(): void {
+  /** Rodagem e orçamento só aceitam dígitos: letras e símbolos (inclusive colados) são descartados na hora. */
+  aoDigitarUso(campo: 'rodagem' | 'orcamento', evento: Event): void {
+    const input = evento.target as HTMLInputElement;
+    const limpo = input.value.replace(/\D/g, '');
+    if (input.value !== limpo) input.value = limpo;
+    this.uso[campo] = limpo;
     this.sincronizarComModelos();
+  }
+
+  /** Telefone só aceita dígitos (até 11) e aparece no formato (00) 00000-0000, ou (00) 0000-0000 quando fixo. */
+  aoDigitarTelefone(evento: Event): void {
+    const input = evento.target as HTMLInputElement;
+    const d = input.value.replace(/\D/g, '').slice(0, 11);
+    let mascarado = d;
+    if (d.length > 10) mascarado = `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    else if (d.length > 6) mascarado = `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    else if (d.length > 2) mascarado = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    else if (d.length > 0) mascarado = `(${d}`;
+    if (input.value !== mascarado) input.value = mascarado;
+    this.conta.telefone = mascarado;
   }
 
   prioritario(v: string): boolean {
@@ -335,8 +392,14 @@ export class PerfilComponent {
     this.conta = structuredClone(this.contaOriginal);
   }
 
+  /** Telefone é opcional, mas se for preenchido tem de estar completo: 10 (fixo) ou 11 dígitos (celular). */
+  get telefoneIncompleto(): boolean {
+    const digitos = this.conta.telefone.replace(/\D/g, '').length;
+    return digitos > 0 && digitos < 10;
+  }
+
   salvar(): void {
-    if (!this.alteracoes) return;
+    if (!this.alteracoes || this.telefoneIncompleto) return;
     this.usoOriginal = structuredClone(this.uso);
     this.contaOriginal = structuredClone(this.conta);
     this.persistir();

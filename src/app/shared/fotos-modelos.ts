@@ -8,11 +8,14 @@ const FOTOS: Record<string, string> = {
   'Explorer': 'explorer.jpeg',
   'Ranger': 'fotos/ranger-web.jpg',
   'Ranger Raptor': 'ranger-raptor.jpg',
+  'Maverick Hybrid': 'maverick-hybrid.jpg',
   'Maverick Tremor': 'maverick-tremor.jpg',
   'Mustang GT': 'mustang.jpeg',
   'Mustang Mach-E': 'mach-e.jpg',
   'F-150': 'f150.jpg',
   'F-150 Lightning': 'fotos/f150-lightning-web.jpg',
+  'Transit Furgão': 'transit-furgao.jpeg',
+  'Transit Minibus': 'transit-minibus.jpeg',
 };
 
 /** Caminho da foto do modelo, ou null quando não há foto para ele. */
