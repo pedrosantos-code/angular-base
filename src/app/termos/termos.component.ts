@@ -173,7 +173,7 @@ export class TermosComponent {
       {
         versao: 'Versão 1.0',
         atual: true,
-        detalhe: `Primeira versão, publicada em 15/05/2026 · ${this.termosUso.aceito ? 'aceita em ' + this.termosUso.aceitoEm : 'aguardando o seu aceite'}`,
+        detalhe: `Primeira versão, sem atualizações · ${this.termosUso.aceito ? 'aceita em ' + this.termosUso.aceitoEm : 'aguardando o seu aceite'}`,
       },
     ];
   }
