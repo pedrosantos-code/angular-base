@@ -115,7 +115,7 @@ button.pf-ghost:focus-visible, button.pf-primary:focus-visible { outline: 2px so
 .pf-preview-body { padding: 18px 14px 14px; }
 .pf-preview-kicker { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #7C8DA6; }
 .pf-preview-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 8px 0 14px; }
-h2.pf-preview-model { color: #fff; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.05; letter-spacing: -.02em; }
+h2.pf-preview-model { color: #fff; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; }
 .pf-preview-score { display: inline-flex; align-items: baseline; gap: 2px; color: #9FB2CC; font-size: 18px; }
 .pf-preview-score strong { font-size: 54px; font-weight: 700; letter-spacing: -.04em; line-height: 1; color: #fff; }
 .pf-bar { display: block; height: 6px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
