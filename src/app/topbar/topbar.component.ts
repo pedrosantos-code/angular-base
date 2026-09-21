@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Output, computed, inject, signal } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, Output, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router } from '@angular/router';
@@ -73,9 +73,13 @@ const CHAVE_POR_ROTA: Record<string, string> = Object.fromEntries(
   imports: [CommonModule],
   templateUrl: './topbar.component.html',
   styleUrl: './topbar.component.css',
+  host: { '[class.tema-claro]': "tema === 'claro'" },
 })
 export class TopbarComponent {
   private router = inject(Router);
+
+  /** 'escuro' (padrão) ou 'claro': barra branca, com os ícones e o logo em tom escuro. A gaveta continua escura. */
+  @Input() tema: 'escuro' | 'claro' = 'escuro';
 
   /** URL atual, atualizada a cada navegação — fonte única para saber qual item está ativo. */
   private urlAtual = signal(this.router.url);
