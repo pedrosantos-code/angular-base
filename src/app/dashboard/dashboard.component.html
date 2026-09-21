@@ -68,58 +68,40 @@
             </span>
           </div>
         }
-      </div>
-    }
 
-    <!-- Comparação com concorrentes do mesmo segmento: sempre no DOM (só escondido), pelo mesmo motivo do gráfico acima -->
-    <section class="l-db-linha" [hidden]="resultados().length === 0">
-      <p class="l-db-kicker">
-        Compare com concorrentes
-        @if (comparacao(); as c) { <span class="l-db-segmento">· {{ c.segmento }}</span> }
-      </p>
-
-      @if (carregandoLinha()) {
-        <p class="l-db-nota" role="status">Carregando a comparação…</p>
-      }
-      @if (erroLinha()) {
-        <p class="l-db-erro" role="alert">{{ erroLinha() }}</p>
-      }
-      @if (!carregandoLinha() && !erroLinha() && !comparacao()) {
-        <p class="l-db-nota">
-          A comparação com concorrentes está disponível para: {{ sugestoes.join(', ') }}. Escolha um deles acima.
-        </p>
-      }
-
-      <div class="l-db-card l-db-chart-card l-db-linha-chart" [hidden]="!comparacao()">
-        <canvas #linhaCanvas role="img" aria-label="Gráfico de barras comparando a potência do modelo Ford pesquisado com concorrentes do mesmo segmento"></canvas>
-      </div>
-
-      @if (comparacao(); as c) {
-        <p class="l-db-nota">
-          Só entram concorrentes do mesmo segmento ({{ c.segmento }}). De cada modelo vale a mesma regra: a versão mais recente
-          com potência informada na API, e nela a mais potente. O ano fica ao lado; a base da API é internacional.
-        </p>
-        <div class="l-db-card l-db-table">
-          @for (item of c.itens; track item.marca + item.modelo) {
-            <div class="l-db-row" [class.l-db-row--destaque]="item.referencia">
+        <!-- Concorrentes do mesmo segmento (Honda e Hyundai, que também estão na API): mesma tabela e mesmo gráfico -->
+        @if (rivais().length > 0) {
+          <div class="l-db-divisor">Concorrentes do mesmo segmento · {{ comparacao()?.segmento }}</div>
+          @for (r of rivais(); track r.marca + r.modelo) {
+            <div class="l-db-row">
               <span class="l-db-row-model">
-                <strong>{{ item.marca }} {{ item.modelo }}</strong>
-                <span>{{ item.carro.model }} · {{ item.carro.variant ?? '—' }}</span>
+                <strong>{{ r.marca }} {{ r.modelo }}</strong>
+                <span>{{ r.carro.variant ?? r.carro.model }}@if (r.ano) { · {{ r.ano }} }</span>
               </span>
-              <span class="l-db-row-stat" [class.l-db-row-stat--antigo]="item.ano !== null && item.ano < 2020"
-                    [attr.title]="item.ano !== null && item.ano < 2020 ? 'Versão antiga: é a mais recente com potência informada na API' : null">
-                {{ item.ano ?? '—' }}
+              <span class="l-db-row-stat">{{ r.carro.enginePowerBhp ?? '—' }} <small>cv</small></span>
+              <span class="l-db-row-stat">{{ r.carro.topSpeedKph ?? '—' }} <small>km/h</small></span>
+              <span class="l-db-row-stat l-db-row-gearbox">
+                {{ r.carro.gearboxType ?? (r.carro.engineFuelType === 'ELECTRIC' ? 'ELECTRIC' : '—') }}
               </span>
-              <span class="l-db-row-stat">{{ item.potencia ?? '—' }} <small>cv</small></span>
-              <span class="l-db-row-stat l-db-row-gearbox">{{ item.carro.drivetrain ?? '—' }}</span>
             </div>
           }
-        </div>
-        @if (c.semDados.length > 0) {
-          <p class="l-db-nota">Sem dados na API: {{ c.semDados.join(', ') }}.</p>
         }
+      </div>
+
+      @if (carregandoLinha()) {
+        <p class="l-db-nota" role="status">Buscando concorrentes do mesmo segmento…</p>
+      } @else if (erroLinha()) {
+        <p class="l-db-erro" role="alert">{{ erroLinha() }}</p>
+      } @else if (comparacao(); as c) {
+        <p class="l-db-nota">
+          Só entram concorrentes do mesmo segmento ({{ c.segmento }}), com a versão mais recente que tem potência informada na API.
+          @if (c.semDados.length > 0) { Sem dados na API: {{ c.semDados.join(', ') }}. }
+          Quando a API não informa a velocidade máxima, ela é estimada a partir da potência, nos concorrentes e nas versões Ford.
+        </p>
+      } @else {
+        <p class="l-db-nota">A comparação com concorrentes está disponível para: {{ sugestoes.join(', ') }}.</p>
       }
-    </section>
+    }
 
     @if (resultados().length > 0) {
       @if (buscandoSemelhantes()) {

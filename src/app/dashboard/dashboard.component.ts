@@ -7,7 +7,7 @@ import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
-import { Comparacao, SEGMENTOS, chaveRival, modeloDaBusca, montarComparacao } from '../shared/comparacao-linha';
+import { Comparacao, ItemComparacao, SEGMENTOS, chaveRival, modeloDaBusca, montarComparacao } from '../shared/comparacao-linha';
 
 Chart.register(...registerables);
 
@@ -26,9 +26,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   private route = inject(ActivatedRoute);
 
   @ViewChild('graficoCanvas') graficoCanvas?: ElementRef<HTMLCanvasElement>;
-  @ViewChild('linhaCanvas') linhaCanvas?: ElementRef<HTMLCanvasElement>;
   private grafico?: Chart;
-  private graficoLinha?: Chart;
 
   onNavegar(chave: string): void {
     const rota = ROTAS_MENU[chave];
@@ -57,6 +55,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   // Comparação com concorrentes do mesmo segmento (a API tem Honda e Hyundai além da Ford)
   comparacao = signal<Comparacao | null>(null);
+  /** Concorrentes do segmento (sem a Ford), com a ficha preenchida como nas versões Ford; entram no gráfico e na tabela. */
+  rivais = signal<ItemComparacao[]>([]);
   carregandoLinha = signal<boolean>(false);
   erroLinha = signal<string | null>(null);
   /** Modelo Ford da busca atual, quando é um dos que têm segmento cadastrado (é a referência da comparação). */
@@ -75,7 +75,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.grafico?.destroy();
-    this.graficoLinha?.destroy();
   }
 
   buscarSugestao(nome: string): void {
@@ -107,6 +106,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
           return;
         }
 
+        this.rivais.set([]); // não deixa os concorrentes da busca anterior aparecerem por um instante
         this.renderizarGrafico(itens);
         this.buscarCarrosSemelhantes(itens[0].id);
         this.carregarComparacao(modeloDaBusca(termo, this.sugestoes));
@@ -118,27 +118,24 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  /** Compara o modelo Ford pesquisado com os concorrentes do segmento dele (guarda o resultado para não repetir). */
+  /** Busca os concorrentes do segmento do modelo Ford pesquisado (guarda o resultado para não repetir). */
   private carregarComparacao(modeloFord: string | null): void {
     this.modeloDestacado.set(modeloFord);
     this.erroLinha.set(null);
 
     if (!modeloFord || !SEGMENTOS[modeloFord]) {
-      this.comparacao.set(null);
-      this.graficoLinha?.destroy();
+      this.aplicarComparacao(null);
       return;
     }
 
     const guardada = this.comparacoesGuardadas.get(modeloFord);
     if (guardada) {
-      this.comparacao.set(guardada);
-      this.desenharLinha();
+      this.aplicarComparacao(guardada);
       return;
     }
 
     this.carregandoLinha.set(true);
-    this.comparacao.set(null);
-    this.graficoLinha?.destroy();
+    this.aplicarComparacao(null);
 
     const rivais = SEGMENTOS[modeloFord].rivais;
     const pedidos = {
@@ -155,44 +152,24 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         // Se a pessoa já buscou outro modelo enquanto isso, descarta este resultado.
         if (this.modeloDestacado() !== modeloFord) return;
         if (comparacao) this.comparacoesGuardadas.set(modeloFord, comparacao);
-        this.comparacao.set(comparacao);
-        this.desenharLinha();
+        this.aplicarComparacao(comparacao);
       },
       error: () => {
         this.carregandoLinha.set(false);
-        this.erroLinha.set('Não foi possível carregar a comparação com os concorrentes. Tente novamente.');
+        this.erroLinha.set('Não foi possível carregar os concorrentes. Tente novamente.');
       },
     });
   }
 
-  private desenharLinha(): void {
-    if (!this.linhaCanvas) return;
-    const itens = (this.comparacao()?.itens ?? []).filter((i) => i.potencia != null);
-
-    this.graficoLinha?.destroy();
-    this.graficoLinha = new Chart(this.linhaCanvas.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: itens.map((i) => `${i.marca} ${i.modelo}${i.ano ? ` (${i.ano})` : ''}`),
-        datasets: [
-          {
-            label: 'Potência (cv)',
-            data: itens.map((i) => i.potencia as number),
-            backgroundColor: itens.map((i) => (i.referencia ? '#0E3165' : '#9FC4E8')),
-          },
-        ],
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          title: { display: true, text: `Potência: Ford ${this.modeloDestacado()} × concorrentes (${this.comparacao()?.segmento ?? ''})` },
-        },
-        scales: { x: { beginAtZero: true, title: { display: true, text: 'cv' } } },
-      },
-    });
+  /** Guarda a comparação, separa os concorrentes (sem a Ford) e redesenha o gráfico com eles junto. */
+  private aplicarComparacao(comparacao: Comparacao | null): void {
+    this.comparacao.set(comparacao);
+    this.rivais.set(
+      (comparacao?.itens ?? [])
+        .filter((i) => !i.referencia)
+        .map((i) => ({ ...i, carro: this.preencherFicha(i.carro) })),
+    );
+    if (this.resultados().length > 0) this.renderizarGrafico(this.resultados());
   }
 
   private buscarCarrosSemelhantes(carId: number): void {
@@ -246,9 +223,14 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    const rotulos = carros.map((c) => c.variant ?? c.model ?? `#${c.id}`);
-    const potencias = carros.map((c) => c.enginePowerBhp ?? 0);
-    const velocidades = carros.map((c) => c.topSpeedKph ?? 0);
+    // Versões do modelo pesquisado + concorrentes do mesmo segmento (quando já carregaram), na mesma escala.
+    const rivais = this.rivais();
+    const rotulos = [
+      ...carros.map((c) => c.variant ?? c.model ?? `#${c.id}`),
+      ...rivais.map((i) => `${i.marca} ${i.modelo}${i.ano ? ` (${i.ano})` : ''}`),
+    ];
+    const potencias = [...carros.map((c) => c.enginePowerBhp ?? 0), ...rivais.map((i) => i.carro.enginePowerBhp ?? 0)];
+    const velocidades = [...carros.map((c) => c.topSpeedKph ?? 0), ...rivais.map((i) => i.carro.topSpeedKph ?? 0)];
 
     this.grafico?.destroy();
     this.grafico = new Chart(this.graficoCanvas.nativeElement, {
@@ -273,7 +255,7 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         maintainAspectRatio: false,
         plugins: {
           legend: { position: 'top' },
-          title: { display: true, text: `Resultados para "${this.nomeCarro()}"` },
+          title: { display: true, text: rivais.length ? `Resultados para "${this.nomeCarro()}" × concorrentes (${this.comparacao()?.segmento ?? ''})` : `Resultados para "${this.nomeCarro()}"` },
         },
         scales: {
           x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } },
