@@ -68,12 +68,12 @@
   background-size: 250% 100%;
   animation: shine 7s ease-in-out infinite;
 }
-/* "próximo Ford.": duas camadas — a de cima é só a faixa de luz que se move, a de baixo é o degradê fixo marinho → azul → ciano */
+/* "próximo Ford.": duas camadas — a de cima é só a faixa de luz que se move, a de baixo é o degradê fixo, que só clareia da esquerda para a direita (marinho → azul → azul-céu), sem mudar de tom: cada letra é um pouco mais clara que a anterior */
 .l-md-shine2 {
-  color: #1F5BE0;
+  color: #2A7FE8;
   background-image:
     linear-gradient(100deg, transparent 40%, #A8E6FF 50%, transparent 60%),
-    linear-gradient(90deg, #0A2A6B, #1F5BE0 50%, #0891B2);
+    linear-gradient(90deg, #0A2A6B 0%, #1B4FBF 40%, #2A7FE8 72%, #3B9EF5 100%);
   background-size: 250% 100%, 100% 100%;
   background-repeat: no-repeat;
   animation: shine 7s ease-in-out infinite;
