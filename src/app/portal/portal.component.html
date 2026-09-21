@@ -1,6 +1,7 @@
 <div class="l-seia-container">
 
   <seia-topbar
+    tema="claro"
     (navegar)="ir($event)"
     (sair)="sair()" />
 
@@ -27,40 +28,6 @@
 
   </main>
 
-  <!-- Rodapé Completo em Colunas -->
-  <footer class="l-footer">
-    <div class="l-footer-container">
-      <div class="l-footer-grid">
-        <div class="l-footer-col">
-          <h4 class="l-footer-col-title">PORTAL</h4>
-          <ul>
-            @for (i of principais; track i.chave) {
-              <li><button type="button" class="l-footer-link" (click)="ir(i.chave)">{{ i.rotulo }}</button></li>
-            }
-          </ul>
-        </div>
-        <div class="l-footer-col">
-          <h4 class="l-footer-col-title">ATENDIMENTO</h4>
-          <ul>
-            @for (i of atendimento; track i.chave) {
-              <li><button type="button" class="l-footer-link" (click)="ir(i.chave)">{{ i.rotulo }}</button></li>
-            }
-          </ul>
-        </div>
-        <div class="l-footer-col">
-          <h4 class="l-footer-col-title">SOBRE</h4>
-          <ul>
-            @for (i of sobre; track i.chave) {
-              <li><button type="button" class="l-footer-link" (click)="ir(i.chave)">{{ i.rotulo }}</button></li>
-            }
-          </ul>
-        </div>
-      </div>
-      <div class="l-footer-bottom">
-        <p>SEIA + Ford · recomendação assistida por IA. As notas são estimativas calculadas a partir do texto que você escreveu e do perfil de uso de cada modelo.</p>
-      </div>
-    </div>
-  </footer>
 
   <seia-rodape />
 

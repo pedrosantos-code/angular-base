@@ -1,195 +1,287 @@
 /* =========================================================
    SEIA + Ford — Modelos
-   Filtros ........ l-md-rail, l-md-filter, l-md-check, l-md-range
-   Cabeçalho ...... l-md-top, l-md-search, l-md-sort
-   Cartões ........ l-md-card, l-md-score, l-md-compare
+   Cabeçalho ...... l-md-hero, l-md-eyebrow, l-md-title, l-md-cats
+   Filtros ........ l-md-controls, l-md-pill, l-md-rail, l-md-switch, l-md-range
+   Cartões ........ l-md-card, l-md-photo, l-md-chip, l-md-cta, l-md-score
    Barra .......... l-md-compare-bar
    ========================================================= */
 
 :host {
-  display: block;
-  background: #fff;
+  /* Coluna da altura da tela: o rodapé fica sempre no fim, mesmo com a página curta ou com zoom muito afastado */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Cria um contexto próprio: o SVG de fundo (z-index -1) fica acima deste fundo e abaixo do conteúdo */
+  isolation: isolate;
+  background: linear-gradient(180deg, #EDF3FB 0, #FAFCFF 480px, #F3F5F9 760px);
   color: #001730;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  /* Margem lateral do conteúdo: 24px no mínimo e centralizado numa coluna de até 1240px */
+  --l-md-pad: max(24px, calc((100% - 1240px) / 2));
 }
 
 :host *, :host *::before, :host *::after { box-sizing: border-box; }
 
 /* Reset escopado contra regras globais do app */
 :host button { font: inherit; background: none; border: none; color: inherit; cursor: pointer; text-align: left; }
-:host input { font: inherit; color: #001730; }
+:host input, :host select { font: inherit; color: #001730; }
 :host h1 { color: #001730; margin: 0; }
 
-.l-md-shell { display: grid; grid-template-columns: 208px minmax(0,1fr); min-height: calc(100vh - 60px); }
+.l-md-shell { min-height: calc(100vh - 60px); }
 
-/* ===== Filtros ===== */
-/* align-self: start pra não esticar o fundo escuro além do próprio conteúdo — mas .l-md-main
-   (coluna ao lado) continua no stretch padrão, senão a barra "sticky" de comparar desalinha
-   quando a lista filtrada fica mais curta que a barra lateral. */
-/* Fixo logo abaixo do topbar (60px, também fixo) e com a altura restante da tela: as categorias ficam paradas em
-   cima enquanto a lista rola, e o fundo escuro acompanha a lista sem deixar vazio branco ao lado dos modelos. */
-.l-md-rail { align-self: start; position: sticky; top: 60px; height: calc(100vh - 60px); height: calc(100dvh - 60px); overflow-y: auto; background: #001730; padding: 22px 0 30px; }
-/* No computador o painel é fixo de verdade (não só sticky): sticky sai da tela junto com a lista quando o rodapé
-   chega. Fixo ele nunca se mexe, e o rodapé passa por cima dele. */
-@media (min-width: 901px) {
-  .l-md-rail { position: fixed; top: 60px; left: 0; width: 208px; z-index: 1; }
-  .l-md-main { grid-column: 2; }
-  seia-rodape { position: relative; z-index: 2; }
+/* ===== Linhas de luz (fundo) ===== */
+.l-md-streams { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+/* Um traço curto (90 de 1000) deslocado ao longo da curva: parece um pulso de luz correndo pela linha */
+.l-md-stream {
+  stroke-dasharray: 90 910;
+  animation: l-md-flow linear infinite;
+  filter: drop-shadow(0 0 3px rgba(31,91,224,.45));
 }
-/* Botão e atalho de fechar só existem no celular (ver @media abaixo) */
-.l-md-filters-toggle, .l-md-filters-done { display: none; }
-
-.l-md-rail-label {
-  font-family: 'Archivo', sans-serif; font-weight: 800;
-  font-size: 10px; letter-spacing: .16em; text-transform: uppercase;
-  color: #5C7691; padding: 0 20px; margin: 22px 0 9px;
+@keyframes l-md-flow {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
 }
-.l-md-rail-label:first-child { margin-top: 0; }
-
-button.l-md-filter {
-  width: 100%; display: flex; align-items: center; gap: 8px;
-  padding: 9px 20px; font-size: 14px; color: #BBD3E9;
-  border-left: 3px solid transparent;
-  transition: color .16s, background .16s;
+@media (prefers-reduced-motion: reduce) {
+  .l-md-stream { animation: none; stroke-dashoffset: 550; }
 }
-button.l-md-filter:hover { color: #fff; }
-button.l-md-filter.is-on { color: #fff; font-weight: 500; background: rgba(46,125,209,.12); border-left-color: #2E7DD1; }
-.l-md-filter:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
-.l-md-filter-count { margin-left: auto; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #6E8CA8; }
-
-.l-md-check {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 20px; font-size: 14px; color: #BBD3E9; cursor: pointer;
-}
-.l-md-check input { width: 15px; height: 15px; accent-color: #2E7DD1; flex: none; cursor: pointer; }
-
-.l-md-range { padding: 4px 20px 0; }
-.l-md-range input { width: 100%; accent-color: #2E7DD1; cursor: pointer; }
-.l-md-range-labels {
-  display: flex; justify-content: space-between; gap: 8px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; color: #8FB8E2;
-  margin-top: 8px;
-}
-
 /* ===== Cabeçalho ===== */
-.l-md-main { min-width: 0; display: flex; flex-direction: column; }
-.l-md-top {
-  padding: 26px 26px 18px;
-  display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap;
+.l-md-hero {
+  position: relative; isolation: isolate;
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  padding: 44px var(--l-md-pad) 30px;
+  /* Sem fundo próprio: o degradê fica no :host para as linhas de luz aparecerem por trás */
 }
-.l-md-title { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: clamp(24px,2.6vw,32px); letter-spacing: -.025em; }
-.l-md-count {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12.5px; color: #55677A; margin: 7px 0 0;
+/* Grade suave que se desfaz nas bordas, atrás do título */
+.l-md-hero::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(46,125,209,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46,125,209,.08) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse 60% 90% at 50% 35%, #000 25%, transparent 78%);
+  mask-image: radial-gradient(ellipse 60% 90% at 50% 35%, #000 25%, transparent 78%);
 }
+.l-md-eyebrow {
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 22px; padding: 7px 14px;
+  border: 1px solid #DCE6F3; border-radius: 999px; background: rgba(255,255,255,.85);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #55677A;
+}
+.l-md-eyebrow i { flex: none; width: 7px; height: 7px; background: #2E7DD1; }
+.l-md-title {
+  font-family: 'Archivo', sans-serif; font-weight: 900; line-height: .98; letter-spacing: -.035em;
+  font-size: clamp(38px, 6.4vw, 72px);
+}
+/* Brilho que atravessa as letras: só CSS. O degradê é 2,5× mais largo que o texto e a animação o desliza da direita para a esquerda;
+   background-clip: text recorta o fundo no formato das letras. */
+.l-md-title .l-md-line { display: block; width: fit-content; margin: 0 auto; }
+.l-md-shine {
+  color: #0A1426;
+  background: linear-gradient(100deg,
+    #0A1426 0%, #0A1426 38%,   /* azul-marinho */
+    #1F5BE0 50%,               /* a faixa de luz */
+    #0A1426 62%, #0A1426 100%);
+  background-size: 250% 100%;
+  animation: shine 7s ease-in-out infinite;
+}
+/* "próximo Ford.": duas camadas — a de cima é só a faixa de luz que se move, a de baixo é o degradê fixo, que só clareia da esquerda para a direita (marinho → azul → azul-céu), sem mudar de tom: cada letra é um pouco mais clara que a anterior */
+.l-md-shine2 {
+  color: #2A7FE8;
+  background-image:
+    linear-gradient(100deg, transparent 40%, #A8E6FF 50%, transparent 60%),
+    linear-gradient(90deg, #0A2A6B 0%, #1B4FBF 40%, #2A7FE8 72%, #3B9EF5 100%);
+  background-size: 250% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  animation: shine 7s ease-in-out infinite;
+  animation-delay: .5s;
+}
+/* Sem suporte a background-clip: text o texto ficaria invisível; só recorta onde há suporte */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .l-md-shine, .l-md-shine2 { -webkit-background-clip: text; background-clip: text; color: transparent; }
+}
+@keyframes shine {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -150% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .l-md-shine, .l-md-shine2 { animation: none; background-position: 0 0; }
+}
+.l-md-count { margin: 16px 0 0; font-size: 13.5px; color: #55677A; }
+.l-md-cats { display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 26px; }
+/* Categoria ativa: azul-claro com contorno (a escura fica para os filtros abaixo) */
+.l-md-cats button.l-md-pill.is-on { background: #EAF2FE; border-color: #8DB7EE; color: #0B57A4; }
+.l-md-cats button.l-md-pill.is-on .l-md-filter-count { opacity: .8; }
+/* ===== Filtros ===== */
+.l-md-controls { padding: 22px var(--l-md-pad) 6px; }
+.l-md-bar { display: flex; align-items: center; gap: 12px 16px; flex-wrap: wrap; }
+.l-md-status { margin: 0; font-size: 13.5px; color: #55677A; }
+.l-md-status strong { color: #001730; font-weight: 700; }
+.l-md-tools { margin-left: auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 
-.l-md-tools { margin-left: auto; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+/* Pílula: base dos filtros, da ordenação e do botão "Filtros" */
+button.l-md-pill, label.l-md-pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 16px; border: 1px solid #E1E7EF; border-radius: 999px; background: #fff;
+  font-size: 13.5px; color: #1E2B3D; white-space: nowrap;
+  transition: background .16s, color .16s, border-color .16s;
+}
+button.l-md-pill:hover:not(:disabled) { border-color: #B5C4D6; }
+button.l-md-pill.is-on { background: #0B1B3A; border-color: #0B1B3A; color: #fff; }
+button.l-md-pill--small { padding: 7px 14px; font-size: 13px; }
+button.l-md-pill:disabled { opacity: .45; cursor: default; }
+button.l-md-pill:focus-visible, .l-md-select:has(select:focus-visible) { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-filter-count { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px; opacity: .6; }
+
 .l-md-search {
-  border: 1px solid #C8D5E2; background: #EFF2F7; border-radius: 2px;
-  padding: 11px 13px; font-size: 14px; width: 220px;
+  width: 210px; padding: 9px 16px; border: 1px solid #E1E7EF; border-radius: 999px; background: #fff; font-size: 13.5px;
 }
-.l-md-search:focus-visible { outline: none; background: #fff; border-color: #2E7DD1; box-shadow: 0 0 0 3px rgba(46,125,209,.18); }
+.l-md-search:focus-visible { outline: none; border-color: #2E7DD1; box-shadow: 0 0 0 3px rgba(46,125,209,.18); }
 
-.l-md-sort { display: flex; align-items: center; gap: 10px; font-size: 13px; color: #55677A; }
-button.l-md-sort-option { font-size: 13px; color: #5B6B7C; padding-bottom: 3px; border-bottom: 2px solid transparent; }
-.l-md-sort-option:hover { color: #001730; }
-.l-md-sort-option.is-on { color: #001730; font-weight: 600; border-bottom-color: #2E7DD1; }
-.l-md-sort-option:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+label.l-md-select span { color: #6B7A8C; }
+.l-md-select select { border: 0; background: transparent; font-weight: 600; font-size: 13.5px; padding: 0 2px; cursor: pointer; }
+.l-md-select select:focus { outline: none; }
+
+button.l-md-filters-toggle, button.l-md-filters-toggle.is-on { background: #E7ECF3; border-color: #E7ECF3; color: #1E2B3D; }
+button.l-md-filters-toggle.is-on { background: #DCE4EE; border-color: #DCE4EE; }
+.l-md-filters-badge { display: grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #2E7DD1; color: #fff; font-size: 11.5px; }
+.l-md-filters-chevron { font-size: 17px; line-height: 1; color: #55677A; }
+
+/* Segunda linha: motorização, preço e favoritos */
+.l-md-rail {
+  display: none; align-items: center; gap: 14px 28px; flex-wrap: wrap;
+  margin-top: 14px; padding: 14px 20px;
+  background: #fff; border-radius: 16px; box-shadow: 0 1px 2px rgba(0,23,48,.05);
+}
+.l-md-rail.is-open { display: flex; }
+.l-md-group { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.l-md-group + .l-md-group { padding-left: 28px; border-left: 1px solid #E9EDF3; }
+.l-md-group-items { display: flex; gap: 8px; flex-wrap: wrap; }
+.l-md-rail-label {
+  font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #6B7A8C;
+}
+.l-md-group--switches { margin-left: auto; gap: 18px; }
+
+.l-md-range { display: flex; align-items: center; gap: 12px; }
+.l-md-range input { width: 200px; accent-color: #2E7DD1; cursor: pointer; }
+.l-md-range-value { min-width: 84px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #1E2B3D; }
+
+.l-md-switch { position: relative; display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; color: #1E2B3D; cursor: pointer; }
+.l-md-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.l-md-switch-track { position: relative; width: 34px; height: 20px; border-radius: 10px; background: #CBD5E1; transition: background .16s; flex: none; }
+.l-md-switch-track::after {
+  content: ''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 2px rgba(0,23,48,.25); transition: transform .16s;
+}
+.l-md-switch input:checked + .l-md-switch-track { background: #2E7DD1; }
+.l-md-switch input:checked + .l-md-switch-track::after { transform: translateX(14px); }
+.l-md-switch input:focus-visible + .l-md-switch-track { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+
+.l-md-summary { margin: 16px 0 0; font-size: 12.5px; color: #6B7A8C; }
+
+/* ===== Lista ===== */
+.l-md-main { min-width: 0; display: flex; flex-direction: column; padding: 14px var(--l-md-pad) 44px; }
+.l-md-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 20px; }
+.l-md-blank { grid-column: 1 / -1; background: #fff; border-radius: 16px; padding: 28px 26px; font-size: 14.5px; color: #55677A; margin: 0; }
 
 /* ===== Cartões ===== */
-.l-md-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1px; background: #E2EAF2;
-  border-top: 1px solid #E2EAF2; border-bottom: 1px solid #E2EAF2;
+.l-md-card {
+  --foto-h: 176px;
+  position: relative; display: flex; flex-direction: column;
+  background: #fff; border: 1px solid #E3EAF8; border-radius: 22px; padding: 8px;
+  box-shadow: 0 1px 2px rgba(0,23,48,.04), 0 10px 28px rgba(46,125,209,.07);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
 }
-.l-md-blank { grid-column: 1 / -1; background: #fff; padding: 28px 26px; font-size: 14.5px; color: #55677A; margin: 0; }
+.l-md-card:hover { border-color: #A9C4F5; box-shadow: 0 1px 2px rgba(0,23,48,.04), 0 14px 34px rgba(46,125,209,.16); transform: translateY(-2px); }
+.l-md-card.is-selected { border-color: #2E7DD1; box-shadow: 0 0 0 3px rgba(46,125,209,.22), 0 14px 34px rgba(46,125,209,.16); }
 
-.l-md-card { background: #fff; position: relative; }
-.l-md-card.is-selected { outline: 2px solid #2E7DD1; outline-offset: -2px; z-index: 1; }
-
-.l-md-card-open { display: block; width: 100%; }
-.l-md-card-open:focus-visible { outline: 2px solid #2E7DD1; outline-offset: -2px; }
-
-.l-md-card-footer { padding: 0 18px 18px; margin-top: 14px; border-top: 1px solid #EDF1F5; }
-
-button.l-md-vistas {
-  display: inline-flex; align-items: center; gap: 6px;
-  margin-top: 12px; padding: 8px 12px;
-  border: 1px solid #C8D5E2; border-radius: 2px;
-  font-size: 12px; font-weight: 600; color: #002B5C;
-  transition: background .16s, border-color .16s;
-}
-button.l-md-vistas:hover { background: #F4F7FA; border-color: #2E7DD1; }
-button.l-md-vistas:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-card-open { display: flex; flex-direction: column; flex: 1; width: 100%; border-radius: 16px; }
+.l-md-card-open:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 
 .l-md-photo {
-  display: grid; place-items: center;
-  height: 150px; background: linear-gradient(160deg, #dfe6ee, #c9d5e2);
-  overflow: hidden;
+  position: relative; display: block; height: var(--foto-h); border-radius: 16px; overflow: hidden;
+  background: linear-gradient(160deg, #DFE6EE, #C9D5E2);
 }
-.l-md-photo img { width: 100%; height: 100%; object-fit: cover; }
-
-.l-md-card-body { display: block; padding: 16px 18px 0; }
-.l-md-segment {
-  display: block;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: #55677A;
-}
-.l-md-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 18px; margin: 9px 0 5px; }
-.l-md-price { display: block; font-size: 14px; color: #3C4B5B; }
-.l-md-spec {
-  display: block;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 12px; line-height: 1.7; color: #55677A; margin-top: 9px;
+.l-md-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.l-md-card:hover .l-md-photo img { transform: scale(1.03); }
+/* Segmento sobre a foto, no canto de baixo */
+.l-md-chip {
+  position: absolute; left: 10px; bottom: 10px; padding: 5px 11px; border-radius: 999px;
+  background: rgba(255,255,255,.94);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #3C4B5B;
 }
 
-.l-md-score {
-  display: flex; align-items: baseline; gap: 5px;
-  margin-top: 12px;
+/* Botões redondos sobre a foto (ver fotos e favoritar), no canto de cima */
+.l-md-overlay { position: absolute; top: 18px; right: 18px; z-index: 1; display: flex; gap: 8px; }
+button.l-md-icone {
+  width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%;
+  background: rgba(255,255,255,.94); color: #55677A; box-shadow: 0 1px 3px rgba(0,23,48,.12);
+  transition: color .16s, background .16s, transform .16s;
 }
-.l-md-card-footer > .l-md-score:first-child { margin-top: 0; }
-.l-md-score strong { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 23px; line-height: 1; color: #002B5C; }
+button.l-md-icone:hover { color: #0B57A4; transform: scale(1.06); }
+button.l-md-icone:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+button.l-md-icone svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+button.l-md-favorito:hover { color: #C0392B; }
+button.l-md-favorito.is-on { color: #fff; background: #C0392B; }
+button.l-md-favorito.is-on svg { fill: currentColor; }
+
+/* "Comparar": pílula no canto de cima, à esquerda, longe da etiqueta do segmento (o checkbox real fica escondido dentro dela) */
+.l-md-compare {
+  position: absolute; z-index: 1; left: 18px; top: 18px;
+  display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 999px;
+  background: rgba(255,255,255,.94); box-shadow: 0 1px 3px rgba(0,23,48,.12);
+  font-size: 12px; font-weight: 600; color: #1E2B3D; cursor: pointer; transition: background .16s, color .16s;
+}
+.l-md-compare:hover { background: #fff; color: #0B57A4; }
+.l-md-compare input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.l-md-compare:has(input:focus-visible) { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-compare:has(input:disabled) { opacity: .55; cursor: default; }
+.l-md-card.is-selected .l-md-compare { background: #0B1B3A; color: #fff; }
+
+.l-md-card-body { display: flex; flex-direction: column; flex: 1; padding: 14px 8px 4px; }
+.l-md-card-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.l-md-card-title { display: block; min-width: 0; }
+.l-md-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 19px; letter-spacing: -.01em; color: #001730; text-wrap: balance; }
+.l-md-spec { display: block; margin-top: 3px; font-size: 12.5px; color: #6B7A8C; }
+.l-md-price { flex: none; text-align: right; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 16px; letter-spacing: -.01em; color: #001730; white-space: nowrap; }
+.l-md-price small { display: block; margin-bottom: 1px; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 10.5px; font-weight: 400; letter-spacing: 0; color: #8A99AB; }
+
+.l-md-card-footer { display: block; padding-top: 12px; }
+.l-md-score { display: flex; align-items: baseline; gap: 5px; }
+.l-md-score strong { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 20px; line-height: 1; color: #002B5C; }
 .l-md-score span { font-size: 11.5px; color: #55677A; }
-.l-md-track { display: block; height: 4px; background: #E7EDF3; margin-top: 8px; }
+.l-md-track { display: block; height: 4px; border-radius: 2px; background: #E7EDF3; margin-top: 8px; overflow: hidden; }
 .l-md-fill { display: block; height: 100%; background: #2E7DD1; }
 .l-md-fill.is-fraco { background: #8FB8E2; }
 
-.l-md-compare {
-  position: absolute; right: 12px; top: 12px;
-  display: flex; align-items: center; gap: 7px;
-  background: rgba(255,255,255,.94); border: 1px solid #C8D5E2;
-  padding: 6px 10px; font-size: 12px; color: #3C4B5B; cursor: pointer;
+/* Botão do cartão: azul-claro com contorno, como no espelho */
+.l-md-cta {
+  display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: auto;
+  height: 44px; border: 1px solid #CFDDF8; border-radius: 14px; background: #EEF3FF;
+  font-size: 13.5px; font-weight: 600; color: #1F5BE0; transition: background .16s, border-color .16s;
 }
-.l-md-compare input { width: 14px; height: 14px; accent-color: #002B5C; cursor: pointer; }
-.l-md-compare:has(input:disabled) { opacity: .5; cursor: default; }
-.l-md-card.is-selected .l-md-compare { background: #002B5C; border-color: #002B5C; color: #fff; }
+.l-md-card-head + .l-md-cta, .l-md-card-footer + .l-md-cta { margin-top: 14px; }
+.l-md-card-open:hover .l-md-cta { background: #E2ECFF; border-color: #A9C4F5; }
+.l-md-cta svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .16s; }
+.l-md-card-open:hover .l-md-cta svg { transform: translateX(3px); }
 
-button.l-md-favorito {
-  position: absolute; left: 12px; top: 12px; z-index: 1;
-  width: 32px; height: 32px; display: grid; place-items: center;
-  background: rgba(255,255,255,.94); border: 1px solid #C8D5E2; border-radius: 50%;
-  color: #55677A; transition: color .16s, border-color .16s, background .16s;
+@media (prefers-reduced-motion: reduce) {
+  .l-md-card, .l-md-photo img, .l-md-cta svg { transition: none; }
+  .l-md-card:hover { transform: none; }
+  .l-md-card:hover .l-md-photo img { transform: none; }
 }
-button.l-md-favorito svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
-button.l-md-favorito:hover { color: #C0392B; border-color: #E8B4AC; }
-button.l-md-favorito.is-on { color: #fff; background: #C0392B; border-color: #C0392B; }
-button.l-md-favorito.is-on svg { fill: currentColor; }
-button.l-md-favorito:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
-
 /* ===== Barra de comparação ===== */
 .l-md-compare-bar {
-  position: sticky; bottom: 0; z-index: 20;
-  background: #001730; padding: 16px 26px;
+  position: sticky; bottom: 12px; z-index: 20; margin-top: 24px;
+  background: #001730; padding: 14px 20px; border-radius: 16px;
   display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
-  box-shadow: 0 -8px 20px rgba(0,0,0,.25);
-  border-bottom: 1px solid rgba(255,255,255,.14);
+  box-shadow: 0 8px 28px rgba(0,23,48,.28);
 }
 .l-md-compare-count { font-size: 14px; color: #BBD3E9; }
 .l-md-compare-count strong { color: #fff; font-weight: 600; }
 .l-md-compare-actions { margin-left: auto; display: flex; align-items: center; gap: 18px; }
-button.l-md-clear { font-size: 13.5px; color: #8FB8E2; text-decoration: underline; text-underline-offset: 3px; }
+button.l-md-clear { font-size: 13.5px; color: #0B57A4; text-decoration: underline; text-underline-offset: 3px; }
+.l-md-compare-bar button.l-md-clear { color: #8FB8E2; }
 button.l-md-primary {
   background: #2E7DD1; color: #fff; border-radius: 2px;
   padding: 13px 22px;
@@ -202,61 +294,84 @@ button.l-md-primary:focus-visible { outline: 2px solid #fff; outline-offset: 2px
 
 /* ===== Modal de comparação ===== */
 .l-md-modal-backdrop {
-  position: fixed; inset: 0; z-index: 40;
-  background: rgba(0,10,23,.6);
+  /* Acima do cabeçalho fixo do site (z-index 90), senão ele cobre o topo do modal */
+  position: fixed; inset: 0; z-index: 120;
+  background: rgba(0,10,23,.6); backdrop-filter: blur(3px);
   display: grid; place-items: center;
   padding: 24px;
 }
 .l-md-modal {
-  background: #fff; width: min(920px, 100%); max-height: 86vh;
+  background: #fff; width: min(980px, 100%); max-height: 88vh;
   display: flex; flex-direction: column; overflow: hidden;
-  border-radius: 3px;
+  border-radius: 24px; box-shadow: 0 24px 80px rgba(0,10,23,.35);
 }
 .l-md-modal-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 22px; border-bottom: 1px solid #E2EAF2;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 22px 28px; border-bottom: 1px solid #EDF1F5;
 }
-.l-md-modal-head h2 { margin: 0; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 19px; color: #001730; }
-button.l-md-modal-close { font-size: 16px; color: #6E8CA8; padding: 4px 8px; }
-.l-md-modal-close:hover { color: #001730; }
-.l-md-modal-close:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-modal-kicker { margin: 0 0 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #2E7DD1; }
+.l-md-modal-head h2 { margin: 0; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; letter-spacing: -.02em; color: #001730; }
+button.l-md-modal-close {
+  display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%;
+  background: #F1F4F8; color: #3C4B5B; transition: background .16s, color .16s;
+}
+button.l-md-modal-close:hover { background: #E4EAF1; color: #001730; }
+button.l-md-modal-close:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-modal-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
-.l-md-compare-table-wrap { overflow: auto; padding: 22px; }
-.l-md-compare-table { width: 100%; border-collapse: collapse; }
-.l-md-compare-table th, .l-md-compare-table td {
-  border-bottom: 1px solid #EDF1F5; padding: 12px 16px; text-align: left; vertical-align: top;
-  font-size: 13.5px; color: #3C4B5B;
+.l-md-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.l-md-compare-table-wrap { overflow: auto; padding: 4px 28px 28px; }
+.l-md-compare-table {
+  --primeira: 150px; --coluna: 210px;
+  /* Colunas de larguras iguais (as fotos ficam do mesmo tamanho); com o espaço curto, a tabela rola na horizontal */
+  table-layout: fixed; width: 100%; min-width: calc(var(--primeira) + var(--n, 2) * var(--coluna));
+  border-collapse: separate; border-spacing: 0;
 }
-.l-md-compare-table thead th {
-  vertical-align: top; min-width: 170px;
-}
+.l-md-compare-table thead th { padding: 20px 12px 18px; text-align: left; vertical-align: top; font-weight: 400; }
+.l-md-compare-table thead th:first-child { width: var(--primeira); }
+.l-md-compare-table tbody th, .l-md-compare-table tbody td { padding: 18px 12px; border-top: 1px solid #EDF1F5; vertical-align: middle; text-align: left; }
+.l-md-compare-table tbody td { font-size: 15px; line-height: 1.4; color: #1E2B3D; }
 .l-md-compare-table tbody th {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px;
-  letter-spacing: .04em; text-transform: uppercase; color: #55677A;
-  white-space: nowrap; font-weight: 700;
+  position: sticky; left: 0; z-index: 1; background: #fff; line-height: 1.5;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #6B7A8C;
 }
-.l-md-ct-cap { text-transform: capitalize; }
+.l-md-compare-table thead th:first-child { position: sticky; left: 0; z-index: 1; background: #fff; }
 
-.l-md-ct-photo {
-  display: block; height: 96px; border-radius: 2px; overflow: hidden;
-  background: linear-gradient(160deg, #dfe6ee, #c9d5e2); margin-bottom: 10px;
-}
-.l-md-ct-photo img { width: 100%; height: 100%; object-fit: cover; }
-.l-md-ct-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 15px; color: #001730; }
+.l-md-ct-photo { display: block; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: linear-gradient(160deg, #DFE6EE, #C9D5E2); margin-bottom: 14px; }
+.l-md-ct-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.l-md-ct-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: -.01em; color: #001730; }
 .l-md-ct-segment {
-  display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10.5px; text-transform: uppercase; color: #55677A; margin-top: 3px;
+  display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 999px; background: #EAF1FB; color: #0B57A4;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
 }
 button.l-md-ct-remove {
-  margin-top: 8px; font-size: 11.5px; color: #C0392B; text-decoration: underline; text-underline-offset: 2px;
+  display: flex; align-items: center; gap: 6px; margin-top: 12px; padding: 5px 12px 5px 9px; border: 1px solid #E1E7EF; border-radius: 999px; background: #fff;
+  font-size: 12px; font-weight: 600; color: #6B7A8C; transition: color .16s, border-color .16s, background .16s;
 }
-.l-md-ct-nota { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 16px; color: #002B5C; }
+button.l-md-ct-remove:hover { color: #B91C1C; border-color: #F3C0BA; background: #FEF5F4; }
+button.l-md-ct-remove:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-ct-remove svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+
+.l-md-ct-valor { display: block; }
+.is-preco .l-md-ct-valor { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -.02em; color: #001730; }
+.l-md-ct-selo { display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 11px; font-weight: 700; }
+/* Empate no melhor valor: selo neutro em vez do verde */
+.l-md-ct-selo.is-empate { background: #EDF1F5; color: #55677A; }
+/* Todos iguais: a linha não diferencia os carros, então fica esmaecida */
+.l-md-compare-table tr.is-igual td { color: #8A99AB; }
+.is-preco.is-igual .l-md-ct-valor { color: #8A99AB; }
+.l-md-ct-nota { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 18px; color: #002B5C; }
 
 @media (max-width: 640px) {
   .l-md-modal-backdrop { padding: 0; }
   .l-md-modal { max-height: 100vh; height: 100%; width: 100%; border-radius: 0; }
+  .l-md-modal-head { padding: 16px 18px; }
+  .l-md-modal-head h2 { font-size: 22px; }
+  .l-md-compare-table-wrap { padding: 0 12px 20px; }
+  .l-md-compare-table { --primeira: 92px; --coluna: 172px; }
+  .l-md-compare-table tbody th { font-size: 9.5px; }
 }
-
 /* ===== Modal de vistas (fotos) ===== */
 .l-md-vistas-modal { width: min(760px, 100%); }
 .l-md-vistas-body { overflow: auto; padding: 22px; }
@@ -264,47 +379,35 @@ button.l-md-ct-remove {
 
 /* ===== Responsivo ===== */
 @media (max-width: 900px) {
-  .l-md-shell { grid-template-columns: 1fr; }
-
-  /* Filtros viram chips que quebram linha, em vez de uma lista comprida antes dos modelos */
-  button.l-md-filters-toggle {
-    display: flex; align-items: center; gap: 10px; width: 100%; min-height: 50px; padding: 12px 20px;
-    background: #001730; color: #fff; border-bottom: 1px solid rgba(255,255,255,.1);
-    font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
-  }
-  .l-md-filters-badge { display: grid; place-items: center; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: #2E7DD1; font-size: 12px; letter-spacing: 0; }
-  .l-md-filters-chevron { margin-left: auto; font-size: 20px; line-height: 1; color: #7FB3E4; }
-  .l-md-filters-toggle:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3px; }
-
-  /* Recolhido por padrão; abre pelo botão "Filtros" */
-  .l-md-rail { display: none; position: static; height: auto; overflow: visible; flex-wrap: wrap; align-items: center; gap: 8px; padding: 16px 20px 18px; }
-  .l-md-rail.is-open { display: flex; }
-  button.l-md-filters-done {
-    display: block; width: 100%; min-height: 44px; margin-top: 14px; padding: 10px 16px; border-radius: 2px; background: #2E7DD1; color: #fff; text-align: center;
-    font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 12.5px; letter-spacing: .07em; text-transform: uppercase;
-  }
-  .l-md-rail-label { width: 100%; padding: 0; margin: 12px 0 0; }
-  .l-md-rail-label:first-child { margin-top: 0; }
-  button.l-md-filter, button.l-md-filter.is-on {
-    width: auto; padding: 7px 12px; border: 1px solid rgba(255,255,255,.2); border-radius: 16px;
-  }
-  button.l-md-filter.is-on { border-color: #2E7DD1; }
-  .l-md-check { padding: 6px 4px 6px 0; }
-  .l-md-range { width: 100%; padding: 4px 0 0; }
-  .l-md-top { padding: 22px 20px 16px; }
+  :host { --l-md-pad: 20px; }
+  .l-md-hero { padding-top: 30px; padding-bottom: 22px; }
   .l-md-tools { margin-left: 0; width: 100%; }
-  .l-md-search { width: 100%; }
-  .l-md-compare-bar { padding: 14px 20px; }
+  .l-md-search { flex: 1 1 100%; width: 100%; }
+  /* Filtros empilhados: sem os divisores verticais */
+  .l-md-rail { flex-direction: column; align-items: stretch; gap: 14px; }
+  .l-md-group + .l-md-group { padding-left: 0; border-left: 0; padding-top: 14px; border-top: 1px solid #E9EDF3; }
+  .l-md-group--switches { margin-left: 0; }
+  .l-md-range { flex: 1; }
+  .l-md-range input { flex: 1; width: auto; }
+  .l-md-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+  .l-md-compare-bar { padding-top: 14px; padding-bottom: 14px; }
   .l-md-compare-actions { width: 100%; margin-left: 0; justify-content: space-between; }
+}
+
+@media (max-width: 640px) {
+  /* Ordenação e "Filtros" na mesma linha: sem a palavra "Ordenar" (o select continua com nome acessível) */
+  label.l-md-select span { display: none; }
 }
 
 /* Alvos de toque confortáveis (~40px) em tela de toque ou estreita; só aumenta a área clicável */
 @media (pointer: coarse), (max-width: 640px) {
-  button.l-md-filter, button.l-md-filter.is-on { min-height: 40px; }
-  button.l-md-sort-option { min-height: 36px; padding-left: 6px; padding-right: 6px; }
+  button.l-md-pill { min-height: 40px; }
+  button.l-md-pill--small { min-height: 38px; }
+  .l-md-select { min-height: 40px; }
+  .l-md-switch { min-height: 40px; }
 }
 
 /* iOS Safari dá zoom na página ao focar um campo com fonte menor que 16px; no celular o campo passa a ter 16px */
 @media (pointer: coarse), (max-width: 640px) {
-  input.l-md-search, .l-md-search { font-size: 16px; }
+  input.l-md-search, .l-md-search, .l-md-select select { font-size: 16px; }
 }

@@ -1,11 +1,18 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
+import { fotoDoModelo } from '../shared/fotos-modelos';
+import { lerModeloRecomendado } from '../shared/modelo-recomendado';
 
-export interface TipoAtendimento { chave: string; rotulo: string; }
+export interface TipoAtendimento {
+  chave: string;
+  rotulo: string;
+  /** Chave do ícone em ICONES (o mesmo conjunto do menu). */
+  icone: string;
+}
 
 export interface Unidade {
   id: string;
@@ -18,9 +25,13 @@ export interface Unidade {
 
 export interface ModeloDisponivel {
   nome: string;
-  /** Nota de compatibilidade vinda da recomendação. Deixe nulo se a pessoa chegou sem recomendação. */
-  nota: number | null;
+  /** true quando o modelo veio do perfil salvo da pessoa (o carro em primeiro lugar); false para o modelo padrão. */
+  doPerfil: boolean;
+  /** Quanto do preço o orçamento da pessoa cobre (0 a 100). Nulo quando ela não informou orçamento. */
+  cobertura: number | null;
   disponivel: boolean;
+  /** Rótulo curto acima do nome ("SUV médio"). */
+  segmento?: string;
 }
 
 export type StatusDia = 'livre' | 'lotado' | 'fechado';
@@ -97,11 +108,13 @@ export class AgendamentosComponent {
   /** Dispare o carregamento da agenda da unidade escolhida. */
   /** Dispare o carregamento dos horários do dia escolhido. */
 
+  readonly icones = ICONES;
+
   tipos: TipoAtendimento[] = [
-    { chave: 'test-drive', rotulo: 'Test-drive' },
-    { chave: 'revisao', rotulo: 'Revisão' },
-    { chave: 'avaliacao', rotulo: 'Avaliação de usado' },
-    { chave: 'comercial', rotulo: 'Atendimento comercial' },
+    { chave: 'test-drive', rotulo: 'Test-drive', icone: 'carro' },
+    { chave: 'revisao', rotulo: 'Revisão', icone: 'config' },
+    { chave: 'avaliacao', rotulo: 'Avaliação de usado', icone: 'grafico' },
+    { chave: 'comercial', rotulo: 'Atendimento comercial', icone: 'telefone' },
   ];
 
   /** Unidades disponíveis para agendamento. */
@@ -113,7 +126,22 @@ export class AgendamentosComponent {
     { id: 'ford-sao-paulo', nome: 'Ford For São Paulo - SP', endereco: 'Av. das Nações Unidas, 21883', distanciaKm: 15.6, horariosLivres: 3 },
   ];
 
-  modelo: ModeloDisponivel = { nome: 'Territory Titanium', nota: 94, disponivel: true };
+  /**
+   * O carro em primeiro lugar do último "Salvar perfil". Sem perfil salvo, fica um modelo padrão, sem porcentagem
+   * e sem o rótulo "vindo do seu perfil" (não há recomendação de verdade por trás dele).
+   */
+  modelo: ModeloDisponivel = this.modeloInicial();
+
+  private modeloInicial(): ModeloDisponivel {
+    const salvo = lerModeloRecomendado();
+    if (salvo) return { nome: salvo.nome, segmento: salvo.segmento || undefined, cobertura: salvo.cobertura, doPerfil: true, disponivel: true };
+    return { nome: 'Territory Titanium', segmento: 'SUV médio', cobertura: null, doPerfil: false, disponivel: true };
+  }
+
+  /** Foto do modelo: procura pelo nome completo e, se não achar, pela primeira palavra ("Territory Titanium" → "Territory"). */
+  get fotoModelo(): string | null {
+    return fotoDoModelo(this.modelo.nome) ?? fotoDoModelo(this.modelo.nome.split(' ')[0]);
+  }
 
   /** Quantidade de dias exibidos, sempre a partir de hoje — 4 semanas fecham exatamente as linhas da grade de 7 colunas. */
   private readonly janelaDias = 28;
@@ -125,6 +153,20 @@ export class AgendamentosComponent {
     fim.setDate(fim.getDate() + this.janelaDias - 1);
     const fmt = (d: Date) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }).replace('.', '');
     return `${fmt(inicio)} – ${fmt(fim)}`;
+  }
+
+  /** Cabeçalho do calendário: a semana começa na segunda-feira. */
+  readonly semanaCabecalho = ['seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'dom'];
+
+  /** Células vazias antes do primeiro dia, para cada data cair na coluna do seu dia da semana. */
+  get vazios(): number[] {
+    return Array.from({ length: (this.hoje().getDay() + 6) % 7 });
+  }
+
+  /** "seg, 21" quando há dia escolhido (mostrado no resumo). */
+  get dataResumo(): string | null {
+    const d = this.diaEscolhido;
+    return d ? `${d.semana}, ${d.numero}` : null;
   }
 
   /** Calendário rolante de hoje até 4 semanas à frente. Domingo fecha; o resto varia de forma determinística (mock). */

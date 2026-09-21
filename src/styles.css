@@ -24,3 +24,8 @@ app-root {
   display: block;
   min-height: 100vh;
 }
+
+/* Nas páginas em coluna de altura mínima da tela, o rodapé desce até o fim quando o conteúdo é curto */
+seia-rodape {
+  margin-top: auto;
+}

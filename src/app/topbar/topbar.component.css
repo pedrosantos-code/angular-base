@@ -21,6 +21,35 @@
   display: flex; align-items: center; gap: 4px;
 }
 
+/* Tema claro (tema="claro"): barra branca com ícones e logo escuros. A gaveta continua escura. */
+:host(.tema-claro) .topbar { background: #fff; }
+/* Em vez de um filete duro, a barra some numa sombra que se dissolve suavemente sobre o conteúdo */
+:host(.tema-claro) .topbar::after {
+  content: ''; position: absolute; left: 0; right: 0; top: 100%; height: 18px; pointer-events: none;
+  background: linear-gradient(to bottom, rgba(0,23,48,.07), rgba(0,23,48,.025) 45%, rgba(0,23,48,0));
+}
+:host(.tema-claro) button.topbar-btn { color: #1E2B3D; }
+:host(.tema-claro) button.topbar-btn:hover { color: #001730; background: #EEF2F7; }
+:host(.tema-claro) button.topbar-btn:focus-visible { outline-color: #2E7DD1; }
+/* O logo "Seia" em script é branco: escurece para aparecer sobre o fundo branco (o oval da Ford já é azul) */
+:host(.tema-claro) .topbar .l-brand-seia { filter: brightness(0); }
+:host(.tema-claro) .topbar .brand-plus--header { color: #001730; }
+
+/* Gaveta (menu lateral) também clara no tema claro */
+:host(.tema-claro) .drawer { background: #fff; border-right: 1px solid #E6ECF3; }
+:host(.tema-claro) .drawer--open { box-shadow: 0 0 40px rgba(0,23,48,.18); }
+:host(.tema-claro) .drawer .l-brand-seia { filter: brightness(0); }
+:host(.tema-claro) .drawer .l-brand-plus { color: #001730; }
+:host(.tema-claro) .drawer-divider { background: #E6ECF3; }
+:host(.tema-claro) .drawer-group-title { color: #6B7A8C; }
+:host(.tema-claro) button.drawer-link { color: #1E2B3D; }
+:host(.tema-claro) .drawer-link svg { stroke: #55677A; }
+:host(.tema-claro) button.drawer-link:hover { color: #001730; }
+:host(.tema-claro) .drawer-link:hover svg { stroke: #001730; }
+:host(.tema-claro) button.drawer-link:focus-visible { outline-color: #2E7DD1; }
+:host(.tema-claro) button.drawer-link--active { color: #001730; font-weight: 600; }
+:host(.tema-claro) .drawer-link--active svg { stroke: #2E7DD1; }
+
 /* Botão de ícone — sem contorno, sem fundo */
 button.topbar-btn {
   width: 40px; height: 40px; flex: none;

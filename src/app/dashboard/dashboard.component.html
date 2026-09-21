@@ -1,17 +1,19 @@
-<seia-topbar
-  (navegar)="onNavegar($event)"
-
-  (sair)="sair()" />
+<seia-topbar tema="claro" (navegar)="onNavegar($event)" (sair)="sair()" />
 
 <header class="l-db-hero">
   <div class="l-db-inner">
-    <p class="l-db-tag">análise técnica</p>
-    <h1 class="l-db-title">Dashboard Detalhado</h1>
-    <p class="l-db-subtitle">
-      Digite o nome de um modelo Ford para ver potência, velocidade máxima e câmbio de cada versão, e modelos semelhantes.
-    </p>
+    <div class="l-db-hero-row">
+      <div>
+        <p class="l-db-tag"><span aria-hidden="true"></span>Análise técnica</p>
+        <h1 class="l-db-title">Dashboard <span>detalhado.</span></h1>
+      </div>
+      <p class="l-db-subtitle">
+        Digite o nome de um modelo Ford para ver potência, velocidade máxima e câmbio de cada versão, e modelos semelhantes.
+      </p>
+    </div>
 
     <form class="l-db-search" (ngSubmit)="buscarGraficos()">
+      <svg class="l-db-search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5" /><path d="m16 16 4.5 4.5" /></svg>
       <input
         class="l-db-input"
         type="text"
@@ -24,13 +26,14 @@
       />
       <button type="submit" class="l-db-go" [disabled]="carregando()">
         {{ carregando() ? 'Buscando…' : 'Gerar gráfico' }}
+        @if (!carregando()) { <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg> }
       </button>
     </form>
 
     <div class="l-db-chips">
-      <span>ou experimente:</span>
+      <span class="l-db-chips-label">Experimente:</span>
       @for (m of sugestoes; track m) {
-        <button type="button" class="l-db-chip" (click)="buscarSugestao(m)">{{ m }}</button>
+        <button type="button" class="l-db-chip" [class.is-on]="modeloDestacado() === m" [attr.aria-pressed]="modeloDestacado() === m" (click)="buscarSugestao(m)">{{ m }}</button>
       }
     </div>
   </div>
@@ -44,49 +47,180 @@
     }
 
     @if (resultados().length > 0) {
-      <p class="l-db-total" role="status">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford</p>
-    }
 
-    <!-- Sempre no DOM (só escondido) — se ficasse dentro do @if acima, o @ViewChild só existiria
-         depois do primeiro resultado chegar, tarde demais pra desenhar o gráfico na hora. -->
-    <div class="l-db-card l-db-chart-card" [hidden]="resultados().length === 0">
-      <canvas #graficoCanvas role="img" aria-label="Gráfico comparando potência e velocidade máxima das versões encontradas"></canvas>
-    </div>
+      @if (!soConcorrentes) {
+        <p class="l-db-total" role="status">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford</p>
+      }
 
-    @if (resultados().length > 0) {
-      <div class="l-db-card l-db-table">
-        @for (carro of resultados(); track carro.id) {
-          <div class="l-db-row">
-            <span class="l-db-row-model">
-              <strong>{{ carro.model }}</strong>
-              <span>{{ carro.variant }}</span>
-            </span>
-            <span class="l-db-row-stat">{{ carro.enginePowerBhp ?? '—' }} <small>cv</small></span>
-            <span class="l-db-row-stat">{{ carro.topSpeedKph ?? '—' }} <small>km/h</small></span>
-            <span class="l-db-row-stat l-db-row-gearbox">
-              {{ carro.gearboxType ?? (carro.engineFuelType === 'ELECTRIC' ? 'ELECTRIC' : '—') }}
-            </span>
+      <!-- Resumo: o modelo analisado, quanto ele passa da média dos rivais e o rival mais forte -->
+      @if (modoComparacao()) {
+        <section class="l-db-summary" aria-label="Resumo da comparação">
+          <article class="l-db-hero-card">
+            <div class="l-db-hero-photo">
+              @if (fotoReferencia(); as foto) {
+                <img [src]="foto" [alt]="'Ford ' + nomeReferencia()" decoding="async" />
+              }
+            </div>
+            <div class="l-db-hero-info">
+              <p class="l-db-card-kicker">Modelo analisado · {{ comparacao()?.segmento }}</p>
+              <h2 class="l-db-hero-name">{{ nomeReferencia() }}</h2>
+              @if (linhas()[0]; as ref) {
+                <p class="l-db-hero-meta">{{ ref.detalhe }}@if (ref.potencia) { · {{ ref.potencia }} cv }</p>
+              }
+            </div>
+          </article>
+
+          @if (diferencaParaMedia(); as d) {
+            <article class="l-db-stat">
+              <p class="l-db-card-kicker">Vs. média dos rivais</p>
+              <p class="l-db-stat-value" [class.is-neg]="d.diferenca < 0">{{ d.texto }}<small>cv</small></p>
+              <p class="l-db-stat-note">Média dos concorrentes: {{ d.media }} cv</p>
+            </article>
+          }
+
+          @if (rivalMaisForte(); as rival) {
+            <article class="l-db-stat">
+              <p class="l-db-card-kicker">Rival mais forte</p>
+              <p class="l-db-stat-name">{{ rival.nome }}</p>
+              <p class="l-db-stat-note">{{ rival.potencia }} cv@if (rival.velocidade) { · {{ rival.velocidade }} km/h }</p>
+            </article>
+          }
+        </section>
+      }
+
+      <!-- Gráfico em barras -->
+      @if (linhas().length > 0) {
+        <section class="l-db-card l-db-chart" aria-labelledby="db-grafico">
+          <div class="l-db-card-head">
+            <div>
+              <p class="l-db-kicker">{{ modoComparacao() ? 'Comparativo' : 'Resultados' }}</p>
+              <h2 class="l-db-card-title" id="db-grafico">{{ tituloGrafico() }}</h2>
+            </div>
+            <div class="l-db-tabs" role="group" aria-label="O que mostrar no gráfico">
+              @for (a of abas; track a.chave) {
+                <button type="button" class="l-db-tab" [class.is-on]="aba() === a.chave" [attr.aria-pressed]="aba() === a.chave" (click)="aba.set(a.chave)">{{ a.rotulo }}</button>
+              }
+            </div>
           </div>
-        }
-      </div>
 
-      @if (buscandoSemelhantes()) {
-        <p class="l-db-kicker">Buscando carros semelhantes…</p>
-      } @else if (carrosSemelhantes().length > 0) {
-        <p class="l-db-kicker">Carros semelhantes</p>
-        <div class="l-db-card l-db-similar">
-          @for (carro of carrosSemelhantes(); track carro.id) {
+          <ul class="l-db-legend" aria-hidden="true">
+            @if (aba() !== 'velocidade') { <li><i class="is-pot"></i>Potência (cv)</li> }
+            @if (aba() !== 'potencia') { <li><i class="is-vel"></i>Velocidade máxima (km/h)</li> }
+            @if (modoComparacao()) { <li><i class="is-ref"></i>Modelo Ford</li> }
+          </ul>
+
+          <ul class="l-db-bars">
+            @for (l of linhas(); track l.chave) {
+              <li class="l-db-bar-row" [class.is-ref]="l.referencia">
+                <span class="l-db-bar-name">
+                  <strong>{{ l.nome }}</strong>
+                  @if (l.detalhe) { <small>{{ l.detalhe }}</small> }
+                </span>
+                <span class="l-db-bar-tracks">
+                  @if (aba() !== 'velocidade') {
+                    <span class="l-db-track">
+                      <i class="l-db-fill is-pot" [class.is-ref]="l.referencia" [style.width.%]="largura(l.potencia)"></i>
+                      <b>{{ l.potencia !== null ? l.potencia + ' cv' : 'Não informado' }}</b>
+                    </span>
+                  }
+                  @if (aba() !== 'potencia') {
+                    <span class="l-db-track">
+                      <i class="l-db-fill is-vel" [class.is-ref]="l.referencia" [style.width.%]="largura(l.velocidade)"></i>
+                      <b>{{ l.velocidade !== null ? l.velocidade + ' km/h' : 'Não informado' }}</b>
+                    </span>
+                  }
+                </span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+
+      <!-- Tabela: concorrentes do mesmo segmento (ou as versões encontradas, sem comparação) -->
+      @if (linhasTabela().length > 0) {
+        <section class="l-db-card l-db-table" [class.has-diff]="modoComparacao()" aria-labelledby="db-tabela">
+          <div class="l-db-card-head">
+            <h2 class="l-db-card-title" id="db-tabela">{{ modoComparacao() ? 'Concorrentes do mesmo segmento' : 'Versões encontradas' }}</h2>
+            @if (modoComparacao()) { <span class="l-db-pill">{{ comparacao()?.segmento }}</span> }
+          </div>
+
+          <div class="l-db-thead" aria-hidden="true">
+            <span>Modelo</span>
+            <span>Potência</span>
+            <span>Vel. máx.</span>
+            <span>Câmbio</span>
+            @if (modoComparacao()) { <span>Vs. {{ modeloDestacado() }}</span> }
+          </div>
+
+          @for (l of linhasTabela(); track l.chave) {
             <div class="l-db-row">
               <span class="l-db-row-model">
-                <strong>{{ carro.model }}</strong>
-                <span>{{ carro.variant }}</span>
+                <strong>{{ l.nome }}</strong>
+                @if (l.detalhe) { <span>{{ l.detalhe }}</span> }
               </span>
-              <span class="l-db-badge">{{ (carro.similarity * 100).toFixed(0) }}% semelhante</span>
+              <span class="l-db-row-stat" data-rotulo="Potência">{{ l.potencia ?? '—' }} <small>cv</small></span>
+              <span class="l-db-row-stat" data-rotulo="Vel. máx.">{{ l.velocidade ?? '—' }} <small>km/h</small></span>
+              <span class="l-db-row-stat" data-rotulo="Câmbio"><em class="l-db-gear">{{ l.cambio }}</em></span>
+              @if (modoComparacao()) {
+                @if (diferencaDoRival(l); as d) {
+                  <span class="l-db-row-stat l-db-row-diff" [class.is-good]="d.ford" [attr.data-rotulo]="'Vs. ' + modeloDestacado()">{{ d.texto }}</span>
+                } @else {
+                  <span class="l-db-row-stat l-db-row-diff">—</span>
+                }
+              }
             </div>
           }
-        </div>
+
+          @if (resultados().length > 0) {
+            @if (carregandoLinha()) {
+              <p class="l-db-foot" role="status"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>Buscando concorrentes do mesmo segmento…</p>
+            } @else if (erroLinha()) {
+              <p class="l-db-foot is-erro" role="alert">{{ erroLinha() }}</p>
+            } @else if (comparacao(); as c) {
+              <p class="l-db-foot">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 11v5M12 8h.01" /></svg>
+                <span>
+                  Só entram concorrentes do mesmo segmento ({{ c.segmento }}), com a versão mais recente que tem potência informada na API.
+                  @if (c.semDados.length > 0) { Sem dados na API: {{ c.semDados.join(', ') }}. }
+                  Quando a API não informa a velocidade máxima, ela é estimada a partir da potência.
+                </span>
+              </p>
+            }
+          }
+        </section>
+      } @else if (soConcorrentes) {
+        @if (carregandoLinha()) {
+          <p class="l-db-nota" role="status">Buscando concorrentes do mesmo segmento…</p>
+        } @else if (erroLinha()) {
+          <p class="l-db-erro" role="alert">{{ erroLinha() }}</p>
+        } @else {
+          <p class="l-db-nota">A API não devolveu concorrentes do mesmo segmento para este modelo.</p>
+        }
+      }
+
+      <!-- Sem comparação cadastrada para o modelo digitado -->
+      @if (!soConcorrentes) {
+        <p class="l-db-nota">A comparação com concorrentes está disponível para: {{ sugestoes.join(', ') }}.</p>
+
+        @if (buscandoSemelhantes()) {
+          <p class="l-db-kicker l-db-kicker--solo">Buscando carros semelhantes…</p>
+        } @else if (carrosSemelhantes().length > 0) {
+          <p class="l-db-kicker l-db-kicker--solo">Carros semelhantes</p>
+          <div class="l-db-card l-db-similar">
+            @for (carro of carrosSemelhantes(); track carro.id) {
+              <div class="l-db-row">
+                <span class="l-db-row-model">
+                  <strong>{{ carro.model }}</strong>
+                  <span>{{ carro.variant }}</span>
+                </span>
+                <span class="l-db-badge">{{ (carro.similarity * 100).toFixed(0) }}% semelhante</span>
+              </div>
+            }
+          </div>
+        }
       }
     }
+
   </div>
 </main>
 

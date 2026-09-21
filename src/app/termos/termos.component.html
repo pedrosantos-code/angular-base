@@ -1,173 +1,200 @@
-<seia-topbar (navegar)="ir($event)" (sair)="sair()" />
+<seia-topbar tema="claro" (navegar)="ir($event)" (sair)="sair()" />
 
-<div class="l-termos-container">
-
-  <!-- Cabeçalho Superior -->
-  <header class="l-termos-header">
-    <div class="l-header-titles">
-      <h1 class="l-main-title">
-        Termos e <strong>consentimentos</strong>
-      </h1>
-      <span class="l-version-info">versão 3.1 · publicada em 15/05/2026</span>
+<header class="tm-hero">
+  <div class="tm-inner tm-hero-row">
+    <div>
+      <p class="tm-eyebrow"><span aria-hidden="true"></span>Privacidade · versão 3.1 · publicada em 15/05/2026</p>
+      <h1 class="tm-title">Termos e <span>consentimentos.</span></h1>
     </div>
-    <div class="l-header-badge" [class.is-done]="pendentes.length === 0">
-      <span class="l-badge-number">{{ pendentes.length }}</span>
-      <span class="l-badge-text">
-        @if (pendentes.length === 0) {
-          tudo em dia
-        } @else {
-          {{ pendentes.length === 1 ? 'documento pendente' : 'documentos pendentes' }}
-        }
+
+    <div class="tm-status" [class.is-done]="pendentes.length === 0" role="status">
+      <span class="tm-status-number">
+        @if (pendentes.length === 0) { ✓ } @else { {{ pendentes.length }} }
+      </span>
+      <span class="tm-status-text">
+        <strong>
+          @if (pendentes.length === 0) {
+            Tudo em dia
+          } @else {
+            {{ pendentes.length }} {{ pendentes.length === 1 ? 'documento pendente' : 'documentos pendentes' }}
+          }
+        </strong>
+        <small>{{ pendentes.length === 0 ? 'Você já pode usar a plataforma.' : 'Aceite para continuar usando.' }}</small>
       </span>
     </div>
-  </header>
+  </div>
+</header>
 
-  <!-- Layout Principal -->
-  <div class="l-termos-layout">
+<div class="tm-inner tm-layout">
 
-    <!-- Sidebar -->
-    <aside class="l-termos-sidebar">
-      <div class="l-menu-section">
-        <h3 class="l-section-subtitle">OBRIGATÓRIOS PARA USAR</h3>
-        <ul>
-          @for (t of termos; track t.chave) {
-            <li>
-              <button
-                type="button"
-                class="l-term-item"
-                [class.active]="termoAtivo === t.chave"
-                (click)="selecionarTermo(t.chave)">
-                <span class="l-term-name">{{ t.nome }}</span>
-                @if (t.aceito) {
-                  <span class="l-term-status accepted">✓ aceito em {{ t.aceitoEm }}</span>
-                } @else {
-                  <span class="l-term-status pending">
-                    <span class="l-icon-alert">⚠️</span> pendente · {{ t.versao }}
-                  </span>
-                }
-              </button>
-            </li>
-          }
-        </ul>
-      </div>
-
-      <div class="l-menu-section">
-        <h3 class="l-section-subtitle">VOCÊ ESCOLHE</h3>
-
-        <div class="l-toggle-item">
-          <div class="l-toggle-info">
-            <span class="l-toggle-label">Compartilhar preferências com concessionárias</span>
-            <span class="l-toggle-state" [class.active-state]="compartilharConcessionarias">
-              {{ compartilharConcessionarias ? 'ligado · ' + compartilharConcessionariasDesde : 'desligado' }}
+  <!-- Lateral: documentos e consentimentos -->
+  <aside class="tm-side">
+    <p class="tm-label">Obrigatórios para usar</p>
+    <ul class="tm-docs">
+      @for (t of termos; track t.chave) {
+        <li>
+          <button
+            type="button"
+            class="tm-doc"
+            [class.is-active]="termoAtivo === t.chave"
+            [attr.aria-current]="termoAtivo === t.chave ? 'true' : null"
+            (click)="selecionarTermo(t.chave)">
+            <span class="tm-doc-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M7 3.5h6.8L19 8.6V20.5H7z" /><path d="M13.8 3.5v5.1H19M10 13.5h6M10 17h6" /></svg>
             </span>
-          </div>
-          <label class="l-switch">
-            <input
-              type="checkbox"
-              aria-label="Compartilhar preferências com concessionárias"
-              [(ngModel)]="compartilharConcessionarias"
-              (ngModelChange)="alternarCompartilhar($event)">
-            <span class="l-slider"></span>
-          </label>
-        </div>
-
-        <div class="l-toggle-item">
-          <div class="l-toggle-info">
-            <span class="l-toggle-label">Consentimento para test-drives</span>
-            <span class="l-toggle-state" [class.active-state]="consentimentoTestDrive">
-              {{ consentimentoTestDrive ? 'ligado · ' + consentimentoTestDriveDesde : 'desligado' }}
+            <span class="tm-doc-text">
+              <span class="tm-doc-name">{{ t.nome }}</span>
+              @if (t.aceito) {
+                <span class="tm-pill tm-pill--ok">Aceito em {{ t.aceitoEm }}</span>
+              } @else {
+                <span class="tm-pill tm-pill--pending">Pendente · {{ t.versao }}</span>
+              }
             </span>
-          </div>
-          <label class="l-switch">
-            <input
-              type="checkbox"
-              aria-label="Consentimento para test-drives"
-              [(ngModel)]="consentimentoTestDrive"
-              (ngModelChange)="alternarConsentimentoTestDrive($event)">
-            <span class="l-slider"></span>
-          </label>
-        </div>
-      </div>
-    </aside>
+            <span class="tm-doc-chevron" aria-hidden="true">›</span>
+          </button>
+        </li>
+      }
+    </ul>
 
-    <!-- Conteúdo do Documento -->
-    <main class="l-termos-content">
-      <div class="l-content-card" [hidden]="termoAtivo !== 'termos-uso'">
-        <div class="l-card-top-tag">
-          <span class="l-doc-tag-title">TERMOS DE USO DA PLATAFORMA</span>
-          <span class="l-tag-badge" [class.accepted-badge]="termosUso.aceito">
-            {{ termosUso.aceito ? 'ACEITO' : 'OBRIGATÓRIO' }}
+    <p class="tm-label">Você escolhe</p>
+    <div class="tm-choices">
+      <div class="tm-choice">
+        <span class="tm-choice-info">
+          <span class="tm-choice-label">Compartilhar preferências com concessionárias</span>
+          <span class="tm-choice-state" [class.is-on]="compartilharConcessionarias">
+            {{ compartilharConcessionarias ? 'Ligado · ' + compartilharConcessionariasDesde : 'Desligado' }}
           </span>
+        </span>
+        <label class="tm-switch">
+          <input
+            type="checkbox"
+            aria-label="Compartilhar preferências com concessionárias"
+            [(ngModel)]="compartilharConcessionarias"
+            (ngModelChange)="alternarCompartilhar($event)">
+          <span class="tm-switch-track" aria-hidden="true"></span>
+        </label>
+      </div>
+
+      <div class="tm-choice">
+        <span class="tm-choice-info">
+          <span class="tm-choice-label">Consentimento para test-drives</span>
+          <span class="tm-choice-state" [class.is-on]="consentimentoTestDrive">
+            {{ consentimentoTestDrive ? 'Ligado · ' + consentimentoTestDriveDesde : 'Desligado' }}
+          </span>
+        </span>
+        <label class="tm-switch">
+          <input
+            type="checkbox"
+            aria-label="Consentimento para test-drives"
+            [(ngModel)]="consentimentoTestDrive"
+            (ngModelChange)="alternarConsentimentoTestDrive($event)">
+          <span class="tm-switch-track" aria-hidden="true"></span>
+        </label>
+      </div>
+    </div>
+    <p class="tm-note">Você pode mudar essas escolhas a qualquer momento.</p>
+
+    <div class="tm-progress">
+      <span><strong>{{ obrigatoriosAceitos }} de {{ totalObrigatorios }}</strong> obrigatórios aceitos</span>
+      <button type="button" class="tm-link" (click)="baixarPdf()">Baixar tudo em PDF</button>
+    </div>
+  </aside>
+
+  <!-- Conteúdo do documento -->
+  <main class="tm-content">
+
+    <article class="tm-card" [hidden]="termoAtivo !== 'termos-uso'">
+      <div class="tm-card-body">
+        <div class="tm-card-top">
+          <p class="tm-kicker">Documento obrigatório</p>
+          <span class="tm-version">{{ termosUso.versao }}</span>
         </div>
+        <h2 class="tm-card-title">Termos de Uso da Plataforma</h2>
+        <p class="tm-meta">{{ termosUso.versao }} · substitui a v3.0, que você aceitou em 02/04/2026</p>
 
-        <p class="l-version-history">{{ termosUso.versao }} · substitui a v3.0, que você aceitou em 02/04/2026</p>
-
-        <p class="l-intro-text">
+        <p class="tm-intro">
           Ao usar o SEIA + Ford você concorda em seguir as diretrizes de navegação, privacidade e segurança da plataforma.
         </p>
 
-        <h4 class="l-block-title">O que muda nesta versão</h4>
-        <ul class="l-bullet-list">
-          <li>A recomendação passa a considerar seu histórico de comparações, e não só o texto que você escreve.</li>
-          <li>As notas de compatibilidade passam a ser registradas por 12 meses para você retomar uma comparação.</li>
-        </ul>
-
-        <h4 class="l-block-title">Ao usar o SEIA, você concorda com</h4>
-        <ul class="l-bullet-list">
-          <li>Manter suas credenciais de acesso seguras.</li>
-          <li>Usar os serviços da plataforma de forma adequada.</li>
-          <li>A coleta de dados necessária para personalizar o atendimento.</li>
-        </ul>
-
-        <!-- Caixa de Aceite -->
-        @if (!termosUso.aceito) {
-          <div class="l-accept-box">
-            <label class="l-checkbox-container">
-              <input type="checkbox" [(ngModel)]="termoAceito">
-              <span class="l-custom-checkbox"></span>
-              <span class="l-checkbox-text">Li e aceito os Termos de Uso {{ termosUso.versao }}</span>
-            </label>
-            <span class="l-warning-text">Sem este aceite não é possível continuar usando a plataforma.</span>
+        <section class="tm-new" aria-labelledby="tm-novo">
+          <div class="tm-new-head">
+            <span class="tm-new-tag">Novo</span>
+            <h3 id="tm-novo">O que muda nesta versão</h3>
           </div>
-        } @else {
-          <div class="l-accept-box is-done">
-            <span class="l-checkbox-text">✓ Aceito em {{ termosUso.aceitoEm }}</span>
-            <span class="l-warning-text">Você pode revisar o conteúdo acima quando quiser.</span>
+          <div class="tm-new-grid">
+            <div class="tm-new-item">
+              <span>01</span>
+              <p>A recomendação passa a considerar seu histórico de comparações, e não só o texto que você escreve.</p>
+            </div>
+            <div class="tm-new-item">
+              <span>02</span>
+              <p>As notas de compatibilidade passam a ser registradas por 12 meses para você retomar uma comparação.</p>
+            </div>
           </div>
-        }
+        </section>
+
+        <h3 class="tm-agree-title">Ao usar o SEIA, você concorda com</h3>
+        <ul class="tm-agree">
+          <li><span class="tm-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 7" /></svg></span>Manter suas credenciais de acesso seguras.</li>
+          <li><span class="tm-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 7" /></svg></span>Usar os serviços da plataforma de forma adequada.</li>
+          <li><span class="tm-check" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 7" /></svg></span>A coleta de dados necessária para personalizar o atendimento.</li>
+        </ul>
       </div>
 
-      <!-- Conteúdo alternativo se clicar em Política de Privacidade -->
-      <div class="l-content-card" [hidden]="termoAtivo !== 'privacidade'">
-        <div class="l-card-top-tag">
-          <span class="l-doc-tag-title">POLÍTICA DE PRIVACIDADE E COOKIES</span>
-          <span class="l-tag-badge accepted-badge">ACEITO</span>
+      <!-- Aceite -->
+      <div class="tm-accept">
+        @if (!termosUso.aceito) {
+          <label class="tm-accept-check">
+            <input type="checkbox" [(ngModel)]="termoAceito">
+            <span class="tm-box" aria-hidden="true"></span>
+            <span>
+              <strong>Li e aceito os Termos de Uso {{ termosUso.versao }}</strong>
+              <small>Sem este aceite não é possível continuar usando a plataforma.</small>
+            </span>
+          </label>
+        } @else {
+          <span class="tm-accept-done">
+            <strong>✓ Aceito em {{ termosUso.aceitoEm }}</strong>
+            <small>Você pode revisar o conteúdo acima quando quiser.</small>
+          </span>
+        }
+        <button
+          type="button"
+          class="tm-primary"
+          [disabled]="!termosUso.aceito && !termoAceito"
+          (click)="continuar()">
+          {{ termosUso.aceito ? 'Continuar para o portal' : 'Aceitar e continuar' }}
+        </button>
+      </div>
+    </article>
+
+    <!-- Conteúdo alternativo: Política de Privacidade -->
+    <article class="tm-card" [hidden]="termoAtivo !== 'privacidade'">
+      <div class="tm-card-body">
+        <div class="tm-card-top">
+          <p class="tm-kicker">Documento obrigatório</p>
+          <span class="tm-version">{{ privacidade.versao }}</span>
         </div>
-        <p class="l-version-history">{{ privacidade.versao }} · aceito em {{ privacidade.aceitoEm }}</p>
-        <p class="l-intro-text">
+        <h2 class="tm-card-title">Política de Privacidade e Cookies</h2>
+        <p class="tm-meta">{{ privacidade.versao }} · aceito em {{ privacidade.aceitoEm }}</p>
+        <p class="tm-intro">
           Esta política detalha como coletamos, usamos e protegemos seus dados pessoais durante a sua experiência com a inteligência artificial da Ford.
         </p>
       </div>
-    </main>
-  </div>
 
-  <!-- Rodapé -->
-  <footer class="l-termos-footer">
-    <div class="l-footer-status-count">
-      <strong>{{ obrigatoriosAceitos }} de {{ totalObrigatorios }}</strong> obrigatórios aceitos
-    </div>
-    <div class="l-footer-actions">
-      <button type="button" class="l-btn-text" (click)="baixarPdf()">Baixar tudo em PDF</button>
-      <button
-        type="button"
-        class="l-btn-primary"
-        [disabled]="!termosUso.aceito && !termoAceito"
-        (click)="continuar()">
-        {{ termosUso.aceito ? 'CONTINUAR PARA O PORTAL' : 'ACEITAR E CONTINUAR' }}
-      </button>
-    </div>
-  </footer>
-
+      <div class="tm-accept">
+        <span class="tm-accept-done">
+          <strong>✓ Aceito em {{ privacidade.aceitoEm }}</strong>
+          <small>Você pode revisar o conteúdo acima quando quiser.</small>
+        </span>
+        @if (termosUso.aceito) {
+          <button type="button" class="tm-primary" (click)="continuar()">Continuar para o portal</button>
+        } @else {
+          <button type="button" class="tm-primary" (click)="selecionarTermo('termos-uso')">Ver Termos de Uso</button>
+        }
+      </div>
+    </article>
+  </main>
 </div>
 
 <seia-rodape />

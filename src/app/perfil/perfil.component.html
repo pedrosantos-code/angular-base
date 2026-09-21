@@ -1,115 +1,157 @@
-<seia-topbar (navegar)="ir($event)" (sair)="sair()" />
+<seia-topbar tema="claro" (navegar)="ir($event)" (sair)="sair()" />
 
-<header class="l-pf-hero">
-  <div class="l-pf-avatar" aria-hidden="true">{{ iniciais }}</div>
-  <div>
-    <h1 class="l-pf-name">{{ conta.nome }}</h1>
-    <p class="l-pf-meta">{{ conta.email }}</p>
+<header class="pf-hero">
+  <div class="pf-inner pf-hero-row">
+    <div class="pf-hero-main">
+      <span class="pf-avatar" aria-hidden="true">
+        @if (iniciais) {
+          {{ iniciais }}
+        } @else {
+          <svg viewBox="0 0 24 24">
+            @for (d of iconePerfil; track $index) { <path [attr.d]="d" /> }
+          </svg>
+        }
+      </span>
+      <div>
+        <p class="pf-eyebrow"><span aria-hidden="true"></span>Prévia da recomendação</p>
+        <h1 class="pf-title">Perfil de <span>uso.</span></h1>
+      </div>
+    </div>
+    <p class="pf-lead">Estas respostas geram a prévia de compatibilidade ao lado. A busca do portal usa o texto que você escrever lá.</p>
   </div>
 </header>
 
-<div class="l-pf-body">
+<div class="pf-inner pf-body">
 
-  <main class="l-pf-main">
+  <main class="pf-main">
 
-    <p class="l-pf-kicker">Prévia da recomendação</p>
-    <h2 class="l-pf-heading">Perfil de uso</h2>
-    <p class="l-pf-lead">Estas respostas geram a prévia de compatibilidade ao lado. A busca do portal usa o texto que
-      você escrever lá.</p>
-
-    <div class="l-pf-group">
-      <div class="l-pf-field">
-        <span class="l-pf-label" id="lb-uso">Uso principal</span>
-        <div class="l-pf-chips" role="group" aria-labelledby="lb-uso">
+    <!-- Perfil de uso -->
+    <section class="pf-card">
+      <div class="pf-block">
+        <div class="pf-block-head">
+          <span class="pf-n">01</span>
+          <h2 class="pf-h" id="lb-uso">Uso principal</h2>
+        </div>
+        <div class="pf-chips" role="group" aria-labelledby="lb-uso">
           @for (o of opcoesUso; track o) {
-          <button class="l-pf-chip" type="button" [class.is-on]="uso.uso === o" [attr.aria-pressed]="uso.uso === o"
-            (click)="escolherUso(o)">{{ o }}</button>
+            <button
+              class="pf-chip"
+              type="button"
+              [class.is-on]="uso.uso === o"
+              [attr.aria-pressed]="uso.uso === o"
+              (click)="escolherUso(o)">
+              @if (uso.uso === o) { <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 7" /></svg> }
+              {{ o }}
+            </button>
           }
         </div>
       </div>
 
-      <div class="l-pf-field">
-        <span class="l-pf-label" id="lb-pax">Pessoas a bordo no dia a dia</span>
-        <div class="l-pf-chips" role="group" aria-labelledby="lb-pax">
+      <div class="pf-block">
+        <div class="pf-block-head">
+          <span class="pf-n">02</span>
+          <h2 class="pf-h" id="lb-pax">Pessoas a bordo no dia a dia</h2>
+        </div>
+        <div class="pf-chips" role="group" aria-labelledby="lb-pax">
           @for (o of opcoesPassageiros; track o) {
-          <button class="l-pf-chip" type="button" [class.is-on]="uso.passageiros === o"
-            [attr.aria-pressed]="uso.passageiros === o" (click)="escolherPassageiros(o)">{{ o }}</button>
+            <button
+              class="pf-chip"
+              type="button"
+              [class.is-on]="uso.passageiros === o"
+              [attr.aria-pressed]="uso.passageiros === o"
+              (click)="escolherPassageiros(o)">
+              @if (uso.passageiros === o) { <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 7" /></svg> }
+              {{ o }}
+            </button>
           }
         </div>
       </div>
 
-      <div class="l-pf-two">
-        <div class="l-pf-field">
-          <label class="l-pf-label" for="rodagem">Rodagem mensal</label>
-          <input class="l-pf-input" id="rodagem" name="rodagem" placeholder="Ex: 1.200 km" [(ngModel)]="uso.rodagem"
-            (ngModelChange)="aoDigitarUso()" />
+      <div class="pf-block pf-two">
+        <div class="pf-field">
+          <label class="pf-h" for="rodagem">Rodagem mensal</label>
+          <span class="pf-input">
+            <input id="rodagem" name="rodagem" placeholder="Ex: 1200" inputmode="numeric" pattern="[0-9]*" autocomplete="off" [value]="uso.rodagem" (input)="aoDigitarUso('rodagem', $event)" />
+            <em>km/mês</em>
+          </span>
         </div>
-        <div class="l-pf-field">
-          <label class="l-pf-label" for="orcamento">Teto de orçamento</label>
-          <input class="l-pf-input" id="orcamento" name="orcamento" placeholder="Ex: R$ 250.000"
-            [(ngModel)]="uso.orcamento" (ngModelChange)="aoDigitarUso()" />
+        <div class="pf-field">
+          <label class="pf-h" for="orcamento">Teto de orçamento</label>
+          <span class="pf-input">
+            <em>R$</em>
+            <input id="orcamento" name="orcamento" placeholder="Ex: 250000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" [value]="uso.orcamento" (input)="aoDigitarUso('orcamento', $event)" />
+          </span>
         </div>
       </div>
 
-      <div class="l-pf-field">
-        <span class="l-pf-label" id="lb-prio">O que mais pesa pra você</span>
-        <div class="l-pf-chips" role="group" aria-labelledby="lb-prio">
+      <div class="pf-block">
+        <div class="pf-block-head">
+          <span class="pf-n">03</span>
+          <h2 class="pf-h" id="lb-prio">O que mais pesa pra você</h2>
+          <span class="pf-aside">escolha até {{ maxPrioridades === 2 ? 'duas' : maxPrioridades }} · peso dobrado na nota</span>
+        </div>
+        <div class="pf-chips" role="group" aria-labelledby="lb-prio">
           @for (o of opcoesPrioridade; track o) {
-          <button class="l-pf-chip" type="button" [class.is-on]="prioritario(o)" [attr.aria-pressed]="prioritario(o)"
-            (click)="alternarPrioridade(o)">{{ o }}</button>
+            <button
+              class="pf-chip"
+              type="button"
+              [class.is-on]="prioritario(o)"
+              [attr.aria-pressed]="prioritario(o)"
+              (click)="alternarPrioridade(o)">
+              @if (prioritario(o)) { <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 7" /></svg> }
+              {{ o }}
+            </button>
           }
         </div>
-        <p class="l-pf-hint">Escolha até {{ maxPrioridades }}. Eles recebem peso dobrado na nota.</p>
       </div>
-    </div>
+    </section>
 
-    <div class="l-pf-section">
-      <p class="l-pf-kicker">Não afeta a nota</p>
-      <h2 class="l-pf-heading">Dados da conta</h2>
-      <p class="l-pf-lead">Usados para contato e para o agendamento em concessionária.</p>
+    <!-- Dados da conta -->
+    <section class="pf-card">
+      <div class="pf-block">
+        <p class="pf-kicker">Não afeta a nota</p>
+        <h2 class="pf-card-title">Dados da conta</h2>
+        <p class="pf-sub">Usados para contato e para o agendamento em concessionária.</p>
+      </div>
 
-      <div class="l-pf-group">
-        <div class="l-pf-two">
-          <div class="l-pf-field">
-            <label class="l-pf-label" for="nome">Nome completo</label>
-            <input class="l-pf-input" id="nome" name="nome" autocomplete="name" placeholder="Seu nome completo"
-              [(ngModel)]="conta.nome" />
-          </div>
-          <div class="l-pf-field">
-            <label class="l-pf-label" for="telefone">Telefone</label>
-            <input class="l-pf-input" id="telefone" name="telefone" autocomplete="tel" placeholder="(00) 00000-0000"
-              [(ngModel)]="conta.telefone" />
-          </div>
+      <div class="pf-block pf-two">
+        <div class="pf-field">
+          <label class="pf-h" for="nome">Nome completo</label>
+          <span class="pf-input"><input id="nome" name="nome" autocomplete="name" placeholder="Seu nome completo" [(ngModel)]="conta.nome" /></span>
         </div>
-
-        <div class="l-pf-two">
-          <div class="l-pf-field">
-            <label class="l-pf-label" for="idade">Idade</label>
-            <input class="l-pf-input" id="idade" name="idade" type="number" min="13" max="120"
-              [(ngModel)]="conta.idade" />
-          </div>
-          <div class="l-pf-field">
-            <span class="l-pf-label" id="lb-genero">Gênero</span>
-            <div class="l-pf-chips" role="group" aria-labelledby="lb-genero">
-              @for (opcao of opcoesGenero; track opcao) {
-              <button class="l-pf-chip" type="button" [class.is-on]="conta.genero === opcao"
-                [attr.aria-pressed]="conta.genero === opcao" (click)="conta.genero = opcao">{{ opcao }}</button>
-              }
-            </div>
-          </div>
-        </div>
-
-        <div class="l-pf-field">
-          <span class="l-pf-label">E-mail da conta</span>
-          <div class="l-pf-locked">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 11h14v10H5zM8 11V7a4 4 0 1 1 8 0v4" />
-            </svg>
-            {{ conta.email }}
-          </div>
-          <p class="l-pf-hint">É o identificador da sua conta. Para trocar, fale com o suporte.</p>
+        <div class="pf-field" [class.is-invalid]="telefoneIncompleto">
+          <label class="pf-h" for="telefone">Telefone</label>
+          <span class="pf-input"><input id="telefone" name="telefone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="(00) 00000-0000" [value]="conta.telefone" [attr.aria-invalid]="telefoneIncompleto" aria-describedby="telefone-erro" (input)="aoDigitarTelefone($event)" /></span>
+          @if (telefoneIncompleto) {
+            <p class="pf-error" id="telefone-erro" role="alert">Complete o telefone com DDD e número para salvar.</p>
+          }
         </div>
       </div>
+
+      <div class="pf-block">
+        <span class="pf-h">E-mail da conta</span>
+        <div class="pf-locked">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 1 1 8 0v4" /></svg>
+          {{ conta.email }}
+        </div>
+        <p class="pf-hint">É o identificador da sua conta. Para trocar, fale com o suporte.</p>
+      </div>
+    </section>
+
+    <!-- Barra de ação -->
+    <div class="pf-save" [class.is-idle]="!alteracoes">
+      <span class="pf-save-state">
+        <i aria-hidden="true"></i>
+        @if (alteracoes) {
+          <strong>{{ alteracoes }}</strong> {{ alteracoes === 1 ? 'alteração' : 'alterações' }} não {{ alteracoes === 1 ? 'salva' : 'salvas' }}
+        } @else {
+          Tudo salvo
+        }
+      </span>
+      <span class="pf-save-actions">
+        <button class="pf-ghost" type="button" [disabled]="!alteracoes" (click)="descartar()">Descartar</button>
+        <button class="pf-primary" type="button" [disabled]="!alteracoes || telefoneIncompleto" (click)="salvar()">Salvar perfil</button>
+      </span>
     </div>
 
     @if (erroBanco) {
@@ -117,54 +159,109 @@
     }
   </main>
 
-  <aside class="l-pf-rail">
-    <div class="l-pf-preview">
-      <div class="l-pf-preview-title">Com este perfil</div>
-      <div class="l-pf-preview-model">{{ previa.modelo }}</div>
-      <div class="l-pf-preview-score">
-        <strong>{{ previa.nota }}</strong><span>% compatível</span>
+  <aside class="pf-rail">
+
+    <!-- Prévia da recomendação -->
+    <section class="pf-preview" aria-label="Prévia da recomendação com este perfil">
+      <div class="pf-preview-photo">
+        @if (fotoPrevia; as src) {
+          <img [src]="src" [alt]="'Ford ' + previa.modelo" loading="lazy" decoding="async" />
+        }
+        <span class="pf-preview-chip">Com este perfil</span>
       </div>
-      <div class="l-pf-preview-track">
-        <div class="l-pf-preview-fill" [style.width.%]="previa.nota"></div>
+      <div class="pf-preview-body">
+        <p class="pf-preview-kicker">Mais compatível</p>
+        <div class="pf-preview-top">
+          <h2 class="pf-preview-model">{{ previa.modelo }}</h2>
+          @if (previa.cobertura !== null) {
+            <span class="pf-preview-cover">
+              <small>Seu orçamento cobre</small>
+              <span class="pf-preview-score"><strong>{{ previa.cobertura }}</strong>%</span>
+            </span>
+          }
+        </div>
+        @if (previa.cobertura !== null) {
+          <div class="pf-bar"><div class="pf-bar-fill" [style.width.%]="previa.cobertura"></div></div>
+          <p class="pf-over" [class.is-ok]="!previa.falta">{{ previa.falta ? 'Faltam ' + real(previa.falta) : 'Cabe no seu orçamento' }}</p>
+        } @else {
+          <p class="pf-over pf-over--ask">Informe seu orçamento</p>
+        }
+        <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: previa.uso }" />
+        @for (o of previa.outros; track o.modelo) {
+          <div class="pf-other">
+            <span>{{ o.modelo }}</span>
+            @if (o.cobertura !== null) {
+              <span class="pf-bar pf-bar--thin"><span class="pf-bar-fill" [style.width.%]="o.cobertura"></span></span>
+              <span class="pf-other-n">cobre {{ o.cobertura }}%</span>
+              <span class="pf-over pf-over--row" [class.is-ok]="!o.falta">{{ o.falta ? 'Faltam ' + real(o.falta) : 'Cabe no seu orçamento' }}</span>
+            } @else {
+              <span></span>
+              <span class="pf-over pf-over--row pf-over--ask">Informe seu orçamento</span>
+            }
+            <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: o.uso }" />
+          </div>
+        }
+        <p class="pf-preview-note">Atualiza na hora conforme você ajusta o perfil.@if (haEstimativaDeUso) { Custos de uso são estimativas, com base em consumo, revisões e desgaste médios. }</p>
       </div>
-      @for (o of previa.outros; track o.modelo) {
-      <div class="l-pf-preview-other"><span>{{ o.modelo }}</span><span>{{ o.nota }}%</span></div>
+    </section>
+
+    <!-- Custo mensal de uso de um carro na rodagem informada (estimativa) -->
+    <ng-template #usoTpl let-u>
+      <div class="pf-uso">
+        @if (u.estado === 'ok') {
+          <span>Custo estimado de uso: <strong>{{ real(u.custoMes) }}/mês</strong></span>
+          <span>Revisão a cada {{ u.revisaoACadaMeses }} {{ u.revisaoACadaMeses === 1 ? 'mês' : 'meses' }} no seu ritmo</span>
+          <span>Próxima revisão em ~{{ u.revisaoACadaMeses }} {{ u.revisaoACadaMeses === 1 ? 'mês' : 'meses' }}</span>
+          @if (u.recarga) {
+            <span class="pf-uso-alerta">Pode exigir recarga durante o dia</span>
+          }
+        } @else if (u.estado === 'sem-rodagem') {
+          <span class="pf-uso-vazio">Informe sua rodagem mensal</span>
+        } @else {
+          <span class="pf-uso-vazio">Dados de uso indisponíveis</span>
+        }
+      </div>
+    </ng-template>
+
+    <!-- Atalhos -->
+    <section class="pf-mini">
+      <p class="pf-kicker">Atalhos</p>
+      @for (a of atalhos; track a.chave) {
+        <button class="pf-link" type="button" (click)="irAtalho(a.chave)">
+          <span class="pf-link-icon" [class.is-blue]="a.chave === 'comparacoes'" aria-hidden="true">
+            @if (a.chave === 'favoritos') {
+              <svg viewBox="0 0 24 24"><path d="M12 20.5s-7.5-4.6-10-9.2C.6 8 2 4.5 5.5 4c2-.3 3.8.6 5 2.2C11.7 4.6 13.5 3.7 15.5 4 19 4.5 20.4 8 19 11.3c-2.5 4.6-7 9.2-7 9.2z" /></svg>
+            } @else {
+              <svg viewBox="0 0 24 24"><path d="M4 20V10.5M10 20V4.5M16 20v-6.5M3 20h18" /></svg>
+            }
+          </span>
+          <span class="pf-link-label">{{ a.rotulo }}</span>
+          <span class="pf-count">{{ a.contagem }}</span>
+        </button>
       }
-      <p class="l-pf-preview-note">Atualiza na hora conforme você ajusta o perfil de uso abaixo.</p>
-    </div>
+    </section>
 
-    <div class="l-pf-rail-label">Atalhos</div>
-    @for (a of atalhos; track a.chave) {
-    <button class="l-pf-link" type="button" (click)="irAtalho(a.chave)">
-      <span>{{ a.rotulo }}</span>
-      <span class="l-pf-count">{{ a.contagem }}</span>
-    </button>
-    }
-
-    <div class="l-pf-rail-label">Consentimento</div>
-    <label class="l-pf-consent">
-      <input type="checkbox" class="l-pf-switch-input" [(ngModel)]="compartilhaComConcessionaria"
-        (ngModelChange)="salvarConsentimento($event)" />
-      <span class="l-pf-switch" aria-hidden="true"></span>
-      <span>Compartilhar preferências com concessionárias</span>
-    </label>
+    <!-- Consentimento -->
+    <section class="pf-mini">
+      <p class="pf-kicker">Consentimento</p>
+      <label class="pf-consent">
+        <span class="pf-consent-text">
+          <strong>Compartilhar preferências com concessionárias</strong>
+          <small>{{ compartilhaComConcessionaria ? 'Ligado' : 'Desligado' }}</small>
+        </span>
+        <span class="pf-switch">
+          <input
+            type="checkbox"
+            class="l-pf-switch-input"
+            aria-label="Compartilhar preferências com concessionárias"
+            [(ngModel)]="compartilhaComConcessionaria"
+            (ngModelChange)="salvarConsentimento($event)" />
+          <span class="pf-switch-track" aria-hidden="true"></span>
+        </span>
+      </label>
+      <button type="button" class="pf-textlink" (click)="ir('termos')">Ver termos e consentimentos</button>
+    </section>
   </aside>
-</div>
-
-<div class="l-pf-save" [class.is-idle]="!alteracoes">
-  <div class="l-pf-save-state">
-    @if (alteracoes) {
-    <strong>{{ alteracoes }}</strong> {{ alteracoes === 1 ? 'alteração' : 'alterações' }} não {{ alteracoes === 1 ?
-    'salva' : 'salvas' }}
-    } @else {
-    Tudo salvo
-    }
-  </div>
-  <div class="l-pf-save-actions">
-    <button class="l-pf-ghost" type="button" [disabled]="!alteracoes" (click)="descartar()">Descartar</button>
-    <button class="l-pf-primary" type="button" [disabled]="!alteracoes || salvandoPerfil" (click)="salvar()">{{
-      salvandoPerfil ? 'Salvando...' : 'Salvar perfil' }}</button>
-  </div>
 </div>
 
 <seia-rodape />

@@ -1,103 +1,120 @@
-
-<seia-topbar (navegar)="onNavegar($event)" (sair)="sair()" />
+<seia-topbar tema="claro" (navegar)="onNavegar($event)" (sair)="sair()" />
 
 <header class="l-ia-hero">
-  <div class="l-ia-inner">
-    <p class="l-ia-tag">transparência</p>
-    <h1 class="l-ia-title">Como a IA decide</h1>
+  <div class="l-ia-inner l-ia-hero-row">
+    <div>
+      <p class="l-ia-tag"><span aria-hidden="true"></span>Transparência</p>
+      <h1 class="l-ia-title">Como a IA <span>decide.</span></h1>
+    </div>
     <p class="l-ia-subtitle">
       Toda recomendação é uma conta com critérios visíveis. Esta página mostra a conta.
     </p>
   </div>
 </header>
 
-<section class="l-ia-section">
-  <div class="l-ia-inner">
-    <p class="l-ia-kicker">O que entra na conta</p>
-    <div class="l-ia-inputs">
-      @for (e of entradas; track e.ordem) {
-        <div class="l-ia-input">
-          <span class="l-ia-input-order">{{ e.ordem }}</span>
-          <h2 class="l-ia-input-title">{{ e.titulo }}</h2>
-          <p class="l-ia-input-text">{{ e.texto }}</p>
+<main class="l-ia-page">
+
+  <!-- 1 · O que entra na conta -->
+  <section class="l-ia-section" aria-labelledby="ia-ingredientes">
+    <div class="l-ia-inner">
+      <p class="l-ia-kicker">O que entra na conta</p>
+      <h2 class="l-ia-heading" id="ia-ingredientes">Três ingredientes.</h2>
+      <div class="l-ia-inputs">
+        @for (e of entradas; track e.ordem) {
+          <article class="l-ia-input">
+            <span class="l-ia-input-order"><small>Entrada</small>{{ e.ordem.replace('Entrada ', '') }}</span>
+            <h3 class="l-ia-input-title">{{ e.titulo }}</h3>
+            <p class="l-ia-input-text">{{ e.texto }}</p>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · Exemplo de cálculo -->
+  <section class="l-ia-section" aria-labelledby="ia-exemplo">
+    <div class="l-ia-inner">
+      <div class="l-ia-score">
+        <div class="l-ia-score-main">
+          <p class="l-ia-kicker">Exemplo de cálculo</p>
+          <h2 class="l-ia-score-model" id="ia-exemplo">Ford {{ exemplo.modelo }}</h2>
+          <ul class="l-ia-profile" aria-label="Perfil usado no exemplo">
+            @for (p of perfilItens; track p) { <li>{{ p }}</li> }
+          </ul>
+
+          <div class="l-ia-criteria">
+            @for (c of exemplo.criterios; track c.rotulo) {
+              <div class="l-ia-criterion">
+                <span class="l-ia-criterion-label">{{ c.rotulo }}</span>
+                <span class="l-ia-criterion-track">
+                  <span
+                    class="l-ia-criterion-fill"
+                    [class.is-fraco]="proporcao(c) < corteFraco"
+                    [style.width.%]="proporcao(c) * 100"></span>
+                </span>
+                <span class="l-ia-criterion-points">+{{ c.pontos }}</span>
+              </div>
+            }
+          </div>
+
+          <p class="l-ia-score-sum"><span aria-hidden="true">✓</span>{{ exemplo.pesos }}</p>
         </div>
-      }
-    </div>
-  </div>
-</section>
 
-<section class="l-ia-score">
-  <div class="l-ia-inner">
-    <div class="l-ia-score-head">
-      <div>
-        <div class="l-ia-score-model">Exemplo de cálculo: {{ exemplo.modelo }}</div>
-        <div class="l-ia-score-profile">perfil: {{ exemplo.perfil }}</div>
-      </div>
-      <div class="l-ia-score-total">
-        <strong>{{ total }}</strong>
-        <span>de {{ maximo }}</span>
-      </div>
-    </div>
-
-    @for (c of exemplo.criterios; track c.rotulo) {
-      <div class="l-ia-criterion">
-        <span class="l-ia-criterion-label">{{ c.rotulo }}</span>
-        <span class="l-ia-criterion-track">
-          <span
-            class="l-ia-criterion-fill"
-            [class.is-fraco]="proporcao(c) < corteFraco"
-            [style.width.%]="proporcao(c) * 100"></span>
-        </span>
-        <span class="l-ia-criterion-points">+{{ c.pontos }}</span>
-      </div>
-    }
-
-    <div class="l-ia-score-sum">
-      <span>{{ exemplo.pesos }}</span>
-      <span><strong>{{ total }} pontos</strong> de {{ maximo }}</span>
-    </div>
-  </div>
-</section>
-
-<section class="l-ia-section">
-  <div class="l-ia-inner">
-    <h2 class="l-ia-heading">O que entra e o que não entra</h2>
-    <div class="l-ia-split">
-      <div class="l-ia-cell is-sim">
-        <div class="l-ia-cell-title">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12.5 9.5 18 20 7" /></svg>
-          Usamos
+        <div class="l-ia-ring" [style.--p]="total" role="img" [attr.aria-label]="'Nota ' + total + ' de ' + maximo">
+          <div class="l-ia-ring-inner">
+            <strong>{{ total }}</strong>
+            <span>de {{ maximo }}</span>
+          </div>
         </div>
-        <ul>
-          @for (i of usamos; track i) { <li>{{ i }}</li> }
-        </ul>
-      </div>
-      <div class="l-ia-cell is-nao">
-        <div class="l-ia-cell-title">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
-          Não usamos
-        </div>
-        <ul>
-          @for (i of naoUsamos; track i) { <li>{{ i }}</li> }
-        </ul>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="l-ia-limits">
-  <div class="l-ia-inner">
-    <p class="l-ia-kicker">Limites</p>
-    <h2 class="l-ia-heading">O que a IA não faz</h2>
-    <div class="l-ia-limits-grid">
-      @for (l of limites; track l.titulo) {
-        <div class="l-ia-limit">
-          <strong>{{ l.titulo }}</strong>
-          <span>{{ l.texto }}</span>
+  <!-- 3 · O que entra e o que não entra -->
+  <section class="l-ia-section" aria-labelledby="ia-regras">
+    <div class="l-ia-inner">
+      <p class="l-ia-kicker">Regras da conta</p>
+      <h2 class="l-ia-heading" id="ia-regras">O que entra e o que não entra.</h2>
+      <div class="l-ia-split">
+        <div class="l-ia-cell is-sim">
+          <div class="l-ia-cell-title">
+            <span class="l-ia-cell-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 12.5 9.5 18 20 7" /></svg></span>
+            Usamos
+          </div>
+          <ul>
+            @for (i of usamos; track i) { <li>{{ i }}</li> }
+          </ul>
         </div>
-      }
+        <div class="l-ia-cell is-nao">
+          <div class="l-ia-cell-title">
+            <span class="l-ia-cell-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18" /></svg></span>
+            Não usamos
+          </div>
+          <ul>
+            @for (i of naoUsamos; track i) { <li>{{ i }}</li> }
+          </ul>
+        </div>
+      </div>
     </div>
-  </div>
-</section>
+  </section>
+
+  <!-- 4 · O que a IA não faz -->
+  <section class="l-ia-section l-ia-section--last" aria-labelledby="ia-limites">
+    <div class="l-ia-inner">
+      <p class="l-ia-kicker">Limites</p>
+      <h2 class="l-ia-heading" id="ia-limites">O que a IA não faz.</h2>
+      <div class="l-ia-limits-grid">
+        @for (l of limites; track l.titulo) {
+          <article class="l-ia-limit">
+            <span class="l-ia-limit-n">{{ ($index + 1).toString().padStart(2, '0') }}</span>
+            <strong>{{ l.titulo }}</strong>
+            <span>{{ l.texto }}</span>
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+
+</main>
 
 <seia-rodape />

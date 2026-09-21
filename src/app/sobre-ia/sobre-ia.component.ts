@@ -67,6 +67,11 @@ export class SobreIaComponent {
 
   readonly corteFraco = 0.9;
 
+  /** O perfil do exemplo em pedaços ("família", "estrada"…), mostrados como etiquetas. */
+  get perfilItens(): string[] {
+    return this.exemplo.perfil.split('·').map((p) => p.trim()).filter(Boolean);
+  }
+
   get total(): number {
     return this.exemplo.criterios.reduce((s, c) => s + c.pontos, 0);
   }

@@ -2,10 +2,12 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
-import { ProfileService, UserProfileRecord } from '../profile.service';
+import { fotoDoModelo } from '../shared/fotos-modelos';
+import { avaliarUso, AvaliacaoUso, TipoMotor } from '../shared/rodagem';
+import { salvarModeloRecomendado } from '../shared/modelo-recomendado';
 
 export interface PerfilUso {
   uso: string;
@@ -26,17 +28,52 @@ export interface DadosConta {
   criadaEm: string;
 }
 
-export interface Previa {
+/** Um carro da prévia: quanto do preço "a partir de" o orçamento cobre e quanto falta. */
+export interface ItemPrevia {
   modelo: string;
-  nota: number;
-  outros: { modelo: string; nota: number }[];
+  /** Porcentagem do preço coberta pelo orçamento (0 a 100); null quando o usuário não informou orçamento. */
+  cobertura: number | null;
+  /** Reais que faltam para chegar ao preço; 0 quando o orçamento cobre o carro (ou não há orçamento). */
+  falta: number;
+  /** Custo estimado de uso na rodagem mensal informada (ou o motivo de não haver). */
+  uso: AvaliacaoUso;
 }
+
+export interface Previa extends ItemPrevia {
+  outros: ItemPrevia[];
+}
+
+/**
+ * Quanto do preço "a partir de" o orçamento cobre, em %: (orçamento ÷ preço) × 100, com teto de 100.
+ * Arredonda sempre para baixo, para nunca mostrar mais do que a pessoa realmente tem.
+ */
+export function coberturaDoOrcamento(preco: number, orcamento: number): number {
+  if (orcamento >= preco) return 100;
+  return Math.floor((orcamento / preco) * 100);
+}
+
+/**
+ * Nota de orçamento (0 a 100) usada só para ORDENAR os carros, pelo preço "a partir de" contra o teto:
+ * até o teto = 100; até 10% acima cai de 100 para 50; de 10% a 30% acima cai de 50 para 0; além disso, 0.
+ */
+export function notaDeOrcamento(preco: number, teto: number): number {
+  const excesso = (preco - teto) / teto;
+  if (excesso <= 0) return 100;
+  if (excesso <= 0.1) return 100 - (excesso / 0.1) * 50;
+  if (excesso <= 0.3) return 50 - ((excesso - 0.1) / 0.2) * 50;
+  return 0;
+}
+
 
 interface ModeloAvaliado {
   /** Mesmo id usado em /modelos — é o que vira favorito/comparação lá. */
   id: string;
   nome: string;
   precoDe: number;
+  /** Rótulo curto do segmento, o mesmo do /modelos ("SUV médio"). */
+  segmento: string;
+  /** Tipo de motor: define qual energia entra no custo mensal de uso (ver shared/rodagem.ts). */
+  motor: TipoMotor;
   /** 'cidade' | 'estrada' | 'offroad' | 'trabalho' — combina com o campo "Uso principal". */
   tags: string[];
   espacoBom: boolean;
@@ -47,19 +84,19 @@ interface ModeloAvaliado {
 
 /** Mesma linha e mesmos ids do /modelos, com sinalizadores usados só pra pontuar a prévia do perfil. */
 const CATALOGO_PERFIL: ModeloAvaliado[] = [
-  { id: 'territory', nome: 'Territory', precoDe: 219900, tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
-  { id: 'bronco-sport', nome: 'Bronco Sport', precoDe: 249900, tags: ['offroad', 'cidade'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'explorer', nome: 'Explorer', precoDe: 429900, tags: ['estrada', 'cidade'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
-  { id: 'f-150', nome: 'F-150', precoDe: 439900, tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'ranger', nome: 'Ranger', precoDe: 259900, tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'ranger-raptor', nome: 'Ranger Raptor', precoDe: 399900, tags: ['offroad', 'trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'maverick-hybrid', nome: 'Maverick Hybrid', precoDe: 219900, tags: ['cidade', 'trabalho'], espacoBom: false, confortoBom: true, consumoBom: true, potenciaBoa: false },
-  { id: 'maverick-tremor', nome: 'Maverick Tremor', precoDe: 249900, tags: ['offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'mustang-gt', nome: 'Mustang GT', precoDe: 549900, tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'mustang-mach-e', nome: 'Mustang Mach-E', precoDe: 379900, tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
-  { id: 'f-150-lightning', nome: 'F-150 Lightning', precoDe: 599900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
-  { id: 'transit-furgao', nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'transit-minibus', nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'territory', nome: 'Territory', segmento: 'SUV médio', precoDe: 219900, motor: 'combustao', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'bronco-sport', nome: 'Bronco Sport', segmento: 'SUV compacto', precoDe: 249900, motor: 'combustao', tags: ['offroad', 'cidade'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'explorer', nome: 'Explorer', segmento: 'SUV grande', precoDe: 429900, motor: 'combustao', tags: ['estrada', 'cidade'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'f-150', nome: 'F-150', segmento: 'Picape grande', precoDe: 439900, motor: 'combustao', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'ranger', nome: 'Ranger', segmento: 'Picape média', precoDe: 259900, motor: 'diesel', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'ranger-raptor', nome: 'Ranger Raptor', segmento: 'Picape de performance', precoDe: 399900, motor: 'combustao', tags: ['offroad', 'trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'maverick-hybrid', nome: 'Maverick Hybrid', segmento: 'Picape compacta', precoDe: 219900, motor: 'hibrido', tags: ['cidade', 'trabalho'], espacoBom: false, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'maverick-tremor', nome: 'Maverick Tremor', segmento: 'Picape compacta off-road', precoDe: 249900, motor: 'combustao', tags: ['offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'mustang-gt', nome: 'Mustang GT', segmento: 'Esportivo', precoDe: 549900, motor: 'combustao', tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'mustang-mach-e', nome: 'Mustang Mach-E', segmento: 'SUV elétrico', precoDe: 379900, motor: 'eletrico', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'f-150-lightning', nome: 'F-150 Lightning', segmento: 'Picape elétrica', precoDe: 599900, motor: 'eletrico', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
+  { id: 'transit-furgao', nome: 'Transit Furgão', segmento: 'Van de carga', precoDe: 219900, motor: 'diesel', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'transit-minibus', nome: 'Transit Minibus', segmento: 'Van de passageiros', precoDe: 239900, motor: 'diesel', tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
 ];
 
 const TAG_POR_USO: Record<string, string> = {
@@ -215,9 +252,11 @@ export class PerfilComponent {
   };
 
   /** Ranking completo (14 modelos) recalculado a cada ajuste no perfil de uso — não espera "Salvar". */
-  private calcularRanking(): { id: string; modelo: string; nota: number; combinaComUso: boolean }[] {
+  private calcularRanking(): { id: string; modelo: string; segmento: string; combinaComUso: boolean; cobertura: number | null; falta: number; uso: AvaliacaoUso }[] {
     const orcamento = this.orcamentoNumero();
     const tagDeUso = TAG_POR_USO[this.uso.uso];
+    // Custo mensal de uso de TODOS os carros: a nota de cada um depende do menor custo entre eles.
+    const usos = avaliarUso(CATALOGO_PERFIL.map((m) => ({ id: m.id, tipo: m.motor })), this.rodagemNumero());
 
     const pontuados = CATALOGO_PERFIL.map((m) => {
       const combinaComUso = !!tagDeUso && m.tags.includes(tagDeUso);
@@ -234,21 +273,55 @@ export class PerfilComponent {
         if (p === 'Potência' && m.potenciaBoa) nota += 20;
       }
 
-      if (orcamento) {
-        if (m.precoDe > orcamento) nota -= 35;
-        else if (m.precoDe <= orcamento * 0.8) nota += 5;
-      }
+      const notaDeUso = Math.max(15, Math.min(97, Math.round(nota)));
 
-      return { id: m.id, modelo: m.nome, nota: Math.max(15, Math.min(97, Math.round(nota))), combinaComUso };
+      // Ordem: a MENOR entre as notas disponíveis (uso, orçamento e rodagem). Nenhuma nota "sobe" a outra: um carro
+      // acima do teto ou caro de rodar nunca ganha posição só por combinar com o uso.
+      const uso = usos[m.id];
+      let ordem = notaDeUso;
+      if (orcamento) ordem = Math.min(ordem, notaDeOrcamento(m.precoDe, orcamento));
+      if (uso.estado === 'ok') ordem = Math.min(ordem, uso.nota);
+
+      // O que aparece é quanto do preço o orçamento cobre — sem orçamento informado não há porcentagem.
+      const cobertura = orcamento ? coberturaDoOrcamento(m.precoDe, orcamento) : null;
+      const falta = orcamento && orcamento < m.precoDe ? m.precoDe - orcamento : 0;
+
+      return { id: m.id, modelo: m.nome, segmento: m.segmento, combinaComUso, cobertura, falta, uso, ordem: Math.floor(ordem), precoDe: m.precoDe };
     });
 
-    pontuados.sort((a, b) => b.nota - a.nota);
-    return pontuados;
+    // Empate na ordem (comum quando o teto é irreal e tudo cai a 0): sobe o mais barato, o que mais chega perto do teto.
+    pontuados.sort((a, b) => b.ordem - a.ordem || a.precoDe - b.precoDe);
+    return pontuados.map(({ ordem, precoDe, ...resto }) => resto);
   }
 
   get previa(): Previa {
     const [primeiro, ...resto] = this.calcularRanking();
-    return { modelo: primeiro.modelo, nota: primeiro.nota, outros: resto.slice(0, 2) };
+    const item = (r: ItemPrevia): ItemPrevia => ({ modelo: r.modelo, cobertura: r.cobertura, falta: r.falta, uso: r.uso });
+    return { ...item(primeiro), outros: resto.slice(0, 2).map(item) };
+  }
+
+  /** Há custo de uso estimado em algum dos três carros da prévia — aí vale o aviso de que são estimativas. */
+  get haEstimativaDeUso(): boolean {
+    const p = this.previa;
+    return [p, ...p.outros].some((c) => c.uso.estado === 'ok');
+  }
+
+  /** Valor em reais no formato brasileiro, ex.: "R$ 30.100". */
+  real(valor: number): string {
+    return 'R$ ' + Math.round(valor).toLocaleString('pt-BR');
+  }
+
+  /** Foto do modelo mais compatível (ou null quando não há foto dele). */
+  get fotoPrevia(): string | null {
+    return fotoDoModelo(this.previa.modelo);
+  }
+
+  /** Ícone de pessoa, mostrado no avatar enquanto não há nome nem e-mail para tirar as iniciais. */
+  readonly iconePerfil = ICONES['perfil'];
+
+  private rodagemNumero(): number | null {
+    const digitos = this.uso.rodagem.replace(/\D/g, '');
+    return digitos ? Number(digitos) : null;
   }
 
   private orcamentoNumero(): number | null {
@@ -363,9 +436,26 @@ export class PerfilComponent {
     this.sincronizarComModelos();
   }
 
-  /** Rodagem e orçamento são texto livre — chamado pelo (ngModelChange) desses dois campos. */
-  aoDigitarUso(): void {
+  /** Rodagem e orçamento só aceitam dígitos: letras e símbolos (inclusive colados) são descartados na hora. */
+  aoDigitarUso(campo: 'rodagem' | 'orcamento', evento: Event): void {
+    const input = evento.target as HTMLInputElement;
+    const limpo = input.value.replace(/\D/g, '');
+    if (input.value !== limpo) input.value = limpo;
+    this.uso[campo] = limpo;
     this.sincronizarComModelos();
+  }
+
+  /** Telefone só aceita dígitos (até 11) e aparece no formato (00) 00000-0000, ou (00) 0000-0000 quando fixo. */
+  aoDigitarTelefone(evento: Event): void {
+    const input = evento.target as HTMLInputElement;
+    const d = input.value.replace(/\D/g, '').slice(0, 11);
+    let mascarado = d;
+    if (d.length > 10) mascarado = `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+    else if (d.length > 6) mascarado = `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+    else if (d.length > 2) mascarado = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    else if (d.length > 0) mascarado = `(${d}`;
+    if (input.value !== mascarado) input.value = mascarado;
+    this.conta.telefone = mascarado;
   }
 
   prioritario(v: string): boolean {
@@ -377,47 +467,20 @@ export class PerfilComponent {
     this.conta = structuredClone(this.contaOriginal);
   }
 
-  salvar(): void {
-    if (!this.alteracoes) return;
-    this.salvandoPerfil = true;
-    this.erroBanco = null;
-    this.persistir();
-
-    const favoritos = this.lerIds(this.chaveFavoritos);
-    const comparados = this.lerIds(this.chaveComparacoesUltima);
-    this.profileService.salvar({
-      nome: this.conta.nome,
-      email: this.conta.email,
-      idade: this.conta.idade,
-      genero: this.conta.genero,
-      telefone: this.conta.telefone,
-      uso_principal: this.uso.uso,
-      passageiros: this.uso.passageiros,
-      rodagem_mensal: this.uso.rodagem,
-      orcamento: this.uso.orcamento,
-      prioridades: this.uso.prioridades,
-      carros_favoritos: favoritos,
-      carros_comparados: comparados,
-      compartilha_com_concessionaria: this.compartilhaComConcessionaria,
-    }).subscribe({
-      next: () => {
-        this.usoOriginal = structuredClone(this.uso);
-        this.contaOriginal = structuredClone(this.conta);
-        this.salvandoPerfil = false;
-      },
-      error: () => {
-        this.salvandoPerfil = false;
-        this.erroBanco = 'Não foi possível salvar no banco. Confira se a migration de perfis foi aplicada no Supabase.';
-      },
-    });
+  /** Telefone é opcional, mas se for preenchido tem de estar completo: 10 (fixo) ou 11 dígitos (celular). */
+  get telefoneIncompleto(): boolean {
+    const digitos = this.conta.telefone.replace(/\D/g, '').length;
+    return digitos > 0 && digitos < 10;
   }
 
-  private lerIds(chave: string): string[] {
-    try {
-      const valor = JSON.parse(localStorage.getItem(chave) ?? '[]') as unknown;
-      return Array.isArray(valor) && valor.every((id): id is string => typeof id === 'string') ? valor : [];
-    } catch {
-      return [];
-    }
+  salvar(): void {
+    if (!this.alteracoes || this.telefoneIncompleto) return;
+    this.usoOriginal = structuredClone(this.uso);
+    this.contaOriginal = structuredClone(this.conta);
+    this.persistir();
+
+    // O carro em primeiro lugar já vai para o passo "Qual modelo?" do /agendamentos.
+    const [primeiro] = this.calcularRanking();
+    salvarModeloRecomendado({ nome: primeiro.modelo, segmento: primeiro.segmento, cobertura: primeiro.cobertura });
   }
 }

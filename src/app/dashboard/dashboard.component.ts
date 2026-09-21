@@ -1,13 +1,31 @@
-import { Component, ElementRef, ViewChild, signal, inject, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, computed, signal, inject, AfterViewInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Chart, registerables } from 'chart.js';
+import { forkJoin, map } from 'rxjs';
 import { Car, CarRecommendation, FordApiService } from '../ford-api.service';
 import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
+import { fotoDoModelo } from '../shared/fotos-modelos';
+import { Comparacao, ItemComparacao, SEGMENTOS, chaveRival, modeloDaBusca, montarComparacao } from '../shared/comparacao-linha';
 
-Chart.register(...registerables);
+/** Uma linha do gráfico e da tabela: um carro com a ficha já preenchida. */
+export interface LinhaCarro {
+  chave: string;
+  nome: string;
+  /** Motor, câmbio e ano da versão ("5.0L · 10AT · 2024"). */
+  detalhe: string;
+  potencia: number | null;
+  velocidade: number | null;
+  cambio: string;
+  /** true só no modelo Ford pesquisado (a referência da comparação). */
+  referencia: boolean;
+}
+
+export type AbaGrafico = 'ambos' | 'potencia' | 'velocidade';
+
+/** Na busca por "Mustang" o carro mais parecido para a foto é o Mustang GT; o mesmo vale para o Maverick. */
+const FOTO_DO_MODELO: Record<string, string> = { Mustang: 'Mustang GT', Maverick: 'Maverick Hybrid' };
 
 @Component({
   selector: 'app-dashboard',
@@ -15,16 +33,13 @@ Chart.register(...registerables);
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent implements AfterViewInit, OnDestroy {
+export class DashboardComponent implements AfterViewInit {
   protected readonly title = signal('meu-projeto');
 
   private fordApi = inject(FordApiService);
   private router = inject(Router);
   private authService = inject(AuthService);
   private route = inject(ActivatedRoute);
-
-  @ViewChild('graficoCanvas') graficoCanvas?: ElementRef<HTMLCanvasElement>;
-  private grafico?: Chart;
 
   onNavegar(chave: string): void {
     const rota = ROTAS_MENU[chave];
@@ -42,6 +57,8 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   // Busca de veículo na API da Ford
   readonly sugestoes = ['Mustang', 'Ranger', 'Territory', 'Bronco Sport', 'Maverick', 'Explorer', 'F-150'];
   nomeCarro = signal<string>('');
+  /** O que foi buscado de fato (o campo muda a cada tecla; o título dos resultados não). */
+  termoBuscado = signal<string>('');
   carregando = signal<boolean>(false);
   erroBusca = signal<string | null>(null);
   totalEncontrado = signal<number>(0);
@@ -51,6 +68,102 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   buscandoSemelhantes = signal<boolean>(false);
   carrosSemelhantes = signal<CarRecommendation[]>([]);
 
+  // Comparação com concorrentes do mesmo segmento (a API tem Honda e Hyundai além da Ford)
+  comparacao = signal<Comparacao | null>(null);
+  /** O modelo Ford pesquisado, com a ficha preenchida: é a referência da comparação. */
+  referencia = signal<ItemComparacao | null>(null);
+  /** Concorrentes do segmento (sem a Ford), com a ficha preenchida como nas versões Ford. */
+  rivais = signal<ItemComparacao[]>([]);
+  carregandoLinha = signal<boolean>(false);
+  erroLinha = signal<string | null>(null);
+
+  /** Modelo Ford da busca atual, quando é um dos que têm segmento cadastrado (é a referência da comparação). */
+  modeloDestacado = signal<string | null>(null);
+  private comparacoesGuardadas = new Map<string, Comparacao>();
+
+  /** Aba do gráfico: as duas barras, só a potência ou só a velocidade. */
+  aba = signal<AbaGrafico>('ambos');
+  readonly abas: { chave: AbaGrafico; rotulo: string }[] = [
+    { chave: 'ambos', rotulo: 'Ambos' },
+    { chave: 'potencia', rotulo: 'Potência' },
+    { chave: 'velocidade', rotulo: 'Velocidade' },
+  ];
+
+  /**
+   * true quando o modelo pesquisado é um dos que têm concorrentes cadastrados: aí a tela compara o modelo Ford com os
+   * concorrentes do mesmo segmento. Fora disso não há com quem comparar e aparecem as versões Ford encontradas.
+   */
+  get soConcorrentes(): boolean {
+    const modelo = this.modeloDestacado();
+    return !!modelo && !!SEGMENTOS[modelo];
+  }
+
+  /** Há referência e concorrentes prontos para mostrar cards, gráfico e tabela de comparação. */
+  readonly modoComparacao = computed(() => this.soConcorrentes && !!this.referencia() && this.rivais().length > 0);
+
+  /** Nome curto do modelo de referência, sem a marca ("Mustang GT"). */
+  readonly nomeReferencia = computed(() => {
+    const ref = this.referencia();
+    if (!ref) return this.modeloDestacado() ?? '';
+    // A API às vezes traz o mercado no nome ("Territory (China)"): fica só o modelo.
+    const modelo = (ref.carro.model ?? ref.modelo).replace(/^ford\s+/i, '').replace(/\s*\([^)]*\)/g, '').trim();
+    return modelo || ref.modelo;
+  });
+
+  /** Linhas do gráfico e da tabela: a referência seguida dos concorrentes, ou as versões Ford quando não há comparação. */
+  readonly linhas = computed<LinhaCarro[]>(() => {
+    if (this.modoComparacao()) {
+      const ref = this.referencia() as ItemComparacao;
+      return [
+        this.linhaDe(ref.carro, 'ref', this.nomeReferencia(), true, ref.ano),
+        ...this.rivais().map((r) => this.linhaDe(r.carro, `${r.marca}:${r.modelo}`, `${r.marca} ${r.modelo}`, false, r.ano)),
+      ];
+    }
+    if (this.soConcorrentes) return [];
+    return this.resultados().map((c) => this.linhaDe(c, String(c.id), this.nomeDoCarro(c), false, c.yearFrom ?? null));
+  });
+
+  /** Linhas da tabela: só os concorrentes na comparação (o modelo Ford já está nos cards); as versões no resto. */
+  readonly linhasTabela = computed(() => this.linhas().filter((l) => !l.referencia));
+
+  /** Maior valor da aba atual: as barras são proporcionais a ele (com as duas abas juntas, à mesma escala). */
+  private readonly maximo = computed(() => {
+    const aba = this.aba();
+    const valores = this.linhas().flatMap((l) => [
+      ...(aba !== 'velocidade' ? [l.potencia ?? 0] : []),
+      ...(aba !== 'potencia' ? [l.velocidade ?? 0] : []),
+    ]);
+    return Math.max(1, ...valores);
+  });
+
+  /** Média de potência dos concorrentes e quanto o modelo Ford está acima (ou abaixo) dela. */
+  readonly diferencaParaMedia = computed(() => {
+    const ref = this.linhas().find((l) => l.referencia)?.potencia;
+    const rivais = this.linhasTabela().map((l) => l.potencia).filter((p): p is number => p != null);
+    if (ref == null || rivais.length === 0) return null;
+    const media = rivais.reduce((a, b) => a + b, 0) / rivais.length;
+    const diferenca = Math.round(ref - media);
+    return { media: Math.round(media), diferenca, texto: `${diferenca > 0 ? '+' : diferenca < 0 ? '−' : ''}${Math.abs(diferenca)}` };
+  });
+
+  /** O concorrente mais potente. */
+  readonly rivalMaisForte = computed(() => {
+    const comPotencia = this.linhasTabela().filter((l) => l.potencia != null);
+    if (comPotencia.length === 0) return null;
+    return comPotencia.reduce((a, b) => ((b.potencia ?? 0) > (a.potencia ?? 0) ? b : a));
+  });
+
+  readonly fotoReferencia = computed(() => {
+    const modelo = this.modeloDestacado();
+    return fotoDoModelo(this.nomeReferencia()) ?? (modelo ? fotoDoModelo(FOTO_DO_MODELO[modelo] ?? modelo) : null);
+  });
+
+  readonly tituloGrafico = computed(() =>
+    this.modoComparacao()
+      ? `${this.nomeReferencia()} vs. ${this.plural(this.comparacao()?.segmento ?? '')}`
+      : `Resultados para "${this.termoBuscado()}"`,
+  );
+
   ngAfterViewInit(): void {
     const modelo = this.route.snapshot.queryParamMap.get('modelo');
     if (modelo) {
@@ -59,10 +172,6 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       // Tira da URL depois de usado — sem isso, um F5 dispararia a busca de novo sozinho.
       this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
     }
-  }
-
-  ngOnDestroy(): void {
-    this.grafico?.destroy();
   }
 
   buscarSugestao(nome: string): void {
@@ -81,27 +190,83 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     this.erroBusca.set(null);
     this.carrosSemelhantes.set([]);
 
-    this.fordApi.listCars({ model: termo, limit: 8 }).subscribe({
+    this.fordApi.listCars({ make: 'FORD', model: termo, limit: 8 }).subscribe({
       next: (resposta) => {
         const itens = resposta.items.map((c) => this.preencherFicha(c));
         this.resultados.set(itens);
         this.totalEncontrado.set(resposta.total);
+        this.termoBuscado.set(termo);
         this.carregando.set(false);
 
         if (itens.length === 0) {
           this.erroBusca.set('Nenhum veículo encontrado com esse nome.');
-          this.grafico?.destroy();
           return;
         }
 
-        this.renderizarGrafico(itens);
+        // Define o modelo Ford e zera os concorrentes ANTES de mostrar, para não aparecer a comparação da busca anterior.
+        const modeloFord = modeloDaBusca(termo, this.sugestoes);
+        this.modeloDestacado.set(modeloFord);
+        this.referencia.set(null);
+        this.rivais.set([]);
         this.buscarCarrosSemelhantes(itens[0].id);
+        this.carregarComparacao(modeloFord);
       },
       error: () => {
         this.carregando.set(false);
         this.erroBusca.set('Não foi possível se conectar à API da Ford. Tente novamente.');
       },
     });
+  }
+
+  /** Busca os concorrentes do segmento do modelo Ford pesquisado (guarda o resultado para não repetir). */
+  private carregarComparacao(modeloFord: string | null): void {
+    this.modeloDestacado.set(modeloFord);
+    this.erroLinha.set(null);
+
+    if (!modeloFord || !SEGMENTOS[modeloFord]) {
+      this.aplicarComparacao(null);
+      return;
+    }
+
+    const guardada = this.comparacoesGuardadas.get(modeloFord);
+    if (guardada) {
+      this.aplicarComparacao(guardada);
+      return;
+    }
+
+    this.carregandoLinha.set(true);
+    this.aplicarComparacao(null);
+
+    const rivais = SEGMENTOS[modeloFord].rivais;
+    const pedidos = {
+      ford: this.fordApi.listCars({ make: 'FORD', model: modeloFord, limit: 100 }).pipe(map((r) => r.items)),
+      rivais: forkJoin(
+        rivais.map((rival) => this.fordApi.listCars({ make: rival.marca, model: rival.busca, limit: 100 }).pipe(map((r) => r.items))),
+      ),
+    };
+    forkJoin(pedidos).subscribe({
+      next: ({ ford, rivais: porRival }) => {
+        const carrosRivais = Object.fromEntries(rivais.map((rival, i) => [chaveRival(rival), porRival[i]]));
+        const comparacao = montarComparacao(modeloFord, ford, carrosRivais);
+        this.carregandoLinha.set(false);
+        // Se a pessoa já buscou outro modelo enquanto isso, descarta este resultado.
+        if (this.modeloDestacado() !== modeloFord) return;
+        if (comparacao) this.comparacoesGuardadas.set(modeloFord, comparacao);
+        this.aplicarComparacao(comparacao);
+      },
+      error: () => {
+        this.carregandoLinha.set(false);
+        this.erroLinha.set('Não foi possível carregar os concorrentes. Tente novamente.');
+      },
+    });
+  }
+
+  /** Guarda a comparação e separa o modelo Ford (referência) dos concorrentes, todos com a ficha preenchida. */
+  private aplicarComparacao(comparacao: Comparacao | null): void {
+    const itens = (comparacao?.itens ?? []).map((i) => ({ ...i, carro: this.preencherFicha(i.carro) }));
+    this.comparacao.set(comparacao);
+    this.referencia.set(itens.find((i) => i.referencia) ?? null);
+    this.rivais.set(itens.filter((i) => !i.referencia));
   }
 
   private buscarCarrosSemelhantes(carId: number): void {
@@ -150,45 +315,50 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
     return Math.round(Math.min(260, 110 + potenciaBhp * 0.42));
   }
 
-  private renderizarGrafico(carros: Car[]): void {
-    if (!this.graficoCanvas) {
-      return;
-    }
+  private linhaDe(carro: Car, chave: string, nome: string, referencia: boolean, ano: number | null): LinhaCarro {
+    return {
+      chave,
+      nome,
+      detalhe: [this.detalheDaVersao(carro), ano].filter(Boolean).join(' · '),
+      potencia: carro.enginePowerBhp ?? null,
+      velocidade: carro.topSpeedKph ?? null,
+      cambio: carro.gearboxType ?? (carro.engineFuelType === 'ELECTRIC' ? 'Elétrico' : '—'),
+      referencia,
+    };
+  }
 
-    const rotulos = carros.map((c) => c.variant ?? c.model ?? `#${c.id}`);
-    const potencias = carros.map((c) => c.enginePowerBhp ?? 0);
-    const velocidades = carros.map((c) => c.topSpeedKph ?? 0);
+  /** Largura da barra em % da trilha: o maior valor ocupa 86%, o resto fica proporcional (sobra espaço para o número). */
+  largura(valor: number | null): number {
+    return valor ? Math.max(2, (valor / this.maximo()) * 86) : 0;
+  }
 
-    this.grafico?.destroy();
-    this.grafico = new Chart(this.graficoCanvas.nativeElement, {
-      type: 'bar',
-      data: {
-        labels: rotulos,
-        datasets: [
-          {
-            label: 'Potência (cv)',
-            data: potencias,
-            backgroundColor: '#0E3165',
-          },
-          {
-            label: 'Velocidade Máxima (km/h)',
-            data: velocidades,
-            backgroundColor: '#38bdf8',
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: `Resultados para "${this.nomeCarro()}"` },
-        },
-        scales: {
-          x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } },
-          y: { beginAtZero: true },
-        },
-      },
-    });
+  /** "+150 cv" / "−150 cv": quanto o concorrente tem a mais ou a menos que o modelo Ford pesquisado. */
+  diferencaDoRival(linha: LinhaCarro): { texto: string; ford: boolean } | null {
+    const ref = this.linhas().find((l) => l.referencia)?.potencia;
+    if (ref == null || linha.potencia == null) return null;
+    const d = linha.potencia - ref;
+    return { texto: `${d > 0 ? '+' : d < 0 ? '−' : ''}${Math.abs(d)} cv`, ford: d < 0 };
+  }
+
+  /** "Esportivo" → "esportivos", "Picape compacta" → "picapes compactas", "SUV médio" → "SUV médios". */
+  private plural(segmento: string): string {
+    return segmento
+      .split(' ')
+      .map((palavra, i) => (palavra === 'SUV' ? palavra : (i === 0 ? palavra.toLowerCase() : palavra) + 's'))
+      .join(' ');
+  }
+
+  /** "Ford Mustang GT": o nome do carro, com a marca na frente quando a API não a traz no modelo. */
+  nomeDoCarro(carro: Car): string {
+    const modelo = (carro.model ?? `#${carro.id}`).trim();
+    return /^ford\b/i.test(modelo) ? modelo : `Ford ${modelo}`;
+  }
+
+  /** Detalhe curto para diferenciar versões do mesmo carro: motor e câmbio ("5.0L · 10AT"). */
+  private detalheDaVersao(carro: Car): string {
+    const texto = carro.variant ?? '';
+    const motor = texto.match(/\b(\d\.\d)L\b/)?.[0];
+    const cambio = texto.match(/\b(\d{1,2}(?:AT|MT)|CVT|DCT)\b/)?.[0] ?? carro.gearboxType?.toLowerCase();
+    return [motor, cambio].filter(Boolean).join(' · ');
   }
 }
