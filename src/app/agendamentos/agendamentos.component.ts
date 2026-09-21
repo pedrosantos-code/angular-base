@@ -5,6 +5,7 @@ import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component'
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
 import { fotoDoModelo } from '../shared/fotos-modelos';
+import { lerModeloRecomendado } from '../shared/modelo-recomendado';
 
 export interface TipoAtendimento {
   chave: string;
@@ -24,8 +25,10 @@ export interface Unidade {
 
 export interface ModeloDisponivel {
   nome: string;
-  /** Nota de compatibilidade vinda da recomendação. Deixe nulo se a pessoa chegou sem recomendação. */
-  nota: number | null;
+  /** true quando o modelo veio do perfil salvo da pessoa (o carro em primeiro lugar); false para o modelo padrão. */
+  doPerfil: boolean;
+  /** Quanto do preço o orçamento da pessoa cobre (0 a 100). Nulo quando ela não informou orçamento. */
+  cobertura: number | null;
   disponivel: boolean;
   /** Rótulo curto acima do nome ("SUV médio"). */
   segmento?: string;
@@ -123,7 +126,17 @@ export class AgendamentosComponent {
     { id: 'ford-sao-paulo', nome: 'Ford For São Paulo - SP', endereco: 'Av. das Nações Unidas, 21883', distanciaKm: 15.6, horariosLivres: 3 },
   ];
 
-  modelo: ModeloDisponivel = { nome: 'Territory Titanium', nota: 94, disponivel: true, segmento: 'SUV médio' };
+  /**
+   * O carro em primeiro lugar do último "Salvar perfil". Sem perfil salvo, fica um modelo padrão, sem porcentagem
+   * e sem o rótulo "vindo do seu perfil" (não há recomendação de verdade por trás dele).
+   */
+  modelo: ModeloDisponivel = this.modeloInicial();
+
+  private modeloInicial(): ModeloDisponivel {
+    const salvo = lerModeloRecomendado();
+    if (salvo) return { nome: salvo.nome, segmento: salvo.segmento || undefined, cobertura: salvo.cobertura, doPerfil: true, disponivel: true };
+    return { nome: 'Territory Titanium', segmento: 'SUV médio', cobertura: null, doPerfil: false, disponivel: true };
+  }
 
   /** Foto do modelo: procura pelo nome completo e, se não achar, pela primeira palavra ("Territory Titanium" → "Territory"). */
   get fotoModelo(): string | null {

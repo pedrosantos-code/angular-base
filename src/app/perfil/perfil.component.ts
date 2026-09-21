@@ -7,6 +7,7 @@ import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
 import { fotoDoModelo } from '../shared/fotos-modelos';
 import { avaliarUso, AvaliacaoUso, TipoMotor } from '../shared/rodagem';
+import { salvarModeloRecomendado } from '../shared/modelo-recomendado';
 
 export interface PerfilUso {
   uso: string;
@@ -67,6 +68,8 @@ interface ModeloAvaliado {
   id: string;
   nome: string;
   precoDe: number;
+  /** Rótulo curto do segmento, o mesmo do /modelos ("SUV médio"). */
+  segmento: string;
   /** Tipo de motor: define qual energia entra no custo mensal de uso (ver shared/rodagem.ts). */
   motor: TipoMotor;
   /** 'cidade' | 'estrada' | 'offroad' | 'trabalho' — combina com o campo "Uso principal". */
@@ -79,19 +82,19 @@ interface ModeloAvaliado {
 
 /** Mesma linha e mesmos ids do /modelos, com sinalizadores usados só pra pontuar a prévia do perfil. */
 const CATALOGO_PERFIL: ModeloAvaliado[] = [
-  { id: 'territory', nome: 'Territory', precoDe: 219900, motor: 'combustao', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
-  { id: 'bronco-sport', nome: 'Bronco Sport', precoDe: 249900, motor: 'combustao', tags: ['offroad', 'cidade'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'explorer', nome: 'Explorer', precoDe: 429900, motor: 'combustao', tags: ['estrada', 'cidade'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
-  { id: 'f-150', nome: 'F-150', precoDe: 439900, motor: 'combustao', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'ranger', nome: 'Ranger', precoDe: 259900, motor: 'diesel', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'ranger-raptor', nome: 'Ranger Raptor', precoDe: 399900, motor: 'combustao', tags: ['offroad', 'trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'maverick-hybrid', nome: 'Maverick Hybrid', precoDe: 219900, motor: 'hibrido', tags: ['cidade', 'trabalho'], espacoBom: false, confortoBom: true, consumoBom: true, potenciaBoa: false },
-  { id: 'maverick-tremor', nome: 'Maverick Tremor', precoDe: 249900, motor: 'combustao', tags: ['offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'mustang-gt', nome: 'Mustang GT', precoDe: 549900, motor: 'combustao', tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'mustang-mach-e', nome: 'Mustang Mach-E', precoDe: 379900, motor: 'eletrico', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
-  { id: 'f-150-lightning', nome: 'F-150 Lightning', precoDe: 599900, motor: 'eletrico', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
-  { id: 'transit-furgao', nome: 'Transit Furgão', precoDe: 219900, motor: 'diesel', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'transit-minibus', nome: 'Transit Minibus', precoDe: 239900, motor: 'diesel', tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'territory', nome: 'Territory', segmento: 'SUV médio', precoDe: 219900, motor: 'combustao', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'bronco-sport', nome: 'Bronco Sport', segmento: 'SUV compacto', precoDe: 249900, motor: 'combustao', tags: ['offroad', 'cidade'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'explorer', nome: 'Explorer', segmento: 'SUV grande', precoDe: 429900, motor: 'combustao', tags: ['estrada', 'cidade'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'f-150', nome: 'F-150', segmento: 'Picape grande', precoDe: 439900, motor: 'combustao', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'ranger', nome: 'Ranger', segmento: 'Picape média', precoDe: 259900, motor: 'diesel', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'ranger-raptor', nome: 'Ranger Raptor', segmento: 'Picape de performance', precoDe: 399900, motor: 'combustao', tags: ['offroad', 'trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'maverick-hybrid', nome: 'Maverick Hybrid', segmento: 'Picape compacta', precoDe: 219900, motor: 'hibrido', tags: ['cidade', 'trabalho'], espacoBom: false, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'maverick-tremor', nome: 'Maverick Tremor', segmento: 'Picape compacta off-road', precoDe: 249900, motor: 'combustao', tags: ['offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'mustang-gt', nome: 'Mustang GT', segmento: 'Esportivo', precoDe: 549900, motor: 'combustao', tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'mustang-mach-e', nome: 'Mustang Mach-E', segmento: 'SUV elétrico', precoDe: 379900, motor: 'eletrico', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'f-150-lightning', nome: 'F-150 Lightning', segmento: 'Picape elétrica', precoDe: 599900, motor: 'eletrico', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
+  { id: 'transit-furgao', nome: 'Transit Furgão', segmento: 'Van de carga', precoDe: 219900, motor: 'diesel', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'transit-minibus', nome: 'Transit Minibus', segmento: 'Van de passageiros', precoDe: 239900, motor: 'diesel', tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
 ];
 
 const TAG_POR_USO: Record<string, string> = {
@@ -201,7 +204,7 @@ export class PerfilComponent {
   };
 
   /** Ranking completo (14 modelos) recalculado a cada ajuste no perfil de uso — não espera "Salvar". */
-  private calcularRanking(): { id: string; modelo: string; combinaComUso: boolean; cobertura: number | null; falta: number; uso: AvaliacaoUso }[] {
+  private calcularRanking(): { id: string; modelo: string; segmento: string; combinaComUso: boolean; cobertura: number | null; falta: number; uso: AvaliacaoUso }[] {
     const orcamento = this.orcamentoNumero();
     const tagDeUso = TAG_POR_USO[this.uso.uso];
     // Custo mensal de uso de TODOS os carros: a nota de cada um depende do menor custo entre eles.
@@ -235,7 +238,7 @@ export class PerfilComponent {
       const cobertura = orcamento ? coberturaDoOrcamento(m.precoDe, orcamento) : null;
       const falta = orcamento && orcamento < m.precoDe ? m.precoDe - orcamento : 0;
 
-      return { id: m.id, modelo: m.nome, combinaComUso, cobertura, falta, uso, ordem: Math.floor(ordem), precoDe: m.precoDe };
+      return { id: m.id, modelo: m.nome, segmento: m.segmento, combinaComUso, cobertura, falta, uso, ordem: Math.floor(ordem), precoDe: m.precoDe };
     });
 
     // Empate na ordem (comum quando o teto é irreal e tudo cai a 0): sobe o mais barato, o que mais chega perto do teto.
@@ -425,5 +428,9 @@ export class PerfilComponent {
     this.usoOriginal = structuredClone(this.uso);
     this.contaOriginal = structuredClone(this.conta);
     this.persistir();
+
+    // O carro em primeiro lugar já vai para o passo "Qual modelo?" do /agendamentos.
+    const [primeiro] = this.calcularRanking();
+    salvarModeloRecomendado({ nome: primeiro.modelo, segmento: primeiro.segmento, cobertura: primeiro.cobertura });
   }
 }

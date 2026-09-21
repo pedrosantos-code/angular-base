@@ -63,8 +63,8 @@
         <div class="l-ag-step-head">
           <span class="l-ag-step-n">03</span>
           <h2 class="l-ag-step-title">Qual modelo?</h2>
-          @if (modelo.nota !== null) {
-            <span class="l-ag-step-aside">vindo da sua recomendação</span>
+          @if (modelo.doPerfil) {
+            <span class="l-ag-step-aside">vindo do seu perfil</span>
           }
         </div>
         <div class="l-ag-model">
@@ -78,9 +78,9 @@
               {{ modelo.disponivel ? 'disponível para test-drive nesta unidade' : 'sem unidade de demonstração aqui' }}
             </span>
           </span>
-          @if (modelo.nota !== null) {
+          @if (modelo.cobertura !== null) {
             <span class="l-ag-model-score">
-              <strong>{{ modelo.nota }}</strong><span>compatível</span>
+              <strong>{{ modelo.cobertura }}</strong><span>seu orçamento cobre</span>
             </span>
           }
         </div>
