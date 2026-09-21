@@ -72,10 +72,10 @@ export class ModelosComponent {
 
     { id: 'mustang-gt', nome: 'Mustang GT', segmento: 'Esportivo', categoria: 'esportivo', motorizacao: 'combustao', precoDe: 549900, ficha: ['5.0 V8 · 480 cv', 'Tração traseira · 4 lugares'], nota: 22, imagem: 'mustang.jpeg', imagemVistas: 'mustang-vistas.jpg', tags: ['performance'] },
 
-    { id: 'mustang-mach-e', nome: 'Mustang Mach-E', segmento: 'SUV elétrico', categoria: 'suv', motorizacao: 'eletrico', precoDe: 379900, ficha: ['Motor elétrico · 351 cv', 'Autonomia até 500 km'], nota: 51, imagem: 'mach-e.jpg', imagemVistas: 'mach-e-vistas.jpg', tags: ['cidade', 'eletrico', 'familia'] },
+    { id: 'mustang-mach-e', nome: 'Mustang Mach-E', segmento: 'SUV elétrico', categoria: 'suv', motorizacao: 'eletrico', precoDe: 379900, ficha: ['Motor elétrico · 351 cv', 'Autonomia até 500 km · 5 lugares'], nota: 51, imagem: 'mach-e.jpg', imagemVistas: 'mach-e-vistas.jpg', tags: ['cidade', 'eletrico', 'familia'] },
     { id: 'f-150-lightning', nome: 'F-150 Lightning', segmento: 'Picape elétrica', categoria: 'picape', motorizacao: 'eletrico', precoDe: 599900, ficha: ['Motor elétrico duplo · 580 cv', 'Tração 4x4 · 5 lugares'], nota: 18, imagem: 'f150-lightning.jpg', imagemVistas: 'f150-lightning-vistas.jpg', tags: ['trabalho', 'eletrico'] },
 
-    { id: 'transit-furgao', nome: 'Transit Furgão', segmento: 'Van de carga', categoria: 'comercial', motorizacao: 'combustao', precoDe: 219900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Capacidade até 1.5 t'], nota: 33, imagem: 'transit-furgao.jpeg', imagemVistas: 'transit-furgao-vistas.jpg', tags: ['trabalho', 'carga'] },
+    { id: 'transit-furgao', nome: 'Transit Furgão', segmento: 'Van de carga', categoria: 'comercial', motorizacao: 'combustao', precoDe: 219900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Capacidade até 1.5 t · 3 lugares'], nota: 33, imagem: 'transit-furgao.jpeg', imagemVistas: 'transit-furgao-vistas.jpg', tags: ['trabalho', 'carga'] },
     { id: 'transit-minibus', nome: 'Transit Minibus', segmento: 'Van de passageiros', categoria: 'comercial', motorizacao: 'combustao', precoDe: 239900, ficha: ['2.2 Turbo Diesel · 125 cv', 'Até 16 lugares'], nota: 74, imagem: 'transit-minibus.jpeg', imagemVistas: 'transit-minibus-vistas.jpg', tags: ['trabalho', 'viagem'] },
   ];
   /** Resumo do perfil, exibido sob o título. Nulo esconde a linha. */
@@ -109,8 +109,8 @@ export class ModelosComponent {
   motorizacoesAtivas = new Set<Motorizacao>();
   tetoPreco = 599900;
   soCompativeis = false;
-  /** Só no celular: o painel de filtros fica recolhido até tocar em "Filtros". */
-  filtrosAbertos = false;
+  /** Painel de filtros (motorização, preço, favoritos): aberto no computador, recolhido no celular até tocar em "Filtros". */
+  filtrosAbertos = typeof window === 'undefined' || window.innerWidth > 900;
   /** Pré-preenchido quando se chega aqui pelo "Ver ficha" do portal (?termo=Nome+do+modelo). */
   termo = this.route.snapshot.queryParamMap.get('termo') ?? '';
   ordem: Ordenacao = 'compatibilidade';
@@ -187,6 +187,58 @@ export class ModelosComponent {
 
   get precoMaximo(): number {
     return this.modelos.length ? Math.max(...this.modelos.map((m) => m.precoDe)) : 0;
+  }
+
+  /** Rótulo da categoria escolhida ("SUVs", "Picapes"…), usado no resumo acima da lista. */
+  get rotuloCategoria(): string {
+    return this.categorias.find((c) => c.chave === this.categoria)?.rotulo ?? '';
+  }
+
+  /** Desliga todos os filtros e a busca por nome (a ordenação e a seleção para comparar ficam como estão). */
+  limparFiltros(): void {
+    this.categoria = 'todos';
+    this.motorizacoesAtivas.clear();
+    this.tetoPreco = this.precoMaximo;
+    this.soCompativeis = false;
+    this.soFavoritos = false;
+    this.termo = '';
+  }
+
+  /** "Combustão", "Híbrido" ou "Elétrico" — mostrado na etiqueta sobre a foto. */
+  rotuloMotorizacao(m: Modelo): string {
+    return this.motorizacoes.find((x) => x.chave === m.motorizacao)?.rotulo ?? '';
+  }
+
+  /** Só o motor, sem a potência: "1.5 EcoBoost turbo", "2.2 Turbo Diesel"… (primeiro trecho da ficha). */
+  motorDoModelo(m: Modelo): string {
+    return (m.ficha[0] ?? '').split('·')[0].trim();
+  }
+
+  /**
+   * Até três números de destaque do cartão (potência, tração ou autonomia/capacidade, lugares), lidos das
+   * duas linhas de ficha. O que a ficha não tem simplesmente não aparece.
+   */
+  destaques(m: Modelo): { rotulo: string; valor: string }[] {
+    const partes = m.ficha.flatMap((linha) => linha.split('·')).map((p) => p.trim());
+    const achar = (regra: RegExp) => partes.find((p) => regra.test(p));
+    const itens: { rotulo: string; valor: string }[] = [];
+
+    const cv = achar(/\d+\s*cv/i)?.match(/\d+/)?.[0];
+    if (cv) itens.push({ rotulo: 'Potência', valor: `${cv} cv` });
+
+    const tracao = achar(/^Tração/i);
+    const extra = achar(/^(Autonomia|Capacidade)/i);
+    if (tracao) {
+      itens.push({ rotulo: 'Tração', valor: tracao.replace(/^Tração\s*/i, '') });
+    } else if (extra) {
+      const rotulo = /^Autonomia/i.test(extra) ? 'Autonomia' : 'Capacidade';
+      itens.push({ rotulo, valor: extra.replace(/^(Autonomia|Capacidade)(\s+até)?\s*/i, '') });
+    }
+
+    const lugares = achar(/lugares/i)?.match(/\d+/)?.[0];
+    if (lugares) itens.push({ rotulo: 'Lugares', valor: lugares });
+
+    return itens;
   }
 
   contagem(chave: string): number {

@@ -2,80 +2,33 @@
 
 <div class="l-md-shell">
 
-  <!-- Só no celular: os filtros ficam recolhidos para a lista aparecer logo; no computador o painel é fixo -->
-  <button type="button" class="l-md-filters-toggle" [attr.aria-expanded]="filtrosAbertos" aria-controls="l-md-rail"
-          (click)="filtrosAbertos = !filtrosAbertos">
-    Filtros
-    @if (filtrosAtivos) { <span class="l-md-filters-badge">{{ filtrosAtivos }}</span> }
-    <span class="l-md-filters-chevron" aria-hidden="true">{{ filtrosAbertos ? '−' : '+' }}</span>
-  </button>
-
-  <aside class="l-md-rail" id="l-md-rail" [class.is-open]="filtrosAbertos">
-    <div class="l-md-rail-label">Categoria</div>
-    @for (c of categorias; track c.chave) {
-      <button
-        class="l-md-filter"
-        type="button"
-        [class.is-on]="categoria === c.chave"
-        [attr.aria-pressed]="categoria === c.chave"
-        (click)="categoria = c.chave">
-        {{ c.rotulo }} <span class="l-md-filter-count">{{ contagem(c.chave) }}</span>
-      </button>
-    }
-
-    <div class="l-md-rail-label">Motorização</div>
-    @for (m of motorizacoes; track m.chave) {
-      <label class="l-md-check">
-        <input
-          type="checkbox"
-          [checked]="motorizacoesAtivas.has(m.chave)"
-          (change)="alternarMotorizacao(m.chave)" />
-        {{ m.rotulo }}
-      </label>
-    }
-
-    <div class="l-md-rail-label">Até quanto</div>
-    <div class="l-md-range">
-      <input
-        type="range"
-        [min]="precoMinimo"
-        [max]="precoMaximo"
-        step="10000"
-        [(ngModel)]="tetoPreco"
-        aria-label="Preço máximo" />
-      <div class="l-md-range-labels">
-        <span>{{ preco(precoMinimo) }}</span>
-        <span>{{ preco(tetoPreco) }}</span>
-      </div>
+  <header class="l-md-hero">
+    <div class="l-md-hero-text">
+      <h1 class="l-md-title">Escolha o seu<br /><span>próximo Ford.</span></h1>
+      <p class="l-md-count">
+        @if (perfil) { perfil: {{ perfil }} } @else { <button type="button" class="l-md-clear" (click)="ir('recomendacao')">Descreva seu uso para ver a compatibilidade</button> }
+      </p>
     </div>
+    <div class="l-md-hero-total" role="status" aria-live="polite">
+      <strong>{{ filtrados.length }}</strong>
+      <span>{{ filtrados.length === 1 ? 'modelo na seleção' : 'modelos na seleção' }}</span>
+    </div>
+  </header>
 
-    @if (perfil) {
-      <div class="l-md-rail-label">Seu perfil</div>
-      <label class="l-md-check">
-        <input type="checkbox" [(ngModel)]="soCompativeis" />
-        Só compatíveis
-      </label>
-    }
+  <section class="l-md-controls" aria-label="Filtros de modelos">
 
-    <div class="l-md-rail-label">Favoritos</div>
-    <label class="l-md-check">
-      <input type="checkbox" [(ngModel)]="soFavoritos" />
-      Só favoritos ({{ favoritos.size }})
-    </label>
-
-    <button type="button" class="l-md-filters-done" (click)="filtrosAbertos = false">
-      Ver {{ filtrados.length }} {{ filtrados.length === 1 ? 'modelo' : 'modelos' }}
-    </button>
-  </aside>
-
-  <main class="l-md-main">
-
-    <div class="l-md-top">
-      <div>
-        <h1 class="l-md-title">Modelos Ford</h1>
-        <p class="l-md-count">
-          {{ filtrados.length }} de {{ modelos.length }} modelos@if (perfil) { · perfil: {{ perfil }} } @else { · <button type="button" class="l-md-clear" (click)="ir('recomendacao')">descreva seu uso para ver a compatibilidade</button> }
-        </p>
+    <div class="l-md-bar">
+      <div class="l-md-cats" role="group" aria-label="Categoria">
+        @for (c of categorias; track c.chave) {
+          <button
+            class="l-md-pill l-md-filter"
+            type="button"
+            [class.is-on]="categoria === c.chave"
+            [attr.aria-pressed]="categoria === c.chave"
+            (click)="categoria = c.chave">
+            {{ c.rotulo }} <span class="l-md-filter-count">{{ contagem(c.chave) }}</span>
+          </button>
+        }
       </div>
 
       <div class="l-md-tools">
@@ -86,18 +39,80 @@
           [(ngModel)]="termo"
           placeholder="Buscar por nome"
           aria-label="Buscar modelo pelo nome" />
-        <div class="l-md-sort">
-          <span>ordenar:</span>
-          @for (o of ordenacoes; track o.chave) {
+
+        <label class="l-md-pill l-md-select">
+          <span>Ordenar</span>
+          <select [(ngModel)]="ordem" aria-label="Ordenar modelos por">
+            @for (o of ordenacoes; track o.chave) {
+              <option [value]="o.chave">{{ o.rotulo }}</option>
+            }
+          </select>
+        </label>
+
+        <button type="button" class="l-md-pill l-md-filters-toggle" [class.is-on]="filtrosAbertos"
+                [attr.aria-expanded]="filtrosAbertos" aria-controls="l-md-rail"
+                (click)="filtrosAbertos = !filtrosAbertos">
+          Filtros
+          @if (filtrosAtivos) { <span class="l-md-filters-badge">{{ filtrosAtivos }}</span> }
+          <span class="l-md-filters-chevron" aria-hidden="true">{{ filtrosAbertos ? '−' : '+' }}</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="l-md-rail" id="l-md-rail" [class.is-open]="filtrosAbertos">
+      <div class="l-md-group">
+        <span class="l-md-rail-label">Motorização</span>
+        <div class="l-md-group-items">
+          @for (m of motorizacoes; track m.chave) {
             <button
-              class="l-md-sort-option"
+              class="l-md-pill l-md-pill--small"
               type="button"
-              [class.is-on]="ordem === o.chave"
-              (click)="ordem = o.chave">{{ o.rotulo }}</button>
+              [class.is-on]="motorizacoesAtivas.has(m.chave)"
+              [attr.aria-pressed]="motorizacoesAtivas.has(m.chave)"
+              (click)="alternarMotorizacao(m.chave)">
+              {{ m.rotulo }}
+            </button>
           }
         </div>
       </div>
+
+      <div class="l-md-group l-md-group--range">
+        <span class="l-md-rail-label">Até quanto</span>
+        <div class="l-md-range">
+          <input
+            type="range"
+            [min]="precoMinimo"
+            [max]="precoMaximo"
+            step="10000"
+            [(ngModel)]="tetoPreco"
+            aria-label="Preço máximo" />
+          <span class="l-md-range-value">{{ preco(tetoPreco) }}</span>
+        </div>
+      </div>
+
+      <div class="l-md-group l-md-group--switches">
+        @if (perfil) {
+          <label class="l-md-switch">
+            <input type="checkbox" [(ngModel)]="soCompativeis" />
+            <span class="l-md-switch-track" aria-hidden="true"></span>
+            Só compatíveis
+          </label>
+        }
+        <label class="l-md-switch">
+          <input type="checkbox" [(ngModel)]="soFavoritos" />
+          <span class="l-md-switch-track" aria-hidden="true"></span>
+          Só favoritos ({{ favoritos.size }})
+        </label>
+        <button type="button" class="l-md-pill l-md-pill--small l-md-limpar" [disabled]="!filtrosAtivos && !termo" (click)="limparFiltros()">Limpar</button>
+      </div>
     </div>
+
+    <p class="l-md-summary">
+      {{ categoria === 'todos' ? 'Todos os veículos' : rotuloCategoria }} · {{ filtrados.length }} de {{ modelos.length }} modelos
+    </p>
+  </section>
+
+  <main class="l-md-main">
 
     <div class="l-md-grid">
       @for (m of filtrados; track m.id) {
@@ -119,42 +134,50 @@
               @if (m.imagem) {
                 <img [src]="m.imagem" [alt]="m.nome" loading="lazy" />
               }
+              <span class="l-md-chip">{{ rotuloMotorizacao(m) }}</span>
             </span>
             <span class="l-md-card-body">
-              <span class="l-md-segment">{{ m.segmento }}</span>
+              <span class="l-md-card-head">
+                <span class="l-md-segment">{{ m.segmento }}</span>
+                <span class="l-md-price"><small>a partir de</small>{{ preco(m.precoDe) }}</span>
+              </span>
               <span class="l-md-name">{{ m.nome }}</span>
-              <span class="l-md-price">a partir de {{ preco(m.precoDe) }}</span>
-              <span class="l-md-spec">
-                @for (f of m.ficha; track f) { {{ f }}<br /> }
+              <span class="l-md-spec">{{ motorDoModelo(m) }}</span>
+              <span class="l-md-stats">
+                @for (d of destaques(m); track d.rotulo) {
+                  <span class="l-md-stat"><small>{{ d.rotulo }}</small><strong>{{ d.valor }}</strong></span>
+                }
               </span>
             </span>
           </button>
 
-          <div class="l-md-card-footer">
-            @if (m.imagemVistas) {
-              <button type="button" class="l-md-vistas" (click)="abrirVistas(m.id, $event)">
-                Ver todas as fotos
-              </button>
-            }
-
-            @if (m.nota !== null) {
+          @if (m.nota !== null) {
+            <div class="l-md-card-footer">
               <span class="l-md-score">
                 <strong>{{ m.nota }}</strong><span>% compatível</span>
               </span>
               <span class="l-md-track">
                 <span class="l-md-fill" [class.is-fraco]="m.nota < corteFraco" [style.width.%]="m.nota"></span>
               </span>
-            }
-          </div>
+            </div>
+          }
 
-          <label class="l-md-compare">
-            <input
-              type="checkbox"
-              [checked]="selecionados.has(m.id)"
-              [disabled]="!selecionados.has(m.id) && selecionados.size >= maxComparar"
-              (click)="alternarSelecao(m.id, $event)" />
-            comparar
-          </label>
+          <div class="l-md-actions">
+            @if (m.imagemVistas) {
+              <button type="button" class="l-md-vistas" (click)="abrirVistas(m.id, $event)">
+                Ver fotos
+              </button>
+            }
+
+            <label class="l-md-compare">
+              <input
+                type="checkbox"
+                [checked]="selecionados.has(m.id)"
+                [disabled]="!selecionados.has(m.id) && selecionados.size >= maxComparar"
+                (click)="alternarSelecao(m.id, $event)" />
+              <span>{{ selecionados.has(m.id) ? 'Selecionado' : 'Comparar' }}</span>
+            </label>
+          </div>
         </article>
       } @empty {
         <p class="l-md-blank">Nenhum modelo com esses filtros. Aumente o teto de preço ou limpe a motorização.</p>

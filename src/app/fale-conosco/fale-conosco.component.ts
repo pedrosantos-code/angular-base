@@ -159,9 +159,27 @@ export class FaleConoscoComponent {
 
   @ViewChild('listaMensagens') private listaMensagens?: ElementRef<HTMLElement>;
 
+  /** Telefones da Central de Relacionamento (mesmo número do passo "humano" do chat). */
+  readonly telefones = [
+    { numero: '0800 000 0000', tel: '08000000000', horario: 'Seg–Sex · 8h–20h' },
+    { numero: '0800 000 0001', tel: '08000000001', horario: 'Seg–Sex · 8h–20h' },
+  ];
+
+  readonly atalhos = [
+    { rotulo: 'Agendar visita', rota: '/agendamentos' },
+    { rotulo: 'Ver modelos', rota: '/modelos' },
+    { rotulo: 'Como a IA decide', rota: '/sobre-ia' },
+  ];
+
   abrirChatSeia(): void {
     this.chatAberto.set(true);
     this.rolarParaOFim();
+  }
+
+  /** Abre o chat já no assunto escolhido, como se a pessoa tivesse tocado no botão correspondente do início da conversa. */
+  perguntar(rotulo: string, proximo: string): void {
+    this.abrirChatSeia();
+    this.escolher({ rotulo, proximo });
   }
 
   fecharChat(): void {

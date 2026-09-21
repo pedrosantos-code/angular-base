@@ -1,142 +1,140 @@
-<div class="fundo-home">
-  <link rel="stylesheet" href="https://unpkg.com/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+<seia-topbar (navegar)="onNavegar($event)" (sair)="sair()" />
 
-  <seia-topbar
-    (navegar)="onNavegar($event)"
+<header class="fc-hero">
+  <div class="fc-hero-text">
+    <p class="fc-eyebrow"><span aria-hidden="true"></span>Atendimento SEIA + Ford</p>
+    <h1 class="fc-title">Fale <span>conosco.</span></h1>
+  </div>
+  <p class="fc-hero-lead">Tire dúvidas com a SEIA na hora ou fale com um atendente da Central de Relacionamento Ford.</p>
+</header>
 
-    (sair)="sair()" />
+<main class="fc-main">
 
-  <main class="container-home">
-    <div class="fale-conosco-container">
-      <!-- Cabeçalho da Página -->
-      <header class="page-header">
-        <h1>Fale Conosco</h1>
-        <p class="subtitle">Atendimento Seia + Ford</p>
-      </header>
+  <!-- Assistente virtual -->
+  <section class="fc-seia" aria-labelledby="fc-seia-titulo">
+    <div class="fc-seia-top">
+      <span class="fc-seia-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M12 3.5V7" /><path d="M6 7h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z" /><path d="M9 12.5h.01M15 12.5h.01" /><path d="M9.5 15.5h5" /></svg>
+      </span>
+      <span class="fc-online"><i aria-hidden="true"></i>Online agora</span>
+    </div>
 
-      <!-- Grid Principais Canais de Atendimento -->
-      <div class="cards-grid">
-        
-        <!-- Card 1: SEIA (AI Partner) -->
-        <div class="card-canal destaque">
-          <div class="card-header">
-            <i class="fa-solid fa-robot header-icon"></i>
-            <h3>Atendimento via SEIA</h3>
-          </div>
-          <div class="card-body">
-            <h4>Assistente virtual</h4>
-            <p>Respostas rápidas sobre agendamentos, modelos e concessionárias</p>
-          </div>
-          <div class="card-footer">
-            <button class="btn-primary" (click)="abrirChatSeia()">Acessar Chat da SEIA</button>
-          </div>
+    <p class="fc-seia-kicker">Assistente virtual</p>
+    <h2 class="fc-seia-title" id="fc-seia-titulo">Atendimento via SEIA</h2>
+    <p class="fc-seia-text">Respostas rápidas sobre agendamentos, modelos e a nota da IA.</p>
+
+    <div class="fc-seia-chips" role="group" aria-label="Assuntos rápidos">
+      <button type="button" class="fc-chip" (click)="perguntar('Agendar test-drive ou revisão', 'agenda')">Agendar um test-drive</button>
+      <button type="button" class="fc-chip" (click)="perguntar('Escolher um modelo', 'modelos')">Comparar modelos</button>
+      <button type="button" class="fc-chip" (click)="perguntar('Entender a nota da IA', 'ia')">Entender a nota da IA</button>
+    </div>
+
+    <div class="fc-seia-ask">
+      <span class="fc-seia-placeholder">Pergunte algo para a SEIA…</span>
+      <button type="button" class="fc-seia-go" (click)="abrirChatSeia()">
+        Acessar chat
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+      </button>
+    </div>
+  </section>
+
+  <div class="fc-side">
+
+    <!-- Central de Relacionamento -->
+    <section class="fc-card" aria-labelledby="fc-central-titulo">
+      <div class="fc-card-head">
+        <span class="fc-card-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 14v-2a8 8 0 0 1 16 0v2" /><path d="M4 14h3v5H5.5A1.5 1.5 0 0 1 4 17.5V14z" /><path d="M20 14h-3v5h1.5a1.5 1.5 0 0 0 1.5-1.5V14z" /><path d="M17 19v.5a2.5 2.5 0 0 1-2.5 2.5H12" /></svg>
+        </span>
+        <div>
+          <h2 class="fc-card-title" id="fc-central-titulo">Central de Relacionamento Ford</h2>
+          <p class="fc-card-sub">Fale com um atendente · questões complexas e suporte dedicado</p>
         </div>
-
-        <!-- Card 2: Central de Relacionamento -->
-        <div class="card-canal">
-          <div class="card-header">
-            <i class="fa-solid fa-headset header-icon"></i>
-            <h3>Central de Relacionamento Ford</h3>
-          </div>
-          <div class="card-body">
-            <h4>Fale com um atendente</h4>
-            <p>Para questões complexas e suporte dedicado</p>
-            
-            <div class="telefones-lista">
-              <div class="telefone-item">
-                <i class="fa-solid fa-phone"></i>
-                <div class="tel-info">
-                  <strong>0800-000-0000</strong>
-                  <span>Seg-Sex 8h-20h</span>
-                </div>
-              </div>
-              <div class="telefone-item">
-                <i class="fa-solid fa-phone"></i>
-                <div class="tel-info">
-                  <strong>0800-000-0001</strong>
-                  <span>Seg-Sex 8h-20h</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="card-footer">
-            <a href="tel:08000000000" class="btn-primary">Ligar Agora</a>
-          </div>
-        </div>
-
-        <!-- Card 3: Atalhos -->
-        <div class="card-canal">
-          <div class="card-header">
-            <i class="fa-regular fa-circle-question header-icon"></i>
-            <h3>Atalhos</h3>
-          </div>
-          <div class="card-body">
-            <h4>Vá direto ao que precisa</h4>
-            
-            <div class="links-rapidos">
-              <a routerLink="/agendamentos">Agendar visita</a>
-              <a routerLink="/modelos">Ver modelos</a>
-              <a routerLink="/sobre-ia">Como a IA decide</a>
-            </div>
-
-          </div>
-        </div>
-
       </div>
 
-      <!-- Widget Flutuante da SEIA -->
-      @if (!chatAberto()) {
-        <div class="widget-seia" (click)="abrirChatSeia()">
-          <span class="badge-status">SEIA ON</span>
-          <button class="btn-widget-seia" type="button" title="Conversar com a SEIA">
-            <i class="fa-solid fa-robot"></i>
-          </button>
+      <ul class="fc-phones">
+        @for (t of telefones; track t.numero) {
+          <li class="fc-phone">
+            <span>
+              <strong>{{ t.numero }}</strong>
+              <small>{{ t.horario }}</small>
+            </span>
+            <a class="fc-phone-call" [href]="'tel:' + t.tel" [attr.aria-label]="'Ligar para ' + t.numero">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 16.9v2.4a2 2 0 0 1-2.2 2 19.4 19.4 0 0 1-8.4-3 19 19 0 0 1-5.8-5.8 19.4 19.4 0 0 1-3-8.5A2 2 0 0 1 3.4 2h2.5a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.7a2 2 0 0 1-.5 2.1L7 9.7a15.8 15.8 0 0 0 5.9 5.9l1.2-1.1a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2z" /></svg>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+
+    <!-- Atalhos -->
+    <section class="fc-card" aria-labelledby="fc-atalhos-titulo">
+      <div class="fc-card-head fc-card-head--split">
+        <h2 class="fc-card-title" id="fc-atalhos-titulo">Atalhos</h2>
+        <span class="fc-card-aside">vá direto ao que precisa</span>
+      </div>
+      <div class="fc-shortcuts">
+        @for (a of atalhos; track a.rota) {
+          <a class="fc-shortcut" [routerLink]="a.rota">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" /></svg>
+            <span>{{ a.rotulo }}</span>
+          </a>
+        }
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<seia-rodape />
+
+<!-- Widget flutuante da SEIA -->
+@if (!chatAberto()) {
+  <button type="button" class="fc-widget" (click)="abrirChatSeia()" aria-label="Conversar com a SEIA">
+    <span class="fc-widget-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M12 3.5V7" /><path d="M6 7h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z" /><path d="M9 12.5h.01M15 12.5h.01" /><path d="M9.5 15.5h5" /></svg>
+    </span>
+    <span class="fc-widget-text"><strong>SEIA</strong><small><i aria-hidden="true"></i>online</small></span>
+  </button>
+}
+
+<!-- Painel de chat da SEIA -->
+@if (chatAberto()) {
+  <div class="fc-chat" role="dialog" aria-label="Chat com a SEIA">
+    <div class="fc-chat-head">
+      <div class="fc-chat-who">
+        <span class="fc-chat-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3.5V7" /><path d="M6 7h12a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2z" /><path d="M9 12.5h.01M15 12.5h.01" /><path d="M9.5 15.5h5" /></svg>
+        </span>
+        <span class="fc-chat-name"><strong>SEIA</strong><small>assistente Ford · online</small></span>
+      </div>
+      <button type="button" class="fc-chat-close" (click)="fecharChat()" aria-label="Fechar chat">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+    </div>
+
+    <div class="fc-chat-messages" #listaMensagens>
+      @for (m of mensagens(); track $index) {
+        <div class="fc-msg" [class.fc-msg--user]="m.autor === 'usuario'" [class.fc-msg--seia]="m.autor === 'seia'">
+          {{ m.texto }}
         </div>
       }
-
-      <!-- Painel de Chat da SEIA -->
-      @if (chatAberto()) {
-        <div class="painel-chat-seia" role="dialog" aria-label="Chat com a SEIA">
-          <div class="chat-cabecalho">
-            <div class="chat-cabecalho-info">
-              <i class="fa-solid fa-robot"></i>
-              <div class="chat-cabecalho-texto">
-                <strong>SEIA</strong>
-                <span>assistente Ford · online</span>
-              </div>
-            </div>
-            <button type="button" class="chat-fechar" (click)="fecharChat()" aria-label="Fechar chat">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
-
-          <div class="chat-mensagens" #listaMensagens>
-            @for (m of mensagens(); track $index) {
-              <div class="chat-msg" [class.chat-msg-usuario]="m.autor === 'usuario'" [class.chat-msg-seia]="m.autor === 'seia'">
-                {{ m.texto }}
-              </div>
-            }
-            @if (chatDigitando()) {
-              <div class="chat-msg chat-msg-seia chat-msg-digitando">
-                <span></span><span></span><span></span>
-              </div>
-            }
-          </div>
-
-          <div class="chat-opcoes" role="group" aria-label="Escolha uma opção">
-            @for (o of opcoes(); track o.rotulo) {
-              <button
-                type="button"
-                class="chat-opcao"
-                [class.chat-opcao-acao]="o.rota || o.tel"
-                [disabled]="chatDigitando()"
-                (click)="escolher(o)">{{ o.rotulo }}</button>
-            }
-          </div>
+      @if (chatDigitando()) {
+        <div class="fc-msg fc-msg--seia fc-msg--typing" aria-label="A SEIA está digitando">
+          <span></span><span></span><span></span>
         </div>
       }
     </div>
-  </main>
 
-  <seia-rodape />
-</div>
+    <div class="fc-chat-options" role="group" aria-label="Escolha uma opção">
+      @for (o of opcoes(); track o.rotulo) {
+        <button
+          type="button"
+          class="fc-option"
+          [class.fc-option--action]="o.rota || o.tel"
+          [disabled]="chatDigitando()"
+          (click)="escolher(o)">{{ o.rotulo }}</button>
+      }
+    </div>
+  </div>
+}

@@ -1,8 +1,8 @@
 <seia-topbar (navegar)="ir($event)" (sair)="sair()" />
 
 <header class="l-ag-hero">
-  <h1 class="l-ag-title">Agendar visitas</h1>
-  <p class="l-ag-subtitle">Test-drive, revisão ou avaliação de usado nas unidades Ford.</p>
+  <p class="l-ag-eyebrow"><span aria-hidden="true"></span>Agendamentos</p>
+  <h1 class="l-ag-title">Marque sua visita <span>em {{ exigeModelo ? 4 : 3 }} passos.</span></h1>
 </header>
 
 <div class="l-ag-body">
@@ -12,7 +12,7 @@
     <section class="l-ag-step">
       <div class="l-ag-step-head">
         <span class="l-ag-step-n">01</span>
-        <h2 class="l-ag-step-title">O que você quer fazer</h2>
+        <h2 class="l-ag-step-title">O que você quer fazer?</h2>
       </div>
       <div class="l-ag-chips" role="group" aria-label="Tipo de atendimento">
         @for (t of tipos; track t.chave) {
@@ -21,7 +21,14 @@
             type="button"
             [class.is-on]="tipo === t.chave"
             [attr.aria-pressed]="tipo === t.chave"
-            (click)="escolherTipo(t.chave)">{{ t.rotulo }}</button>
+            (click)="escolherTipo(t.chave)">
+            <span class="l-ag-chip-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                @for (d of icones[t.icone]; track $index) { <path [attr.d]="d" /> }
+              </svg>
+            </span>
+            <span class="l-ag-chip-label">{{ t.rotulo }}</span>
+          </button>
         }
       </div>
     </section>
@@ -29,7 +36,7 @@
     <section class="l-ag-step">
       <div class="l-ag-step-head">
         <span class="l-ag-step-n">02</span>
-        <h2 class="l-ag-step-title">Em qual unidade</h2>
+        <h2 class="l-ag-step-title">Em qual unidade?</h2>
         <span class="l-ag-step-aside">{{ unidades.length }} perto de você</span>
       </div>
       <div class="l-ag-units" role="group" aria-label="Unidade">
@@ -40,6 +47,7 @@
             [class.is-on]="unidadeId === u.id"
             [attr.aria-pressed]="unidadeId === u.id"
             (click)="escolherUnidade(u.id)">
+            <span class="l-ag-unit-radio" aria-hidden="true"></span>
             <span>
               <span class="l-ag-unit-name">{{ u.nome }}</span>
               <span class="l-ag-unit-address">{{ u.endereco }} · {{ u.distanciaKm }} km</span>
@@ -54,13 +62,17 @@
       <section class="l-ag-step">
         <div class="l-ag-step-head">
           <span class="l-ag-step-n">03</span>
-          <h2 class="l-ag-step-title">Qual modelo</h2>
+          <h2 class="l-ag-step-title">Qual modelo?</h2>
           @if (modelo.nota !== null) {
             <span class="l-ag-step-aside">vindo da sua recomendação</span>
           }
         </div>
         <div class="l-ag-model">
-          <span>
+          @if (fotoModelo; as src) {
+            <img class="l-ag-model-photo" [src]="src" [alt]="'Ford ' + modelo.nome" loading="lazy" decoding="async" />
+          }
+          <span class="l-ag-model-text">
+            @if (modelo.segmento) { <span class="l-ag-model-segment">{{ modelo.segmento }}</span> }
             <span class="l-ag-model-name">{{ modelo.nome }}</span>
             <span class="l-ag-model-note">
               {{ modelo.disponivel ? 'disponível para test-drive nesta unidade' : 'sem unidade de demonstração aqui' }}
@@ -68,7 +80,7 @@
           </span>
           @if (modelo.nota !== null) {
             <span class="l-ag-model-score">
-              <strong>{{ modelo.nota }}</strong><span>% compatível</span>
+              <strong>{{ modelo.nota }}</strong><span>compatível</span>
             </span>
           }
         </div>
@@ -78,11 +90,15 @@
     <section class="l-ag-step">
       <div class="l-ag-step-head">
         <span class="l-ag-step-n">{{ exigeModelo ? '04' : '03' }}</span>
-        <h2 class="l-ag-step-title">Quando</h2>
+        <h2 class="l-ag-step-title">Quando?</h2>
         <span class="l-ag-step-aside">{{ periodo }}</span>
       </div>
 
+      <div class="l-ag-week" aria-hidden="true">
+        @for (s of semanaCabecalho; track s) { <span>{{ s }}</span> }
+      </div>
       <div class="l-ag-days" role="group" aria-label="Dia">
+        @for (v of vazios; track $index) { <span class="l-ag-day-blank" aria-hidden="true"></span> }
         @for (d of dias; track d.iso) {
           <button
             class="l-ag-day"
@@ -91,8 +107,8 @@
             [class.is-off]="d.status !== 'livre'"
             [disabled]="d.status !== 'livre'"
             [attr.aria-pressed]="dia === d.iso"
+            [attr.aria-label]="d.semana + ', dia ' + d.numero + ': ' + (d.status === 'livre' ? d.vagas + ' vagas' : d.status)"
             (click)="escolherDia(d)">
-            <span class="l-ag-day-week">{{ d.semana }}</span>
             <span class="l-ag-day-number">{{ d.numero }}</span>
             <span class="l-ag-day-slots">
               @switch (d.status) {
@@ -122,40 +138,47 @@
         <p class="l-ag-empty">Escolha um dia para ver os horários livres.</p>
       }
     </section>
-
-    <div class="l-ag-summary" [class.is-ready]="completo">
-      <p class="l-ag-summary-text">
-        @if (completo) {
-          <strong>{{ tipoRotulo }}@if (exigeModelo) { do {{ modelo.nome }} }</strong><br />
-          {{ unidade?.nome }} · {{ diaEscolhido?.semana }}, {{ diaEscolhido?.numero }} · às {{ hora }} · {{ requisitos[tipo] }}
-        } @else {
-          Escolha dia e horário para confirmar.
-        }
-      </p>
-      <button class="l-ag-confirm" type="button" [disabled]="!completo" (click)="enviar()">Confirmar</button>
-    </div>
   </main>
 
   <aside class="l-ag-rail">
-    <div class="l-ag-rail-label">Seus agendamentos</div>
+    <div class="l-ag-summary" [class.is-ready]="completo">
+      <div class="l-ag-summary-label">Resumo</div>
+      <dl class="l-ag-summary-rows">
+        <div><dt>Serviço</dt><dd>{{ tipoRotulo }}</dd></div>
+        <div><dt>Unidade</dt><dd>{{ unidade?.nome ?? '—' }}</dd></div>
+        @if (exigeModelo) {
+          <div><dt>Modelo</dt><dd>{{ modelo.nome }}</dd></div>
+        }
+        <div><dt>Dia</dt><dd>{{ dataResumo ?? '—' }}</dd></div>
+        <div><dt>Horário</dt><dd>{{ hora ?? '—' }}</dd></div>
+      </dl>
+      <button class="l-ag-confirm" type="button" [disabled]="!completo" (click)="enviar()">Confirmar agendamento</button>
+      <p class="l-ag-summary-note">
+        @if (completo) { {{ requisitos[tipo] }} } @else { Escolha dia e horário para confirmar. }
+      </p>
+    </div>
 
-    @for (a of agendamentos; track a.id) {
-      <article class="l-ag-card" [class.is-past]="a.passado">
-        <div class="l-ag-card-when">{{ a.quando }}</div>
-        <h3 class="l-ag-card-title">{{ a.titulo }}</h3>
-        <p class="l-ag-card-unit">{{ a.unidade }}<br />{{ a.detalhe }}</p>
-        <div class="l-ag-card-actions">
-          @if (!a.passado) {
-            <button type="button" class="l-ag-action" (click)="remarcar(a)">Remarcar</button>
-            <button type="button" class="l-ag-action is-muted" (click)="excluirAgendamento(a)">Cancelar</button>
-          } @else {
-            <button type="button" class="l-ag-action" (click)="verComparacao()">Ver comparação</button>
-          }
-        </div>
-      </article>
-    } @empty {
-      <p class="l-ag-empty">Você ainda não tem visitas marcadas.</p>
-    }
+    <div class="l-ag-mine">
+      <div class="l-ag-rail-label">Seus agendamentos</div>
+
+      @for (a of agendamentos; track a.id) {
+        <article class="l-ag-card" [class.is-past]="a.passado">
+          <div class="l-ag-card-when">{{ a.quando }}</div>
+          <h3 class="l-ag-card-title">{{ a.titulo }}</h3>
+          <p class="l-ag-card-unit">{{ a.unidade }}<br />{{ a.detalhe }}</p>
+          <div class="l-ag-card-actions">
+            @if (!a.passado) {
+              <button type="button" class="l-ag-action" (click)="remarcar(a)">Remarcar</button>
+              <button type="button" class="l-ag-action is-muted" (click)="excluirAgendamento(a)">Cancelar</button>
+            } @else {
+              <button type="button" class="l-ag-action" (click)="verComparacao()">Ver comparação</button>
+            }
+          </div>
+        </article>
+      } @empty {
+        <p class="l-ag-empty">Você ainda não tem visitas marcadas.</p>
+      }
+    </div>
   </aside>
 </div>
 
