@@ -2,9 +2,10 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
+import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
+import { fotoDoModelo } from '../shared/fotos-modelos';
 
 export interface PerfilUso {
   uso: string;
@@ -201,6 +202,14 @@ export class PerfilComponent {
     const [primeiro, ...resto] = this.calcularRanking();
     return { modelo: primeiro.modelo, nota: primeiro.nota, outros: resto.slice(0, 2) };
   }
+
+  /** Foto do modelo mais compatível (ou null quando não há foto dele). */
+  get fotoPrevia(): string | null {
+    return fotoDoModelo(this.previa.modelo);
+  }
+
+  /** Ícone de pessoa, mostrado no avatar enquanto não há nome nem e-mail para tirar as iniciais. */
+  readonly iconePerfil = ICONES['perfil'];
 
   private orcamentoNumero(): number | null {
     const digitos = this.uso.orcamento.replace(/\D/g, '');
