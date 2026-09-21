@@ -11,14 +11,13 @@ import { Router } from '@angular/router';
 export class RodapeComponent {
   private router = inject(Router);
 
-  /** Só os links com página real navegam. Os demais ficam inertes até existir conteúdo pra eles. */
+  /** Só os links com página real navegam. Os demais são links de fachada: reagem ao clique, mas não levam a lugar nenhum. */
   private readonly rotas: Record<string, string> = {
     cookies: '/termos',
-    privacidade: '/termos',
-    contato: '/fale-conosco',
   };
 
-  ir(chave: string): void {
+  ir(chave: string, evento: Event): void {
+    evento.preventDefault();
     const rota = this.rotas[chave];
     if (rota) this.router.navigateByUrl(rota);
   }
