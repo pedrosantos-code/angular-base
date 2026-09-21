@@ -216,61 +216,84 @@ button.l-md-primary:focus-visible { outline: 2px solid #fff; outline-offset: 2px
 
 /* ===== Modal de comparação ===== */
 .l-md-modal-backdrop {
-  position: fixed; inset: 0; z-index: 40;
-  background: rgba(0,10,23,.6);
+  /* Acima do cabeçalho fixo do site (z-index 90), senão ele cobre o topo do modal */
+  position: fixed; inset: 0; z-index: 120;
+  background: rgba(0,10,23,.6); backdrop-filter: blur(3px);
   display: grid; place-items: center;
   padding: 24px;
 }
 .l-md-modal {
-  background: #fff; width: min(920px, 100%); max-height: 86vh;
+  background: #fff; width: min(980px, 100%); max-height: 88vh;
   display: flex; flex-direction: column; overflow: hidden;
-  border-radius: 3px;
+  border-radius: 24px; box-shadow: 0 24px 80px rgba(0,10,23,.35);
 }
 .l-md-modal-head {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px 22px; border-bottom: 1px solid #E2EAF2;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 22px 28px; border-bottom: 1px solid #EDF1F5;
 }
-.l-md-modal-head h2 { margin: 0; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 19px; color: #001730; }
-button.l-md-modal-close { font-size: 16px; color: #6E8CA8; padding: 4px 8px; }
-.l-md-modal-close:hover { color: #001730; }
-.l-md-modal-close:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-modal-kicker { margin: 0 0 4px; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #2E7DD1; }
+.l-md-modal-head h2 { margin: 0; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; letter-spacing: -.02em; color: #001730; }
+button.l-md-modal-close {
+  display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%;
+  background: #F1F4F8; color: #3C4B5B; transition: background .16s, color .16s;
+}
+button.l-md-modal-close:hover { background: #E4EAF1; color: #001730; }
+button.l-md-modal-close:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-modal-close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
-.l-md-compare-table-wrap { overflow: auto; padding: 22px; }
-.l-md-compare-table { width: 100%; border-collapse: collapse; }
-.l-md-compare-table th, .l-md-compare-table td {
-  border-bottom: 1px solid #EDF1F5; padding: 12px 16px; text-align: left; vertical-align: top;
-  font-size: 13.5px; color: #3C4B5B;
+.l-md-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+.l-md-compare-table-wrap { overflow: auto; padding: 4px 28px 28px; }
+.l-md-compare-table {
+  --primeira: 150px; --coluna: 210px;
+  /* Colunas de larguras iguais (as fotos ficam do mesmo tamanho); com o espaço curto, a tabela rola na horizontal */
+  table-layout: fixed; width: 100%; min-width: calc(var(--primeira) + var(--n, 2) * var(--coluna));
+  border-collapse: separate; border-spacing: 0;
 }
-.l-md-compare-table thead th {
-  vertical-align: top; min-width: 170px;
-}
+.l-md-compare-table thead th { padding: 20px 12px 18px; text-align: left; vertical-align: top; font-weight: 400; }
+.l-md-compare-table thead th:first-child { width: var(--primeira); }
+.l-md-compare-table tbody th, .l-md-compare-table tbody td { padding: 18px 12px; border-top: 1px solid #EDF1F5; vertical-align: middle; text-align: left; }
+.l-md-compare-table tbody td { font-size: 15px; line-height: 1.4; color: #1E2B3D; }
 .l-md-compare-table tbody th {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11.5px;
-  letter-spacing: .04em; text-transform: uppercase; color: #55677A;
-  white-space: nowrap; font-weight: 700;
+  position: sticky; left: 0; z-index: 1; background: #fff; line-height: 1.5;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: #6B7A8C;
 }
-.l-md-ct-cap { text-transform: capitalize; }
+.l-md-compare-table thead th:first-child { position: sticky; left: 0; z-index: 1; background: #fff; }
 
-.l-md-ct-photo {
-  display: block; height: 96px; border-radius: 2px; overflow: hidden;
-  background: linear-gradient(160deg, #dfe6ee, #c9d5e2); margin-bottom: 10px;
-}
-.l-md-ct-photo img { width: 100%; height: 100%; object-fit: cover; }
-.l-md-ct-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 15px; color: #001730; }
+.l-md-ct-photo { display: block; aspect-ratio: 16 / 10; border-radius: 16px; overflow: hidden; background: linear-gradient(160deg, #DFE6EE, #C9D5E2); margin-bottom: 14px; }
+.l-md-ct-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.l-md-ct-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 18px; letter-spacing: -.01em; color: #001730; }
 .l-md-ct-segment {
-  display: block; font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10.5px; text-transform: uppercase; color: #55677A; margin-top: 3px;
+  display: inline-block; margin-top: 8px; padding: 4px 10px; border-radius: 999px; background: #EAF1FB; color: #0B57A4;
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
 }
 button.l-md-ct-remove {
-  margin-top: 8px; font-size: 11.5px; color: #C0392B; text-decoration: underline; text-underline-offset: 2px;
+  display: flex; align-items: center; gap: 6px; margin-top: 12px; padding: 5px 12px 5px 9px; border: 1px solid #E1E7EF; border-radius: 999px; background: #fff;
+  font-size: 12px; font-weight: 600; color: #6B7A8C; transition: color .16s, border-color .16s, background .16s;
 }
-.l-md-ct-nota { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 16px; color: #002B5C; }
+button.l-md-ct-remove:hover { color: #B91C1C; border-color: #F3C0BA; background: #FEF5F4; }
+button.l-md-ct-remove:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-ct-remove svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; }
+
+.l-md-ct-valor { display: block; }
+.is-preco .l-md-ct-valor { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: -.02em; color: #001730; }
+.l-md-ct-selo { display: inline-block; margin-top: 6px; padding: 3px 10px; border-radius: 999px; background: #DCFCE7; color: #166534; font-size: 11px; font-weight: 700; }
+/* Empate no melhor valor: selo neutro em vez do verde */
+.l-md-ct-selo.is-empate { background: #EDF1F5; color: #55677A; }
+/* Todos iguais: a linha não diferencia os carros, então fica esmaecida */
+.l-md-compare-table tr.is-igual td { color: #8A99AB; }
+.is-preco.is-igual .l-md-ct-valor { color: #8A99AB; }
+.l-md-ct-nota { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 18px; color: #002B5C; }
 
 @media (max-width: 640px) {
   .l-md-modal-backdrop { padding: 0; }
   .l-md-modal { max-height: 100vh; height: 100%; width: 100%; border-radius: 0; }
+  .l-md-modal-head { padding: 16px 18px; }
+  .l-md-modal-head h2 { font-size: 22px; }
+  .l-md-compare-table-wrap { padding: 0 12px 20px; }
+  .l-md-compare-table { --primeira: 92px; --coluna: 172px; }
+  .l-md-compare-table tbody th { font-size: 9.5px; }
 }
-
 /* ===== Modal de vistas (fotos) ===== */
 .l-md-vistas-modal { width: min(760px, 100%); }
 .l-md-vistas-body { overflow: auto; padding: 22px; }

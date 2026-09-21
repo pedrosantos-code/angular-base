@@ -206,46 +206,47 @@
 
 @if (compararAtivo) {
   <div class="l-md-modal-backdrop" (click)="fecharComparacao()">
-    <div class="l-md-modal" role="dialog" aria-modal="true" aria-label="Comparação de modelos" (click)="$event.stopPropagation()">
+    <div class="l-md-modal" role="dialog" aria-modal="true" aria-labelledby="md-cmp-titulo" (click)="$event.stopPropagation()">
       <div class="l-md-modal-head">
-        <h2>Comparar modelos</h2>
-        <button class="l-md-modal-close" type="button" (click)="fecharComparacao()" aria-label="Fechar comparação">✕</button>
+        <div>
+          <p class="l-md-modal-kicker">Lado a lado</p>
+          <h2 id="md-cmp-titulo">Comparar modelos</h2>
+        </div>
+        <button class="l-md-modal-close" type="button" (click)="fecharComparacao()" aria-label="Fechar comparação">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
       </div>
 
       <div class="l-md-compare-table-wrap">
-        <table class="l-md-compare-table">
+        <table class="l-md-compare-table" [style.--n]="modelosComparados.length">
           <thead>
             <tr>
-              <th></th>
+              <th scope="col"><span class="l-md-sr">Característica</span></th>
               @for (m of modelosComparados; track m.id) {
-                <th>
+                <th scope="col">
                   <span class="l-md-ct-photo">
-                    @if (m.imagem) { <img [src]="m.imagem" [alt]="m.nome" loading="lazy" /> }
+                    @if (m.imagem) { <img [src]="m.imagem" [alt]="'Ford ' + m.nome" loading="lazy" /> }
                   </span>
                   <span class="l-md-ct-name">{{ m.nome }}</span>
                   <span class="l-md-ct-segment">{{ m.segmento }}</span>
-                  <button class="l-md-ct-remove" type="button" (click)="removerDaComparacao(m.id)">remover</button>
+                  <button class="l-md-ct-remove" type="button" (click)="removerDaComparacao(m.id)" [attr.aria-label]="'Remover ' + m.nome + ' da comparação'">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>Remover
+                  </button>
                 </th>
               }
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <th scope="row">Preço a partir de</th>
-              @for (m of modelosComparados; track m.id) { <td>{{ preco(m.precoDe) }}</td> }
-            </tr>
-            <tr>
-              <th scope="row">Motorização</th>
-              @for (m of modelosComparados; track m.id) { <td class="l-md-ct-cap">{{ m.motorizacao }}</td> }
-            </tr>
-            <tr>
-              <th scope="row">Ficha técnica</th>
-              @for (m of modelosComparados; track m.id) {
-                <td>
-                  @for (f of m.ficha; track f) { {{ f }}<br /> }
-                </td>
-              }
-            </tr>
+            @for (l of linhasComparacao; track l.rotulo) {
+              <tr [class.is-preco]="l.rotulo === 'Preço a partir de'" [class.is-igual]="l.igual">
+                <th scope="row">{{ l.rotulo }}</th>
+                @for (c of l.celulas; track $index) {
+                  <td>
+                    <span class="l-md-ct-valor">{{ c.texto }}</span>
+                    @if (c.selo) { <span class="l-md-ct-selo" [class.is-empate]="c.empate">{{ c.selo }}</span> }                  </td>
+                }
+              </tr>
+            }
             @if (perfil) {
               <tr>
                 <th scope="row">Compatibilidade</th>
@@ -269,7 +270,6 @@
     </div>
   </div>
 }
-
 @if (vistaAtiva) {
   <div class="l-md-modal-backdrop" (click)="fecharVistas()">
     <div class="l-md-modal l-md-vistas-modal" role="dialog" aria-modal="true" [attr.aria-label]="'Fotos do ' + vistaAtiva.nome" (click)="$event.stopPropagation()">

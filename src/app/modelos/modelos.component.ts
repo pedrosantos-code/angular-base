@@ -10,6 +10,21 @@ import { AuthService } from '../auth.service';
 export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
 export type Ordenacao = 'compatibilidade' | 'preco' | 'nome';
 
+/** Uma célula da tabela de comparação; `selo` marca o melhor da linha ("Menor preço"). */
+export interface CelulaComparacao {
+  texto: string;
+  selo?: string;
+  /** true quando o selo é o cinza "Empate" (vários carros dividem o melhor valor). */
+  empate?: boolean;
+}
+
+export interface LinhaComparacao {
+  rotulo: string;
+  celulas: CelulaComparacao[];
+  /** Todos os carros têm o mesmo valor: a linha não diferencia e aparece esmaecida. */
+  igual: boolean;
+}
+
 export interface Modelo {
   id: string;
   nome: string;
@@ -298,6 +313,52 @@ export class ModelosComponent {
   get modelosComparados(): Modelo[] {
     const ids = [...this.selecionados];
     return this.modelos.filter((m) => ids.includes(m.id));
+  }
+
+  /**
+   * Linhas da tabela de comparação, com o melhor de cada uma destacado:
+   * - um vencedor único (menor preço, maior potência) ganha o selo verde;
+   * - vários carros empatados no melhor valor ganham, cada um, o selo cinza "Empate";
+   * - uma linha em que todos são iguais fica esmaecida (`igual`), porque ali os carros não se diferenciam.
+   */
+  get linhasComparacao(): LinhaComparacao[] {
+    const ms = this.modelosComparados;
+    const valorDe = (m: Modelo, rotulo: string) => this.destaques(m).find((d) => d.rotulo === rotulo)?.valor ?? null;
+    const numero = (texto: string | null) => (texto ? Number(texto.replace(/\D/g, '')) || null : null);
+
+    const linha = (rotulo: string, textos: (string | null)[], melhor?: { indices: number[]; selo: string }): LinhaComparacao => {
+      const empate = (melhor?.indices.length ?? 0) > 1;
+      const celulas: CelulaComparacao[] = textos.map((texto, i) => {
+        const vence = !!melhor?.indices.includes(i);
+        return { texto: texto ?? '—', selo: vence ? (empate ? 'Empate' : melhor?.selo) : undefined, empate: vence && empate ? true : undefined };
+      });
+      const igual = celulas.length > 1 && celulas[0].texto !== '—' && celulas.every((c) => c.texto === celulas[0].texto);
+      return { rotulo, celulas, igual };
+    };
+
+    /** Índices do menor/maior valor, só quando há diferença entre os modelos comparados. */
+    const vencedores = (valores: (number | null)[], menor: boolean): number[] => {
+      const validos = valores.filter((v): v is number => v !== null);
+      if (validos.length < 2 || new Set(validos).size < 2) return [];
+      const alvo = menor ? Math.min(...validos) : Math.max(...validos);
+      return valores.flatMap((v, i) => (v === alvo ? [i] : []));
+    };
+
+    const potencias = ms.map((m) => numero(valorDe(m, 'Potência')));
+    const tracaoOuCapacidade = ms.map((m) => {
+      const d = this.destaques(m).find((x) => ['Tração', 'Autonomia', 'Capacidade'].includes(x.rotulo));
+      return d ? `${d.rotulo} ${d.valor}` : null;
+    });
+    const lugares = ms.map((m) => valorDe(m, 'Lugares'));
+
+    return [
+      linha('Preço a partir de', ms.map((m) => this.preco(m.precoDe)), { indices: vencedores(ms.map((m) => m.precoDe), true), selo: 'Menor preço' }),
+      linha('Motorização', ms.map((m) => this.rotuloMotorizacao(m))),
+      linha('Motor', ms.map((m) => this.motorDoModelo(m) || null)),
+      linha('Potência', ms.map((m) => valorDe(m, 'Potência')), { indices: vencedores(potencias, false), selo: 'Mais potente' }),
+      linha('Tração e capacidade', tracaoOuCapacidade),
+      linha('Lugares', lugares.map((l) => (l ? `${l} lugares` : null))),
+    ];
   }
 
   comparar(): void {
