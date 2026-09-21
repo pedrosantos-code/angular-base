@@ -131,7 +131,6 @@ export class PerfilComponent {
     this.carregarSalvo();
     this.usoOriginal = structuredClone(this.uso);
     this.contaOriginal = structuredClone(this.conta);
-    this.sincronizarComModelos();
 
     // O e-mail vem da sessão de login, não do que ficou salvo no navegador.
     this.authService.getCurrentUserEmail().subscribe({
@@ -180,7 +179,6 @@ export class PerfilComponent {
     } catch {
       // O perfil remoto continua disponível mesmo sem acesso ao localStorage.
     }
-    this.sincronizarComModelos();
   }
 
   /** Restaura o que foi salvo antes — sem isso, um F5 devolveria os campos a zero mesmo depois de "Salvar". */
@@ -333,7 +331,7 @@ export class PerfilComponent {
   private readonly chaveFavoritos = 'seia-favoritos';
   private readonly chaveComparacoesUltima = 'seia-comparacoes-ultima';
 
-  /** Contagens lidas do que o perfil atual está sugerindo — a mesma lista que aparece em /modelos. */
+  /** Quantos carros a pessoa marcou à mão em /modelos (favoritos e última comparação): sem número fixo, pode ser até o total do catálogo. */
   get atalhos(): { chave: string; rotulo: string; contagem: number }[] {
     return [
       { chave: 'favoritos', rotulo: 'Favoritos', contagem: this.contarSalvos(this.chaveFavoritos) },
@@ -356,28 +354,6 @@ export class PerfilComponent {
       return (JSON.parse(salvo) as unknown[]).length;
     } catch {
       return 0;
-    }
-  }
-
-  /**
-   * Favorita TODOS os modelos que combinam com o "Uso principal" escolhido — não é um top 3 fixo,
-   * varia conforme quantos modelos realmente têm aquela tag (ex.: Off-road tem 5, Trabalho tem 6...).
-   * A comparação é sempre o top 3 exato do painel "Com este perfil" (modelo + outros), sem o filtro
-   * de uso — assim "Minhas comparações" bate certinho com o que aparece ali.
-   */
-  private sincronizarComModelos(): void {
-    const ranking = this.calcularRanking();
-    const combinam = ranking.filter((r) => r.combinaComUso);
-    const baseFavoritos = combinam.length ? combinam : ranking;
-
-    const favoritosIds = baseFavoritos.map((r) => r.id);
-    const comparacaoIds = ranking.slice(0, 3).map((r) => r.id);
-
-    try {
-      localStorage.setItem(this.chaveFavoritos, JSON.stringify(favoritosIds));
-      localStorage.setItem(this.chaveComparacoesUltima, JSON.stringify(comparacaoIds));
-    } catch {
-      // localStorage indisponível — a sugestão vale só pra esta sessão.
     }
   }
 
@@ -424,8 +400,8 @@ export class PerfilComponent {
     return a.length === b.length && [...a].sort().join('|') === [...b].sort().join('|');
   }
 
-  escolherUso(v: string): void { this.uso.uso = v; this.sincronizarComModelos(); }
-  escolherPassageiros(v: string): void { this.uso.passageiros = v; this.sincronizarComModelos(); }
+  escolherUso(v: string): void { this.uso.uso = v; }
+  escolherPassageiros(v: string): void { this.uso.passageiros = v; }
 
   alternarPrioridade(v: string): void {
     const i = this.uso.prioridades.indexOf(v);
@@ -434,7 +410,6 @@ export class PerfilComponent {
       if (this.uso.prioridades.length >= this.maxPrioridades) this.uso.prioridades.shift();
       this.uso.prioridades.push(v);
     }
-    this.sincronizarComModelos();
   }
 
   /** Rodagem e orçamento só aceitam dígitos: letras e símbolos (inclusive colados) são descartados na hora. */
@@ -443,7 +418,6 @@ export class PerfilComponent {
     const limpo = input.value.replace(/\D/g, '');
     if (input.value !== limpo) input.value = limpo;
     this.uso[campo] = limpo;
-    this.sincronizarComModelos();
   }
 
   /** Telefone só aceita dígitos (até 11) e aparece no formato (00) 00000-0000, ou (00) 0000-0000 quando fixo. */

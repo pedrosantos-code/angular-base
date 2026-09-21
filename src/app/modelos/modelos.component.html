@@ -205,21 +205,41 @@
     </div>
 
     @if (selecionados.size) {
-      <div class="l-md-compare-bar">
-        <span class="l-md-compare-count">
-          <strong>{{ selecionados.size }}</strong>
-          {{ selecionados.size === 1 ? 'modelo selecionado' : 'modelos selecionados' }}
-          @if (selecionados.size === 1) { · escolha mais um para comparar }
-        </span>
+      <div class="l-md-compare-bar" role="region" aria-label="Modelos escolhidos para comparar">
+        <div class="l-md-picks-wrap">
+          <ul class="l-md-picks">
+            @for (m of escolhidosNaBarra; track m.id) {
+              <li class="l-md-pick">
+                <span class="l-md-pick-photo">
+                  @if (m.imagem) { <img [src]="m.imagem" [alt]="'Ford ' + m.nome" /> }
+                </span>
+                <span class="l-md-pick-name">{{ m.nome }}</span>
+                <button class="l-md-pick-x" type="button" (click)="removerDaComparacao(m.id)" [attr.aria-label]="'Tirar ' + m.nome + ' da comparação'">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                </button>
+              </li>
+            }
+            @if (restantesNaBarra > 0) {
+              <li class="l-md-pick l-md-pick--mais" [title]="nomesRestantes">{{ rotuloRestantes }}</li>
+            }
+          </ul>
+          <span class="l-md-compare-count" role="status">
+            @if (selecionados.size === 1) {
+              Escolha mais um modelo para comparar
+            } @else {
+              <strong>{{ selecionados.size }}</strong> modelos prontos para comparar
+            }
+          </span>
+        </div>
         <span class="l-md-compare-actions">
           <button class="l-md-clear" type="button" (click)="limparSelecao()">Limpar</button>
           <button class="l-md-primary" type="button" [disabled]="selecionados.size < 2" (click)="comparar()">
             Comparar lado a lado
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
           </button>
         </span>
       </div>
-    }
-  </main>
+    }  </main>
 </div>
 
 <seia-rodape />

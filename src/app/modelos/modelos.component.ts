@@ -136,7 +136,41 @@ export class ModelosComponent {
 
   /** Abaixo disso a barra clareia: está listado, mas fora do perfil. */
   readonly corteFraco = 70;
-  readonly maxComparar = 3;
+  /** Quantos carros aparecem com foto na barra de comparação; o resto vira "+ N carro(s)". */
+  readonly fotosNaBarra = 3;
+
+  /** Os primeiros carros escolhidos (na ordem em que foram marcados), com foto na barra. */
+  get escolhidosNaBarra(): Modelo[] {
+    return [...this.selecionados]
+      .slice(0, this.fotosNaBarra)
+      .map((id) => this.modelos.find((m) => m.id === id))
+      .filter((m): m is Modelo => !!m);
+  }
+
+  /** Carros escolhidos além dos que aparecem com foto. */
+  get restantesNaBarra(): number {
+    return Math.max(0, this.selecionados.size - this.fotosNaBarra);
+  }
+
+  /** "+ 1 carro" / "+ 2 carros": singular para um, plural para mais de um. */
+  get rotuloRestantes(): string {
+    const n = this.restantesNaBarra;
+    return `+ ${n} ${n === 1 ? 'carro' : 'carros'}`;
+  }
+
+  /** Nomes dos carros que ficaram de fora da barra (dica ao passar o mouse no "+ N"). */
+  get nomesRestantes(): string {
+    return [...this.selecionados]
+      .slice(this.fotosNaBarra)
+      .map((id) => this.modelos.find((m) => m.id === id)?.nome)
+      .filter(Boolean)
+      .join(', ');
+  }
+
+  /** Sem limite fixo: dá para comparar até o total de carros do catálogo (a tabela rola na horizontal). */
+  get maxComparar(): number {
+    return this.modelos.length;
+  }
 
   categoria = 'todos';
   motorizacoesAtivas = new Set<Motorizacao>();
