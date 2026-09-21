@@ -1,5 +1,24 @@
 <seia-topbar tema="claro" (navegar)="ir($event)" (sair)="sair()" />
 
+<!-- Linhas de luz atrás de tudo: SVG do tamanho da tela, animado só com CSS (ver .l-md-stream) -->
+<svg class="l-md-streams" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  <defs>
+    <!-- some no começo, azul no meio, ciano na ponta -->
+    <linearGradient id="l-md-sg" x1="0" x2="1">
+      <stop offset="0" stop-color="#1F5BE0" stop-opacity="0" />
+      <stop offset=".55" stop-color="#1F5BE0" />
+      <stop offset="1" stop-color="#06B6D4" />
+    </linearGradient>
+  </defs>
+  @for (l of linhasDeLuz; track $index) {
+    <!-- trilho fixo, quase invisível -->
+    <path [attr.d]="l.d" fill="none" stroke="rgba(31,91,224,.07)" stroke-width="1" />
+    <!-- a luz que corre por cima -->
+    <path class="l-md-stream" [attr.d]="l.d" fill="none" stroke="url(#l-md-sg)" [attr.stroke-width]="l.espessura"
+          stroke-linecap="round" pathLength="1000" [style.animation-duration]="l.duracao + 's'" [style.animation-delay]="l.atraso + 's'" />
+  }
+</svg>
+
 <div class="l-md-shell">
 
   <header class="l-md-hero">
@@ -118,69 +137,69 @@
     <div class="l-md-grid">
       @for (m of filtrados; track m.id) {
         <article class="l-md-card" [class.is-selected]="selecionados.has(m.id)">
-          <button
-            class="l-md-favorito"
-            type="button"
-            [class.is-on]="favoritos.has(m.id)"
-            [attr.aria-pressed]="favoritos.has(m.id)"
-            [attr.aria-label]="favoritos.has(m.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
-            (click)="alternarFavorito(m.id, $event)">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M12 20.5s-7.5-4.6-10-9.2C.6 8 2 4.5 5.5 4c2-.3 3.8.6 5 2.2C11.7 4.6 13.5 3.7 15.5 4 19 4.5 20.4 8 19 11.3c-2.5 4.6-7 9.2-7 9.2z" />
-            </svg>
-          </button>
-
-          <button class="l-md-card-open" type="button" (click)="abrirFicha(m)">
+          <button class="l-md-card-open" type="button" (click)="abrirFicha(m)" [attr.aria-label]="'Ver detalhes do ' + m.nome">
             <span class="l-md-photo">
               @if (m.imagem) {
-                <img [src]="m.imagem" [alt]="m.nome" loading="lazy" />
+                <img [src]="m.imagem" [alt]="'Ford ' + m.nome" loading="lazy" />
               }
-              <span class="l-md-chip">{{ rotuloMotorizacao(m) }}</span>
+              <span class="l-md-chip">{{ m.segmento }}</span>
             </span>
             <span class="l-md-card-body">
               <span class="l-md-card-head">
-                <span class="l-md-segment">{{ m.segmento }}</span>
+                <span class="l-md-card-title">
+                  <span class="l-md-name">{{ m.nome }}</span>
+                  <span class="l-md-spec">{{ resumoCurto(m) }}</span>
+                </span>
                 <span class="l-md-price"><small>a partir de</small>{{ preco(m.precoDe) }}</span>
               </span>
-              <span class="l-md-name">{{ m.nome }}</span>
-              <span class="l-md-spec">{{ motorDoModelo(m) }}</span>
-              <span class="l-md-stats">
-                @for (d of destaques(m); track d.rotulo) {
-                  <span class="l-md-stat"><small>{{ d.rotulo }}</small><strong>{{ d.valor }}</strong></span>
-                }
+
+              @if (m.nota !== null) {
+                <span class="l-md-card-footer">
+                  <span class="l-md-score">
+                    <strong>{{ m.nota }}</strong><span>% compatível</span>
+                  </span>
+                  <span class="l-md-track">
+                    <span class="l-md-fill" [class.is-fraco]="m.nota < corteFraco" [style.width.%]="m.nota"></span>
+                  </span>
+                </span>
+              }
+
+              <span class="l-md-cta">
+                Ver detalhes
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
               </span>
             </span>
           </button>
 
-          @if (m.nota !== null) {
-            <div class="l-md-card-footer">
-              <span class="l-md-score">
-                <strong>{{ m.nota }}</strong><span>% compatível</span>
-              </span>
-              <span class="l-md-track">
-                <span class="l-md-fill" [class.is-fraco]="m.nota < corteFraco" [style.width.%]="m.nota"></span>
-              </span>
-            </div>
-          }
-
-          <div class="l-md-actions">
+          <!-- Sobre a foto: favoritar, ver fotos e escolher para comparar -->
+          <div class="l-md-overlay">
             @if (m.imagemVistas) {
-              <button type="button" class="l-md-vistas" (click)="abrirVistas(m.id, $event)">
-                Ver fotos
+              <button type="button" class="l-md-icone" (click)="abrirVistas(m.id, $event)" [attr.aria-label]="'Ver fotos do ' + m.nome">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z" /><circle cx="12" cy="13.5" r="3.2" /></svg>
               </button>
             }
-
-            <label class="l-md-compare">
-              <input
-                type="checkbox"
-                [checked]="selecionados.has(m.id)"
-                [disabled]="!selecionados.has(m.id) && selecionados.size >= maxComparar"
-                (click)="alternarSelecao(m.id, $event)" />
-              <span>{{ selecionados.has(m.id) ? 'Selecionado' : 'Comparar' }}</span>
-            </label>
+            <button
+              class="l-md-icone l-md-favorito"
+              type="button"
+              [class.is-on]="favoritos.has(m.id)"
+              [attr.aria-pressed]="favoritos.has(m.id)"
+              [attr.aria-label]="favoritos.has(m.id) ? 'Remover dos favoritos' : 'Adicionar aos favoritos'"
+              (click)="alternarFavorito(m.id, $event)">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 20.5s-7.5-4.6-10-9.2C.6 8 2 4.5 5.5 4c2-.3 3.8.6 5 2.2C11.7 4.6 13.5 3.7 15.5 4 19 4.5 20.4 8 19 11.3c-2.5 4.6-7 9.2-7 9.2z" />
+              </svg>
+            </button>
           </div>
-        </article>
-      } @empty {
+
+          <label class="l-md-compare">
+            <input
+              type="checkbox"
+              [checked]="selecionados.has(m.id)"
+              [disabled]="!selecionados.has(m.id) && selecionados.size >= maxComparar"
+              (click)="alternarSelecao(m.id, $event)" />
+            <span>{{ selecionados.has(m.id) ? '✓ Selecionado' : 'Comparar' }}</span>
+          </label>
+        </article>      } @empty {
         <p class="l-md-blank">Nenhum modelo com esses filtros. Aumente o teto de preço ou limpe a motorização.</p>
       }
     </div>

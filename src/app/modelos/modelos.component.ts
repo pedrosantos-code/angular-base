@@ -65,6 +65,21 @@ export class ModelosComponent {
     if (rota) this.router.navigateByUrl(rota);
   }
 
+  /**
+   * As 7 linhas de luz do fundo. Cada uma tem curva, velocidade (7 s a 14,5 s), atraso negativo (já começa no meio do caminho,
+   * então nunca estão todas sincronizadas) e espessura (1,1 ou 1,6) diferentes: por isso o movimento parece orgânico.
+   * As curvas começam e terminam fora da tela (-100 e 1700), então a luz entra e sai sem aparecer cortada.
+   */
+  readonly linhasDeLuz: { d: string; duracao: number; atraso: number; espessura: number }[] = [
+    { d: 'M -100 200 C 400 120, 1100 300, 1700 180', duracao: 8, atraso: -2, espessura: 1.6 },
+    { d: 'M -100 620 C 300 720, 900 520, 1700 660', duracao: 11, atraso: -3.4, espessura: 1.1 },
+    { d: 'M -100 420 C 500 330, 1000 560, 1700 400', duracao: 7.5, atraso: -5, espessura: 1.6 },
+    { d: 'M -100 90 C 350 200, 1200 20, 1700 120', duracao: 14.5, atraso: -1, espessura: 1.1 },
+    { d: 'M -100 780 C 450 700, 1150 860, 1700 760', duracao: 9.5, atraso: -6.5, espessura: 1.6 },
+    { d: 'M -100 320 C 250 460, 1250 240, 1700 500', duracao: 12, atraso: -4, espessura: 1.1 },
+    { d: 'M -100 520 C 600 620, 950 400, 1700 560', duracao: 13, atraso: -8, espessura: 1.6 },
+  ];
+
   /** Abre a ficha técnica do modelo no Dashboard, que busca na API da Ford. */
   abrirFicha(m: Modelo): void {
     this.router.navigate(['/dashboard'], { queryParams: { modelo: m.nome } });
@@ -254,6 +269,23 @@ export class ModelosComponent {
     if (lugares) itens.push({ rotulo: 'Lugares', valor: lugares });
 
     return itens;
+  }
+
+  /**
+   * Ficha curta do cartão, numa linha: "182 cv · 4x2 · 5 lugares". Elétricos e híbridos abrem com o tipo de motor
+   * ("Elétrico · 580 cv · 4x4 · 5 lugares"). O que a ficha não tem simplesmente não aparece.
+   */
+  resumoCurto(m: Modelo): string {
+    const d = this.destaques(m);
+    const valor = (rotulo: string) => d.find((x) => x.rotulo === rotulo)?.valor;
+    const lugares = valor('Lugares');
+    const partes = [
+      m.motorizacao !== 'combustao' ? this.rotuloMotorizacao(m) : null,
+      valor('Potência'),
+      valor('Tração') ?? valor('Autonomia') ?? valor('Capacidade'),
+      lugares ? `${lugares} lugares` : null,
+    ];
+    return partes.filter(Boolean).join(' · ');
   }
 
   contagem(chave: string): number {

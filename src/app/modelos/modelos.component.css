@@ -2,7 +2,7 @@
    SEIA + Ford — Modelos
    Cabeçalho ...... l-md-hero, l-md-eyebrow, l-md-title, l-md-cats
    Filtros ........ l-md-controls, l-md-pill, l-md-rail, l-md-switch, l-md-range
-   Cartões ........ l-md-card, l-md-stats, l-md-actions, l-md-score
+   Cartões ........ l-md-card, l-md-photo, l-md-chip, l-md-cta, l-md-score
    Barra .......... l-md-compare-bar
    ========================================================= */
 
@@ -12,7 +12,9 @@
   flex-direction: column;
   min-height: 100vh;
   min-height: 100dvh;
-  background: #F3F5F9;
+  /* Cria um contexto próprio: o SVG de fundo (z-index -1) fica acima deste fundo e abaixo do conteúdo */
+  isolation: isolate;
+  background: linear-gradient(180deg, #EDF3FB 0, #FAFCFF 480px, #F3F5F9 760px);
   color: #001730;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -29,12 +31,27 @@
 
 .l-md-shell { min-height: calc(100vh - 60px); }
 
+/* ===== Linhas de luz (fundo) ===== */
+.l-md-streams { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; }
+/* Um traço curto (90 de 1000) deslocado ao longo da curva: parece um pulso de luz correndo pela linha */
+.l-md-stream {
+  stroke-dasharray: 90 910;
+  animation: l-md-flow linear infinite;
+  filter: drop-shadow(0 0 3px rgba(31,91,224,.45));
+}
+@keyframes l-md-flow {
+  from { stroke-dashoffset: 1000; }
+  to   { stroke-dashoffset: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .l-md-stream { animation: none; stroke-dashoffset: 550; }
+}
 /* ===== Cabeçalho ===== */
 .l-md-hero {
   position: relative; isolation: isolate;
   display: flex; flex-direction: column; align-items: center; text-align: center;
   padding: 44px var(--l-md-pad) 30px;
-  background: linear-gradient(180deg, #EDF3FB 0%, #FAFCFF 62%, #fff 100%);
+  /* Sem fundo próprio: o degradê fica no :host para as linhas de luz aparecerem por trás */
 }
 /* Grade suave que se desfaz nas bordas, atrás do título */
 .l-md-hero::before {
@@ -169,80 +186,90 @@ button.l-md-filters-toggle.is-on { background: #DCE4EE; border-color: #DCE4EE; }
 
 /* ===== Cartões ===== */
 .l-md-card {
+  --foto-h: 176px;
   position: relative; display: flex; flex-direction: column;
-  background: #fff; border-radius: 18px; padding: 10px;
-  box-shadow: 0 1px 2px rgba(0,23,48,.05), 0 8px 24px rgba(0,23,48,.05);
+  background: #fff; border: 1px solid #E3EAF8; border-radius: 22px; padding: 8px;
+  box-shadow: 0 1px 2px rgba(0,23,48,.04), 0 10px 28px rgba(46,125,209,.07);
+  transition: border-color .18s, box-shadow .18s, transform .18s;
 }
-.l-md-card.is-selected { outline: 2px solid #2E7DD1; outline-offset: -2px; }
+.l-md-card:hover { border-color: #A9C4F5; box-shadow: 0 1px 2px rgba(0,23,48,.04), 0 14px 34px rgba(46,125,209,.16); transform: translateY(-2px); }
+.l-md-card.is-selected { border-color: #2E7DD1; box-shadow: 0 0 0 3px rgba(46,125,209,.22), 0 14px 34px rgba(46,125,209,.16); }
 
-.l-md-card-open { display: block; width: 100%; border-radius: 12px; }
+.l-md-card-open { display: flex; flex-direction: column; flex: 1; width: 100%; border-radius: 16px; }
 .l-md-card-open:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 
 .l-md-photo {
-  position: relative; display: block; height: 168px; border-radius: 12px; overflow: hidden;
-  background: linear-gradient(160deg, #dfe6ee, #c9d5e2);
+  position: relative; display: block; height: var(--foto-h); border-radius: 16px; overflow: hidden;
+  background: linear-gradient(160deg, #DFE6EE, #C9D5E2);
 }
-.l-md-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.l-md-photo img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+.l-md-card:hover .l-md-photo img { transform: scale(1.03); }
+/* Segmento sobre a foto, no canto de baixo */
 .l-md-chip {
-  position: absolute; left: 10px; top: 10px; padding: 4px 10px; border-radius: 999px;
-  background: rgba(255,255,255,.94); font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: #2B3A4F;
+  position: absolute; left: 10px; bottom: 10px; padding: 5px 11px; border-radius: 999px;
+  background: rgba(255,255,255,.94);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #3C4B5B;
 }
 
-button.l-md-favorito {
-  position: absolute; right: 20px; top: 20px; z-index: 1;
-  width: 32px; height: 32px; display: grid; place-items: center;
-  background: rgba(255,255,255,.94); border-radius: 50%;
-  color: #55677A; transition: color .16s, background .16s;
+/* Botões redondos sobre a foto (ver fotos e favoritar), no canto de cima */
+.l-md-overlay { position: absolute; top: 18px; right: 18px; z-index: 1; display: flex; gap: 8px; }
+button.l-md-icone {
+  width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%;
+  background: rgba(255,255,255,.94); color: #55677A; box-shadow: 0 1px 3px rgba(0,23,48,.12);
+  transition: color .16s, background .16s, transform .16s;
 }
-button.l-md-favorito svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+button.l-md-icone:hover { color: #0B57A4; transform: scale(1.06); }
+button.l-md-icone:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+button.l-md-icone svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 button.l-md-favorito:hover { color: #C0392B; }
 button.l-md-favorito.is-on { color: #fff; background: #C0392B; }
 button.l-md-favorito.is-on svg { fill: currentColor; }
-button.l-md-favorito:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 
-.l-md-card-body { display: block; padding: 14px 8px 0; }
-.l-md-card-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
-.l-md-segment {
-  font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: #6B7A8C; padding-top: 2px;
+/* "Comparar": pílula no canto de cima, à esquerda, longe da etiqueta do segmento (o checkbox real fica escondido dentro dela) */
+.l-md-compare {
+  position: absolute; z-index: 1; left: 18px; top: 18px;
+  display: inline-flex; align-items: center; height: 30px; padding: 0 12px; border-radius: 999px;
+  background: rgba(255,255,255,.94); box-shadow: 0 1px 3px rgba(0,23,48,.12);
+  font-size: 12px; font-weight: 600; color: #1E2B3D; cursor: pointer; transition: background .16s, color .16s;
 }
-.l-md-price { text-align: right; font-size: 14.5px; font-weight: 700; color: #001730; white-space: nowrap; }
-.l-md-price small { display: block; font-size: 9.5px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: #6B7A8C; }
-.l-md-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 20px; margin: 6px 0 2px; letter-spacing: -.01em; }
-.l-md-spec { display: block; font-size: 12.5px; color: #6B7A8C; }
+.l-md-compare:hover { background: #fff; color: #0B57A4; }
+.l-md-compare input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.l-md-compare:has(input:focus-visible) { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-compare:has(input:disabled) { opacity: .55; cursor: default; }
+.l-md-card.is-selected .l-md-compare { background: #0B1B3A; color: #fff; }
 
-.l-md-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
-.l-md-stat { display: block; padding: 8px 10px; border-radius: 10px; background: #F3F5F9; min-width: 0; }
-.l-md-stat small { display: block; font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: #6B7A8C; }
-.l-md-stat strong { display: block; margin-top: 2px; font-size: 13px; font-weight: 700; color: #001730; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.l-md-card-body { display: flex; flex-direction: column; flex: 1; padding: 14px 8px 4px; }
+.l-md-card-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.l-md-card-title { display: block; min-width: 0; }
+.l-md-name { display: block; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 19px; letter-spacing: -.01em; color: #001730; text-wrap: balance; }
+.l-md-spec { display: block; margin-top: 3px; font-size: 12.5px; color: #6B7A8C; }
+.l-md-price { flex: none; text-align: right; font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 16px; letter-spacing: -.01em; color: #001730; white-space: nowrap; }
+.l-md-price small { display: block; margin-bottom: 1px; font-family: 'IBM Plex Sans', system-ui, sans-serif; font-size: 10.5px; font-weight: 400; letter-spacing: 0; color: #8A99AB; }
 
-.l-md-card-footer { padding: 12px 8px 0; }
+.l-md-card-footer { display: block; padding-top: 12px; }
 .l-md-score { display: flex; align-items: baseline; gap: 5px; }
-.l-md-score strong { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 23px; line-height: 1; color: #002B5C; }
+.l-md-score strong { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 20px; line-height: 1; color: #002B5C; }
 .l-md-score span { font-size: 11.5px; color: #55677A; }
 .l-md-track { display: block; height: 4px; border-radius: 2px; background: #E7EDF3; margin-top: 8px; overflow: hidden; }
 .l-md-fill { display: block; height: 100%; background: #2E7DD1; }
 .l-md-fill.is-fraco { background: #8FB8E2; }
 
-.l-md-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; padding: 14px 0 0; }
-button.l-md-vistas, .l-md-compare {
-  display: flex; align-items: center; justify-content: center; gap: 6px;
-  min-height: 42px; padding: 0 12px; border-radius: 12px;
-  font-size: 13px; font-weight: 600; text-align: center;
-  transition: background .16s, border-color .16s, color .16s;
+/* Botão do cartão: azul-claro com contorno, como no espelho */
+.l-md-cta {
+  display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: auto;
+  height: 44px; border: 1px solid #CFDDF8; border-radius: 14px; background: #EEF3FF;
+  font-size: 13.5px; font-weight: 600; color: #1F5BE0; transition: background .16s, border-color .16s;
 }
-button.l-md-vistas { border: 1px solid #E1E7EF; background: #fff; color: #1E2B3D; }
-button.l-md-vistas:hover { border-color: #B5C4D6; background: #F7F9FC; }
-button.l-md-vistas:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
+.l-md-card-head + .l-md-cta, .l-md-card-footer + .l-md-cta { margin-top: 14px; }
+.l-md-card-open:hover .l-md-cta { background: #E2ECFF; border-color: #A9C4F5; }
+.l-md-cta svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform .16s; }
+.l-md-card-open:hover .l-md-cta svg { transform: translateX(3px); }
 
-.l-md-compare { position: relative; background: #EDF1F6; color: #1E2B3D; cursor: pointer; }
-.l-md-compare:only-child { grid-column: 1 / -1; }
-.l-md-compare:hover { background: #E2E9F1; }
-.l-md-compare input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.l-md-compare:has(input:focus-visible) { outline: 2px solid #2E7DD1; outline-offset: 2px; }
-.l-md-compare:has(input:disabled) { opacity: .5; cursor: default; }
-.l-md-card.is-selected .l-md-compare { background: #0B1B3A; color: #fff; }
-
+@media (prefers-reduced-motion: reduce) {
+  .l-md-card, .l-md-photo img, .l-md-cta svg { transition: none; }
+  .l-md-card:hover { transform: none; }
+  .l-md-card:hover .l-md-photo img { transform: none; }
+}
 /* ===== Barra de comparação ===== */
 .l-md-compare-bar {
   position: sticky; bottom: 12px; z-index: 20; margin-top: 24px;
