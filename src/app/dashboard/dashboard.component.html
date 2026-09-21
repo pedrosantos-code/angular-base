@@ -43,22 +43,22 @@
       <p class="l-db-erro" role="alert">{{ erroBusca() }}</p>
     }
 
-    @if (resultados().length > 0) {
+    @if (resultados().length > 0 && !soConcorrentes) {
       <p class="l-db-total" role="status">{{ totalEncontrado() }} veículo(s) encontrado(s) na base da Ford</p>
     }
 
     <!-- Sempre no DOM (só escondido) — se ficasse dentro do @if acima, o @ViewChild só existiria
          depois do primeiro resultado chegar, tarde demais pra desenhar o gráfico na hora. -->
-    <div class="l-db-card l-db-chart-card" [hidden]="resultados().length === 0">
-      <canvas #graficoCanvas role="img" aria-label="Gráfico comparando potência e velocidade máxima das versões encontradas"></canvas>
+    <div class="l-db-card l-db-chart-card" [style.height.px]="alturaGrafico()" [hidden]="resultados().length === 0 || !graficoVisivel()">
+      <canvas #graficoCanvas role="img" aria-label="Gráfico de barras com a potência e a velocidade máxima dos concorrentes do mesmo segmento (ou das versões encontradas, se não houver concorrentes cadastrados)"></canvas>
     </div>
 
-    @if (resultados().length > 0) {
+    @if (resultados().length > 0 && (!soConcorrentes || rivais().length > 0)) {
       <div class="l-db-card l-db-table">
-        @for (carro of resultados(); track carro.id) {
+        @for (carro of (soConcorrentes ? [] : resultados()); track carro.id) {
           <div class="l-db-row">
             <span class="l-db-row-model">
-              <strong>{{ carro.model }}</strong>
+              <strong>{{ nomeDoCarro(carro) }}</strong>
               <span>{{ carro.variant }}</span>
             </span>
             <span class="l-db-row-stat">{{ carro.enginePowerBhp ?? '—' }} <small>cv</small></span>
@@ -87,7 +87,9 @@
           }
         }
       </div>
+    }
 
+    @if (resultados().length > 0) {
       @if (carregandoLinha()) {
         <p class="l-db-nota" role="status">Buscando concorrentes do mesmo segmento…</p>
       } @else if (erroLinha()) {
@@ -96,14 +98,14 @@
         <p class="l-db-nota">
           Só entram concorrentes do mesmo segmento ({{ c.segmento }}), com a versão mais recente que tem potência informada na API.
           @if (c.semDados.length > 0) { Sem dados na API: {{ c.semDados.join(', ') }}. }
-          Quando a API não informa a velocidade máxima, ela é estimada a partir da potência, nos concorrentes e nas versões Ford.
+          Quando a API não informa a velocidade máxima, ela é estimada a partir da potência.
         </p>
       } @else {
         <p class="l-db-nota">A comparação com concorrentes está disponível para: {{ sugestoes.join(', ') }}.</p>
       }
     }
 
-    @if (resultados().length > 0) {
+    @if (resultados().length > 0 && !soConcorrentes) {
       @if (buscandoSemelhantes()) {
         <p class="l-db-kicker">Buscando carros semelhantes…</p>
       } @else if (carrosSemelhantes().length > 0) {

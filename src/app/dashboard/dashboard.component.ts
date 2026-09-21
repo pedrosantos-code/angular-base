@@ -57,8 +57,21 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
   comparacao = signal<Comparacao | null>(null);
   /** Concorrentes do segmento (sem a Ford), com a ficha preenchida como nas versões Ford; entram no gráfico e na tabela. */
   rivais = signal<ItemComparacao[]>([]);
+  /** Altura do gráfico: cresce com o número de barras para os nomes não se apertarem. */
+  alturaGrafico = signal<number>(340);
+  /** false enquanto os concorrentes carregam (o gráfico só mostra concorrentes, então não há o que desenhar antes). */
+  graficoVisivel = signal<boolean>(true);
   carregandoLinha = signal<boolean>(false);
   erroLinha = signal<string | null>(null);
+  /**
+   * true quando o modelo pesquisado é um dos que têm concorrentes cadastrados: aí a tela (gráfico e tabela) mostra SÓ os
+   * concorrentes do mesmo segmento, sem carros da Ford. Fora disso não há com quem comparar e aparecem as versões Ford.
+   */
+  get soConcorrentes(): boolean {
+    const modelo = this.modeloDestacado();
+    return !!modelo && !!SEGMENTOS[modelo];
+  }
+
   /** Modelo Ford da busca atual, quando é um dos que têm segmento cadastrado (é a referência da comparação). */
   modeloDestacado = signal<string | null>(null);
   private comparacoesGuardadas = new Map<string, Comparacao>();
@@ -106,10 +119,13 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
           return;
         }
 
-        this.rivais.set([]); // não deixa os concorrentes da busca anterior aparecerem por um instante
+        // Define o modelo Ford e zera os concorrentes ANTES de desenhar, para não aparecer o gráfico da busca anterior.
+        const modeloFord = modeloDaBusca(termo, this.sugestoes);
+        this.modeloDestacado.set(modeloFord);
+        this.rivais.set([]);
         this.renderizarGrafico(itens);
         this.buscarCarrosSemelhantes(itens[0].id);
-        this.carregarComparacao(modeloDaBusca(termo, this.sugestoes));
+        this.carregarComparacao(modeloFord);
       },
       error: () => {
         this.carregando.set(false);
@@ -223,15 +239,31 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    // Versões do modelo pesquisado + concorrentes do mesmo segmento (quando já carregaram), na mesma escala.
+    // Com concorrentes cadastrados para o modelo (os 7 dos botões), o gráfico mostra SÓ os concorrentes do mesmo
+    // segmento. Fora disso, mostra as versões encontradas, porque não há com quem comparar.
     const rivais = this.rivais();
-    const rotulos = [
-      ...carros.map((c) => c.variant ?? c.model ?? `#${c.id}`),
-      ...rivais.map((i) => `${i.marca} ${i.modelo}${i.ano ? ` (${i.ano})` : ''}`),
-    ];
-    const potencias = [...carros.map((c) => c.enginePowerBhp ?? 0), ...rivais.map((i) => i.carro.enginePowerBhp ?? 0)];
-    const velocidades = [...carros.map((c) => c.topSpeedKph ?? 0), ...rivais.map((i) => i.carro.topSpeedKph ?? 0)];
+    const modeloFord = this.modeloDestacado();
+    const soConcorrentes = this.soConcorrentes;
+    if (soConcorrentes && rivais.length === 0) {
+      // Ainda carregando (ou a API não devolveu nada): sem gráfico vazio.
+      this.grafico?.destroy();
+      this.graficoVisivel.set(false);
+      return;
+    }
+    this.graficoVisivel.set(true);
 
+    const noGrafico = soConcorrentes ? [] : carros;
+    const rotulos: string[][] = [
+      ...noGrafico.map((c) => [this.nomeDoCarro(c), this.detalheDaVersao(c)]),
+      ...rivais.map((i) => [`${i.marca} ${i.modelo}`, [i.ano, this.detalheDaVersao(i.carro)].filter(Boolean).join(' · ')]),
+    ];
+    const potencias = [...noGrafico.map((c) => c.enginePowerBhp ?? 0), ...rivais.map((i) => i.carro.enginePowerBhp ?? 0)];
+    const velocidades = [...noGrafico.map((c) => c.topSpeedKph ?? 0), ...rivais.map((i) => i.carro.topSpeedKph ?? 0)];
+    const titulo = soConcorrentes
+      ? `Concorrentes do ${modeloFord} (${this.comparacao()?.segmento ?? ''})`
+      : `Resultados para "${this.nomeCarro()}"`;
+
+    this.alturaGrafico.set(Math.max(340, rotulos.length * 46 + 120));
     this.grafico?.destroy();
     this.grafico = new Chart(this.graficoCanvas.nativeElement, {
       type: 'bar',
@@ -251,17 +283,32 @@ export class DashboardComponent implements AfterViewInit, OnDestroy {
         ],
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: { position: 'top' },
-          title: { display: true, text: rivais.length ? `Resultados para "${this.nomeCarro()}" × concorrentes (${this.comparacao()?.segmento ?? ''})` : `Resultados para "${this.nomeCarro()}"` },
+          title: { display: true, text: titulo },
         },
         scales: {
-          x: { ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } },
-          y: { beginAtZero: true },
+          x: { beginAtZero: true },
+          y: { ticks: { autoSkip: false, font: { size: 11.5 } } },
         },
       },
     });
+  }
+
+  /** "Ford Mustang GT": o nome do carro, com a marca na frente quando a API não a traz no modelo. */
+  nomeDoCarro(carro: Car): string {
+    const modelo = (carro.model ?? `#${carro.id}`).trim();
+    return /^ford\b/i.test(modelo) ? modelo : `Ford ${modelo}`;
+  }
+
+  /** Detalhe curto para diferenciar versões do mesmo carro: motor e câmbio ("5.0L · 10AT"). */
+  private detalheDaVersao(carro: Car): string {
+    const texto = carro.variant ?? '';
+    const motor = texto.match(/\b(\d\.\d)L\b/)?.[0];
+    const cambio = texto.match(/\b(\d{1,2}(?:AT|MT)|CVT|DCT)\b/)?.[0] ?? carro.gearboxType?.toLowerCase();
+    return [motor, cambio].filter(Boolean).join(' · ');
   }
 }
