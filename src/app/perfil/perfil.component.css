@@ -119,6 +119,8 @@ button.pf-ghost:focus-visible, button.pf-primary:focus-visible { outline: 2px so
 .pf-preview-kicker { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #7C8DA6; }
 .pf-preview-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 8px 0 14px; }
 h2.pf-preview-model { color: #fff; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; }
+.pf-preview-cover { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+.pf-preview-cover small { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .04em; color: #9FB2CC; }
 .pf-preview-score { display: inline-flex; align-items: baseline; gap: 2px; color: #9FB2CC; font-size: 18px; }
 .pf-preview-score strong { font-size: 54px; font-weight: 700; letter-spacing: -.04em; line-height: 1; color: #fff; }
 .pf-bar { display: block; height: 6px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
@@ -129,6 +131,13 @@ h2.pf-preview-model { color: #fff; font-family: 'Archivo', sans-serif; font-weig
 .pf-bar--thin { height: 4px; }
 .pf-other-n { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #fff; }
 .pf-over { margin: 10px 0 14px; font-size: 12.5px; font-weight: 600; color: #FFB4A8; }
+/* p.pf-over precisa do "p": o reset ":host p { margin: 0 }" do topo do arquivo tem mais especificidade que só a classe */
+p.pf-over { margin: 10px 0 6px; }
+.pf-uso { display: grid; gap: 2px; margin: 0 0 14px; font-size: 12.5px; color: #9FB2CC; }
+.pf-uso strong { color: #fff; font-weight: 600; }
+.pf-uso-vazio { color: #9FB2CC; }
+.pf-uso-alerta { color: #FCD34D; font-weight: 600; }
+.pf-other .pf-uso { grid-column: 1 / -1; margin: -6px 0 0; font-size: 12px; }
 .pf-over.is-ok { color: #86EFAC; }
 .pf-over--ask { color: #9FB2CC; font-weight: 500; }
 .pf-over--row { grid-column: 1 / -1; margin: -4px 0 0; font-size: 12px; }

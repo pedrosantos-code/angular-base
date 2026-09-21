@@ -6,6 +6,7 @@ import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component'
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
 import { fotoDoModelo } from '../shared/fotos-modelos';
+import { avaliarUso, AvaliacaoUso, TipoMotor } from '../shared/rodagem';
 
 export interface PerfilUso {
   uso: string;
@@ -31,6 +32,8 @@ export interface ItemPrevia {
   cobertura: number | null;
   /** Reais que faltam para chegar ao preço; 0 quando o orçamento cobre o carro (ou não há orçamento). */
   falta: number;
+  /** Custo estimado de uso na rodagem mensal informada (ou o motivo de não haver). */
+  uso: AvaliacaoUso;
 }
 
 export interface Previa extends ItemPrevia {
@@ -64,6 +67,8 @@ interface ModeloAvaliado {
   id: string;
   nome: string;
   precoDe: number;
+  /** Tipo de motor: define qual energia entra no custo mensal de uso (ver shared/rodagem.ts). */
+  motor: TipoMotor;
   /** 'cidade' | 'estrada' | 'offroad' | 'trabalho' — combina com o campo "Uso principal". */
   tags: string[];
   espacoBom: boolean;
@@ -74,19 +79,19 @@ interface ModeloAvaliado {
 
 /** Mesma linha e mesmos ids do /modelos, com sinalizadores usados só pra pontuar a prévia do perfil. */
 const CATALOGO_PERFIL: ModeloAvaliado[] = [
-  { id: 'territory', nome: 'Territory', precoDe: 219900, tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
-  { id: 'bronco-sport', nome: 'Bronco Sport', precoDe: 249900, tags: ['offroad', 'cidade'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'explorer', nome: 'Explorer', precoDe: 429900, tags: ['estrada', 'cidade'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
-  { id: 'f-150', nome: 'F-150', precoDe: 439900, tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'ranger', nome: 'Ranger', precoDe: 259900, tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'ranger-raptor', nome: 'Ranger Raptor', precoDe: 399900, tags: ['offroad', 'trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'maverick-hybrid', nome: 'Maverick Hybrid', precoDe: 219900, tags: ['cidade', 'trabalho'], espacoBom: false, confortoBom: true, consumoBom: true, potenciaBoa: false },
-  { id: 'maverick-tremor', nome: 'Maverick Tremor', precoDe: 249900, tags: ['offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'mustang-gt', nome: 'Mustang GT', precoDe: 549900, tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
-  { id: 'mustang-mach-e', nome: 'Mustang Mach-E', precoDe: 379900, tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
-  { id: 'f-150-lightning', nome: 'F-150 Lightning', precoDe: 599900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
-  { id: 'transit-furgao', nome: 'Transit Furgão', precoDe: 219900, tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
-  { id: 'transit-minibus', nome: 'Transit Minibus', precoDe: 239900, tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'territory', nome: 'Territory', precoDe: 219900, motor: 'combustao', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'bronco-sport', nome: 'Bronco Sport', precoDe: 249900, motor: 'combustao', tags: ['offroad', 'cidade'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'explorer', nome: 'Explorer', precoDe: 429900, motor: 'combustao', tags: ['estrada', 'cidade'], espacoBom: true, confortoBom: true, consumoBom: false, potenciaBoa: false },
+  { id: 'f-150', nome: 'F-150', precoDe: 439900, motor: 'combustao', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'ranger', nome: 'Ranger', precoDe: 259900, motor: 'diesel', tags: ['trabalho', 'offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'ranger-raptor', nome: 'Ranger Raptor', precoDe: 399900, motor: 'combustao', tags: ['offroad', 'trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'maverick-hybrid', nome: 'Maverick Hybrid', precoDe: 219900, motor: 'hibrido', tags: ['cidade', 'trabalho'], espacoBom: false, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'maverick-tremor', nome: 'Maverick Tremor', precoDe: 249900, motor: 'combustao', tags: ['offroad'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'mustang-gt', nome: 'Mustang GT', precoDe: 549900, motor: 'combustao', tags: ['estrada'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: true },
+  { id: 'mustang-mach-e', nome: 'Mustang Mach-E', precoDe: 379900, motor: 'eletrico', tags: ['cidade', 'estrada'], espacoBom: true, confortoBom: true, consumoBom: true, potenciaBoa: false },
+  { id: 'f-150-lightning', nome: 'F-150 Lightning', precoDe: 599900, motor: 'eletrico', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: true, potenciaBoa: true },
+  { id: 'transit-furgao', nome: 'Transit Furgão', precoDe: 219900, motor: 'diesel', tags: ['trabalho'], espacoBom: false, confortoBom: false, consumoBom: false, potenciaBoa: false },
+  { id: 'transit-minibus', nome: 'Transit Minibus', precoDe: 239900, motor: 'diesel', tags: ['trabalho', 'estrada'], espacoBom: true, confortoBom: false, consumoBom: false, potenciaBoa: false },
 ];
 
 const TAG_POR_USO: Record<string, string> = {
@@ -196,9 +201,11 @@ export class PerfilComponent {
   };
 
   /** Ranking completo (14 modelos) recalculado a cada ajuste no perfil de uso — não espera "Salvar". */
-  private calcularRanking(): { id: string; modelo: string; combinaComUso: boolean; cobertura: number | null; falta: number }[] {
+  private calcularRanking(): { id: string; modelo: string; combinaComUso: boolean; cobertura: number | null; falta: number; uso: AvaliacaoUso }[] {
     const orcamento = this.orcamentoNumero();
     const tagDeUso = TAG_POR_USO[this.uso.uso];
+    // Custo mensal de uso de TODOS os carros: a nota de cada um depende do menor custo entre eles.
+    const usos = avaliarUso(CATALOGO_PERFIL.map((m) => ({ id: m.id, tipo: m.motor })), this.rodagemNumero());
 
     const pontuados = CATALOGO_PERFIL.map((m) => {
       const combinaComUso = !!tagDeUso && m.tags.includes(tagDeUso);
@@ -217,14 +224,18 @@ export class PerfilComponent {
 
       const notaDeUso = Math.max(15, Math.min(97, Math.round(nota)));
 
-      // Ordem: a MENOR entre a nota de uso e a de orçamento, então um carro acima do teto nunca sobe por combinar com o uso.
-      const ordem = orcamento ? Math.min(notaDeUso, notaDeOrcamento(m.precoDe, orcamento)) : notaDeUso;
+      // Ordem: a MENOR entre as notas disponíveis (uso, orçamento e rodagem). Nenhuma nota "sobe" a outra: um carro
+      // acima do teto ou caro de rodar nunca ganha posição só por combinar com o uso.
+      const uso = usos[m.id];
+      let ordem = notaDeUso;
+      if (orcamento) ordem = Math.min(ordem, notaDeOrcamento(m.precoDe, orcamento));
+      if (uso.estado === 'ok') ordem = Math.min(ordem, uso.nota);
 
       // O que aparece é quanto do preço o orçamento cobre — sem orçamento informado não há porcentagem.
       const cobertura = orcamento ? coberturaDoOrcamento(m.precoDe, orcamento) : null;
       const falta = orcamento && orcamento < m.precoDe ? m.precoDe - orcamento : 0;
 
-      return { id: m.id, modelo: m.nome, combinaComUso, cobertura, falta, ordem: Math.floor(ordem), precoDe: m.precoDe };
+      return { id: m.id, modelo: m.nome, combinaComUso, cobertura, falta, uso, ordem: Math.floor(ordem), precoDe: m.precoDe };
     });
 
     // Empate na ordem (comum quando o teto é irreal e tudo cai a 0): sobe o mais barato, o que mais chega perto do teto.
@@ -234,8 +245,14 @@ export class PerfilComponent {
 
   get previa(): Previa {
     const [primeiro, ...resto] = this.calcularRanking();
-    const item = (r: { modelo: string; cobertura: number | null; falta: number }): ItemPrevia => ({ modelo: r.modelo, cobertura: r.cobertura, falta: r.falta });
+    const item = (r: ItemPrevia): ItemPrevia => ({ modelo: r.modelo, cobertura: r.cobertura, falta: r.falta, uso: r.uso });
     return { ...item(primeiro), outros: resto.slice(0, 2).map(item) };
+  }
+
+  /** Há custo de uso estimado em algum dos três carros da prévia — aí vale o aviso de que são estimativas. */
+  get haEstimativaDeUso(): boolean {
+    const p = this.previa;
+    return [p, ...p.outros].some((c) => c.uso.estado === 'ok');
   }
 
   /** Valor em reais no formato brasileiro, ex.: "R$ 30.100". */
@@ -250,6 +267,11 @@ export class PerfilComponent {
 
   /** Ícone de pessoa, mostrado no avatar enquanto não há nome nem e-mail para tirar as iniciais. */
   readonly iconePerfil = ICONES['perfil'];
+
+  private rodagemNumero(): number | null {
+    const digitos = this.uso.rodagem.replace(/\D/g, '');
+    return digitos ? Number(digitos) : null;
+  }
 
   private orcamentoNumero(): number | null {
     const digitos = this.uso.orcamento.replace(/\D/g, '');

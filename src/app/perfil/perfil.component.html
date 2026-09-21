@@ -170,7 +170,10 @@
         <div class="pf-preview-top">
           <h2 class="pf-preview-model">{{ previa.modelo }}</h2>
           @if (previa.cobertura !== null) {
-            <span class="pf-preview-score"><strong>{{ previa.cobertura }}</strong>%</span>
+            <span class="pf-preview-cover">
+              <small>Seu orçamento cobre</small>
+              <span class="pf-preview-score"><strong>{{ previa.cobertura }}</strong>%</span>
+            </span>
           }
         </div>
         @if (previa.cobertura !== null) {
@@ -179,22 +182,42 @@
         } @else {
           <p class="pf-over pf-over--ask">Informe seu orçamento</p>
         }
+        <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: previa.uso }" />
         @for (o of previa.outros; track o.modelo) {
           <div class="pf-other">
             <span>{{ o.modelo }}</span>
             @if (o.cobertura !== null) {
               <span class="pf-bar pf-bar--thin"><span class="pf-bar-fill" [style.width.%]="o.cobertura"></span></span>
-              <span class="pf-other-n">{{ o.cobertura }}%</span>
+              <span class="pf-other-n">cobre {{ o.cobertura }}%</span>
               <span class="pf-over pf-over--row" [class.is-ok]="!o.falta">{{ o.falta ? 'Faltam ' + real(o.falta) : 'Cabe no seu orçamento' }}</span>
             } @else {
               <span></span>
               <span class="pf-over pf-over--row pf-over--ask">Informe seu orçamento</span>
             }
+            <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: o.uso }" />
           </div>
         }
-        <p class="pf-preview-note">Atualiza na hora conforme você ajusta o perfil.</p>
+        <p class="pf-preview-note">Atualiza na hora conforme você ajusta o perfil.@if (haEstimativaDeUso) { Custos de uso são estimativas, com base em consumo, revisões e desgaste médios. }</p>
       </div>
     </section>
+
+    <!-- Custo mensal de uso de um carro na rodagem informada (estimativa) -->
+    <ng-template #usoTpl let-u>
+      <div class="pf-uso">
+        @if (u.estado === 'ok') {
+          <span>Custo estimado de uso: <strong>{{ real(u.custoMes) }}/mês</strong></span>
+          <span>Revisão a cada {{ u.revisaoACadaMeses }} {{ u.revisaoACadaMeses === 1 ? 'mês' : 'meses' }} no seu ritmo</span>
+          <span>Próxima revisão em ~{{ u.revisaoACadaMeses }} {{ u.revisaoACadaMeses === 1 ? 'mês' : 'meses' }}</span>
+          @if (u.recarga) {
+            <span class="pf-uso-alerta">Pode exigir recarga durante o dia</span>
+          }
+        } @else if (u.estado === 'sem-rodagem') {
+          <span class="pf-uso-vazio">Informe sua rodagem mensal</span>
+        } @else {
+          <span class="pf-uso-vazio">Dados de uso indisponíveis</span>
+        }
+      </div>
+    </ng-template>
 
     <!-- Atalhos -->
     <section class="pf-mini">
