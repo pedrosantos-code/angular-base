@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { TopbarComponent, ROTAS_MENU, ICONES } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { AuthService } from '../auth.service';
+import { ProfileService, UserProfileRecord } from '../profile.service';
 import { fotoDoModelo } from '../shared/fotos-modelos';
 import { avaliarUso, AvaliacaoUso, TipoMotor } from '../shared/rodagem';
 import { salvarModeloRecomendado } from '../shared/modelo-recomendado';
@@ -475,12 +476,49 @@ export class PerfilComponent {
 
   salvar(): void {
     if (!this.alteracoes || this.telefoneIncompleto) return;
-    this.usoOriginal = structuredClone(this.uso);
-    this.contaOriginal = structuredClone(this.conta);
+    this.salvandoPerfil = true;
+    this.erroBanco = null;
     this.persistir();
+
+    const favoritos = this.lerIds(this.chaveFavoritos);
+    const comparados = this.lerIds(this.chaveComparacoesUltima);
+    this.profileService.salvar({
+      nome: this.conta.nome,
+      email: this.conta.email,
+      idade: this.conta.idade,
+      genero: this.conta.genero,
+      telefone: this.conta.telefone,
+      uso_principal: this.uso.uso,
+      passageiros: this.uso.passageiros,
+      rodagem_mensal: this.uso.rodagem,
+      orcamento: this.uso.orcamento,
+      prioridades: this.uso.prioridades,
+      carros_favoritos: favoritos,
+      carros_comparados: comparados,
+      compartilha_com_concessionaria: this.compartilhaComConcessionaria,
+    }).subscribe({
+      next: () => {
+        this.usoOriginal = structuredClone(this.uso);
+        this.contaOriginal = structuredClone(this.conta);
+        this.salvandoPerfil = false;
+      },
+      error: () => {
+        this.salvandoPerfil = false;
+        this.erroBanco = 'Não foi possível salvar no banco. Confira se as migrations foram aplicadas no Supabase.';
+      },
+    });
 
     // O carro em primeiro lugar já vai para o passo "Qual modelo?" do /agendamentos.
     const [primeiro] = this.calcularRanking();
     salvarModeloRecomendado({ nome: primeiro.modelo, segmento: primeiro.segmento, cobertura: primeiro.cobertura });
+  }
+
+  private lerIds(chave: string): string[] {
+    try {
+      const valor = JSON.parse(localStorage.getItem(chave) ?? '[]') as unknown;
+      return Array.isArray(valor) && valor.every((id): id is string => typeof id === 'string') ? valor : [];
+    } catch {
+      return [];
+    }
   }
 }

@@ -6,6 +6,7 @@ import { TopbarComponent, ROTAS_MENU } from '../topbar/topbar.component';
 import { RodapeComponent } from '../rodape/rodape.component';
 import { calcularNota, formatarPerfil } from '../shared/recomendacao-ia';
 import { AuthService } from '../auth.service';
+import { ProfileService } from '../profile.service';
 
 export type Motorizacao = 'combustao' | 'hibrido' | 'eletrico';
 export type Ordenacao = 'compatibilidade' | 'preco' | 'nome';
@@ -57,6 +58,7 @@ export interface Categoria { chave: string; rotulo: string; }
 export class ModelosComponent {
   private router = inject(Router);
   private authService = inject(AuthService);
+  private profileService = inject(ProfileService);
   private route = inject(ActivatedRoute);
 
 
@@ -82,6 +84,7 @@ export class ModelosComponent {
 
   /** Abre a ficha técnica do modelo no Dashboard, que busca na API da Ford. */
   abrirFicha(m: Modelo): void {
+    this.registrarEvento(m, 'view');
     this.router.navigate(['/dashboard'], { queryParams: { modelo: m.nome } });
   }
 
@@ -322,12 +325,16 @@ export class ModelosComponent {
 
   alternarFavorito(id: string, evento: Event): void {
     evento.stopPropagation();
-    this.favoritos.has(id) ? this.favoritos.delete(id) : this.favoritos.add(id);
+    const adicionando = !this.favoritos.has(id);
+    adicionando ? this.favoritos.add(id) : this.favoritos.delete(id);
+    const modelo = this.modelos.find((item) => item.id === id);
+    if (modelo) this.registrarEvento(modelo, adicionando ? 'favorite' : 'unfavorite');
     try {
       localStorage.setItem(this.chaveFavoritos, JSON.stringify([...this.favoritos]));
     } catch {
       // localStorage indisponível — o favorito vale só para esta sessão.
     }
+    this.profileService.salvarFavoritos([...this.favoritos]).subscribe({ error: () => { /* Analytics não bloqueia o catálogo. */ } });
   }
 
   alternarSelecao(id: string, evento: Event): void {
@@ -397,6 +404,11 @@ export class ModelosComponent {
     if (this.selecionados.size < 2) return;
     this.compararAtivo = true;
 
+    for (const id of this.selecionados) {
+      const modelo = this.modelos.find((item) => item.id === id);
+      if (modelo) this.registrarEvento(modelo, 'compare');
+    }
+
     try {
       localStorage.setItem(this.chaveUltimaComparacao, JSON.stringify([...this.selecionados]));
     } catch {
@@ -425,5 +437,14 @@ export class ModelosComponent {
 
   preco(v: number): string {
     return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+  }
+
+  private registrarEvento(modelo: Modelo, tipo: 'view' | 'favorite' | 'unfavorite' | 'compare'): void {
+    this.profileService.registrarEvento(modelo.id, tipo, modelo.nome, {
+      segmento: modelo.segmento,
+      categoria: modelo.categoria,
+      motorizacao: modelo.motorizacao,
+      precoDe: modelo.precoDe,
+    }).subscribe({ error: () => { /* Analytics não pode bloquear a experiência do catálogo. */ } });
   }
 }
