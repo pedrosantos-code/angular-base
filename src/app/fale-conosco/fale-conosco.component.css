@@ -7,7 +7,11 @@
    ========================================================= */
 
 :host {
-  display: block;
+  /* Coluna da altura da tela: o rodapé fica sempre no fim, mesmo com a página curta ou com zoom muito afastado */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: #F3F5F9;
   color: #001730;
   font-family: 'IBM Plex Sans', system-ui, sans-serif;
