@@ -358,11 +358,20 @@ export class DashboardComponent implements AfterViewInit {
     return { texto: `${d > 0 ? '+' : d < 0 ? '−' : ''}${Math.abs(d)} cv`, ford: d < 0 };
   }
 
-  /** "Esportivo" → "esportivos", "Picape compacta" → "picapes compactas", "SUV médio" → "SUV médios". */
+  /**
+   * "Esportivo" → "esportivos", "Picape compacta" → "picapes compactas", "SUV médio" → "SUV médios",
+   * "Picape de performance" → "picapes de performance" (depois de uma preposição como "de" o resto da
+   * frase fica invariável — plural nenhum vira "picapes des performances").
+   */
   private plural(segmento: string): string {
+    let apósPreposicao = false;
     return segmento
       .split(' ')
-      .map((palavra, i) => (palavra === 'SUV' ? palavra : (i === 0 ? palavra.toLowerCase() : palavra) + 's'))
+      .map((palavra, i) => {
+        if (palavra.toLowerCase() === 'de') { apósPreposicao = true; return palavra; }
+        if (palavra === 'SUV' || apósPreposicao) return palavra;
+        return (i === 0 ? palavra.toLowerCase() : palavra) + 's';
+      })
       .join(' ');
   }
 
