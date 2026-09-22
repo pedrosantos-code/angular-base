@@ -73,14 +73,18 @@ export const SEGMENTOS: Record<string, Segmento> = {
   },
 };
 
-/** Nome que a API usa para cada modelo Ford ("Ranger Super Cab", "Ford Ranger"…). */
-const PERTENCE_FORD: Record<string, (modelo: string) => boolean> = {
+/**
+ * Nome que a API usa para cada modelo Ford ("Ranger Super Cab", "Ford Ranger"…). Recebe `model` e `variant`
+ * (ambos em minúsculas) — a maioria só olha o `model`, mas o Maverick Hybrid só dá pra reconhecer pelo
+ * `variant`: a API nunca escreve "Hybrid" no `model` (é sempre "Ford Maverick"), só "FHEV" na variante.
+ */
+const PERTENCE_FORD: Record<string, (modelo: string, variante: string) => boolean> = {
   Mustang: (m) => m.includes('mustang') && !m.includes('mach'),
   Ranger: (m) => m.includes('ranger'),
   'Ranger Raptor': (m) => m.includes('ranger') && m.includes('raptor'),
   Territory: (m) => m.includes('territory'),
   'Bronco Sport': (m) => m.includes('bronco sport'),
-  'Maverick Hybrid': (m) => m.includes('maverick') && m.includes('hybrid'),
+  'Maverick Hybrid': (m, v) => m.includes('maverick') && (v.includes('fhev') || v.includes('hybrid')),
   Explorer: (m) => (m.startsWith('explorer') || m.includes('ford explorer')) && !m.includes('sport trac'),
   'F-150': (m) => m.includes('f-150') || m.includes('f150'),
 };
@@ -140,7 +144,9 @@ export function versaoFord(modelo: string, carros: Car[]): Car | null {
   const ehNicho = MODELOS_NICHO.has(modelo);
   return escolherVersao(
     carros.filter(
-      (c) => pertence((c.model ?? '').toLowerCase()) && (ehNicho || !NICHO_FORD.test(`${c.model ?? ''} ${c.variant ?? ''}`)),
+      (c) =>
+        pertence((c.model ?? '').toLowerCase(), (c.variant ?? '').toLowerCase()) &&
+        (ehNicho || !NICHO_FORD.test(`${c.model ?? ''} ${c.variant ?? ''}`)),
     ),
   );
 }

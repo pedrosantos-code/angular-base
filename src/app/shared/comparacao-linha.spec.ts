@@ -53,6 +53,14 @@ describe('comparacao-linha', () => {
     expect(escolhido?.id).toBe(1);
   });
 
+  it('no Maverick Hybrid, reconhece pela variante (a API nunca escreve "Hybrid" no model, só "FHEV" no variant)', () => {
+    const escolhido = versaoFord('Maverick Hybrid', [
+      carro({ id: 1, model: 'Ford Maverick', variant: '2.0L EcoBoost 8AT (250 HP)', yearFrom: 2022, enginePowerBhp: 247 }),
+      carro({ id: 2, model: 'Ford Maverick', variant: '2.5L FHEV 8AT (191 HP)', yearFrom: 2022, enginePowerBhp: 160 }),
+    ]);
+    expect(escolhido?.id).toBe(2);
+  });
+
   it('no rival, reconhece só o modelo certo pelo filtro', () => {
     const tucson = SEGMENTOS['Bronco Sport'].rivais.find((r) => r.rotulo === 'Tucson')!;
     const escolhido = versaoRival(tucson, [

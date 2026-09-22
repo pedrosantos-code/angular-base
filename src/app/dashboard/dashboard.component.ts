@@ -28,6 +28,12 @@ export type AbaGrafico = 'ambos' | 'potencia' | 'velocidade';
 /** Na busca por "Mustang" o carro mais parecido para a foto é o Mustang GT. */
 const FOTO_DO_MODELO: Record<string, string> = { Mustang: 'Mustang GT' };
 
+/**
+ * Termo mandado pra API quando o nome de exibição não existe como texto no campo `model` dela: a API só tem
+ * "Ford Maverick" (a versão Hybrid vira "FHEV" no `variant`), então buscar "Maverick Hybrid" não acha nada.
+ */
+const TERMO_BUSCA_API: Record<string, string> = { 'Maverick Hybrid': 'Maverick' };
+
 @Component({
   selector: 'app-dashboard',
   imports: [FormsModule, TopbarComponent, RodapeComponent, LinhasDeLuzComponent],
@@ -192,7 +198,8 @@ export class DashboardComponent implements AfterViewInit {
     this.erroBusca.set(null);
     this.carrosSemelhantes.set([]);
 
-    this.fordApi.listCars({ make: 'FORD', model: termo, limit: 8 }).subscribe({
+    const termoApi = TERMO_BUSCA_API[termo] ?? termo;
+    this.fordApi.listCars({ make: 'FORD', model: termoApi, limit: 8 }).subscribe({
       next: (resposta) => {
         const itens = resposta.items.map((c) => this.preencherFicha(c));
         this.resultados.set(itens);
@@ -241,7 +248,7 @@ export class DashboardComponent implements AfterViewInit {
 
     const rivais = SEGMENTOS[modeloFord].rivais;
     const pedidos = {
-      ford: this.fordApi.listCars({ make: 'FORD', model: modeloFord, limit: 100 }).pipe(map((r) => r.items)),
+      ford: this.fordApi.listCars({ make: 'FORD', model: TERMO_BUSCA_API[modeloFord] ?? modeloFord, limit: 100 }).pipe(map((r) => r.items)),
       rivais: forkJoin(
         rivais.map((rival) => this.fordApi.listCars({ make: rival.marca, model: rival.busca, limit: 100 }).pipe(map((r) => r.items))),
       ),
