@@ -180,6 +180,66 @@ export class AgenteComponent implements OnDestroy {
     () => this.fichas().length - this.valoresMetrica().length,
   );
 
+  // ---- Resumo executivo em PDF --------------------------------------------
+
+  /**
+   * Gráficos convertidos em PNG para o resumo impresso.
+   *
+   * O canvas do Chart.js não sobrevive à impressão de forma confiável — o navegador
+   * costuma imprimi-lo em branco, porque redimensiona o elemento e o Chart.js não
+   * redesenha antes do diálogo abrir. Congelar em imagem resolve.
+   */
+  imagensGraficos = signal<{ radar: string; ficha: string; drivers: string } | null>(null);
+
+  /** Data do relatório, fixada no momento da geração. */
+  geradoEm = signal<string>('');
+
+  /**
+   * PNG do gráfico, ou string vazia quando ele não pode ser capturado.
+   *
+   * O try/catch não é decorativo: se o canvas não tem contexto 2D — gráfico ainda
+   * não desenhado, elemento oculto, canvas indisponível no ambiente — o Chart.js
+   * lança em toDataURL. Sem isso, um gráfico problemático derruba o resumo inteiro:
+   * a exceção sobe, window.print nunca é chamado e o analista clica no botão sem
+   * nada acontecer. Melhor um PDF sem aquele gráfico do que nenhum PDF.
+   */
+  private capturar(grafico?: Chart): string {
+    if (!grafico) return '';
+    try {
+      // PNG com fundo transparente, que no papel branco fica correto.
+      return grafico.toBase64Image('image/png', 1);
+    } catch {
+      return '';
+    }
+  }
+
+  baixarPdf(): void {
+    this.imagensGraficos.set({
+      radar: this.capturar(this.graficoRadar),
+      ficha: this.capturar(this.graficoFicha),
+      drivers: this.capturar(this.graficoDrivers),
+    });
+    this.geradoEm.set(
+      new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' }),
+    );
+
+    // Espera o Angular pintar a área de impressão antes de abrir o diálogo.
+    setTimeout(() => window.print(), 120);
+  }
+
+  /** Linhas da ficha técnica para a tabela do resumo. */
+  readonly linhasFichaPdf = computed(() =>
+    this.fichas().map((f) => ({
+      modelo: f.modelo,
+      variante: f.variante,
+      combustivel: f.combustivel,
+      potencia: f.potencia !== null ? `${f.potencia} cv` : '—',
+      comprimento: f.comprimento !== null ? `${f.comprimento} mm` : '—',
+      altura: f.altura !== null ? `${f.altura} mm` : '—',
+      tanque: f.tanque !== null ? `${f.tanque} L` : '—',
+    })),
+  );
+
   // ---- Canvas dos gráficos ------------------------------------------------
   private radarCanvas = viewChild<ElementRef<HTMLCanvasElement>>('radarCanvas');
   private fichaCanvas = viewChild<ElementRef<HTMLCanvasElement>>('fichaCanvas');

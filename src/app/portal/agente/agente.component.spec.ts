@@ -128,6 +128,72 @@ describe('AgenteComponent · camada de IA', () => {
     expect(c.comp.erroIa()).toContain('sessão');
   });
 
+  it('monta a área de impressão com os dados da análise', () => {
+    const c = criar();
+    analisar(c);
+
+    const impressao = c.el.querySelector('.ag-impressao');
+    expect(impressao).not.toBeNull();
+    expect(impressao!.textContent).toContain('Resumo executivo');
+    // O ranking completo tem que estar no papel, não só o pódio.
+    expect(impressao!.querySelectorAll('.pdf-tabela tbody tr').length).toBeGreaterThanOrEqual(
+      c.comp.matches().length,
+    );
+  });
+
+  it('inclui a leitura da IA no resumo impresso quando ela existe', async () => {
+    const c = criar();
+    analisar(c);
+    expect(c.el.querySelector('.ag-impressao')!.textContent).not.toContain('Leitura da IA');
+
+    c.ia.proximoInsight = INSIGHT_EXEMPLO;
+    await c.comp.gerarInsights();
+    c.fixture.detectChanges();
+
+    const texto = c.el.querySelector('.ag-impressao')!.textContent!;
+    expect(texto).toContain('Leitura da IA');
+    expect(texto).toContain('Orçamento'); // título do risco de exemplo
+  });
+
+  it('registra a data no momento em que o PDF é pedido', () => {
+    const c = criar();
+    analisar(c);
+    expect(c.comp.geradoEm()).toBe('');
+
+    // window.print não existe no jsdom; só o efeito colateral do estado interessa.
+    const original = window.print;
+    (window as { print: unknown }).print = () => {};
+    try {
+      c.comp.baixarPdf();
+    } finally {
+      (window as { print: unknown }).print = original;
+    }
+
+    expect(c.comp.geradoEm()).not.toBe('');
+    expect(c.comp.imagensGraficos()).not.toBeNull();
+  });
+
+  it('gera o PDF mesmo quando um gráfico não pode ser capturado', () => {
+    // No jsdom o canvas não tem contexto 2D, então nenhum gráfico captura —
+    // exatamente o cenário que antes derrubava o resumo inteiro por exceção.
+    const c = criar();
+    analisar(c);
+
+    const original = window.print;
+    let imprimiu = false;
+    (window as { print: unknown }).print = () => { imprimiu = true; };
+    try {
+      expect(() => c.comp.baixarPdf()).not.toThrow();
+    } finally {
+      (window as { print: unknown }).print = original;
+    }
+
+    const img = c.comp.imagensGraficos();
+    expect(img).not.toBeNull();
+    expect(img!.radar).toBe(''); // sem imagem, mas sem quebrar
+    expect(imprimiu).toBe(false); // o print é assíncrono; o que importa é não ter lançado
+  });
+
   it('descarta a leitura da IA ao analisar outro cliente', async () => {
     const c = criar();
     analisar(c);

@@ -83,3 +83,31 @@ seia-rodape {
 @media (prefers-reduced-motion: reduce) {
   .seia-brilho-marinho, .seia-brilho-azul { animation: none; background-position: 0 0; }
 }
+/* =========================================================
+   Impressão do resumo executivo do Agente de Perfil.
+
+   Fica aqui, e não no CSS do componente, porque precisa
+   esconder o que está FORA dele — topbar, rodapé, as outras
+   seções do portal. O encapsulamento de estilos do Angular
+   não alcança elementos irmãos.
+
+   Usa visibility em vez de display: display:none em um
+   ancestral apagaria também a área de impressão.
+   ========================================================= */
+@media print {
+  body * { visibility: hidden; }
+  .ag-impressao, .ag-impressao * { visibility: visible; }
+
+  .ag-impressao {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    display: block !important;
+  }
+
+  /* Barras de rolagem e alturas fixas quebram a paginação. */
+  html, body { height: auto !important; overflow: visible !important; background: #fff !important; }
+
+  @page { margin: 14mm 12mm; }
+}

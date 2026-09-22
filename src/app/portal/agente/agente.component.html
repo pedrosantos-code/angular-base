@@ -43,6 +43,20 @@
 
   @if (analisou()) {
 
+    <!-- Barra de ações da análise -->
+    <div class="ag-barra-acoes" appReveal="up">
+      <span class="ag-barra-info">
+        {{ matches().length }} modelos avaliados · {{ fichas().length }} com ficha técnica da API
+      </span>
+      <button type="button" class="ag-btn-pdf" (click)="baixarPdf()">
+        <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 3v12M7.5 10.5 12 15l4.5-4.5" />
+          <path d="M4.5 19.5h15" />
+        </svg>
+        Baixar resumo em PDF
+      </button>
+    </div>
+
     <!-- Premissas que o agente leu -->
     <div class="ag-premissas" appReveal="up">
       <div class="ag-premissas-topo">
@@ -432,6 +446,207 @@
     </div>
 
     <p class="ag-aviso">{{ avisoMercado }}</p>
+
+    <!--
+      Resumo executivo para impressão. Invisível na tela; o CSS global em
+      styles.css esconde o resto da página quando o diálogo de impressão abre.
+    -->
+    <div class="ag-impressao" aria-hidden="true">
+
+      <header class="pdf-capa">
+        <div class="pdf-marca">SEIA + Ford</div>
+        <h1 class="pdf-titulo">Resumo executivo — Agente de Perfil</h1>
+        @if (geradoEm()) { <p class="pdf-data">Gerado em {{ geradoEm() }}</p> }
+      </header>
+
+      <section class="pdf-bloco">
+        <h2 class="pdf-h2">Perfil analisado</h2>
+        <p class="pdf-citacao">“{{ descricao.trim() }}”</p>
+        <table class="pdf-tabela pdf-tabela--fatos">
+          <tbody>
+            @for (f of fatos(); track f.rotulo) {
+              <tr>
+                <th scope="row">{{ f.rotulo }}</th>
+                <td>{{ f.valor }}@if (!f.lido) { <em> (premissa assumida)</em> }</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+
+      @if (lider(); as l) {
+        <section class="pdf-bloco pdf-destaque">
+          <h2 class="pdf-h2">Recomendação</h2>
+          <div class="pdf-lider">
+            <div>
+              <strong class="pdf-lider-nome">{{ l.modelo }}</strong>
+              <span class="pdf-lider-seg">{{ l.segmento }} · a partir de {{ formatarReais(l.precoDe) }}</span>
+            </div>
+            <div class="pdf-lider-score">
+              <span class="pdf-score">{{ l.score }}</span><span class="pdf-score-max">/100</span>
+              <span class="pdf-score-rot">aderência</span>
+            </div>
+          </div>
+          <p class="pdf-texto">{{ l.diferencial }}</p>
+          <ul class="pdf-kpis">
+            <li><span>Share estimado</span><strong>{{ l.shareLinha }}%</strong></li>
+            <li><span>Ranking de vendas</span><strong>{{ l.posicaoVendas }}º</strong></li>
+            <li>
+              <span>Preço vs. teto</span>
+              <strong>{{ l.dentroDoOrcamento ? 'Cabe' : 'Acima (−' + (-l.ajustePreco) + ' pts)' }}</strong>
+            </li>
+          </ul>
+          @if (nenhumCabe() && perfil(); as p) {
+            <p class="pdf-alerta">
+              Nenhum modelo da linha cabe no teto de {{ formatarReais(p.orcamento) }}.
+              O ranking mostra o mais próximo do alcance.
+            </p>
+          }
+        </section>
+      }
+
+      <section class="pdf-bloco">
+        <h2 class="pdf-h2">Por que estes três</h2>
+        @for (m of podio(); track m.modelo) {
+          <div class="pdf-card">
+            <div class="pdf-card-topo">
+              <strong>{{ m.modelo }}</strong>
+              <span>{{ m.score }}/100 · {{ formatarReais(m.precoDe) }}</span>
+            </div>
+            <ul class="pdf-razoes">
+              @for (r of m.razoes; track r.eixo) {
+                <li><strong>{{ rotuloEixo(r.eixo) }} (+{{ r.contribuicao }})</strong> {{ r.texto }}</li>
+              }
+            </ul>
+            @if (m.atencao; as a) {
+              <p class="pdf-atencao"><strong>Atenção · {{ rotuloEixo(a.eixo) }}</strong> {{ a.texto }}</p>
+            }
+          </div>
+        }
+      </section>
+
+      @if (imagensGraficos(); as img) {
+        <section class="pdf-bloco pdf-quebra">
+          <h2 class="pdf-h2">Gráficos</h2>
+          @if (img.radar) {
+            <figure class="pdf-fig">
+              <img [src]="img.radar" alt="Aderência por eixo de necessidade">
+              <figcaption>Aderência por eixo de necessidade (0 a 100)</figcaption>
+            </figure>
+          }
+          @if (img.ficha) {
+            <figure class="pdf-fig">
+              <img [src]="img.ficha" alt="Ficha técnica comparada">
+              <figcaption>{{ metricaSelecionada().rotulo }} em {{ metricaSelecionada().unidade }} — dado real da API</figcaption>
+            </figure>
+          }
+          @if (img.drivers && lider(); as l) {
+            <figure class="pdf-fig">
+              <img [src]="img.drivers" alt="Fatores de decisão dos compradores">
+              <figcaption>Por que a massa escolhe o {{ l.modelo }} (estimativa interna)</figcaption>
+            </figure>
+          }
+        </section>
+      }
+
+      @if (insights(); as i) {
+        <section class="pdf-bloco pdf-quebra">
+          <h2 class="pdf-h2">Leitura da IA</h2>
+          <p class="pdf-veredito">
+            <strong>{{ i.concordaComRanking ? 'Concorda com o ranking.' : 'Discorda do ranking.' }}</strong>
+            {{ i.veredito }}
+          </p>
+          <p class="pdf-texto">{{ i.leituraPerfil }}</p>
+
+          <div class="pdf-duas-colunas">
+            <div>
+              <h3 class="pdf-h3">Riscos</h3>
+              <ul class="pdf-lista">
+                @for (r of i.riscos; track r.titulo) {
+                  <li><strong>{{ r.titulo }}</strong> — {{ r.texto }}</li>
+                }
+              </ul>
+            </div>
+            <div>
+              <h3 class="pdf-h3">Argumentos de venda</h3>
+              <ul class="pdf-lista">
+                @for (a of i.argumentosVenda; track a.titulo) {
+                  <li><strong>{{ a.titulo }}</strong> — {{ a.texto }}</li>
+                }
+              </ul>
+            </div>
+          </div>
+
+          @if (i.perguntasDoGestor.length) {
+            <h3 class="pdf-h3">Perguntas prováveis</h3>
+            <ul class="pdf-lista">
+              @for (p of i.perguntasDoGestor; track p.pergunta) {
+                <li><strong>{{ p.pergunta }}</strong> {{ p.resposta }}</li>
+              }
+            </ul>
+          }
+        </section>
+      }
+
+      <section class="pdf-bloco pdf-quebra">
+        <h2 class="pdf-h2">Ranking completo</h2>
+        <table class="pdf-tabela">
+          <thead>
+            <tr>
+              <th>#</th><th>Modelo</th><th>Segmento</th>
+              <th class="pdf-num">Score</th><th class="pdf-num">Ajuste preço</th>
+              <th class="pdf-num">Preço</th><th class="pdf-num">Share est.</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of matches(); track m.modelo; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ m.modelo }}</td>
+                <td>{{ m.segmento }}</td>
+                <td class="pdf-num">{{ m.score }}</td>
+                <td class="pdf-num">{{ m.ajustePreco === 0 ? '—' : m.ajustePreco }}</td>
+                <td class="pdf-num">{{ formatarReais(m.precoDe) }}</td>
+                <td class="pdf-num">{{ m.shareLinha }}%</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
+
+      @if (linhasFichaPdf().length) {
+        <section class="pdf-bloco">
+          <h2 class="pdf-h2">Ficha técnica — dados da API</h2>
+          <table class="pdf-tabela">
+            <thead>
+              <tr>
+                <th>Modelo</th><th>Variante</th><th>Combustível</th>
+                <th class="pdf-num">Potência</th><th class="pdf-num">Compr.</th>
+                <th class="pdf-num">Altura</th><th class="pdf-num">Tanque</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (f of linhasFichaPdf(); track f.modelo) {
+                <tr>
+                  <td>{{ f.modelo }}</td>
+                  <td class="pdf-variante">{{ f.variante }}</td>
+                  <td>{{ f.combustivel }}</td>
+                  <td class="pdf-num">{{ f.potencia }}</td>
+                  <td class="pdf-num">{{ f.comprimento }}</td>
+                  <td class="pdf-num">{{ f.altura }}</td>
+                  <td class="pdf-num">{{ f.tanque }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </section>
+      }
+
+      <footer class="pdf-rodape">
+        <p><strong>Origem dos dados.</strong> {{ avisoMercado }}</p>
+        <p>Fonte da ficha técnica: {{ nomeFonte }}.</p>
+      </footer>
+    </div>
   }
 
 </section>
