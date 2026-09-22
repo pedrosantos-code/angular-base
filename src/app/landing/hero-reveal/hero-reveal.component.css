@@ -150,6 +150,6 @@
 }
 
 @media (max-width: 700px) {
-  .frame { width: 180vw; max-width: none; --ry: -37%; --rs: .12; }
+  .frame { width: 180vw; max-width: none; --ry: -62%; --rs: .24; }
   .content { padding-left: 16px; padding-right: 16px; }
 }

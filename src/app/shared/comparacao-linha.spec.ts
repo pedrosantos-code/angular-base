@@ -45,6 +45,14 @@ describe('comparacao-linha', () => {
     expect(versaoFord('Bronco Sport', [carro({ model: 'Bronco', yearFrom: 2021 })])).toBeNull();
   });
 
+  it('no Ranger Raptor, escolhe a versão Raptor mesmo sendo de nicho, e ignora o Ranger de linha', () => {
+    const escolhido = versaoFord('Ranger Raptor', [
+      carro({ id: 1, model: 'Ford Ranger Raptor', yearFrom: 2024, enginePowerBhp: 405 }),
+      carro({ id: 2, model: 'Ford Ranger', yearFrom: 2023, enginePowerBhp: 270 }),
+    ]);
+    expect(escolhido?.id).toBe(1);
+  });
+
   it('no rival, reconhece só o modelo certo pelo filtro', () => {
     const tucson = SEGMENTOS['Bronco Sport'].rivais.find((r) => r.rotulo === 'Tucson')!;
     const escolhido = versaoRival(tucson, [
@@ -63,6 +71,8 @@ describe('comparacao-linha', () => {
     expect(rotulos('Mustang')).not.toContain('CR-V');
     expect(rotulos('Ranger')).toEqual(['Ridgeline', 'Santa Cruz']);
     expect(SEGMENTOS['Ranger']).toBe(SEGMENTOS['F-150']);
+    expect(rotulos('Ranger Raptor')).toEqual(['Ridgeline', 'Santa Cruz']);
+    expect(SEGMENTOS['Ranger Raptor'].rotulo).toBe('Picape de performance');
   });
 
   it('monta a comparação com a Ford como referência e sem outros modelos Ford', () => {

@@ -46,8 +46,9 @@ export const SEGMENTOS: Record<string, Segmento> = {
     ],
   },
   Ranger: PICAPES,
+  'Ranger Raptor': { ...PICAPES, rotulo: 'Picape de performance' },
   'F-150': PICAPES,
-  Maverick: { ...PICAPES, rotulo: 'Picape compacta' },
+  'Maverick Hybrid': { ...PICAPES, rotulo: 'Picape compacta' },
   'Bronco Sport': {
     rotulo: 'SUV compacto',
     rivais: [
@@ -76,15 +77,19 @@ export const SEGMENTOS: Record<string, Segmento> = {
 const PERTENCE_FORD: Record<string, (modelo: string) => boolean> = {
   Mustang: (m) => m.includes('mustang') && !m.includes('mach'),
   Ranger: (m) => m.includes('ranger'),
+  'Ranger Raptor': (m) => m.includes('ranger') && m.includes('raptor'),
   Territory: (m) => m.includes('territory'),
   'Bronco Sport': (m) => m.includes('bronco sport'),
-  Maverick: (m) => m.includes('maverick'),
+  'Maverick Hybrid': (m) => m.includes('maverick') && m.includes('hybrid'),
   Explorer: (m) => (m.startsWith('explorer') || m.includes('ford explorer')) && !m.includes('sport trac'),
   'F-150': (m) => m.includes('f-150') || m.includes('f150'),
 };
 
 /** Versões de nicho ou de performance extrema da Ford ficam de fora: compara-se a versão "de linha". */
 const NICHO_FORD = /raptor|gtd|shelby|gt500|gt350|svt|lightning|tremor|dark horse|sport trac/i;
+
+/** Modelos que SÃO a versão de nicho (ex.: Ranger Raptor): para eles o filtro acima não se aplica. */
+const MODELOS_NICHO = new Set(['Ranger Raptor']);
 
 export interface ItemComparacao {
   /** "Ford", "Honda"… */
@@ -132,8 +137,11 @@ export function escolherVersao(candidatas: Car[]): Car | null {
 export function versaoFord(modelo: string, carros: Car[]): Car | null {
   const pertence = PERTENCE_FORD[modelo];
   if (!pertence) return null;
+  const ehNicho = MODELOS_NICHO.has(modelo);
   return escolherVersao(
-    carros.filter((c) => pertence((c.model ?? '').toLowerCase()) && !NICHO_FORD.test(`${c.model ?? ''} ${c.variant ?? ''}`)),
+    carros.filter(
+      (c) => pertence((c.model ?? '').toLowerCase()) && (ehNicho || !NICHO_FORD.test(`${c.model ?? ''} ${c.variant ?? ''}`)),
+    ),
   );
 }
 

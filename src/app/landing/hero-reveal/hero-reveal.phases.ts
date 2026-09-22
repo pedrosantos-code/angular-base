@@ -65,7 +65,7 @@ export function revealPhases(progress: number): RevealPhases {
     head: range(s, 0.8, 0.9),
     scan: scanT,
     scanO: Math.sin(scanT * Math.PI),
-    recede: range(s, 0.93, 1),
+    recede: range(s, 0.8, 0.93),
     t: [step(0), step(1), step(2), step(3)]
   };
 }

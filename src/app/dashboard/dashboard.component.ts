@@ -25,8 +25,8 @@ export interface LinhaCarro {
 
 export type AbaGrafico = 'ambos' | 'potencia' | 'velocidade';
 
-/** Na busca por "Mustang" o carro mais parecido para a foto é o Mustang GT; o mesmo vale para o Maverick. */
-const FOTO_DO_MODELO: Record<string, string> = { Mustang: 'Mustang GT', Maverick: 'Maverick Hybrid' };
+/** Na busca por "Mustang" o carro mais parecido para a foto é o Mustang GT. */
+const FOTO_DO_MODELO: Record<string, string> = { Mustang: 'Mustang GT' };
 
 @Component({
   selector: 'app-dashboard',
@@ -57,7 +57,7 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   // Busca de veículo na API da Ford
-  readonly sugestoes = ['Mustang', 'Ranger', 'Territory', 'Bronco Sport', 'Maverick', 'Explorer', 'F-150'];
+  readonly sugestoes = ['Mustang', 'Ranger', 'Ranger Raptor', 'Territory', 'Bronco Sport', 'Maverick Hybrid', 'Explorer', 'F-150'];
   nomeCarro = signal<string>('');
   /** O que foi buscado de fato (o campo muda a cada tecla; o título dos resultados não). */
   termoBuscado = signal<string>('');
