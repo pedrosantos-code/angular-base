@@ -26,13 +26,6 @@ export const ICONES: Record<string, string[]> = {
     'M15.5 16 20 12l-4.5-4M20 12H9.5',
   ],
   ia: ['M12 3.2l2 4.8 4.8 2-4.8 2-2 4.8-2-4.8-4.8-2 4.8-2z'],
-  robo: [
-    'M6.5 8.8h11a2 2 0 0 1 2 2v6.4a2 2 0 0 1-2 2h-11a2 2 0 0 1-2-2v-6.4a2 2 0 0 1 2-2z',
-    'M12 8.8V6.2M12 3a1.6 1.6 0 1 1 0 3.2A1.6 1.6 0 0 1 12 3z',
-    'M9.3 13h.01M14.7 13h.01',
-    'M9.8 16.2h4.4',
-    'M4.5 12.2H3M21 12.2h-1.5',
-  ],
   carro: ['M5 17h14M4.5 17v-4.2L6.4 8h11.2l1.9 4.8V17M5 17v2M19 17v2', 'M8 13h.01M16 13h.01'],
   grafico: ['M4 20V10.5M10 20V4.5M16 20v-6.5M3 20h18'],
   agenda: ['M4 5.5h16v15H4zM4 10h16M8.5 3v4.5M15.5 3v4.5'],
@@ -44,7 +37,6 @@ export const ICONES: Record<string, string[]> = {
 
 /** "Encontrar meu Ford" não entra aqui — o logo da gaveta já leva pra lá (irHome), não precisa duplicar. */
 export const ITENS_PRINCIPAIS: ItemMenu[] = [
-  { chave: 'agente', rotulo: 'Agente de IA', icone: 'robo' },
   { chave: 'modelos', rotulo: 'Modelos Ford', icone: 'carro' },
   { chave: 'comparacoes', rotulo: 'Dashboard detalhado', icone: 'grafico' },
 ];
@@ -62,9 +54,6 @@ export const ITENS_SOBRE: ItemMenu[] = [
 /** Mapa chave da gaveta → rota real, para páginas que navegam de fato pelo Router. */
 export const ROTAS_MENU: Record<string, string> = {
   recomendacao: '/portal',
-  // O agente vive dentro do /portal, numa seção com id="agente". A âncora leva
-  // direto até ela — ver anchorScrolling no app.config.ts.
-  agente: '/portal#agente',
   modelos: '/modelos',
   comparacoes: '/dashboard',
   agendamentos: '/agendamentos',
@@ -98,9 +87,7 @@ export class TopbarComponent {
   /** Chave do item ativo na gaveta, derivada dinamicamente da rota atual. */
   readonly ativo = computed(() => {
     const semQuery = this.urlAtual().split('?')[0];
-    // Tenta com a âncora primeiro (/portal#agente) e só depois o caminho puro
-    // (/portal). Descartando a âncora de saída, o item do agente nunca acenderia.
-    return CHAVE_POR_ROTA[semQuery] ?? CHAVE_POR_ROTA[semQuery.split('#')[0]] ?? '';
+    return CHAVE_POR_ROTA[semQuery.split('#')[0]] ?? '';
   });
 
   constructor() {

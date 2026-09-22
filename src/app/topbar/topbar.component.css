@@ -99,9 +99,9 @@ button.topbar-btn:focus-visible { outline: 2px solid #7FB3E4; outline-offset: -3
 }
 .overlay--visible { opacity: 1; pointer-events: auto; }
 
-/* Gaveta */
+/* Gaveta — acima do .topbar (z-index 90) pra cobrir o cabeçalho por inteiro quando aberta. */
 .drawer {
-  position: fixed; left: 0; top: 0; bottom: 0; z-index: 80;
+  position: fixed; left: 0; top: 0; bottom: 0; z-index: 95;
   width: 268px; max-width: 82vw;
   background: #001730; border-right: 1px solid rgba(255,255,255,.12);
   padding: 14px 0 24px;
