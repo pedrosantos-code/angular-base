@@ -82,21 +82,25 @@
 }
 
 .l-db-tag {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   margin: 0 0 12px;
+  padding: 7px 14px;
+  border: 1px solid #DCE6F3;
+  border-radius: 999px;
+  background: rgba(255,255,255,.85);
   font-family: 'IBM Plex Mono', ui-monospace, monospace;
-  font-size: 11px;
-  letter-spacing: .14em;
+  font-size: 10.5px;
+  letter-spacing: .12em;
   text-transform: uppercase;
-  color: #6B7A8C;
+  color: #55677A;
 }
 
 .l-db-tag span {
   flex: none;
-  width: 22px;
-  height: 2px;
+  width: 7px;
+  height: 7px;
   background: #2E7DD1;
 }
 

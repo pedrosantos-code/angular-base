@@ -112,7 +112,10 @@ export class DashboardComponent implements AfterViewInit {
   /** Nome curto do modelo de referência, sem a marca ("Mustang GT"). */
   readonly nomeReferencia = computed(() => {
     const ref = this.referencia();
-    if (!ref) return this.modeloDestacado() ?? '';
+    const destacado = this.modeloDestacado();
+    if (!ref) return destacado ?? '';
+    // A API nunca escreve "Hybrid" no campo model do Maverick (só "FHEV" no variant) — usa o nome já resolvido.
+    if (destacado === 'Maverick Hybrid') return destacado;
     // A API às vezes traz o mercado no nome ("Territory (China)"): fica só o modelo.
     const modelo = (ref.carro.model ?? ref.modelo).replace(/^ford\s+/i, '').replace(/\s*\([^)]*\)/g, '').trim();
     return modelo || ref.modelo;

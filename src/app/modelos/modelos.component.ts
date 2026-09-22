@@ -49,6 +49,9 @@ export interface Modelo {
 
 export interface Categoria { chave: string; rotulo: string; }
 
+/** Modelos sem versão cadastrada na API da Ford (busca lá não acha nada) — o card não abre a ficha no Dashboard. */
+const SEM_FICHA_DASHBOARD = new Set(['maverick-tremor', 'mustang-mach-e', 'f-150-lightning', 'transit-furgao', 'transit-minibus']);
+
 @Component({
   selector: 'seia-modelos',
   standalone: true,
@@ -69,8 +72,14 @@ export class ModelosComponent {
     if (rota) this.router.navigateByUrl(rota);
   }
 
+  /** false para modelos sem versão na API da Ford: o card não abre a ficha no Dashboard. */
+  temFicha(m: Modelo): boolean {
+    return !SEM_FICHA_DASHBOARD.has(m.id);
+  }
+
   /** Abre a ficha técnica do modelo no Dashboard, que busca na API da Ford. */
   abrirFicha(m: Modelo): void {
+    if (!this.temFicha(m)) return;
     this.registrarEvento(m, 'view');
     this.router.navigate(['/dashboard'], { queryParams: { modelo: m.nome } });
   }
