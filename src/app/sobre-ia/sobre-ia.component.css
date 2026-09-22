@@ -32,10 +32,11 @@
 .l-ia-hero { background: #fff; padding: 36px 0 34px; }
 .l-ia-hero-row { display: flex; align-items: center; justify-content: space-between; gap: 28px 48px; flex-wrap: wrap; }
 .l-ia-tag {
-  display: flex; align-items: center; gap: 10px; margin: 0 0 14px;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6B7A8C;
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 14px; padding: 7px 14px;
+  border: 1px solid #DCE6F3; border-radius: 999px; background: rgba(255,255,255,.85);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #55677A;
 }
-.l-ia-tag span { width: 22px; height: 2px; background: #2E7DD1; }
+.l-ia-tag span { flex: none; width: 7px; height: 7px; background: #2E7DD1; }
 h1.l-ia-title {
   font-family: 'Archivo', sans-serif; font-weight: 900; line-height: .95; letter-spacing: -.04em;
   font-size: clamp(40px, 6.4vw, 76px);
