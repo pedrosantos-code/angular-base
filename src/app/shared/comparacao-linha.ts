@@ -91,8 +91,12 @@ const PERTENCE_FORD: Record<string, (modelo: string, variante: string) => boolea
   'F-150': (m) => m.includes('f-150') || m.includes('f150'),
 };
 
-/** Versões de nicho ou de performance extrema da Ford ficam de fora: compara-se a versão "de linha". */
-const NICHO_FORD = /raptor|gtd|shelby|gt500|gt350|svt|lightning|tremor|dark horse|sport trac/i;
+/**
+ * Versões de nicho, de performance extrema ou de carroceria diferente da linha ficam de fora: compara-se a
+ * versão "de linha" (cupê fechado, cabine padrão) — convertible e as cabines extras do F-150 entram aqui
+ * pelo mesmo motivo que o sport trac: não é o corte que representa o modelo.
+ */
+const NICHO_FORD = /raptor|gtd|shelby|gt500|gt350|svt|lightning|tremor|dark horse|sport trac|convertible|super\s?crew/i;
 
 /** Modelos que SÃO a versão de nicho (ex.: Ranger Raptor): para eles o filtro acima não se aplica. */
 const MODELOS_NICHO = new Set(['Ranger Raptor']);

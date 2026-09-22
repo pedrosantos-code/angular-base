@@ -118,6 +118,10 @@ export class DashboardComponent implements AfterViewInit {
     if (!ref) return destacado ?? '';
     // A API nunca escreve "Hybrid" no campo model do Maverick (só "FHEV" no variant) — usa o nome já resolvido.
     if (destacado === 'Maverick Hybrid') return destacado;
+    // A versão de linha do Mustang às vezes vem só como "Mustang" no model (o "GT" fica implícito no motor V8).
+    if (destacado === 'Mustang') return 'Mustang GT';
+    // Sem "Super Crew" na disputa, quem ganha é outra config. de cabine (ex.: "F-150 Regular Cab") — mostra só "F-150".
+    if (destacado === 'F-150') return destacado;
     // A API às vezes traz o mercado no nome ("Territory (China)"): fica só o modelo.
     const modelo = (ref.carro.model ?? ref.modelo).replace(/^ford\s+/i, '').replace(/\s*\([^)]*\)/g, '').trim();
     return modelo || ref.modelo;

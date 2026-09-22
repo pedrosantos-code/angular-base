@@ -53,6 +53,22 @@ describe('comparacao-linha', () => {
     expect(escolhido?.id).toBe(1);
   });
 
+  it('no Mustang, ignora o conversível e pega a versão de linha (fechada)', () => {
+    const escolhido = versaoFord('Mustang', [
+      carro({ id: 1, model: 'Ford Mustang Convertible', yearFrom: 2024, enginePowerBhp: 460 }),
+      carro({ id: 2, model: 'Ford Mustang GT', yearFrom: 2018, enginePowerBhp: 460 }),
+    ]);
+    expect(escolhido?.id).toBe(2);
+  });
+
+  it('no F-150, ignora o Super Crew (cabine, não trim) e pega outra configuração de linha', () => {
+    const escolhido = versaoFord('F-150', [
+      carro({ id: 1, model: 'F-150 Super Crew', yearFrom: 2018, enginePowerBhp: 395 }),
+      carro({ id: 2, model: 'F-150 Regular Cab', yearFrom: 2012, enginePowerBhp: 365 }),
+    ]);
+    expect(escolhido?.id).toBe(2);
+  });
+
   it('no Maverick Hybrid, reconhece pela variante (a API nunca escreve "Hybrid" no model, só "FHEV" no variant)', () => {
     const escolhido = versaoFord('Maverick Hybrid', [
       carro({ id: 1, model: 'Ford Maverick', variant: '2.0L EcoBoost 8AT (250 HP)', yearFrom: 2022, enginePowerBhp: 247 }),
