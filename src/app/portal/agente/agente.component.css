@@ -105,6 +105,28 @@
 }
 .ag-persona:hover { background: #2E7DD1; border-color: #2E7DD1; color: #fff; }
 
+/* ===== Barra de ações ===== */
+.ag-barra-acoes {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-wrap: wrap;
+  background: #fff; border: 1px solid #E2EAF2; border-left: 3px solid #2E7DD1;
+  padding: 14px 18px;
+}
+.ag-barra-info { font-size: 13px; color: #55677A; }
+.ag-btn-pdf {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: #001730; color: #fff;
+  padding: 11px 20px;
+  font-family: 'Archivo', sans-serif; font-weight: 800;
+  font-size: 12px; letter-spacing: .07em; text-transform: uppercase;
+  transition: background .16s, transform .16s;
+}
+.ag-btn-pdf:hover { background: #0B57A4; transform: translateY(-1px); }
+.ag-btn-pdf svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+/* ===== Área de impressão (invisível na tela) ===== */
+.ag-impressao { display: none; }
+
 /* ===== Premissas ===== */
 .ag-premissas, .ag-tabela-bloco { background: #fff; border: 1px solid #E2EAF2; padding: 22px; }
 .ag-premissas-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
@@ -405,4 +427,131 @@
   .ag-fato, .ag-card, .ag-kpi-fill { animation: none; }
   .ag-btn-primario:hover:not(:disabled), .ag-card:hover { transform: none; }
   .ag-peso-fill { transition: none; }
+}
+
+/* =========================================================
+   Resumo executivo impresso.
+   Só existe no @media print — na tela .ag-impressao fica
+   display:none (regra acima). Tudo em preto sobre branco,
+   com tamanhos em pt, que é a unidade que impressora entende.
+   ========================================================= */
+@media print {
+  .ag-impressao {
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    color: #111;
+    font-size: 9.5pt;
+    line-height: 1.45;
+  }
+
+  .pdf-capa { border-bottom: 2pt solid #001730; padding-bottom: 8pt; margin-bottom: 14pt; }
+  .pdf-marca {
+    font-family: 'Archivo', sans-serif; font-weight: 900;
+    font-size: 8pt; letter-spacing: .14em; text-transform: uppercase; color: #2E7DD1;
+  }
+  .pdf-titulo {
+    font-family: 'Archivo', sans-serif; font-weight: 900;
+    font-size: 17pt; margin: 3pt 0 2pt; color: #001730;
+  }
+  .pdf-data { font-size: 8.5pt; color: #666; margin: 0; }
+
+  .pdf-bloco { margin-bottom: 14pt; break-inside: avoid; }
+  /* Começa em página nova: sem isso, gráficos e tabelas partem no meio. */
+  .pdf-quebra { break-before: page; }
+
+  .pdf-h2 {
+    font-family: 'Archivo', sans-serif; font-weight: 800;
+    font-size: 11pt; color: #001730;
+    border-bottom: .5pt solid #C9D6E3; padding-bottom: 3pt; margin: 0 0 8pt;
+  }
+  .pdf-h3 {
+    font-family: 'Archivo', sans-serif; font-weight: 800;
+    font-size: 9pt; text-transform: uppercase; letter-spacing: .06em;
+    color: #2E7DD1; margin: 9pt 0 4pt;
+  }
+  .pdf-texto { margin: 0 0 6pt; }
+  .pdf-citacao {
+    font-style: italic; color: #333;
+    border-left: 2pt solid #2E7DD1; padding-left: 8pt; margin: 0 0 8pt;
+  }
+
+  /* Recomendação */
+  .pdf-destaque { border: .5pt solid #C9D6E3; padding: 10pt; background: #F7FAFD; }
+  .pdf-lider { display: flex; justify-content: space-between; align-items: flex-start; gap: 12pt; margin-bottom: 6pt; }
+  .pdf-lider-nome {
+    font-family: 'Archivo', sans-serif; font-weight: 900;
+    font-size: 15pt; color: #001730; display: block;
+  }
+  .pdf-lider-seg { font-size: 9pt; color: #555; }
+  .pdf-lider-score { text-align: right; white-space: nowrap; }
+  .pdf-score { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 24pt; color: #001730; }
+  .pdf-score-max { font-size: 10pt; color: #666; }
+  .pdf-score-rot {
+    display: block; font-size: 7.5pt; text-transform: uppercase;
+    letter-spacing: .08em; color: #777;
+  }
+
+  .pdf-kpis { list-style: none; padding: 0; margin: 8pt 0 0; display: flex; gap: 18pt; }
+  .pdf-kpis li { font-size: 9pt; }
+  .pdf-kpis span {
+    display: block; font-size: 7.5pt; text-transform: uppercase;
+    letter-spacing: .06em; color: #777;
+  }
+  .pdf-kpis strong { font-size: 10.5pt; color: #001730; }
+
+  .pdf-alerta {
+    margin: 8pt 0 0; padding: 6pt 8pt; font-size: 9pt;
+    background: #FCEEE8; border-left: 2pt solid #C2603C; color: #7A3A22;
+  }
+
+  /* Pódio */
+  .pdf-card { border-bottom: .5pt solid #DDE6EE; padding: 6pt 0; break-inside: avoid; }
+  .pdf-card:last-child { border-bottom: none; }
+  .pdf-card-topo { display: flex; justify-content: space-between; font-size: 10pt; margin-bottom: 3pt; }
+  .pdf-card-topo strong { font-family: 'Archivo', sans-serif; font-weight: 800; color: #001730; }
+  .pdf-card-topo span { color: #555; }
+  .pdf-razoes { list-style: none; padding: 0; margin: 0; }
+  .pdf-razoes li { font-size: 9pt; margin-bottom: 2pt; color: #333; }
+  .pdf-razoes strong { color: #001730; }
+  .pdf-atencao { font-size: 9pt; margin: 4pt 0 0; color: #7A3A22; }
+
+  /* Gráficos */
+  .pdf-fig { margin: 0 0 12pt; break-inside: avoid; text-align: center; }
+  .pdf-fig img { max-width: 100%; max-height: 78mm; object-fit: contain; }
+  .pdf-fig figcaption { font-size: 8pt; color: #666; margin-top: 3pt; }
+
+  /* Leitura da IA */
+  .pdf-veredito {
+    font-size: 10.5pt; margin: 0 0 6pt;
+    padding: 7pt 9pt; background: #F1FAF6; border-left: 2pt solid #1baf7a;
+  }
+  .pdf-duas-colunas { display: flex; gap: 18pt; }
+  .pdf-duas-colunas > div { flex: 1; }
+  .pdf-lista { padding-left: 12pt; margin: 0; }
+  .pdf-lista li { font-size: 9pt; margin-bottom: 4pt; color: #333; }
+  .pdf-lista strong { color: #001730; }
+
+  /* Tabelas */
+  .pdf-tabela { width: 100%; border-collapse: collapse; font-size: 8.5pt; }
+  .pdf-tabela th {
+    text-align: left; padding: 4pt 5pt;
+    font-size: 7.5pt; text-transform: uppercase; letter-spacing: .05em; color: #555;
+    border-bottom: 1pt solid #001730;
+  }
+  .pdf-tabela td { padding: 4pt 5pt; border-bottom: .5pt solid #E4EBF2; }
+  .pdf-tabela tbody tr { break-inside: avoid; }
+  .pdf-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .pdf-variante { color: #555; max-width: 52mm; }
+
+  .pdf-tabela--fatos th {
+    width: 32mm; border-bottom: .5pt solid #E4EBF2;
+    text-transform: none; font-size: 8.5pt; color: #001730; font-weight: 600;
+  }
+  .pdf-tabela--fatos em { color: #777; font-size: 8pt; }
+
+  /* Rodapé */
+  .pdf-rodape {
+    margin-top: 14pt; padding-top: 7pt; border-top: .5pt solid #C9D6E3;
+    font-size: 7.5pt; color: #666;
+  }
+  .pdf-rodape p { margin: 0 0 3pt; }
 }

@@ -42,13 +42,21 @@ const CORS = {
 // Formato da resposta de insights
 // ---------------------------------------------------------------------------
 
-/** Par título + texto, repetido em riscos e argumentos. */
+/**
+ * Par título + texto, repetido em riscos e argumentos.
+ *
+ * Os limites de tamanho estão na descrição de propósito: sem eles o modelo escreve
+ * parágrafos que ninguém lê numa reunião, e o PDF de resumo estoura de página.
+ */
 const itemComTitulo = (descricao: string) => ({
   type: 'array',
-  description: descricao,
+  description: `${descricao} No máximo 3 itens, ordenados do mais relevante para o menos.`,
   items: {
     type: 'object',
-    properties: { titulo: { type: 'string' }, texto: { type: 'string' } },
+    properties: {
+      titulo: { type: 'string', description: 'Rótulo de 2 a 5 palavras. Sem verbo, sem frase.' },
+      texto: { type: 'string', description: 'Uma frase acionável, no máximo 25 palavras. Cite o número quando houver.' },
+    },
     required: ['titulo', 'texto'],
     additionalProperties: false,
   },
@@ -57,17 +65,26 @@ const itemComTitulo = (descricao: string) => ({
 const ESQUEMA_INSIGHTS = {
   type: 'object',
   properties: {
-    veredito: { type: 'string', description: 'Uma frase dizendo se o ranking faz sentido comercialmente para este perfil.' },
+    veredito: {
+      type: 'string',
+      description: 'A conclusão, em uma frase de no máximo 20 palavras. Comece pela recomendação, não pelo contexto.',
+    },
     concordaComRanking: { type: 'boolean', description: 'true se o modelo líder é de fato a melhor recomendação comercial.' },
-    leituraPerfil: { type: 'string', description: 'O que este perfil significa na prática para o vendedor, em 2 a 3 frases.' },
-    riscos: itemComTitulo('Riscos concretos de recomendar o modelo líder para este cliente.'),
-    argumentosVenda: itemComTitulo('Argumentos que o vendedor pode usar, ancorados nos dados recebidos.'),
+    leituraPerfil: {
+      type: 'string',
+      description: 'O que este perfil muda na abordagem de venda. No máximo 2 frases, 40 palavras no total.',
+    },
+    riscos: itemComTitulo('O que pode dar errado ao recomendar o modelo líder para este cliente.'),
+    argumentosVenda: itemComTitulo('Argumentos de venda ancorados nos dados recebidos.'),
     perguntasDoGestor: {
       type: 'array',
-      description: 'Perguntas que um gestor provavelmente faria na reunião, com a resposta baseada nos dados.',
+      description: 'Perguntas que um gestor faria na reunião. No máximo 3.',
       items: {
         type: 'object',
-        properties: { pergunta: { type: 'string' }, resposta: { type: 'string' } },
+        properties: {
+          pergunta: { type: 'string', description: 'A pergunta como um gestor a faria. Direta, no máximo 15 palavras.' },
+          resposta: { type: 'string', description: 'Resposta com o número na frente. No máximo 30 palavras.' },
+        },
         required: ['pergunta', 'resposta'],
         additionalProperties: false,
       },
@@ -103,8 +120,21 @@ REGRAS DE ANCORAGEM — as mais importantes:
 POSTURA:
 - Você pode discordar do ranking. Se o modelo líder for uma má recomendação comercial,
   diga e explique. Concordar por educação não ajuda ninguém.
-- Seja concreto e direto. Nada de generalidade de folheto.
-- Português do Brasil, tom profissional e sóbrio.`;
+- Português do Brasil, tom profissional e sóbrio.
+
+ESTILO — isto é leitura para reunião de diretoria, não relatório:
+- Frases curtas e afirmativas. Uma ideia por frase.
+- Número na frente do adjetivo. "37 de aderência, 26 pontos descontados por preço"
+  vale mais que "aderência relativamente baixa".
+- Sem preâmbulo, sem recapitular o que foi perguntado, sem fechamento cerimonioso.
+  Comece pela conclusão.
+- Corte hedge: nada de "é importante notar", "vale ressaltar", "de modo geral",
+  "pode-se dizer". Se você tem a informação, afirme. Se não tem, diga que não tem.
+- Zero linguagem de folheto: "versatilidade", "experiência única", "custo-benefício"
+  sozinhos não significam nada. Diga o que muda na decisão.
+- Cada risco e cada argumento é acionável: o que fazer ou o que checar, não uma
+  observação genérica.
+- Respeite os limites de tamanho que o formato pedir. Prolixidade aqui é defeito.`;
 
 function promptDaAnalise(analise: unknown): string {
   return `Resultado da análise:
@@ -181,8 +211,9 @@ Deno.serve(async (req) => {
 
 Pergunta do analista: ${pergunta}
 
-Responda de forma direta e ancorada nos dados acima. Se os dados não permitirem
-responder, diga o que faltaria.`,
+Responda em no máximo 4 frases. Comece pela resposta, não pelo contexto. Cite os
+números que sustentam o que você diz. Se os dados não permitirem responder, diga
+isso na primeira frase e aponte o que faltaria.`,
         }],
       });
 
