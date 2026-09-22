@@ -202,7 +202,7 @@
 
       <!-- Sem comparação cadastrada para o modelo digitado -->
       @if (!soConcorrentes) {
-        <p class="l-db-nota">A comparação com concorrentes está disponível para: {{ sugestoes.join(', ') }}.</p>
+        <p class="l-db-nota">A comparação com concorrentes está disponível para: {{ sugestoesComComparacao.join(', ') }}.</p>
 
         @if (buscandoSemelhantes()) {
           <p class="l-db-kicker l-db-kicker--solo">Buscando carros semelhantes…</p>

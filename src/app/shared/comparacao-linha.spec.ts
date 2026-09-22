@@ -62,7 +62,7 @@ describe('comparacao-linha', () => {
   });
 
   it('no rival, reconhece só o modelo certo pelo filtro', () => {
-    const tucson = SEGMENTOS['Bronco Sport'].rivais.find((r) => r.rotulo === 'Tucson')!;
+    const tucson = SEGMENTOS['Territory'].rivais.find((r) => r.rotulo === 'Tucson')!;
     const escolhido = versaoRival(tucson, [
       carro({ id: 1, make: 'HYUNDAI', model: 'Tucson', yearFrom: 2018, enginePowerBhp: 183 }),
       carro({ id: 2, make: 'HYUNDAI', model: 'Hyundai Tucson', yearFrom: 2024, enginePowerBhp: 187 }),
@@ -74,30 +74,58 @@ describe('comparacao-linha', () => {
   it('compara cada modelo Ford só com o segmento dele', () => {
     // SUV não é comparado com esportivo, e picape não é comparada com SUV.
     const rotulos = (m: string) => SEGMENTOS[m].rivais.map((r) => r.rotulo);
-    expect(rotulos('Bronco Sport')).toEqual(expect.arrayContaining(['CR-V', 'Tucson']));
+    expect(rotulos('Bronco Sport')).toEqual(expect.arrayContaining(['HR-V', 'Kona']));
     expect(rotulos('Bronco Sport')).not.toContain('NSX');
     expect(rotulos('Mustang')).not.toContain('CR-V');
-    expect(rotulos('Ranger')).toEqual(['Ridgeline', 'Santa Cruz']);
-    expect(SEGMENTOS['Ranger']).toBe(SEGMENTOS['F-150']);
-    expect(rotulos('Ranger Raptor')).toEqual(['Ridgeline', 'Santa Cruz']);
+  });
+
+  it('nenhum rival de SUV se repete entre Bronco Sport, Territory e Explorer — cada um no seu porte', () => {
+    const rotulos = (m: string) => SEGMENTOS[m].rivais.map((r) => r.rotulo);
+    const compacto = rotulos('Bronco Sport');
+    const medio = rotulos('Territory');
+    const grande = rotulos('Explorer');
+    expect(compacto.filter((r) => medio.includes(r) || grande.includes(r))).toEqual([]);
+    expect(medio.filter((r) => compacto.includes(r) || grande.includes(r))).toEqual([]);
+    expect(grande.filter((r) => compacto.includes(r) || medio.includes(r))).toEqual([]);
+  });
+
+  it('cada picape leva a rival do porte mais parecido — só o F-150 (o único sem porte equivalente) leva as duas', () => {
+    // Honda e Hyundai só têm duas picapes no catálogo inteiro (Ridgeline e Santa Cruz), então pra 4 modelos
+    // Ford picape nem todo mundo sai sem repetir: Ranger e Ranger Raptor dividem a Ridgeline (mesmo porte),
+    // e só o F-150 — que não tem equivalente de porte em nenhuma das duas — leva as duas.
+    const rotulos = (m: string) => SEGMENTOS[m].rivais.map((r) => r.rotulo);
+    expect(rotulos('Ranger')).toEqual(['Ridgeline']);
+    expect(rotulos('Ranger Raptor')).toEqual(['Ridgeline']);
+    expect(rotulos('Maverick Hybrid')).toEqual(['Santa Cruz']);
+    expect(rotulos('F-150')).toEqual(['Ridgeline', 'Santa Cruz']);
     expect(SEGMENTOS['Ranger Raptor'].rotulo).toBe('Picape de performance');
   });
 
   it('monta a comparação com a Ford como referência e sem outros modelos Ford', () => {
-    const rivais = SEGMENTOS['Ranger'].rivais;
     const comparacao = montarComparacao(
       'Ranger',
       [carro({ id: 1, model: 'Ford Ranger', yearFrom: 2024, enginePowerBhp: 315 })],
-      {
-        [chaveRival(rivais[0])]: [carro({ id: 2, make: 'HONDA', model: 'Honda Ridgeline', yearFrom: 2017, enginePowerBhp: 280 })],
-        // Santa Cruz sem dados na API
-      },
+      {},
+      // Ridgeline sem dados na API
     );
     expect(comparacao?.segmento).toBe('Picape');
-    expect(comparacao?.itens.map((i) => `${i.marca} ${i.modelo}`)).toEqual(['Ford Ranger', 'Honda Ridgeline']);
+    expect(comparacao?.itens.map((i) => `${i.marca} ${i.modelo}`)).toEqual(['Ford Ranger']);
     expect(comparacao?.itens[0].referencia).toBe(true);
-    expect(comparacao?.itens[1].referencia).toBe(false);
-    expect(comparacao?.semDados).toEqual(['Hyundai Santa Cruz']);
+    expect(comparacao?.semDados).toEqual(['Honda Ridgeline']);
+  });
+
+  it('monta a comparação também com o rival, quando a API devolve dados pra ele', () => {
+    const rivais = SEGMENTOS['Maverick Hybrid'].rivais;
+    const comparacao = montarComparacao(
+      'Maverick Hybrid',
+      [carro({ id: 1, model: 'Ford Maverick', variant: '2.5L FHEV 8AT (191 HP)', yearFrom: 2022, enginePowerBhp: 160 })],
+      {
+        [chaveRival(rivais[0])]: [carro({ id: 2, make: 'HYUNDAI', model: 'Hyundai Santa Cruz', yearFrom: 2023, enginePowerBhp: 191 })],
+      },
+    );
+    expect(comparacao?.segmento).toBe('Picape compacta');
+    expect(comparacao?.itens.map((i) => `${i.marca} ${i.modelo}`)).toEqual(['Ford Maverick Hybrid', 'Hyundai Santa Cruz']);
+    expect(comparacao?.semDados).toEqual([]);
   });
 
   it('não monta comparação para modelo sem segmento cadastrado', () => {

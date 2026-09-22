@@ -19,17 +19,38 @@ export interface Segmento {
   rivais: Rival[];
 }
 
-const PICAPES: Segmento = {
-  rotulo: 'Picape',
-  rivais: [
-    { marca: 'HONDA', busca: 'Ridgeline', filtro: /ridgeline/i, rotulo: 'Ridgeline' },
-    { marca: 'HYUNDAI', busca: 'Santa Cruz', filtro: /santa cruz/i, rotulo: 'Santa Cruz' },
-  ],
-};
+/*
+ * Picapes: Honda e Hyundai só têm DUAS picapes no catálogo inteiro — Ridgeline (Honda, média) e Santa Cruz
+ * (Hyundai, compacta). Com só essas duas pra quatro modelos Ford (Ranger, Ranger Raptor, F-150 e Maverick
+ * Hybrid), dá pra evitar repetição na maior parte, mas não em todo mundo:
+ * - Maverick Hybrid (compacta, unibody) ......... só Santa Cruz (o porte que bate)
+ * - Ranger e Ranger Raptor (média) ............... só Ridgeline (o porte que bate; a Raptor repete a mesma
+ *   do Ranger de linha porque não existe picape de performance da Honda/Hyundai pra comparar)
+ * - F-150 (extra-grande) .......................... as duas, já que nenhuma bate no porte dela sozinha
+ */
+const RIDGELINE: Rival = { marca: 'HONDA', busca: 'Ridgeline', filtro: /ridgeline/i, rotulo: 'Ridgeline' };
+const SANTA_CRUZ: Rival = { marca: 'HYUNDAI', busca: 'Santa Cruz', filtro: /santa cruz/i, rotulo: 'Santa Cruz' };
+const PICAPE_MEDIA: Segmento = { rotulo: 'Picape', rivais: [RIDGELINE] };
+const PICAPE_COMPACTA: Segmento = { rotulo: 'Picape compacta', rivais: [SANTA_CRUZ] };
+const PICAPE_EXTRA_GRANDE: Segmento = { rotulo: 'Picape extra-grande', rivais: [RIDGELINE, SANTA_CRUZ] };
 
-const TUCSON: Rival = { marca: 'HYUNDAI', busca: 'Tucson', filtro: /^hyundai tucson$/i, rotulo: 'Tucson' };
-const SANTA_FE: Rival = { marca: 'HYUNDAI', busca: 'Santa Fe', filtro: /^hyundai santa fe$/i, rotulo: 'Santa Fe' };
+/*
+ * SUVs: aqui a Honda e a Hyundai têm bem mais opções que nas picapes, então dá pra separar por porte sem
+ * repetir nenhum rival entre Bronco Sport, Territory e Explorer — cada um fica só com o degrau dele:
+ * - Bronco Sport (compacto 2 fileiras) ... HR-V, ZR-V, Kona, Venue (os menores dos dois catálogos)
+ * - Territory (um degrau acima, 2 fileiras) ... CR-V, Tucson
+ * - Explorer (grande, 3 fileiras) ... Pilot, Passport, Palisade, Santa Fe (os maiores)
+ */
+const HR_V: Rival = { marca: 'HONDA', busca: 'HR-V', filtro: /^(honda )?hr-v$/i, rotulo: 'HR-V' };
+const ZR_V: Rival = { marca: 'HONDA', busca: 'ZR-V', filtro: /zr-v/i, rotulo: 'ZR-V' };
+const KONA: Rival = { marca: 'HYUNDAI', busca: 'Kona', filtro: /^hyundai kona$/i, rotulo: 'Kona' };
+const VENUE: Rival = { marca: 'HYUNDAI', busca: 'Venue', filtro: /^hyundai venue$/i, rotulo: 'Venue' };
 const CR_V: Rival = { marca: 'HONDA', busca: 'CR-V', filtro: /cr-v/i, rotulo: 'CR-V' };
+const TUCSON: Rival = { marca: 'HYUNDAI', busca: 'Tucson', filtro: /^hyundai tucson$/i, rotulo: 'Tucson' };
+const PILOT: Rival = { marca: 'HONDA', busca: 'Pilot', filtro: /pilot/i, rotulo: 'Pilot' };
+const PASSPORT: Rival = { marca: 'HONDA', busca: 'Passport', filtro: /passport/i, rotulo: 'Passport' };
+const PALISADE: Rival = { marca: 'HYUNDAI', busca: 'Palisade', filtro: /palisade/i, rotulo: 'Palisade' };
+const SANTA_FE: Rival = { marca: 'HYUNDAI', busca: 'Santa Fe', filtro: /^hyundai santa fe$/i, rotulo: 'Santa Fe' };
 
 /**
  * Cada modelo Ford é comparado só com concorrentes do MESMO segmento (SUV com SUV, picape com picape,
@@ -45,32 +66,13 @@ export const SEGMENTOS: Record<string, Segmento> = {
       { marca: 'HYUNDAI', busca: 'Elantra N', filtro: /elantra n/i, rotulo: 'Elantra N' },
     ],
   },
-  Ranger: PICAPES,
-  'Ranger Raptor': { ...PICAPES, rotulo: 'Picape de performance' },
-  'F-150': PICAPES,
-  'Maverick Hybrid': { ...PICAPES, rotulo: 'Picape compacta' },
-  'Bronco Sport': {
-    rotulo: 'SUV compacto',
-    rivais: [
-      CR_V,
-      { marca: 'HONDA', busca: 'HR-V', filtro: /^(honda )?hr-v$/i, rotulo: 'HR-V' },
-      TUCSON,
-      { marca: 'HYUNDAI', busca: 'Kona', filtro: /^hyundai kona$/i, rotulo: 'Kona' },
-    ],
-  },
-  Territory: {
-    rotulo: 'SUV médio',
-    rivais: [CR_V, { marca: 'HONDA', busca: 'ZR-V', filtro: /zr-v/i, rotulo: 'ZR-V' }, TUCSON, SANTA_FE],
-  },
-  Explorer: {
-    rotulo: 'SUV grande',
-    rivais: [
-      { marca: 'HONDA', busca: 'Pilot', filtro: /pilot/i, rotulo: 'Pilot' },
-      { marca: 'HONDA', busca: 'Passport', filtro: /passport/i, rotulo: 'Passport' },
-      { marca: 'HYUNDAI', busca: 'Palisade', filtro: /palisade/i, rotulo: 'Palisade' },
-      SANTA_FE,
-    ],
-  },
+  Ranger: PICAPE_MEDIA,
+  'Ranger Raptor': { ...PICAPE_MEDIA, rotulo: 'Picape de performance' },
+  'F-150': PICAPE_EXTRA_GRANDE,
+  'Maverick Hybrid': PICAPE_COMPACTA,
+  'Bronco Sport': { rotulo: 'SUV compacto', rivais: [HR_V, ZR_V, KONA, VENUE] },
+  Territory: { rotulo: 'SUV médio', rivais: [CR_V, TUCSON] },
+  Explorer: { rotulo: 'SUV grande', rivais: [PILOT, PASSPORT, PALISADE, SANTA_FE] },
 };
 
 /**

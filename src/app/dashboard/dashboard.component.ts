@@ -64,6 +64,8 @@ export class DashboardComponent implements AfterViewInit {
 
   // Busca de veículo na API da Ford
   readonly sugestoes = ['Mustang', 'Ranger', 'Ranger Raptor', 'Territory', 'Bronco Sport', 'Maverick Hybrid', 'Explorer', 'F-150'];
+  /** Só os que têm concorrentes cadastrados (fica pronto pra quando algum modelo ficar sem, sem quebrar o texto). */
+  readonly sugestoesComComparacao = this.sugestoes.filter((s) => !!SEGMENTOS[s]);
   nomeCarro = signal<string>('');
   /** O que foi buscado de fato (o campo muda a cada tecla; o título dos resultados não). */
   termoBuscado = signal<string>('');
