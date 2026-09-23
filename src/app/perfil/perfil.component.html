@@ -15,7 +15,10 @@
         }
       </span>
       <div>
-        <p class="pf-eyebrow"><span aria-hidden="true"></span>Prévia da recomendação</p>
+        <div class="pf-tags">
+          <span class="pf-tag"><i aria-hidden="true"></i>Perfil</span>
+          <span class="pf-tag"><i aria-hidden="true"></i>Base da recomendação</span>
+        </div>
         <h1 class="pf-title"><span class="seia-brilho-marinho">Perfil de</span>&ngsp;<span class="seia-brilho-azul">uso.</span></h1>
       </div>
     </div>
@@ -73,7 +76,7 @@
         <div class="pf-field">
           <label class="pf-h" for="rodagem">Rodagem mensal</label>
           <span class="pf-input">
-            <input id="rodagem" name="rodagem" placeholder="Ex: 1200" inputmode="numeric" pattern="[0-9]*" autocomplete="off" [value]="uso.rodagem" (input)="aoDigitarUso('rodagem', $event)" />
+            <input id="rodagem" name="rodagem" placeholder="Ex: 1.200" inputmode="numeric" pattern="[0-9]*" autocomplete="off" [value]="uso.rodagem" (input)="aoDigitarUso('rodagem', $event)" />
             <em>km/mês</em>
           </span>
         </div>
@@ -81,7 +84,7 @@
           <label class="pf-h" for="orcamento">Teto de orçamento</label>
           <span class="pf-input">
             <em>R$</em>
-            <input id="orcamento" name="orcamento" placeholder="Ex: 250000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" [value]="uso.orcamento" (input)="aoDigitarUso('orcamento', $event)" />
+            <input id="orcamento" name="orcamento" placeholder="Ex: 250.000" inputmode="numeric" pattern="[0-9]*" autocomplete="off" [value]="uso.orcamento" (input)="aoDigitarUso('orcamento', $event)" />
           </span>
         </div>
       </div>
@@ -90,7 +93,7 @@
         <div class="pf-block-head">
           <span class="pf-n">03</span>
           <h2 class="pf-h" id="lb-prio">O que mais pesa pra você</h2>
-          <span class="pf-aside">escolha até {{ maxPrioridades === 2 ? 'duas' : maxPrioridades }} · peso dobrado na nota</span>
+          <span class="pf-aside">escolha quantos quiser</span>
         </div>
         <div class="pf-chips" role="group" aria-labelledby="lb-prio">
           @for (o of opcoesPrioridade; track o) {
@@ -106,13 +109,14 @@
           }
         </div>
       </div>
-    </section>
 
-    <!-- Dados da conta -->
-    <section class="pf-card">
+      <!-- 04 · Dados da conta -->
       <div class="pf-block">
-        <p class="pf-kicker">Não afeta a nota</p>
-        <h2 class="pf-card-title">Dados da conta</h2>
+        <div class="pf-block-head">
+          <span class="pf-n">04</span>
+          <h2 class="pf-h" id="lb-conta">Dados da conta</h2>
+          <span class="pf-aside">não afeta a nota</span>
+        </div>
         <p class="pf-sub">Usados para contato e para o agendamento em concessionária.</p>
       </div>
 
@@ -136,25 +140,25 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 11h14v10H5zM8 11V7a4 4 0 1 1 8 0v4" /></svg>
           {{ conta.email }}
         </div>
-        <p class="pf-hint">É o identificador da sua conta. Para trocar, fale com o suporte.</p>
+        <p class="pf-hint">É o identificador da conta. Trocar o e-mail exige nova confirmação.</p>
+      </div>
+
+      <!-- Barra de ação -->
+      <div class="pf-block pf-save" [class.is-idle]="!alteracoes">
+        <span class="pf-save-state">
+          <i aria-hidden="true"></i>
+          @if (alteracoes) {
+            <strong>{{ alteracoes }}</strong> {{ alteracoes === 1 ? 'alteração' : 'alterações' }} não {{ alteracoes === 1 ? 'salva' : 'salvas' }}
+          } @else {
+            Tudo salvo
+          }
+        </span>
+        <span class="pf-save-actions">
+          <button class="pf-ghost" type="button" [disabled]="!alteracoes" (click)="descartar()">Descartar</button>
+          <button class="pf-primary" type="button" [disabled]="!alteracoes || telefoneIncompleto" (click)="salvar()">Salvar perfil</button>
+        </span>
       </div>
     </section>
-
-    <!-- Barra de ação -->
-    <div class="pf-save" [class.is-idle]="!alteracoes">
-      <span class="pf-save-state">
-        <i aria-hidden="true"></i>
-        @if (alteracoes) {
-          <strong>{{ alteracoes }}</strong> {{ alteracoes === 1 ? 'alteração' : 'alterações' }} não {{ alteracoes === 1 ? 'salva' : 'salvas' }}
-        } @else {
-          Tudo salvo
-        }
-      </span>
-      <span class="pf-save-actions">
-        <button class="pf-ghost" type="button" [disabled]="!alteracoes" (click)="descartar()">Descartar</button>
-        <button class="pf-primary" type="button" [disabled]="!alteracoes || telefoneIncompleto" (click)="salvar()">Salvar perfil</button>
-      </span>
-    </div>
 
     @if (erroBanco) {
     <p class="l-pf-hint l-pf-save-error" role="alert">{{ erroBanco }}</p>
@@ -163,48 +167,55 @@
 
   <aside class="pf-rail">
 
-    <!-- Prévia da recomendação -->
+    <!-- Prévia da recomendação: só existe depois que a pessoa escolhe o uso principal -->
     <section class="pf-preview" aria-label="Prévia da recomendação com este perfil">
-      <div class="pf-preview-photo">
-        @if (fotoPrevia; as src) {
-          <img [src]="src" [alt]="'Ford ' + previa.modelo" loading="lazy" decoding="async" />
-        }
-        <span class="pf-preview-chip">Com este perfil</span>
-      </div>
-      <div class="pf-preview-body">
-        <p class="pf-preview-kicker">Mais compatível</p>
-        <div class="pf-preview-top">
-          <h2 class="pf-preview-model">{{ previa.modelo }}</h2>
-          @if (previa.cobertura !== null) {
-            <span class="pf-preview-cover">
-              <small>Seu orçamento cobre</small>
-              <span class="pf-preview-score"><strong>{{ previa.cobertura }}</strong>%</span>
-            </span>
+      @if (temRecomendacao) {
+        <div class="pf-preview-photo">
+          @if (fotoPrevia; as src) {
+            <img [src]="src" [alt]="'Ford ' + previa.modelo" loading="lazy" decoding="async" />
           }
+          <span class="pf-preview-chip">{{ previa.segmento }}</span>
         </div>
-        @if (previa.cobertura !== null) {
-          <div class="pf-bar"><div class="pf-bar-fill" [style.width.%]="previa.cobertura"></div></div>
-          <p class="pf-over" [class.is-ok]="!previa.falta">{{ previa.falta ? 'Faltam ' + real(previa.falta) : 'Cabe no seu orçamento' }}</p>
-        } @else {
-          <p class="pf-over pf-over--ask">Informe seu orçamento</p>
-        }
-        <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: previa.uso }" />
-        @for (o of previa.outros; track o.modelo) {
-          <div class="pf-other">
-            <span>{{ o.modelo }}</span>
-            @if (o.cobertura !== null) {
-              <span class="pf-bar pf-bar--thin"><span class="pf-bar-fill" [style.width.%]="o.cobertura"></span></span>
-              <span class="pf-other-n">cobre {{ o.cobertura }}%</span>
-              <span class="pf-over pf-over--row" [class.is-ok]="!o.falta">{{ o.falta ? 'Faltam ' + real(o.falta) : 'Cabe no seu orçamento' }}</span>
-            } @else {
-              <span></span>
-              <span class="pf-over pf-over--row pf-over--ask">Informe seu orçamento</span>
+        <div class="pf-preview-body">
+          <p class="pf-preview-kicker">Mais compatível</p>
+          <div class="pf-preview-top">
+            <h2 class="pf-preview-model">{{ previa.modelo }}</h2>
+            @if (previa.cobertura !== null) {
+              <span class="pf-preview-cover">
+                <small>Seu orçamento cobre</small>
+                <span class="pf-preview-score"><strong>{{ previa.cobertura }}</strong>%</span>
+              </span>
             }
-            <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: o.uso }" />
           </div>
-        }
-        <p class="pf-preview-note">Atualiza na hora conforme você ajusta o perfil.@if (haEstimativaDeUso) { Custos de uso são estimativas, com base em consumo, revisões e desgaste médios. }</p>
-      </div>
+          @if (previa.cobertura !== null) {
+            <div class="pf-bar"><div class="pf-bar-fill" [style.width.%]="previa.cobertura"></div></div>
+            <p class="pf-over" [class.is-ok]="!previa.falta">{{ previa.falta ? 'Faltam ' + real(previa.falta) : 'Cabe no seu orçamento' }}</p>
+          } @else {
+            <p class="pf-over pf-over--ask">Informe seu orçamento</p>
+          }
+          <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: previa.uso }" />
+          @for (o of previa.outros; track o.modelo) {
+            <div class="pf-other">
+              <span>{{ o.modelo }}</span>
+              @if (o.cobertura !== null) {
+                <span class="pf-bar pf-bar--thin"><span class="pf-bar-fill" [style.width.%]="o.cobertura"></span></span>
+                <span class="pf-other-n">cobre {{ o.cobertura }}%</span>
+                <span class="pf-over pf-over--row" [class.is-ok]="!o.falta">{{ o.falta ? 'Faltam ' + real(o.falta) : 'Cabe no seu orçamento' }}</span>
+              } @else {
+                <span></span>
+                <span class="pf-over pf-over--row pf-over--ask">Informe seu orçamento</span>
+              }
+              <ng-container *ngTemplateOutlet="usoTpl; context: { $implicit: o.uso }" />
+            </div>
+          }
+          <p class="pf-preview-note">Atualiza na hora conforme você ajusta o perfil.@if (haEstimativaDeUso) { Custos de uso são estimativas, com base em consumo, revisões e desgaste médios. }</p>
+        </div>
+      } @else {
+        <div class="pf-preview-vazia">
+          <p class="pf-preview-kicker">Mais compatível</p>
+          <p class="pf-preview-vazia-texto">Escolha o uso principal ao lado pra ver a prévia de compatibilidade aqui.</p>
+        </div>
+      }
     </section>
 
     <!-- Custo mensal de uso de um carro na rodagem informada (estimativa) -->
@@ -225,7 +236,8 @@
       </div>
     </ng-template>
 
-    <!-- Atalhos -->
+    <!-- Atalhos: só aparece quando há favoritos ou comparações -->
+    @if (atalhos.length) {
     <section class="pf-mini">
       <p class="pf-kicker">Atalhos</p>
       @for (a of atalhos; track a.chave) {
@@ -242,6 +254,7 @@
         </button>
       }
     </section>
+    }
 
     <!-- Consentimento -->
     <section class="pf-mini">
@@ -254,6 +267,7 @@
         <span class="pf-switch">
           <input
             type="checkbox"
+            role="switch"
             class="l-pf-switch-input"
             aria-label="Compartilhar preferências com concessionárias"
             [(ngModel)]="compartilhaComConcessionaria"

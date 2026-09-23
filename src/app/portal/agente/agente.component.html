@@ -3,14 +3,14 @@
   <!-- Cabeçalho -->
   <header class="ag-cabecalho" appReveal="up">
     <div>
-      <span class="ag-tag">agente de perfil</span>
+      <p class="ag-tag"><i aria-hidden="true"></i>Agente de Perfil</p>
       <h2 class="ag-titulo"><span class="seia-brilho-marinho">Quem é o cliente?</span>&ngsp;<span class="seia-brilho-azul">Eu digo o que esse perfil já dirige.</span></h2>
-      <p class="ag-sub">
-        Descreva o cliente em uma frase. O agente consulta a frota que circula em São Paulo
-        e responde o que esse grupo escolhe mais que o resto da cidade — com o texto pronto
-        para a reunião.
-      </p>
     </div>
+    <p class="ag-sub">
+      Descreva o cliente em uma frase. O agente consulta a frota que circula em São Paulo
+      e responde o que esse grupo escolhe mais que o resto da cidade — com o texto pronto
+      para a reunião.
+    </p>
   </header>
 
   <!-- Entrada -->
@@ -88,7 +88,7 @@
       </div>
 
       <div class="ag-campo">
-        <label class="ag-campo-rotulo" for="ag-renda">Renda por pessoa (salários mínimos)</label>
+        <label class="ag-campo-rotulo" for="ag-renda">Renda por pessoa (SM)</label>
         <input
           id="ag-renda"
           class="ag-input"
@@ -141,7 +141,7 @@
 
     @if (faltas().length) {
       <p class="ag-faltas">
-        Falta {{ faltas().join(' e ') }} para consultar. Escreva na frase ou preencha acima.
+        {{ faltas().length > 1 ? 'Faltam' : 'Falta' }} {{ faltas().join(' e ') }} para consultar. Escreva na frase ou preencha acima.
       </p>
     }
 

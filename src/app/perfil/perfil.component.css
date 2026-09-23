@@ -38,14 +38,16 @@
 .pf-hero-main { display: flex; align-items: center; gap: 22px; min-width: 0; }
 .pf-avatar {
   display: grid; place-items: center; flex: none; width: 68px; height: 68px; border-radius: 50%;
-  background: #0F2D6B; color: #fff; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: .02em;
+  background: #EAF2FE; color: #2E7DD1; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 22px; letter-spacing: .02em;
 }
 .pf-avatar svg { width: 28px; height: 28px; }
-.pf-eyebrow {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 12px !important;
-  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: #6B7A8C;
+.pf-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.pf-tag {
+  display: inline-flex; align-items: center; gap: 9px; padding: 7px 14px;
+  border: 1px solid #DCE6F3; border-radius: 999px; background: rgba(255,255,255,.85);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #55677A;
 }
-.pf-eyebrow span { flex: none; width: 22px; height: 2px; background: #2E7DD1; }
+.pf-tag i { flex: none; width: 7px; height: 7px; background: #2E7DD1; }
 h1.pf-title { font-family: 'Archivo', sans-serif; font-weight: 900; line-height: .95; letter-spacing: -.04em; font-size: clamp(38px, 6vw, 72px); }
 h1.pf-title span { color: #0B57A4; }
 .pf-lead { max-width: 340px; margin-bottom: 6px !important; font-size: 14px; line-height: 1.55; color: #55677A; }
@@ -67,11 +69,11 @@ label.pf-h, span.pf-h { display: block; margin-bottom: 12px; }
 
 .pf-chips { display: flex; flex-wrap: wrap; gap: 10px; }
 button.pf-chip {
-  display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid #E1E7EF; border-radius: 999px; background: #fff;
+  display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border: 1px solid #E1E7EF; border-radius: 12px; background: #fff;
   font-size: 14px; font-weight: 500; color: #1E2B3D; transition: background .16s, color .16s, border-color .16s;
 }
 button.pf-chip:hover:not(.is-on) { border-color: #B5C4D6; }
-button.pf-chip.is-on { background: #0B1B3A; border-color: #0B1B3A; color: #fff; }
+button.pf-chip.is-on { background: #EAF2FE; border-color: #8DB7EE; color: #0B57A4; }
 button.pf-chip:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 .pf-chip svg { width: 14px; height: 14px; }
 
@@ -90,17 +92,15 @@ button.pf-chip:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; 
 .pf-input em { flex: none; font-style: normal; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; color: #6B7A8C; }
 
 .pf-kicker { margin-bottom: 8px !important; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #6B7A8C; }
-.pf-card-title { font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 24px; letter-spacing: -.02em; }
 .pf-sub { margin-top: 6px !important; font-size: 14px; color: #55677A; }
 .pf-locked { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-radius: 14px; background: #F6F8FB; font-size: 14.5px; color: #3C4B5B; overflow-wrap: anywhere; }
 .pf-locked svg { flex: none; width: 16px; height: 16px; color: #6B7A8C; }
 .pf-hint { margin-top: 10px !important; font-size: 12.5px; color: #6B7A8C; }
 
-/* Barra de ação (sempre à vista ao rolar) */
+/* Barra de ação: último bloco do card, com fundo levemente cinza pra se destacar do resto do formulário */
 .pf-save {
-  position: sticky; bottom: 12px; z-index: 10;
   display: flex; align-items: center; justify-content: space-between; gap: 14px 20px; flex-wrap: wrap;
-  padding: 14px 20px; border: 1px solid #E6ECF3; border-radius: 20px; background: #fff; box-shadow: 0 8px 24px rgba(0,23,48,.1);
+  background: #F6F8FB; border-radius: 0 0 24px 24px;
 }
 .pf-save-state { display: inline-flex; align-items: center; gap: 10px; font-size: 13.5px; color: #3C4B5B; }
 .pf-save-state i { width: 8px; height: 8px; border-radius: 50%; background: #F59E0B; }
@@ -118,41 +118,59 @@ button.pf-ghost:focus-visible, button.pf-primary:focus-visible { outline: 2px so
 /* ===== Lateral ===== */
 .pf-rail { position: sticky; top: 76px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
 
-/* Prévia escura */
-.pf-preview { background: #0B1424; color: #fff; border-radius: 24px; padding: 10px; overflow: hidden; }
+/* Prévia clara, estilo card de catálogo */
+.pf-preview { background: #fff; color: #001730; border-radius: 24px; padding: 10px; overflow: hidden; box-shadow: 0 1px 2px rgba(0,23,48,.04); }
 .pf-preview-photo { position: relative; height: 176px; border-radius: 16px; overflow: hidden; background: linear-gradient(160deg, #24344F, #16233A); }
 .pf-preview-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .pf-preview-chip { position: absolute; left: 12px; top: 12px; padding: 5px 12px; border-radius: 999px; background: rgba(255,255,255,.94); color: #2B3A4F; font-size: 10.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
 .pf-preview-body { padding: 18px 14px 14px; }
-.pf-preview-kicker { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #7C8DA6; }
+.pf-preview-vazia { padding: 22px 16px 26px; display: flex; flex-direction: column; gap: 8px; }
+.pf-preview-vazia-texto { font-size: 14px; line-height: 1.5; color: #55677A; }
+.pf-preview-kicker { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; color: #6B7A8C; }
 .pf-preview-top { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 8px 0 14px; }
-h2.pf-preview-model { color: #fff; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; }
+h2.pf-preview-model { color: #001730; font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; line-height: 1.05; letter-spacing: -.02em; text-wrap: balance; }
 .pf-preview-cover { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
-.pf-preview-cover small { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .04em; color: #9FB2CC; }
-.pf-preview-score { display: inline-flex; align-items: baseline; gap: 2px; color: #9FB2CC; font-size: 18px; }
-.pf-preview-score strong { font-size: 54px; font-weight: 700; letter-spacing: -.04em; line-height: 1; color: #fff; }
-.pf-bar { display: block; height: 6px; border-radius: 3px; background: rgba(255,255,255,.12); overflow: hidden; }
-.pf-bar-fill { display: block; height: 100%; border-radius: 3px; background: #3B82F6; }
-.pf-other { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid rgba(255,255,255,.08); margin-top: 12px; }
+.pf-preview-cover small { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; letter-spacing: .04em; color: #6B7A8C; }
+.pf-preview-score { display: inline-flex; align-items: baseline; gap: 2px; color: #6B7A8C; font-size: 18px; }
+.pf-preview-score strong { font-size: 54px; font-weight: 700; letter-spacing: -.04em; line-height: 1; color: #0B57A4; }
+.pf-bar { display: block; height: 6px; border-radius: 3px; background: #E1E7EF; overflow: hidden; }
+.pf-bar-fill { display: block; height: 100%; border-radius: 3px; background: #2E7DD1; }
+.pf-other { display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 12px 0; border-top: 1px solid #EDF1F5; margin-top: 12px; }
 .pf-other:nth-of-type(n+2) { margin-top: 0; }
-.pf-other > span:first-child { font-size: 13px; font-weight: 600; color: #fff; }
+.pf-other > span:first-child { font-size: 13px; font-weight: 600; color: #001730; }
 .pf-bar--thin { height: 4px; }
-.pf-other-n { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #fff; }
-.pf-over { margin: 10px 0 14px; font-size: 12.5px; font-weight: 600; color: #FFB4A8; }
+.pf-other-n { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; color: #0B57A4; }
+.pf-over { margin: 10px 0 14px; font-size: 12.5px; font-weight: 600; color: #DC2626; }
 /* p.pf-over precisa do "p": o reset ":host p { margin: 0 }" do topo do arquivo tem mais especificidade que só a classe */
 p.pf-over { margin: 10px 0 6px; }
-.pf-uso { display: grid; gap: 2px; margin: 0 0 14px; font-size: 12.5px; color: #9FB2CC; }
-.pf-uso strong { color: #fff; font-weight: 600; }
-.pf-uso-vazio { color: #9FB2CC; }
-.pf-uso-alerta { color: #FCD34D; font-weight: 600; }
+.pf-uso { display: grid; gap: 2px; margin: 0 0 14px; font-size: 12.5px; color: #6B7A8C; }
+.pf-uso strong { color: #001730; font-weight: 600; }
+.pf-uso-vazio { color: #6B7A8C; }
+.pf-uso-alerta { color: #B45309; font-weight: 600; }
 .pf-other .pf-uso { grid-column: 1 / -1; margin: -6px 0 0; font-size: 12px; }
-.pf-over.is-ok { color: #86EFAC; }
-.pf-over--ask { color: #9FB2CC; font-weight: 500; }
+.pf-over.is-ok { color: #16A34A; }
+.pf-over--ask { color: #6B7A8C; font-weight: 500; }
 .pf-over--row { grid-column: 1 / -1; margin: -4px 0 0; font-size: 12px; }
-.pf-preview-note { margin-top: 6px !important; font-size: 12.5px; color: #9FB2CC; }
+.pf-preview-note { margin-top: 6px !important; font-size: 12.5px; color: #6B7A8C; }
 
 /* Cartões pequenos */
 .pf-mini { background: #fff; border-radius: 20px; padding: 20px 20px 18px; box-shadow: 0 1px 2px rgba(0,23,48,.04); }
+
+/* Hover nos cards da lateral: sobem um pouco, a borda acende e uma barra azul desliza na base */
+.pf-mini, .pf-preview {
+  position: relative; border: 1px solid transparent;
+  transition: border-color .18s, box-shadow .18s, transform .18s;
+}
+.pf-mini::after, .pf-preview::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: #2E7DD1;
+  transform: scaleX(0); transform-origin: left; transition: transform .2s ease;
+}
+.pf-mini:hover, .pf-preview:hover { transform: translateY(-2px); border-color: #B5C4D6; box-shadow: 0 8px 20px rgba(0,23,48,.08); }
+.pf-mini:hover::after, .pf-preview:hover::after { transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  .pf-mini, .pf-preview, .pf-mini::after, .pf-preview::after { transition: none; }
+  .pf-mini:hover, .pf-preview:hover { transform: none; }
+}
 button.pf-link { width: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 0; border-radius: 12px; }
 button.pf-link:hover .pf-link-label { text-decoration: underline; text-underline-offset: 3px; }
 button.pf-link:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
@@ -168,10 +186,13 @@ button.pf-link:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; 
 .pf-consent-text small { font-size: 12px; color: #6B7A8C; }
 .pf-switch { position: relative; flex: none; display: inline-block; }
 .pf-switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.pf-switch-track { display: block; position: relative; width: 44px; height: 26px; border-radius: 13px; background: #CBD5E1; transition: background .16s; }
-.pf-switch-track::after { content: ''; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,23,48,.3); transition: transform .16s; }
+.pf-switch-track { display: block; position: relative; width: 50px; height: 30px; border-radius: 15px; background: #CBD5E1; transition: background .16s; }
+.pf-switch-track::after { content: ''; position: absolute; left: 3px; top: 3px; width: 24px; height: 24px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0,23,48,.3); transition: transform .16s; }
 .pf-switch input:checked + .pf-switch-track { background: #2E7DD1; }
-.pf-switch input:checked + .pf-switch-track::after { transform: translateX(18px); }
+.pf-switch input:checked + .pf-switch-track::after { transform: translateX(20px); }
+@media (prefers-reduced-motion: reduce) {
+  .pf-switch-track, .pf-switch-track::after { transition: none; }
+}
 .pf-switch input:focus-visible + .pf-switch-track { outline: 2px solid #2E7DD1; outline-offset: 2px; }
 button.pf-textlink { display: inline-block; margin-top: 14px; font-size: 13px; font-weight: 600; color: #0B57A4; text-decoration: underline; text-underline-offset: 3px; }
 button.pf-textlink:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2px; }
@@ -190,7 +211,6 @@ button.pf-textlink:focus-visible { outline: 2px solid #2E7DD1; outline-offset: 2
   .pf-avatar { width: 52px; height: 52px; font-size: 18px; }
   .pf-two { grid-template-columns: 1fr; gap: 18px; }
   .pf-aside { margin-left: 0; width: 100%; }
-  .pf-save { position: sticky; bottom: 8px; }
   .pf-save-actions { width: 100%; }
   .pf-save-actions button { flex: 1; text-align: center; }
 }

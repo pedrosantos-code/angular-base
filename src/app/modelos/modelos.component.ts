@@ -369,14 +369,28 @@ export class ModelosComponent {
 
   alternarSelecao(id: string, evento: Event): void {
     evento.stopPropagation();
-    if (this.selecionados.has(id)) { this.selecionados.delete(id); return; }
-    if (this.selecionados.size >= this.maxComparar) return;
-    this.selecionados.add(id);
+    if (this.selecionados.has(id)) {
+      this.selecionados.delete(id);
+    } else {
+      if (this.selecionados.size >= this.maxComparar) return;
+      this.selecionados.add(id);
+    }
+    this.persistirSelecao();
+  }
+
+  /** Mesmo padrão do favorito: salva a cada mudança, sem esperar o clique em "Comparar" — o atalho do perfil lê daqui. */
+  private persistirSelecao(): void {
+    try {
+      localStorage.setItem(this.chaveUltimaComparacao, JSON.stringify([...this.selecionados]));
+    } catch {
+      // localStorage indisponível — a seleção vale só para esta sessão.
+    }
   }
 
   limparSelecao(): void {
     this.selecionados.clear();
     this.compararAtivo = false;
+    this.persistirSelecao();
   }
 
   get modelosComparados(): Modelo[] {
@@ -438,12 +452,6 @@ export class ModelosComponent {
       const modelo = this.modelos.find((item) => item.id === id);
       if (modelo) this.registrarEvento(modelo, 'compare');
     }
-
-    try {
-      localStorage.setItem(this.chaveUltimaComparacao, JSON.stringify([...this.selecionados]));
-    } catch {
-      // localStorage indisponível — a comparação vale só para esta sessão.
-    }
   }
 
   fecharComparacao(): void {
@@ -463,6 +471,7 @@ export class ModelosComponent {
   removerDaComparacao(id: string): void {
     this.selecionados.delete(id);
     if (this.selecionados.size < 2) this.compararAtivo = false;
+    this.persistirSelecao();
   }
 
   preco(v: number): string {

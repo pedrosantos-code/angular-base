@@ -34,14 +34,11 @@
   flex-wrap: wrap;
 }
 .ag-tag {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11.5px;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: #2E7DD1;
-  display: block;
-  margin-bottom: 8px;
+  display: inline-flex; align-items: center; gap: 9px; margin: 0 0 14px; padding: 7px 14px;
+  border: 1px solid #DCE6F3; border-radius: 999px; background: rgba(255,255,255,.85);
+  font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #55677A;
 }
+.ag-tag i { flex: none; width: 7px; height: 7px; background: #2E7DD1; }
 .ag-titulo {
   font-family: 'Archivo', sans-serif;
   font-weight: 900;
@@ -50,7 +47,7 @@
   line-height: 1.1;
   max-width: 620px;
 }
-.ag-sub { font-size: 15px; color: #55677A; margin: 10px 0 0; max-width: 620px; line-height: 1.5; }
+.ag-sub { font-size: 14px; color: #55677A; margin: 0; max-width: 280px; line-height: 1.5; }
 
 /* ===== Entrada ===== */
 .ag-entrada { background: #fff; border: 1px solid #E2EAF2; padding: 22px; }

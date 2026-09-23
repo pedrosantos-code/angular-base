@@ -16,7 +16,7 @@ export interface PerfilUso {
   passageiros: string;
   rodagem: string;
   orcamento: string;
-  /** No máximo dois. Recebem peso dobrado no cálculo da nota. */
+  /** Sem limite de quantidade. Cada uma soma pontos extra no cálculo da nota. */
   prioridades: string[];
 }
 
@@ -33,6 +33,8 @@ export interface DadosConta {
 /** Um carro da prévia: quanto do preço "a partir de" o orçamento cobre e quanto falta. */
 export interface ItemPrevia {
   modelo: string;
+  /** Rótulo curto do segmento, o mesmo do /modelos ("SUV médio"). */
+  segmento: string;
   /** Porcentagem do preço coberta pelo orçamento (0 a 100); null quando o usuário não informou orçamento. */
   cobertura: number | null;
   /** Reais que faltam para chegar ao preço; 0 quando o orçamento cobre o carro (ou não há orçamento). */
@@ -233,14 +235,14 @@ export class PerfilComponent {
   readonly opcoesUso = ['Cidade', 'Estrada', 'Off-road', 'Trabalho'];
   readonly opcoesPassageiros = ['1 ou 2', '3 ou 4', '5 ou mais'];
   readonly opcoesPrioridade = ['Consumo', 'Espaço', 'Conforto', 'Potência'];
-  readonly maxPrioridades = 2;
 
+  /** Zerado até a pessoa escolher algo — sem chip pré-marcado, a prévia não inventa uma recomendação. */
   uso: PerfilUso = {
-    uso: 'Cidade',
-    passageiros: '3 ou 4',
+    uso: '',
+    passageiros: '',
     rodagem: '',
     orcamento: '',
-    prioridades: ['Consumo', 'Espaço'],
+    prioridades: [],
   };
 
   conta: DadosConta = {
@@ -295,9 +297,14 @@ export class PerfilComponent {
     return pontuados.map(({ ordem, precoDe, ...resto }) => resto);
   }
 
+  /** Só há recomendação de verdade depois que a pessoa escolhe o uso principal — antes disso não há o que prever. */
+  get temRecomendacao(): boolean {
+    return !!this.uso.uso;
+  }
+
   get previa(): Previa {
     const [primeiro, ...resto] = this.calcularRanking();
-    const item = (r: ItemPrevia): ItemPrevia => ({ modelo: r.modelo, cobertura: r.cobertura, falta: r.falta, uso: r.uso });
+    const item = (r: ItemPrevia): ItemPrevia => ({ modelo: r.modelo, segmento: r.segmento, cobertura: r.cobertura, falta: r.falta, uso: r.uso });
     return { ...item(primeiro), outros: resto.slice(0, 2).map(item) };
   }
 
@@ -333,7 +340,10 @@ export class PerfilComponent {
   private readonly chaveFavoritos = 'seia-favoritos';
   private readonly chaveComparacoesUltima = 'seia-comparacoes-ultima';
 
-  /** Quantos carros a pessoa marcou à mão em /modelos (favoritos e última comparação): sem número fixo, pode ser até o total do catálogo. */
+  /**
+   * Quantos carros a pessoa marcou à mão em /modelos (favoritos e última comparação): sem número fixo, pode ser até
+   * o total do catálogo. Sempre aparecem, mesmo zerados — o atalho já leva pra /modelos pra favoritar ou comparar.
+   */
   get atalhos(): { chave: string; rotulo: string; contagem: number }[] {
     return [
       { chave: 'favoritos', rotulo: 'Favoritos', contagem: this.contarSalvos(this.chaveFavoritos) },
@@ -359,11 +369,17 @@ export class PerfilComponent {
     }
   }
 
+  /**
+   * Zerado, o atalho só leva pra /modelos pra a pessoa escolher — filtrar por favoritos ou reabrir a
+   * comparação só faz sentido quando já existe algo salvo, senão a lista chegaria vazia.
+   */
   irAtalho(chave: string): void {
     if (chave === 'favoritos') {
-      this.router.navigate(['/modelos'], { queryParams: { favoritos: '1' } });
+      const ja = this.contarSalvos(this.chaveFavoritos) > 0;
+      this.router.navigate(['/modelos'], ja ? { queryParams: { favoritos: '1' } } : {});
     } else if (chave === 'comparacoes') {
-      this.router.navigate(['/modelos'], { queryParams: { ultimaComparacao: '1' } });
+      const ja = this.contarSalvos(this.chaveComparacoesUltima) > 0;
+      this.router.navigate(['/modelos'], ja ? { queryParams: { ultimaComparacao: '1' } } : {});
     }
   }
 
@@ -408,18 +424,19 @@ export class PerfilComponent {
   alternarPrioridade(v: string): void {
     const i = this.uso.prioridades.indexOf(v);
     if (i >= 0) { this.uso.prioridades.splice(i, 1); }
-    else {
-      if (this.uso.prioridades.length >= this.maxPrioridades) this.uso.prioridades.shift();
-      this.uso.prioridades.push(v);
-    }
+    else { this.uso.prioridades.push(v); }
   }
 
-  /** Rodagem e orçamento só aceitam dígitos: letras e símbolos (inclusive colados) são descartados na hora. */
+  /**
+   * Rodagem e orçamento só aceitam dígitos (letras e símbolos, inclusive colados, são descartados na hora) e se
+   * formatam sozinhos com separador de milhar enquanto a pessoa digita (1.200, 250.000).
+   */
   aoDigitarUso(campo: 'rodagem' | 'orcamento', evento: Event): void {
     const input = evento.target as HTMLInputElement;
-    const limpo = input.value.replace(/\D/g, '');
-    if (input.value !== limpo) input.value = limpo;
-    this.uso[campo] = limpo;
+    const digitos = input.value.replace(/\D/g, '');
+    const formatado = digitos ? Number(digitos).toLocaleString('pt-BR') : '';
+    if (input.value !== formatado) input.value = formatado;
+    this.uso[campo] = formatado;
   }
 
   /** Telefone só aceita dígitos (até 11) e aparece no formato (00) 00000-0000, ou (00) 0000-0000 quando fixo. */
@@ -484,9 +501,11 @@ export class PerfilComponent {
       },
     });
 
-    // O carro em primeiro lugar já vai para o passo "Qual modelo?" do /agendamentos.
-    const [primeiro] = this.calcularRanking();
-    salvarModeloRecomendado({ nome: primeiro.modelo, segmento: primeiro.segmento, cobertura: primeiro.cobertura });
+    // O carro em primeiro lugar já vai para o passo "Qual modelo?" do /agendamentos — só quando há recomendação de verdade.
+    if (this.temRecomendacao) {
+      const [primeiro] = this.calcularRanking();
+      salvarModeloRecomendado({ nome: primeiro.modelo, segmento: primeiro.segmento, cobertura: primeiro.cobertura });
+    }
   }
 
   private lerIds(chave: string): string[] {

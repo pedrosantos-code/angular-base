@@ -26,11 +26,11 @@ export class PortalComponent {
 
   ativo = 'recomendacao';
 
-  // Passos de funcionamento da IA
+  // Passos de funcionamento do agente (base: API Pessoas, afinidade de frota por perfil demográfico)
   readonly passos: PassoFuncionamento[] = [
-    { n: '01', titulo: 'Informe sua rotina', texto: 'Conte quantos quilômetros roda, se enfrenta trânsito ou estrada e quem viaja com você.' },
-    { n: '02', titulo: 'Análise de dados', texto: 'O sistema procura no seu texto palavras de uso (família, estrada, cidade…) e orçamento, e compara com o perfil de cada modelo.' },
-    { n: '03', titulo: 'Resultado inteligente', texto: 'Você recebe os modelos ordenados por % de compatibilidade, cada um com o motivo.' }
+    { n: '01', titulo: 'Descreva o perfil', texto: 'Gênero, idade e cidade numa frase só, ou direto nos campos. Renda e escolaridade refinam o resultado.' },
+    { n: '02', titulo: 'Consulta a frota real', texto: 'O agente cruza esse perfil com o cadastro de veículos de São Paulo e mede o quanto cada modelo aparece a mais ou a menos que a média do município.' },
+    { n: '03', titulo: 'Resultado com dados reais', texto: 'Você recebe os modelos por afinidade real com o grupo — "1 em cada 12 carros", "30% a mais que a média" — pronto para a reunião.' },
   ];
 
   ir(chave: string): void {
