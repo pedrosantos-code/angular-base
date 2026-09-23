@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { FONTE_VEICULOS, fonteVazia } from '../shared/fonte-veiculos';
+import { FONTE_AFINIDADE, fonteAfinidadeVazia } from '../shared/fonte-afinidade';
 import { PortalComponent } from './portal.component';
 
 describe('PortalComponent', () => {
@@ -11,8 +12,9 @@ describe('PortalComponent', () => {
       providers: [
         provideRouter([]),
         { provide: AuthService, useValue: { logout: async () => {} } },
-        // O portal renderiza o Agente de Perfil, que depende de uma fonte de veículos.
-        // A fonte vazia mantém o teste sem rede.
+        // O portal renderiza o Agente de Perfil, que depende da fonte de afinidade
+        // e da de veículos. As fontes vazias mantêm o teste sem rede.
+        { provide: FONTE_AFINIDADE, useValue: fonteAfinidadeVazia('stub de teste') },
         { provide: FONTE_VEICULOS, useValue: fonteVazia('stub de teste') },
       ],
     });

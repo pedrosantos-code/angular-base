@@ -4,6 +4,7 @@ import { provideRouter, withInMemoryScrolling } from '@angular/router';
 
 import { routes } from './app.routes';
 import { FONTE_VEICULOS, fonteFordApi } from './shared/fonte-veiculos';
+import { FONTE_AFINIDADE, fonteApiPessoas } from './shared/fonte-afinidade';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,11 +15,18 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
 
     /**
-     * Fonte de dados do Agente de Perfil (/portal).
+     * Fonte de afinidade do Agente de Perfil (/portal) — a base que responde
+     * "o que este perfil demográfico já dirige".
      *
-     * Hoje aponta para a mesma API que o Dashboard consome — combinado como
-     * solução temporária. Para trocar de API, escreva outra factory que devolva
-     * um FonteVeiculos e troque só esta linha: nenhum componente muda.
+     * Era a API de carros; passou a ser a API Pessoas, que publica registro de
+     * frota por perfil no estado de São Paulo. A troca custou esta linha: o
+     * componente fala só com o token, nunca com a API.
+     */
+    { provide: FONTE_AFINIDADE, useFactory: fonteApiPessoas },
+
+    /**
+     * Fonte secundária: ficha técnica de veículo, usada pelo Dashboard e, no
+     * agente, só para os modelos que existem nas duas bases.
      */
     { provide: FONTE_VEICULOS, useFactory: fonteFordApi },
   ],

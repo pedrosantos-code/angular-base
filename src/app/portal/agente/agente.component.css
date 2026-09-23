@@ -143,7 +143,6 @@
   background: #F2F7FC; border-left: 3px solid #2E7DD1;
   animation: ag-entra .4s cubic-bezier(.2,.7,.3,1) both;
 }
-.ag-fato--assumido { background: #F5F6F7; border-left-color: #B9C4CE; }
 .ag-fato-rotulo {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10px; letter-spacing: .1em; text-transform: uppercase; color: #7C8A99;
@@ -156,24 +155,6 @@
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
-
-.ag-pesos {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 14px 20px;
-  margin-top: 20px; padding-top: 18px; border-top: 1px solid #EDF1F5;
-}
-.ag-peso-topo { display: flex; justify-content: space-between; font-size: 13px; color: #55677A; margin-bottom: 5px; }
-.ag-peso-topo strong { color: #001730; font-variant-numeric: tabular-nums; }
-.ag-peso-trilho { height: 4px; background: #E7EDF3; border-radius: 2px; overflow: hidden; }
-.ag-peso-fill { height: 100%; background: #2a78d6; border-radius: 2px; transition: width .5s cubic-bezier(.2,.7,.3,1); }
-
-/* ===== Alerta de orçamento ===== */
-.ag-alerta-orcamento {
-  background: #FCEEE8; border-left: 3px solid #ec835a;
-  padding: 16px 18px;
-  display: flex; flex-direction: column; gap: 4px;
-}
-.ag-alerta-orcamento strong { font-size: 14.5px; color: #8E4226; }
-.ag-alerta-orcamento span { font-size: 13px; color: #7A5244; line-height: 1.5; }
 
 /* ===== Líder ===== */
 .ag-lider {
@@ -195,7 +176,6 @@
   font-size: clamp(26px, 3.4vw, 38px); color: #fff; line-height: 1.05; margin: 8px 0 4px;
 }
 .ag-lider-segmento { font-size: 13.5px; color: #9FC4E8; margin: 0 0 14px; }
-.ag-lider-diferencial { font-size: 14.5px; line-height: 1.55; color: #D6E6F5; margin: 0; }
 .ag-lider .ag-btn-secundario { color: #7FB3E4; }
 .ag-lider .ag-btn-secundario:hover { color: #fff; }
 
@@ -216,34 +196,16 @@
 .ag-kpi-valor--medio { font-size: 26px; }
 .ag-kpi-valor--medio small { font-size: 13px; }
 .ag-kpi-nota { display: block; font-size: 11px; color: #E6A08A; margin-top: 4px; }
-.ag-kpi-trilho { height: 5px; background: rgba(255,255,255,.12); margin-top: 12px; border-radius: 3px; overflow: hidden; }
-.ag-kpi-fill {
-  height: 100%; background: #7FB3E4; border-radius: 3px;
-  animation: ag-cresce .8s cubic-bezier(.2,.7,.3,1) both;
-}
-@keyframes ag-cresce { from { width: 0 !important; } }
-.ag-acima { color: #E6A08A; }
 
-/* ===== Pódio ===== */
-.ag-podio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 16px; margin-top: 16px; }
-.ag-card {
-  background: #fff; border: 1px solid #E2EAF2; padding: 20px;
-  display: flex; flex-direction: column;
-  animation: ag-entra .5s cubic-bezier(.2,.7,.3,1) both;
-  transition: border-color .18s, box-shadow .18s, transform .18s;
-}
-.ag-card:hover { border-color: #CFDDEA; box-shadow: 0 6px 20px rgba(0,23,48,.07); transform: translateY(-2px); }
-.ag-card-topo { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid #EDF1F5; }
-.ag-card-pos { width: 10px; height: 10px; border-radius: 50%; flex: none; }
-.ag-card-topo > div { flex: 1; }
-.ag-card-nome { font-family: 'Archivo', sans-serif; font-weight: 800; font-size: 17px; }
-.ag-card-segmento { font-size: 12px; color: #7C8A99; }
-.ag-card-score {
-  font-family: 'Archivo', sans-serif; font-weight: 900; font-size: 26px; color: #002B5C;
-  line-height: 1;
-}
+/* Pilha de destaques: cartao do lider e, abaixo, a leitura de diferenciacao. */
+.ag-podio { display: flex; flex-direction: column; gap: 16px; margin-top: 18px; }
 
-.ag-razoes { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+/* Bloco dos fatores explicativos: mesmo cartao branco das premissas. */
+.ag-razoes {
+  background: #fff; border: 1px solid #E2EAF2; padding: 22px; margin-top: 18px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.ag-razao { padding: 12px 14px; background: #F7FAFD; border-left: 3px solid #2E7DD1; }
 .ag-razao-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
 .ag-razao-eixo {
   font-family: 'IBM Plex Mono', monospace;
@@ -251,49 +213,30 @@
 }
 .ag-razao-pts { font-size: 11.5px; color: #7C8A99; font-variant-numeric: tabular-nums; }
 .ag-razao-texto { font-size: 13.5px; line-height: 1.45; color: #55677A; margin: 3px 0 0; }
-
-.ag-atencao {
-  margin-top: 14px; padding: 11px 13px;
-  background: #FFF8EC; border-left: 3px solid #fab219;
-}
-.ag-atencao-rotulo {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #8A6410;
-}
-.ag-atencao .ag-razao-texto { color: #6B5B3E; }
-
-.ag-card-rodape {
-  display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  margin-top: 16px; padding-top: 14px; border-top: 1px solid #EDF1F5;
-}
-.ag-card-preco { font-size: 13.5px; font-weight: 600; color: #001730; }
 .ag-selo-alerta {
   font-size: 11px; padding: 3px 8px; background: #FCEEE8; color: #A8502F; border-radius: 2px;
 }
 
 /* ===== Gráficos ===== */
 .ag-graficos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.ag-massa { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+/* Cartao branco como os demais blocos: antes ficava solto sobre o fundo da pagina,
+   o unico bloco sem superficie, e parecia texto perdido embaixo do cartao do lider. */
+.ag-massa {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  background: #fff; border: 1px solid #E2EAF2; padding: 22px;
+}
+@media (max-width: 720px) {
+  .ag-massa { grid-template-columns: 1fr; }
+}
 .ag-grafico { background: #fff; border: 1px solid #E2EAF2; padding: 22px; margin: 0; }
 .ag-grafico figcaption { margin-bottom: 16px; }
 .ag-grafico-topo { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
 .ag-grafico-nota { font-size: 12.5px; color: #7C8A99; margin: 5px 0 0; line-height: 1.45; }
 .ag-grafico-aviso { font-size: 12px; color: #7C8A99; margin: 12px 0 0; font-style: italic; }
 
-.ag-metricas { display: flex; border: 1px solid #E2EAF2; flex: none; }
-.ag-metrica {
-  padding: 7px 12px; font-size: 12px; color: #55677A; background: #fff;
-  border-right: 1px solid #E2EAF2; transition: all .16s;
-}
-.ag-metrica:last-child { border-right: none; }
-.ag-metrica:hover { background: #F2F7FC; }
-.ag-metrica--ativa { background: #2E7DD1; color: #fff; }
-.ag-metrica--ativa:hover { background: #0B57A4; }
-
 .ag-canvas-wrap { position: relative; width: 100%; }
-.ag-canvas-wrap--radar { height: 340px; }
-.ag-canvas-wrap--barras { height: 220px; }
-.ag-canvas-wrap--drivers { height: 260px; }
+.ag-canvas-wrap--barras { height: 320px; }
+.ag-canvas-wrap--drivers { height: 300px; }
 
 .ag-estado {
   display: flex; align-items: center; gap: 10px;
@@ -310,10 +253,6 @@
 .ag-narrativa { background: #fff; border: 1px solid #E2EAF2; border-top: 3px solid #2E7DD1; padding: 22px; }
 .ag-narrativa-topo { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 14px; }
 .ag-narrativa-texto { font-size: 14.5px; line-height: 1.65; color: #3E5163; margin: 0; }
-.ag-narrativa-comprador {
-  font-size: 13px; color: #55677A; margin: 16px 0 0;
-  padding-top: 14px; border-top: 1px solid #EDF1F5;
-}
 
 /* ===== Camada de IA ===== */
 .ag-ia {
@@ -328,14 +267,11 @@
   background: #F1FAF6; border-left: 3px solid #1baf7a;
   padding: 14px 16px;
 }
-.ag-veredito--discorda { background: #FFF8EC; border-left-color: #fab219; }
 .ag-veredito-selo {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #0b6f4d;
 }
-.ag-veredito--discorda .ag-veredito-selo { color: #8A6410; }
 .ag-veredito-texto { font-size: 14.5px; line-height: 1.55; color: #2C4A3D; margin: 5px 0 0; }
-.ag-veredito--discorda .ag-veredito-texto { color: #6B5B3E; }
 
 .ag-ia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
 .ag-ia-subtitulo {
@@ -389,7 +325,6 @@
 }
 .ag-tabela td { padding: 11px 12px; border-bottom: 1px solid #EDF1F5; color: #3E5163; }
 .ag-tabela tbody tr:hover { background: #F7FAFD; }
-.ag-linha-podio { background: #F9FBFD; }
 .ag-num { text-align: right; font-variant-numeric: tabular-nums; }
 .ag-celula-suave { color: #7C8A99; }
 .ag-sr {
@@ -416,19 +351,132 @@
   .ag-lider { padding: 22px; }
   .ag-kpis { grid-template-columns: 1fr; }
   .ag-kpi-valor { font-size: 42px; }
-  .ag-metricas { width: 100%; }
-  .ag-metrica { flex: 1; text-align: center; }
   .ag-ia { padding: 18px; }
   .ag-chat-entrada { flex-direction: column; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1 !important; transform: none !important; }
-  .ag-fato, .ag-card, .ag-kpi-fill { animation: none; }
-  .ag-btn-primario:hover:not(:disabled), .ag-card:hover { transform: none; }
-  .ag-peso-fill { transition: none; }
+  .ag-fato { animation: none; }
+  .ag-btn-primario:hover:not(:disabled) { transform: none; }
 }
 
+/* ===== Campos estruturados do perfil =====
+   A API de afinidade exige genero e idade e aceita recortes que o texto livre
+   raramente traz (regiao, renda per capita em SM). Os campos ficam a mao para o
+   analista corrigir o que o parser leu errado, sem reescrever a frase. */
+.ag-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px 16px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #E2EAF2;
+}
+.ag-campo { display: flex; flex-direction: column; gap: 7px; min-width: 0; position: relative; }
+.ag-campo--largo { grid-column: span 2; }
+.ag-campo-rotulo {
+  font-family: 'Archivo', sans-serif; font-weight: 800;
+  font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: #55677A;
+}
+.ag-campo-rotulo abbr { color: #2E7DD1; text-decoration: none; }
+.ag-campo-nota { font-size: 11.5px; color: #7C8A99; }
+
+.ag-input {
+  width: 100%;
+  font: inherit; font-size: 14px;
+  padding: 10px 12px;
+  border: 2px solid #E2EAF2;
+  background: #fff; color: #001730;
+  transition: border-color .18s;
+}
+.ag-input:focus-visible { outline: none; border-color: #2E7DD1; }
+.ag-input::placeholder { color: #8A99A8; }
+
+.ag-radios { display: flex; }
+.ag-radio {
+  flex: 1;
+  border: 2px solid #E2EAF2; background: #fff;
+  padding: 10px 12px; font-size: 13px; color: #55677A;
+  cursor: pointer; transition: all .16s;
+}
+.ag-radio + .ag-radio { border-left: none; }
+.ag-radio:hover { background: #F2F7FC; }
+.ag-radio--ativo { background: #2E7DD1; border-color: #2E7DD1; color: #fff; }
+.ag-radio--ativo:hover { background: #0B57A4; }
+
+.ag-municipio-escolhido {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; border: 2px solid #2E7DD1; background: #F2F7FC;
+  font-size: 14px; color: #001730;
+}
+
+/* O autocomplete flutua sobre o conteudo: em grade estreita, empurrar os campos
+   abaixo faria a lista mover o botao de analisar no meio do clique. */
+.ag-sugestoes {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 20;
+  margin: 4px 0 0; padding: 0; list-style: none;
+  background: #fff; border: 1px solid #E2EAF2;
+  box-shadow: 0 10px 24px rgba(0, 23, 48, .12);
+  max-height: 220px; overflow-y: auto;
+}
+.ag-sugestao {
+  display: block; width: 100%; text-align: left;
+  padding: 9px 12px; font-size: 13.5px; color: #001730;
+  background: none; border: none; cursor: pointer;
+}
+.ag-sugestao:hover { background: #F2F7FC; }
+
+.ag-faltas {
+  margin: 12px 0 0;
+  padding: 10px 14px;
+  background: #FFF6E9; border-left: 3px solid #E98B1F;
+  font-size: 13px; color: #6B4A12;
+}
+
+/* ===== Ajustes de contexto e fatores explicativos ===== */
+.ag-ajustes { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+.ag-ajuste {
+  display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) auto;
+  align-items: center; gap: 12px;
+  padding: 9px 12px; background: #F7FAFD; border: 1px solid #E2EAF2;
+  font-size: 12.5px; color: #55677A;
+}
+.ag-ajuste code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11.5px; color: #0B57A4; word-break: break-all;
+}
+.ag-fatores { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+
+@media (max-width: 620px) {
+  .ag-campo--largo { grid-column: span 1; }
+  .ag-ajuste { grid-template-columns: 1fr; gap: 4px; }
+}
+
+/* ===== Aposta do grupo =====
+   O numero que responde a pergunta da reuniao, destacado ao lado da explicacao. */
+.ag-aposta {
+  display: flex; flex-direction: column; gap: 4px; justify-content: center;
+  padding: 16px 18px; background: #F2F7FC; border-left: 3px solid #2E7DD1;
+}
+.ag-aposta-nome {
+  font-family: 'Archivo', sans-serif; font-weight: 900;
+  font-size: 26px; line-height: 1.1; color: #001730;
+}
+.ag-aposta-num { font-size: 14px; font-weight: 600; color: #0B57A4; }
+.ag-aposta-nota { font-size: 12.5px; color: #7C8A99; }
+
+/* Frase sem evidencia: some do primeiro plano, mas nao desaparece. */
+.ag-sem-evidencia { display: block; margin-top: 3px; font-style: italic; }
+
+/* ===== Detalhe tecnico recolhido ===== */
+.ag-tecnico { margin-top: 18px; }
+.ag-tecnico-corpo {
+  margin-top: 12px; padding: 22px;
+  background: #fff; border: 1px solid #E2EAF2;
+  display: flex; flex-direction: column; gap: 14px;
+}
+.ag-tecnico-corpo .ag-ia-subtitulo { margin: 4px 0 0; }
 /* =========================================================
    Resumo executivo impresso.
    Só existe no @media print — na tela .ag-impressao fica

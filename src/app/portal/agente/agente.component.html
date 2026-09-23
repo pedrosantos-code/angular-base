@@ -4,10 +4,11 @@
   <header class="ag-cabecalho" appReveal="up">
     <div>
       <span class="ag-tag">agente de perfil</span>
-      <h2 class="ag-titulo"><span class="seia-brilho-marinho">Quem é o cliente?</span>&ngsp;<span class="seia-brilho-azul">Eu digo qual Ford e por quê.</span></h2>
+      <h2 class="ag-titulo"><span class="seia-brilho-marinho">Quem é o cliente?</span>&ngsp;<span class="seia-brilho-azul">Eu digo o que esse perfil já dirige.</span></h2>
       <p class="ag-sub">
-        Descreva o cliente em uma frase. O agente extrai os fatos, pontua a linha inteira,
-        puxa a ficha técnica real da API e devolve o argumento pronto para a reunião.
+        Descreva o cliente em uma frase. O agente consulta a frota que circula em São Paulo
+        e responde o que esse grupo escolhe mais que o resto da cidade — com o texto pronto
+        para a reunião.
       </p>
     </div>
   </header>
@@ -20,18 +21,129 @@
       class="ag-textarea"
       rows="3"
       [(ngModel)]="descricao"
+      (ngModelChange)="lerDescricao()"
       (keydown.control.enter)="analisar()"
-      placeholder="Ex: Cliente solteiro, 20 anos, sem filhos, residente em cidade grande."></textarea>
+      placeholder="Ex: Homem de 24 anos, solteiro, ensino superior, mora em Campinas, renda per capita de 3 salários mínimos."></textarea>
+
+    <div class="ag-campos">
+      <div class="ag-campo">
+        <span class="ag-campo-rotulo">Gênero <abbr title="obrigatório">*</abbr></span>
+        <div class="ag-radios">
+          <button
+            type="button"
+            class="ag-radio"
+            [class.ag-radio--ativo]="rascunho().genero === 'masculino'"
+            (click)="definirGenero('masculino')">Masculino</button>
+          <button
+            type="button"
+            class="ag-radio"
+            [class.ag-radio--ativo]="rascunho().genero === 'feminino'"
+            (click)="definirGenero('feminino')">Feminino</button>
+        </div>
+      </div>
+
+      <div class="ag-campo">
+        <label class="ag-campo-rotulo" for="ag-idade">Idade <abbr title="obrigatório">*</abbr></label>
+        <input
+          id="ag-idade"
+          class="ag-input"
+          type="number"
+          [min]="idadeMinima"
+          max="110"
+          [ngModel]="rascunho().idade"
+          (ngModelChange)="atualizar('idade', $event)"
+          placeholder="{{ idadeMinima }}+">
+      </div>
+
+      <div class="ag-campo ag-campo--largo">
+        <label class="ag-campo-rotulo" for="ag-municipio">Cidade</label>
+        @if (rascunho().municipio) {
+          <div class="ag-municipio-escolhido">
+            <strong>{{ rascunho().municipio }}</strong>
+            <button type="button" class="ag-btn-texto" (click)="limparMunicipio()">trocar</button>
+          </div>
+        } @else {
+          <input
+            id="ag-municipio"
+            class="ag-input"
+            type="text"
+            [(ngModel)]="buscaMunicipio"
+            (ngModelChange)="buscarMunicipios()"
+            placeholder="Digite 3 letras (cidades de SP)">
+          @if (buscandoMunicipio()) {
+            <span class="ag-campo-nota">buscando…</span>
+          }
+          @if (sugestoesMunicipio().length) {
+            <ul class="ag-sugestoes">
+              @for (m of sugestoesMunicipio(); track m.cod_ibge) {
+                <li>
+                  <button type="button" class="ag-sugestao" (click)="escolherMunicipio(m)">
+                    {{ m.municipio }}
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        }
+      </div>
+
+      <div class="ag-campo">
+        <label class="ag-campo-rotulo" for="ag-renda">Renda por pessoa (salários mínimos)</label>
+        <input
+          id="ag-renda"
+          class="ag-input"
+          type="number"
+          min="0"
+          step="0.5"
+          [ngModel]="rascunho().rendaPerCapitaSm"
+          (ngModelChange)="atualizar('rendaPerCapitaSm', $event)"
+          placeholder="ex: 3">
+      </div>
+
+      <div class="ag-campo">
+        <label class="ag-campo-rotulo" for="ag-escolaridade">Escolaridade</label>
+        <select
+          id="ag-escolaridade"
+          class="ag-input"
+          [ngModel]="rascunho().escolaridade"
+          (ngModelChange)="atualizar('escolaridade', $event)">
+          <option [ngValue]="null">não informada</option>
+          @for (e of escolaridades; track e) {
+            <option [ngValue]="e">{{ rotuloEscolaridade[e] }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="ag-campo">
+        <label class="ag-campo-rotulo" for="ag-area">Onde mora</label>
+        <select
+          id="ag-area"
+          class="ag-input"
+          [ngModel]="rascunho().area"
+          (ngModelChange)="atualizar('area', $event)">
+          <option [ngValue]="null">não informado</option>
+          @for (a of areas; track a) {
+            <option [ngValue]="a">{{ rotuloArea[a] }}</option>
+          }
+        </select>
+      </div>
+    </div>
 
     <div class="ag-acoes">
-      <button type="button" class="ag-btn-primario" (click)="analisar()" [disabled]="!descricao.trim()">
-        Analisar perfil
+      <button type="button" class="ag-btn-primario" (click)="analisar()" [disabled]="!podeAnalisar()">
+        {{ carregando() ? 'Consultando…' : 'Analisar perfil' }}
       </button>
       @if (analisou()) {
         <button type="button" class="ag-btn-texto" (click)="limpar()">Limpar</button>
       }
       <span class="ag-dica">Ctrl + Enter</span>
     </div>
+
+    @if (faltas().length) {
+      <p class="ag-faltas">
+        Falta {{ faltas().join(' e ') }} para consultar. Escreva na frase ou preencha acima.
+      </p>
+    }
 
     <div class="ag-personas">
       <span class="ag-personas-titulo">Personas prontas:</span>
@@ -41,12 +153,19 @@
     </div>
   </div>
 
+  @if (carregando()) {
+    <p class="ag-estado"><span class="ag-spinner"></span> Consultando a base de frota…</p>
+  }
+
+  @if (erro()) {
+    <p class="ag-estado ag-estado--erro">{{ erro() }}</p>
+  }
+
   @if (analisou()) {
 
-    <!-- Barra de ações da análise -->
     <div class="ag-barra-acoes" appReveal="up">
       <span class="ag-barra-info">
-        {{ matches().length }} modelos avaliados · {{ fichas().length }} com ficha técnica da API
+        {{ matches().length }} modelos no recorte{{ fichas().length ? ' · ' + fichas().length + ' com ficha técnica' : '' }}
       </span>
       <button type="button" class="ag-btn-pdf" (click)="baixarPdf()">
         <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true">
@@ -57,290 +176,307 @@
       </button>
     </div>
 
-    <!-- Premissas que o agente leu -->
-    <div class="ag-premissas" appReveal="up">
-      <div class="ag-premissas-topo">
-        <h3 class="ag-bloco-titulo">O que o agente leu</h3>
-        <button type="button" class="ag-btn-texto" (click)="mostrarPesos.set(!mostrarPesos())">
-          {{ mostrarPesos() ? 'Ocultar' : 'Ver' }} pesos por eixo
-        </button>
-      </div>
-      <p class="ag-premissas-nota">
-        Campo em azul foi lido da sua frase. Campo em cinza é premissa que o agente assumiu —
-        escreva o dado na descrição para substituí-la.
-      </p>
+    @if (avisoParcial()) {
+      <p class="ag-estado ag-estado--erro">{{ avisoParcial() }}</p>
+    }
 
-      <div class="ag-fatos">
-        @for (f of fatos(); track f.rotulo; let i = $index) {
-          <div class="ag-fato" [class.ag-fato--assumido]="!f.lido" [style.animation-delay.ms]="i * 45">
-            <span class="ag-fato-rotulo">{{ f.rotulo }}</span>
-            <strong class="ag-fato-valor">{{ f.valor }}</strong>
-            @if (!f.lido) { <span class="ag-fato-selo">assumido</span> }
+    <!-- ============================ A RESPOSTA ============================ -->
+    <div class="ag-podio" appReveal="up">
+      @if (lider(); as l) {
+        <div class="ag-lider">
+          <div class="ag-lider-principal">
+            <span class="ag-lider-selo">o carro mais comum neste perfil</span>
+            <h3 class="ag-lider-nome">{{ l.modelo }}</h3>
+            <p class="ag-lider-segmento">
+              {{ frequenciaLegivel(l.sharePerfilPct) }} carros do grupo
+              @if (perfilDaApi(); as api) {
+                · {{ rotuloGrupo(api.grupo).toLowerCase() }} em {{ localidade() }}
+              }
+            </p>
+          </div>
+          <div class="ag-kpis">
+            <div class="ag-kpi ag-kpi--heroi">
+              <span class="ag-kpi-rotulo">Comparado com a cidade</span>
+              <span class="ag-kpi-valor">{{ diferencaCurta(l.lift) }}</span>
+              <span class="ag-kpi-nota">
+                {{ sobreIndexa(l.lift) ? 'preferência real do grupo' : 'é comum, mas não é preferência' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      }
+
+      @if (maisCaracteristico(); as c) {
+        @if (lider() && c.modelo !== lider()!.modelo) {
+          <div class="ag-massa">
+            <div>
+              <h4 class="ag-bloco-titulo">A aposta do grupo</h4>
+              <p class="ag-narrativa-texto">
+                O carro mais comum é o que todo mundo tem. A <strong>aposta</strong> é o modelo
+                que esse grupo escolhe mais que o resto da cidade — é onde ele se diferencia.
+              </p>
+            </div>
+            <div class="ag-aposta">
+              <strong class="ag-aposta-nome">{{ c.modelo }}</strong>
+              <span class="ag-aposta-num">{{ diferencaLegivel(c.lift) }}</span>
+              <span class="ag-aposta-nota">{{ frequenciaLegivel(c.sharePerfilPct) }} carros do grupo</span>
+            </div>
           </div>
         }
-      </div>
-
-      @if (mostrarPesos() && pesos(); as p) {
-        <div class="ag-pesos">
-          @for (e of eixos; track e.chave) {
-            <div class="ag-peso">
-              <div class="ag-peso-topo">
-                <span [title]="e.descricao">{{ e.rotulo }}</span>
-                <strong>{{ p[e.chave] }}</strong>
-              </div>
-              <div class="ag-peso-trilho"><div class="ag-peso-fill" [style.width.%]="p[e.chave]"></div></div>
-            </div>
-          }
-        </div>
       }
     </div>
 
-    @if (nenhumCabe() && perfil(); as p) {
-      <div class="ag-alerta-orcamento" appReveal="up" role="status">
-        <strong>Nenhum modelo da linha cabe no teto de {{ formatarReais(p.orcamento) }}.</strong>
-        <span>
-          O ranking abaixo mostra o mais próximo do alcance, já com o desconto de preço aplicado.
-          @if (p.orcamentoEstimado) {
-            Esse teto foi estimado pelo agente — informe o orçamento real na descrição para recalcular.
-          }
-        </span>
-      </div>
-    }
-
-    <!-- Destaque do líder -->
+    <!-- Por que -->
     @if (lider(); as l) {
-      <div class="ag-lider" appReveal="up">
-        <div class="ag-lider-principal">
-          <span class="ag-lider-selo">melhor aderência</span>
-          <h3 class="ag-lider-nome">{{ l.modelo }}</h3>
-          <p class="ag-lider-segmento">{{ l.segmento }} · a partir de {{ formatarReais(l.precoDe) }}</p>
-          <p class="ag-lider-diferencial">{{ l.diferencial }}</p>
-          <button type="button" class="ag-btn-secundario" (click)="verFichaTecnica(l.modelo)">
-            Abrir no Dashboard →
-          </button>
-        </div>
-
-        <div class="ag-kpis">
-          <div class="ag-kpi ag-kpi--heroi">
-            <span class="ag-kpi-rotulo">Aderência ao perfil</span>
-            <span class="ag-kpi-valor">{{ l.score }}<small>/100</small></span>
-            <div class="ag-kpi-trilho"><div class="ag-kpi-fill" [style.width.%]="l.score"></div></div>
-          </div>
-          <div class="ag-kpi">
-            <span class="ag-kpi-rotulo">Share estimado da linha</span>
-            <span class="ag-kpi-valor ag-kpi-valor--medio">{{ l.shareLinha }}<small>%</small></span>
-          </div>
-          <div class="ag-kpi">
-            <span class="ag-kpi-rotulo">Ranking de vendas</span>
-            <span class="ag-kpi-valor ag-kpi-valor--medio">{{ l.posicaoVendas }}<small>º</small></span>
-          </div>
-          <div class="ag-kpi">
-            <span class="ag-kpi-rotulo">Preço vs. teto</span>
-            <span class="ag-kpi-valor ag-kpi-valor--medio" [class.ag-acima]="!l.dentroDoOrcamento">
-              {{ l.dentroDoOrcamento ? 'cabe' : 'acima' }}
-            </span>
-            @if (!l.dentroDoOrcamento) {
-              <span class="ag-kpi-nota">−{{ -l.ajustePreco }} pts aplicados</span>
-            }
-          </div>
-        </div>
-      </div>
-    }
-
-    <!-- Pódio com as razões -->
-    <div class="ag-podio" appReveal="up">
-      <h3 class="ag-bloco-titulo">Por que estes três</h3>
-      <div class="ag-podio-grid">
-        @for (m of podio(); track m.modelo; let i = $index) {
-          <article class="ag-card" [style.animation-delay.ms]="i * 90">
-            <header class="ag-card-topo">
-              <span class="ag-card-pos" [style.background]="cores[i]" aria-hidden="true"></span>
-              <div>
-                <h4 class="ag-card-nome">{{ m.modelo }}</h4>
-                <span class="ag-card-segmento">{{ m.segmento }}</span>
-              </div>
-              <span class="ag-card-score">{{ m.score }}</span>
-            </header>
-
-            <ul class="ag-razoes">
-              @for (r of m.razoes; track r.eixo) {
-                <li class="ag-razao">
-                  <div class="ag-razao-topo">
-                    <span class="ag-razao-eixo">{{ rotuloEixo(r.eixo) }}</span>
-                    <span class="ag-razao-pts">+{{ r.contribuicao }} pts</span>
-                  </div>
-                  <p class="ag-razao-texto">{{ r.texto }}</p>
-                </li>
+      @if (explicacoes().length || semEvidencia().length) {
+        <div class="ag-razoes" appReveal="up">
+          <h4 class="ag-bloco-titulo">Por que o {{ l.modelo }} aparece aí</h4>
+          @if (explicacoes().length) {
+            <ul class="ag-fatores">
+              @for (e of explicacoes(); track e.texto) {
+                <li class="ag-razao">{{ e.texto }}</li>
               }
             </ul>
+          }
+          @if (semEvidencia().length) {
+            <p class="ag-premissas-nota">
+              Não use como argumento:
+              @for (e of semEvidencia(); track e.texto) {
+                <span class="ag-sem-evidencia">{{ e.texto }}</span>
+              }
+            </p>
+          }
+        </div>
+      }
+    }
 
-            @if (m.atencao; as a) {
-              <div class="ag-atencao">
-                <span class="ag-atencao-rotulo">Atenção · {{ rotuloEixo(a.eixo) }}</span>
-                <p class="ag-razao-texto">{{ a.texto }}</p>
-              </div>
-            }
-
-            <footer class="ag-card-rodape">
-              <span class="ag-card-preco">{{ formatarReais(m.precoDe) }}</span>
-              @if (!m.dentroDoOrcamento) { <span class="ag-selo-alerta">acima do teto</span> }
-            </footer>
-          </article>
-        }
+    <!-- Resumo para levar -->
+    <div class="ag-narrativa" appReveal="up">
+      <div class="ag-narrativa-topo">
+        <h3 class="ag-bloco-titulo">Resumo</h3>
+        <button type="button" class="ag-btn-secundario" (click)="copiarNarrativa()">
+          {{ copiado() ? 'Copiado' : 'Copiar' }}
+        </button>
       </div>
+      <p class="ag-narrativa-texto">{{ narrativa() }}</p>
     </div>
 
     <!-- Gráficos -->
     <div class="ag-graficos" appReveal="up">
 
       <figure class="ag-grafico">
-        <figcaption>
-          <h3 class="ag-bloco-titulo">Aderência por eixo de necessidade</h3>
-          <p class="ag-grafico-nota">Cada eixo vai de 0 a 100. Quanto mais preenchida a área, mais o modelo cobre o que este perfil pede.</p>
-        </figcaption>
-        <div class="ag-canvas-wrap ag-canvas-wrap--radar">
-          <canvas #radarCanvas aria-label="Gráfico radar comparando os três modelos nos seis eixos de necessidade"></canvas>
+        <div class="ag-grafico-topo">
+          <h4 class="ag-bloco-titulo">Onde este grupo foge da média</h4>
         </div>
+        <div class="ag-canvas-wrap ag-canvas-wrap--barras">
+          <canvas #liftCanvas aria-label="Quanto cada modelo aparece acima ou abaixo da média da cidade, neste grupo"></canvas>
+        </div>
+        <figcaption class="ag-grafico-nota">
+          Zero é a média da cidade. À direita, o grupo tem mais desse carro que a cidade;
+          à esquerda, tem menos. É o gráfico que mostra a preferência.
+        </figcaption>
       </figure>
 
       <figure class="ag-grafico">
-        <figcaption>
-          <div class="ag-grafico-topo">
-            <div>
-              <h3 class="ag-bloco-titulo">Ficha técnica — dado real da API</h3>
-              <p class="ag-grafico-nota">{{ metricaSelecionada().rotulo }} em {{ metricaSelecionada().unidade }}, da variante com ficha mais completa de cada modelo.</p>
-            </div>
-            <div class="ag-metricas" role="group" aria-label="Escolher métrica">
-              @for (m of metricas; track m.chave) {
-                <button
-                  type="button"
-                  class="ag-metrica"
-                  [class.ag-metrica--ativa]="metricaAtiva() === m.chave"
-                  [attr.aria-pressed]="metricaAtiva() === m.chave"
-                  (click)="metricaAtiva.set(m.chave)">{{ m.rotulo }}</button>
-              }
-            </div>
-          </div>
+        <div class="ag-grafico-topo">
+          <h4 class="ag-bloco-titulo">Quantos carros de cada modelo</h4>
+        </div>
+        <div class="ag-canvas-wrap ag-canvas-wrap--barras">
+          <canvas #shareCanvas aria-label="Participação de cada modelo na frota do grupo e na frota da cidade"></canvas>
+        </div>
+        <figcaption class="ag-grafico-nota">
+          De cada 100 carros, quantos são de cada modelo — no grupo (azul) e na cidade
+          inteira (laranja). Mostra o tamanho; o gráfico acima mostra a preferência.
         </figcaption>
-
-        @if (carregandoApi()) {
-          <div class="ag-estado"><span class="ag-spinner" aria-hidden="true"></span> Consultando a fonte de dados…</div>
-        } @else if (erroApi()) {
-          <div class="ag-estado ag-estado--erro">{{ erroApi() }}</div>
-        } @else {
-          <div class="ag-canvas-wrap ag-canvas-wrap--barras">
-            <canvas #fichaCanvas [attr.aria-label]="'Gráfico de barras: ' + metricaSelecionada().rotulo + ' por modelo'"></canvas>
-          </div>
-          @if (semDadoNaMetrica() > 0) {
-            <p class="ag-grafico-aviso">
-              {{ semDadoNaMetrica() }} modelo(s) fora do gráfico: a API não publica {{ metricaSelecionada().rotulo.toLowerCase() }} para eles. Nada foi estimado.
-            </p>
-          }
-        }
       </figure>
+
+      @if (detalheLider(); as d) {
+        <figure class="ag-grafico">
+          <div class="ag-grafico-topo">
+            <h4 class="ag-bloco-titulo">Quem mais tem {{ d.modelo }}</h4>
+          </div>
+          <div class="ag-canvas-wrap ag-canvas-wrap--drivers">
+            <canvas #gruposCanvas aria-label="Quanto cada faixa de idade e gênero tem do modelo, comparado com a média"></canvas>
+          </div>
+          <figcaption class="ag-grafico-nota">
+            Comparado com a média do modelo. A linha fina em cada barra é a margem de erro:
+            quando ela atravessa o zero, aquele grupo não difere da média de forma confiável.
+          </figcaption>
+        </figure>
+      }
     </div>
 
-    <!-- Drivers + narrativa -->
-    @if (lider(); as l) {
-      <div class="ag-massa" appReveal="up">
-        <figure class="ag-grafico">
-          <figcaption>
-            <h3 class="ag-bloco-titulo">Por que a massa escolhe o {{ l.modelo }}</h3>
-            <p class="ag-grafico-nota">% dos compradores do modelo que citam o fator como decisivo.</p>
-          </figcaption>
-          <div class="ag-canvas-wrap ag-canvas-wrap--drivers">
-            <canvas #driversCanvas [attr.aria-label]="'Fatores de decisão dos compradores do ' + l.modelo"></canvas>
-          </div>
-        </figure>
+    <!-- Ranking -->
+    <div class="ag-tabela-bloco" appReveal="up">
+      <div class="ag-premissas-topo">
+        <h3 class="ag-bloco-titulo">Todos os modelos do recorte</h3>
+        <button type="button" class="ag-btn-texto" (click)="mostrarTabela.set(!mostrarTabela())">
+          {{ mostrarTabela() ? 'Ocultar' : 'Ver' }} tabela
+        </button>
+      </div>
 
-        <div class="ag-narrativa">
-          <div class="ag-narrativa-topo">
-            <h3 class="ag-bloco-titulo">Resumo</h3>
-            <button type="button" class="ag-btn-texto" (click)="copiarNarrativa()">
-              {{ copiado() ? 'Copiado ✓' : 'Copiar' }}
-            </button>
+      @if (mostrarTabela()) {
+        <div class="ag-tabela-scroll">
+          <table class="ag-tabela">
+            <caption class="ag-sr">Modelos ordenados por quantidade na frota do grupo</caption>
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Modelo</th>
+                <th scope="col">No grupo</th>
+                <th scope="col" class="ag-num">Comparado com a cidade</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of matches(); track m.modelo) {
+                <tr>
+                  <td>{{ m.posicao }}</td>
+                  <td>{{ m.modelo }}</td>
+                  <td>{{ frequenciaLegivel(m.sharePerfilPct) }}</td>
+                  <td class="ag-num" [class.ag-selo-alerta]="!sobreIndexa(m.lift)">
+                    {{ diferencaCurta(m.lift) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <!-- Premissas: o que foi lido e o que ficou em branco -->
+    <div class="ag-premissas" appReveal="up">
+      <div class="ag-premissas-topo">
+        <h3 class="ag-bloco-titulo">O que o agente entendeu</h3>
+      </div>
+      <p class="ag-premissas-nota">
+        Campo em azul veio da sua frase. Campo em cinza ficou em branco — preencher
+        deixa o recorte mais preciso.
+      </p>
+      <div class="ag-fatos">
+        @for (f of fatos(); track f.rotulo) {
+          <div class="ag-fato" [class.ag-celula-suave]="!f.lido">
+            <span class="ag-fato-rotulo">{{ f.rotulo }}</span>
+            <span class="ag-fato-valor">{{ f.valor }}</span>
+            @if (!f.lido) { <span class="ag-fato-selo">em branco</span> }
           </div>
-          <p class="ag-narrativa-texto">{{ narrativa() }}</p>
-          <p class="ag-narrativa-comprador"><strong>Comprador típico:</strong> {{ l.compradorTipico }}</p>
+        }
+        @if (perfilDaApi(); as api) {
+          <div class="ag-fato">
+            <span class="ag-fato-rotulo">Grupo comparado</span>
+            <span class="ag-fato-valor">{{ rotuloGrupo(api.grupo) }}</span>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Ficha técnica, quando as duas bases conhecem o modelo -->
+    @if (fichas().length) {
+      <div class="ag-tabela-bloco" appReveal="up">
+        <div class="ag-premissas-topo">
+          <h3 class="ag-bloco-titulo">Ficha técnica dos três primeiros</h3>
+        </div>
+        <div class="ag-tabela-scroll">
+          <table class="ag-tabela">
+            <thead>
+              <tr>
+                <th scope="col">Modelo</th>
+                <th scope="col">Versão</th>
+                <th scope="col">Combustível</th>
+                <th scope="col" class="ag-num">Potência</th>
+                <th scope="col" class="ag-num">Compr.</th>
+                <th scope="col" class="ag-num">Altura</th>
+                <th scope="col" class="ag-num">Tanque</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (f of linhasFichaPdf(); track f.modelo) {
+                <tr>
+                  <td>
+                    <button type="button" class="ag-btn-texto" (click)="verFichaTecnica(f.modelo)">{{ f.modelo }}</button>
+                  </td>
+                  <td>{{ f.variante }}</td>
+                  <td>{{ f.combustivel }}</td>
+                  <td class="ag-num">{{ f.potencia }}</td>
+                  <td class="ag-num">{{ f.comprimento }}</td>
+                  <td class="ag-num">{{ f.altura }}</td>
+                  <td class="ag-num">{{ f.tanque }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
         </div>
       </div>
     }
 
+    <!-- Como ler, em uma frase -->
+    <p class="ag-aviso" appReveal="up"><strong>Como ler estes números.</strong> {{ comoLer }}</p>
+
     <!-- Camada de IA -->
-    @if (iaConfigurada) {
-      <div class="ag-ia" appReveal="up">
-        <div class="ag-premissas-topo">
-          <div>
-            <h3 class="ag-bloco-titulo">Opinião da IA</h3>
-            <p class="ag-grafico-nota">
-              Um modelo de linguagem lê o resultado acima e elabora o argumento. Os números continuam
-              vindo do motor determinístico — a IA não calcula nada e é instruída a não inventar dados.
-            </p>
-          </div>
-          @if (!insights() && !carregandoInsights()) {
-            <button type="button" class="ag-btn-primario ag-btn-ia" (click)="gerarInsights()">
-              Gerar leitura executiva
-            </button>
-          }
+    <div class="ag-ia" appReveal="up">
+      <div class="ag-premissas-topo">
+        <h3 class="ag-bloco-titulo">Leitura executiva por IA</h3>
+        @if (!insights() && !carregandoInsights()) {
+          <button type="button" class="ag-btn-ia" (click)="gerarInsights()" [disabled]="!iaConfigurada">
+            Gerar leitura executiva
+          </button>
+        }
+      </div>
+
+      @if (!iaConfigurada) {
+        <p class="ag-estado">A função de IA não está configurada neste ambiente.</p>
+      }
+
+      @if (carregandoInsights()) {
+        <p class="ag-estado"><span class="ag-spinner"></span> A IA está lendo os números…</p>
+      }
+
+      @if (erroIa()) {
+        <p class="ag-estado ag-estado--erro">{{ erroIa() }}</p>
+      }
+
+      @if (insights(); as i) {
+        <div class="ag-veredito">
+          <span class="ag-veredito-selo">{{ i.concordaComRanking ? 'concorda com a leitura' : 'discorda da leitura' }}</span>
+          <p class="ag-veredito-texto">{{ i.veredito }}</p>
         </div>
 
-        @if (carregandoInsights()) {
-          <div class="ag-estado"><span class="ag-spinner" aria-hidden="true"></span> A IA está analisando…</div>
-        }
+        <p class="ag-ia-texto">{{ i.leituraPerfil }}</p>
 
-        @if (erroIa(); as erro) {
-          <div class="ag-estado ag-estado--erro">{{ erro }}</div>
-        }
-
-        @if (insights(); as i) {
-          <div class="ag-veredito" [class.ag-veredito--discorda]="!i.concordaComRanking">
-            <span class="ag-veredito-selo">{{ i.concordaComRanking ? 'Concorda com o ranking' : 'Discorda do ranking' }}</span>
-            <p class="ag-veredito-texto">{{ i.veredito }}</p>
-          </div>
-
+        <div class="ag-ia-grid">
           <div class="ag-ia-bloco">
-            <h4 class="ag-ia-subtitulo">Leitura do perfil</h4>
-            <p class="ag-ia-texto">{{ i.leituraPerfil }}</p>
+            <h4 class="ag-ia-subtitulo">Riscos</h4>
+            @for (r of i.riscos; track r.titulo) {
+              <div class="ag-ia-item ag-ia-item--risco">
+                <strong>{{ r.titulo }}</strong>
+                <span>{{ r.texto }}</span>
+              </div>
+            }
           </div>
-
-          <div class="ag-ia-grid">
-            <div class="ag-ia-bloco">
-              <h4 class="ag-ia-subtitulo">Riscos</h4>
-              @for (r of i.riscos; track r.titulo) {
-                <div class="ag-ia-item ag-ia-item--risco">
-                  <strong>{{ r.titulo }}</strong>
-                  <p>{{ r.texto }}</p>
-                </div>
-              }
-            </div>
-            <div class="ag-ia-bloco">
-              <h4 class="ag-ia-subtitulo">Argumentos de venda</h4>
-              @for (a of i.argumentosVenda; track a.titulo) {
-                <div class="ag-ia-item">
-                  <strong>{{ a.titulo }}</strong>
-                  <p>{{ a.texto }}</p>
-                </div>
-              }
-            </div>
+          <div class="ag-ia-bloco">
+            <h4 class="ag-ia-subtitulo">Argumentos</h4>
+            @for (a of i.argumentosVenda; track a.titulo) {
+              <div class="ag-ia-item">
+                <strong>{{ a.titulo }}</strong>
+                <span>{{ a.texto }}</span>
+              </div>
+            }
           </div>
+        </div>
 
-          @if (i.perguntasDoGestor.length) {
-            <div class="ag-ia-bloco">
-              <h4 class="ag-ia-subtitulo">O gestor provavelmente vai perguntar</h4>
-              @for (p of i.perguntasDoGestor; track p.pergunta) {
-                <details class="ag-ia-qa">
-                  <summary>{{ p.pergunta }}</summary>
-                  <p>{{ p.resposta }}</p>
-                </details>
-              }
-            </div>
-          }
+        @if (i.perguntasDoGestor.length) {
+          <div class="ag-ia-bloco">
+            <h4 class="ag-ia-subtitulo">Perguntas que o gestor vai fazer</h4>
+            @for (q of i.perguntasDoGestor; track q.pergunta) {
+              <div class="ag-ia-qa">
+                <strong>{{ q.pergunta }}</strong>
+                <span>{{ q.resposta }}</span>
+              </div>
+            }
+          </div>
         }
 
-        <!-- Pergunta livre -->
         <div class="ag-ia-chat">
-          <h4 class="ag-ia-subtitulo">Pergunte sobre esta análise</h4>
-
           @for (t of conversa(); track $index) {
             <div class="ag-chat-turno">
               <p class="ag-chat-pergunta">{{ t.pergunta }}</p>
@@ -349,215 +485,245 @@
           }
 
           @if (carregandoPergunta()) {
-            <div class="ag-estado"><span class="ag-spinner" aria-hidden="true"></span> Pensando…</div>
+            <p class="ag-estado"><span class="ag-spinner"></span> Respondendo…</p>
           }
 
           <div class="ag-chat-entrada">
             <input
-              type="text"
               class="ag-chat-input"
+              type="text"
               [(ngModel)]="pergunta"
-              (keyup.enter)="enviarPergunta()"
-              [disabled]="carregandoPergunta()"
-              aria-label="Pergunta sobre a análise"
-              placeholder="Ex: e se o orçamento subir para 400 mil?">
-            <button type="button" class="ag-btn-primario" (click)="enviarPergunta()" [disabled]="!pergunta.trim() || carregandoPergunta()">
+              (keydown.enter)="enviarPergunta()"
+              placeholder="Pergunte sobre o grupo, a cidade ou a confiança do número…">
+            <button type="button" class="ag-btn-secundario" (click)="enviarPergunta()" [disabled]="!pergunta.trim()">
               Perguntar
             </button>
           </div>
         </div>
-      </div>
-    }
+      }
+    </div>
 
-    <!-- Tabela de dados -->
-    <div class="ag-tabela-bloco" appReveal="up">
-      <div class="ag-premissas-topo">
-        <h3 class="ag-bloco-titulo">Ranking completo</h3>
-        <button type="button" class="ag-btn-texto" (click)="mostrarTabela.set(!mostrarTabela())">
-          {{ mostrarTabela() ? 'Ocultar tabela' : 'Ver tabela de dados' }}
-        </button>
-      </div>
+    <!-- ===================== Detalhe técnico, recolhido =====================
+         Quem apresenta não vê; quem audita o número abre e encontra tudo:
+         os índices crus, os controles da base e os intervalos de confiança. -->
+    <div class="ag-tecnico" appReveal="up">
+      <button type="button" class="ag-btn-texto" (click)="mostrarTecnico.set(!mostrarTecnico())">
+        {{ mostrarTecnico() ? 'Ocultar' : 'Ver' }} detalhe técnico
+      </button>
 
-      @if (mostrarTabela()) {
-        <div class="ag-tabela-scroll">
-          <table class="ag-tabela">
-            <caption class="ag-sr">Ranking de aderência com score, ajuste de preço e share estimado</caption>
-            <thead>
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Modelo</th>
-                <th scope="col">Segmento</th>
-                <th scope="col" class="ag-num">Score</th>
-                <th scope="col" class="ag-num">Bruto</th>
-                <th scope="col" class="ag-num">Ajuste preço</th>
-                <th scope="col" class="ag-num">Preço</th>
-                <th scope="col" class="ag-num">Share est.</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (m of matches(); track m.modelo; let i = $index) {
-                <tr [class.ag-linha-podio]="i < 3">
-                  <td>{{ i + 1 }}</td>
-                  <td><strong>{{ m.modelo }}</strong></td>
-                  <td class="ag-celula-suave">{{ m.segmento }}</td>
-                  <td class="ag-num"><strong>{{ m.score }}</strong></td>
-                  <td class="ag-num ag-celula-suave">{{ m.scoreBruto }}</td>
-                  <td class="ag-num" [class.ag-acima]="m.ajustePreco < 0">{{ m.ajustePreco === 0 ? '—' : m.ajustePreco }}</td>
-                  <td class="ag-num ag-celula-suave">{{ formatarReais(m.precoDe) }}</td>
-                  <td class="ag-num ag-celula-suave">{{ m.shareLinha }}%</td>
-                </tr>
+      @if (mostrarTecnico()) {
+        <div class="ag-tecnico-corpo">
+          @if (avisoApi()) {
+            <p class="ag-premissas-nota"><strong>Método.</strong> {{ avisoApi() }}</p>
+          }
+          @if (avisoCosseno()) {
+            <p class="ag-premissas-nota"><strong>Semelhança de perfil.</strong> {{ avisoCosseno() }}</p>
+          }
+
+          @if (ajustesContexto().length) {
+            <h4 class="ag-ia-subtitulo">Controles aplicados pela base</h4>
+            <ul class="ag-ajustes">
+              @for (a of ajustesContexto(); track a.controle) {
+                <li class="ag-ajuste">
+                  <code>{{ a.controle }}</code>
+                  <span>{{ a.motivo }}</span>
+                  <strong class="ag-num">{{ a.valor_pct }}%</strong>
+                </li>
               }
-            </tbody>
-          </table>
-        </div>
+            </ul>
+          }
 
-        @if (fichas().length) {
+          <h4 class="ag-ia-subtitulo">Índices por modelo</h4>
           <div class="ag-tabela-scroll">
             <table class="ag-tabela">
-              <caption class="ag-sr">Ficha técnica dos finalistas, dados da API</caption>
               <thead>
                 <tr>
                   <th scope="col">Modelo</th>
-                  <th scope="col">Variante na API</th>
-                  <th scope="col">Combustível</th>
-                  <th scope="col" class="ag-num">Potência</th>
-                  <th scope="col" class="ag-num">Comprimento</th>
-                  <th scope="col" class="ag-num">Altura</th>
-                  <th scope="col" class="ag-num">Tanque</th>
+                  <th scope="col" class="ag-num">Share perfil</th>
+                  <th scope="col" class="ag-num">Share município</th>
+                  <th scope="col" class="ag-num">Lift</th>
+                  <th scope="col" class="ag-num">Cosseno</th>
                 </tr>
               </thead>
               <tbody>
-                @for (f of fichas(); track f.modelo) {
+                @for (m of matches(); track m.modelo) {
                   <tr>
-                    <td><strong>{{ f.modelo }}</strong></td>
-                    <td class="ag-celula-suave">{{ f.variante }}</td>
-                    <td class="ag-celula-suave">{{ f.combustivel }}</td>
-                    <td class="ag-num">{{ f.potencia !== null ? f.potencia + ' cv' : '—' }}</td>
-                    <td class="ag-num">{{ f.comprimento !== null ? f.comprimento + ' mm' : '—' }}</td>
-                    <td class="ag-num">{{ f.altura !== null ? f.altura + ' mm' : '—' }}</td>
-                    <td class="ag-num">{{ f.tanque !== null ? f.tanque + ' L' : '—' }}</td>
+                    <td>{{ m.modelo }}</td>
+                    <td class="ag-num">{{ formatarPct(m.sharePerfilPct) }}</td>
+                    <td class="ag-num">{{ formatarPct(m.shareMunicipioPct) }}</td>
+                    <td class="ag-num">{{ m.lift }}</td>
+                    <td class="ag-num">{{ m.cosseno === null ? '—' : m.cosseno }}</td>
                   </tr>
                 }
               </tbody>
             </table>
           </div>
-        }
+
+          @if (lider(); as l) {
+            @if (l.fatores.length) {
+              <h4 class="ag-ia-subtitulo">Fatores da semelhança de perfil — {{ l.modelo }}</h4>
+              <ul class="ag-ajustes">
+                @for (f of l.fatores; track f.caracteristica) {
+                  <li class="ag-ajuste">
+                    <code>{{ f.caracteristica }}</code>
+                    <span>{{ f.sentido }}</span>
+                    <strong class="ag-num">{{ f.contribuicao }}</strong>
+                  </li>
+                }
+              </ul>
+            }
+          }
+
+          @if (detalheLider(); as d) {
+            <h4 class="ag-ia-subtitulo">Efeitos com intervalo de confiança — {{ d.modelo }}</h4>
+            <div class="ag-tabela-scroll">
+              <table class="ag-tabela">
+                <thead>
+                  <tr>
+                    <th scope="col">Controle</th>
+                    <th scope="col" class="ag-num">Efeito por DP</th>
+                    <th scope="col" class="ag-num">IC 90%</th>
+                    <th scope="col">Conclusivo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (e of d.efeitos_contexto; track e.controle) {
+                    <tr>
+                      <td>{{ e.descricao }}</td>
+                      <td class="ag-num">{{ e.efeito_pct_por_dp }}%</td>
+                      <td class="ag-num">{{ e.ic90_pct[0] }}% a {{ e.ic90_pct[1] }}%</td>
+                      <td>{{ e.distinguivel_de_zero ? 'sim' : 'não' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          <p class="ag-premissas-nota">Fonte: {{ nomeFonte }}.@if (fichas().length) { Ficha técnica: {{ nomeFonteVeiculos }}.}</p>
+        </div>
       }
     </div>
+  }
 
-    <p class="ag-aviso">{{ avisoMercado }}</p>
-
-    <!--
-      Resumo executivo para impressão. Invisível na tela; o CSS global em
-      styles.css esconde o resto da página quando o diálogo de impressão abre.
-    -->
-    <div class="ag-impressao" aria-hidden="true">
-
+  <!-- ===================================================================
+       Resumo executivo para impressão / PDF
+       Oculto na tela e visível só em @media print — ver styles.css.
+       =================================================================== -->
+  @if (analisou()) {
+    <div class="ag-impressao">
       <header class="pdf-capa">
         <div class="pdf-marca">SEIA + Ford</div>
         <h1 class="pdf-titulo">Resumo executivo — Agente de Perfil</h1>
-        @if (geradoEm()) { <p class="pdf-data">Gerado em {{ geradoEm() }}</p> }
+        <p class="pdf-data">Gerado em {{ geradoEm() }}</p>
       </header>
+
+      @if (lider(); as l) {
+        <section class="pdf-bloco pdf-destaque">
+          <h2 class="pdf-h2">A resposta</h2>
+          <div class="pdf-lider">
+            <div>
+              <strong class="pdf-lider-nome">{{ l.modelo }}</strong>
+              <span class="pdf-lider-seg">o carro mais comum neste perfil</span>
+            </div>
+            <div class="pdf-lider-score">
+              <span class="pdf-score">{{ diferencaCurta(l.lift) }}</span>
+              <span class="pdf-score-rot">vs. a cidade</span>
+            </div>
+          </div>
+          <ul class="pdf-kpis">
+            <li><span>No grupo</span><strong>{{ frequenciaLegivel(l.sharePerfilPct) }}</strong></li>
+            <li><span>Na cidade</span><strong>{{ frequenciaLegivel(l.shareMunicipioPct) }}</strong></li>
+            <li>
+              <span>Leitura</span>
+              <strong>{{ sobreIndexa(l.lift) ? 'Preferência real' : 'Comum, não preferido' }}</strong>
+            </li>
+          </ul>
+          @if (maisCaracteristico(); as c) {
+            @if (c.modelo !== l.modelo) {
+              <p class="pdf-alerta">
+                A aposta do grupo é o {{ c.modelo }}: {{ diferencaLegivel(c.lift) }},
+                com {{ frequenciaLegivel(c.sharePerfilPct) }} carros do grupo.
+              </p>
+            }
+          }
+        </section>
+
+        @if (explicacoes().length) {
+          <section class="pdf-bloco">
+            <h2 class="pdf-h2">Por que</h2>
+            <ul class="pdf-razoes">
+              @for (e of explicacoes(); track e.texto) {
+                <li>{{ e.texto }}</li>
+              }
+            </ul>
+            @if (semEvidencia().length) {
+              <p class="pdf-texto"><strong>Não usar como argumento:</strong>
+                @for (e of semEvidencia(); track e.texto) { {{ e.texto }} }
+              </p>
+            }
+          </section>
+        }
+      }
+
+      <section class="pdf-bloco">
+        <h2 class="pdf-h2">Resumo</h2>
+        <p class="pdf-texto">{{ narrativa() }}</p>
+      </section>
 
       <section class="pdf-bloco">
         <h2 class="pdf-h2">Perfil analisado</h2>
-        <p class="pdf-citacao">“{{ descricao.trim() }}”</p>
+        @if (descricao.trim()) {
+          <p class="pdf-citacao">“{{ descricao.trim() }}”</p>
+        }
         <table class="pdf-tabela pdf-tabela--fatos">
           <tbody>
             @for (f of fatos(); track f.rotulo) {
               <tr>
                 <th scope="row">{{ f.rotulo }}</th>
-                <td>{{ f.valor }}@if (!f.lido) { <em> (premissa assumida)</em> }</td>
+                <td>{{ f.valor }}@if (!f.lido) {<em> (não informado)</em>}</td>
               </tr>
+            }
+            @if (perfilDaApi(); as api) {
+              <tr><th scope="row">Grupo comparado</th><td>{{ rotuloGrupo(api.grupo) }}</td></tr>
+              <tr><th scope="row">Cidade</th><td>{{ localidade() }}</td></tr>
             }
           </tbody>
         </table>
       </section>
 
-      @if (lider(); as l) {
-        <section class="pdf-bloco pdf-destaque">
-          <h2 class="pdf-h2">Recomendação</h2>
-          <div class="pdf-lider">
-            <div>
-              <strong class="pdf-lider-nome">{{ l.modelo }}</strong>
-              <span class="pdf-lider-seg">{{ l.segmento }} · a partir de {{ formatarReais(l.precoDe) }}</span>
-            </div>
-            <div class="pdf-lider-score">
-              <span class="pdf-score">{{ l.score }}</span><span class="pdf-score-max">/100</span>
-              <span class="pdf-score-rot">aderência</span>
-            </div>
-          </div>
-          <p class="pdf-texto">{{ l.diferencial }}</p>
-          <ul class="pdf-kpis">
-            <li><span>Share estimado</span><strong>{{ l.shareLinha }}%</strong></li>
-            <li><span>Ranking de vendas</span><strong>{{ l.posicaoVendas }}º</strong></li>
-            <li>
-              <span>Preço vs. teto</span>
-              <strong>{{ l.dentroDoOrcamento ? 'Cabe' : 'Acima (−' + (-l.ajustePreco) + ' pts)' }}</strong>
-            </li>
-          </ul>
-          @if (nenhumCabe() && perfil(); as p) {
-            <p class="pdf-alerta">
-              Nenhum modelo da linha cabe no teto de {{ formatarReais(p.orcamento) }}.
-              O ranking mostra o mais próximo do alcance.
-            </p>
+      <section class="pdf-bloco pdf-quebra">
+        <h2 class="pdf-h2">Gráficos</h2>
+        @if (imagensGraficos(); as img) {
+          @if (img.lift) {
+            <figure class="pdf-fig">
+              <img [src]="img.lift" alt="Onde o grupo foge da média da cidade">
+              <figcaption>Onde este grupo foge da média — zero é a média da cidade</figcaption>
+            </figure>
           }
-        </section>
-      }
-
-      <section class="pdf-bloco">
-        <h2 class="pdf-h2">Por que estes três</h2>
-        @for (m of podio(); track m.modelo) {
-          <div class="pdf-card">
-            <div class="pdf-card-topo">
-              <strong>{{ m.modelo }}</strong>
-              <span>{{ m.score }}/100 · {{ formatarReais(m.precoDe) }}</span>
-            </div>
-            <ul class="pdf-razoes">
-              @for (r of m.razoes; track r.eixo) {
-                <li><strong>{{ rotuloEixo(r.eixo) }} (+{{ r.contribuicao }})</strong> {{ r.texto }}</li>
-              }
-            </ul>
-            @if (m.atencao; as a) {
-              <p class="pdf-atencao"><strong>Atenção · {{ rotuloEixo(a.eixo) }}</strong> {{ a.texto }}</p>
-            }
-          </div>
+          @if (img.share) {
+            <figure class="pdf-fig">
+              <img [src]="img.share" alt="Quantos carros de cada modelo, no grupo e na cidade">
+              <figcaption>Quantos carros de cada modelo — grupo (azul) e cidade (laranja)</figcaption>
+            </figure>
+          }
+          @if (img.grupos && detalheLider(); as d) {
+            <figure class="pdf-fig">
+              <img [src]="imagensGraficos()!.grupos" alt="Quem mais tem o modelo">
+              <figcaption>Quem mais tem {{ d.modelo }} — a linha fina é a margem de erro</figcaption>
+            </figure>
+          }
         }
       </section>
-
-      @if (imagensGraficos(); as img) {
-        <section class="pdf-bloco pdf-quebra">
-          <h2 class="pdf-h2">Gráficos</h2>
-          @if (img.radar) {
-            <figure class="pdf-fig">
-              <img [src]="img.radar" alt="Aderência por eixo de necessidade">
-              <figcaption>Aderência por eixo de necessidade (0 a 100)</figcaption>
-            </figure>
-          }
-          @if (img.ficha) {
-            <figure class="pdf-fig">
-              <img [src]="img.ficha" alt="Ficha técnica comparada">
-              <figcaption>{{ metricaSelecionada().rotulo }} em {{ metricaSelecionada().unidade }} — dado real da API</figcaption>
-            </figure>
-          }
-          @if (img.drivers && lider(); as l) {
-            <figure class="pdf-fig">
-              <img [src]="img.drivers" alt="Fatores de decisão dos compradores">
-              <figcaption>Por que a massa escolhe o {{ l.modelo }} (estimativa interna)</figcaption>
-            </figure>
-          }
-        </section>
-      }
 
       @if (insights(); as i) {
         <section class="pdf-bloco pdf-quebra">
           <h2 class="pdf-h2">Leitura da IA</h2>
           <p class="pdf-veredito">
-            <strong>{{ i.concordaComRanking ? 'Concorda com o ranking.' : 'Discorda do ranking.' }}</strong>
+            <strong>{{ i.concordaComRanking ? 'Concorda com a leitura.' : 'Discorda da leitura.' }}</strong>
             {{ i.veredito }}
           </p>
           <p class="pdf-texto">{{ i.leituraPerfil }}</p>
-
           <div class="pdf-duas-colunas">
             <div>
               <h3 class="pdf-h3">Riscos</h3>
@@ -568,7 +734,7 @@
               </ul>
             </div>
             <div>
-              <h3 class="pdf-h3">Argumentos de venda</h3>
+              <h3 class="pdf-h3">Argumentos</h3>
               <ul class="pdf-lista">
                 @for (a of i.argumentosVenda; track a.titulo) {
                   <li><strong>{{ a.titulo }}</strong> — {{ a.texto }}</li>
@@ -576,12 +742,11 @@
               </ul>
             </div>
           </div>
-
           @if (i.perguntasDoGestor.length) {
             <h3 class="pdf-h3">Perguntas prováveis</h3>
             <ul class="pdf-lista">
-              @for (p of i.perguntasDoGestor; track p.pergunta) {
-                <li><strong>{{ p.pergunta }}</strong> {{ p.resposta }}</li>
+              @for (q of i.perguntasDoGestor; track q.pergunta) {
+                <li><strong>{{ q.pergunta }}</strong> {{ q.resposta }}</li>
               }
             </ul>
           }
@@ -589,25 +754,25 @@
       }
 
       <section class="pdf-bloco pdf-quebra">
-        <h2 class="pdf-h2">Ranking completo</h2>
+        <h2 class="pdf-h2">Todos os modelos do recorte</h2>
         <table class="pdf-tabela">
           <thead>
             <tr>
-              <th>#</th><th>Modelo</th><th>Segmento</th>
-              <th class="pdf-num">Score</th><th class="pdf-num">Ajuste preço</th>
-              <th class="pdf-num">Preço</th><th class="pdf-num">Share est.</th>
+              <th>#</th>
+              <th>Modelo</th>
+              <th>No grupo</th>
+              <th>Na cidade</th>
+              <th class="pdf-num">vs. cidade</th>
             </tr>
           </thead>
           <tbody>
-            @for (m of matches(); track m.modelo; let i = $index) {
+            @for (m of matches(); track m.modelo) {
               <tr>
-                <td>{{ i + 1 }}</td>
+                <td>{{ m.posicao }}</td>
                 <td>{{ m.modelo }}</td>
-                <td>{{ m.segmento }}</td>
-                <td class="pdf-num">{{ m.score }}</td>
-                <td class="pdf-num">{{ m.ajustePreco === 0 ? '—' : m.ajustePreco }}</td>
-                <td class="pdf-num">{{ formatarReais(m.precoDe) }}</td>
-                <td class="pdf-num">{{ m.shareLinha }}%</td>
+                <td>{{ frequenciaLegivel(m.sharePerfilPct) }}</td>
+                <td>{{ frequenciaLegivel(m.shareMunicipioPct) }}</td>
+                <td class="pdf-num">{{ diferencaCurta(m.lift) }}</td>
               </tr>
             }
           </tbody>
@@ -616,13 +781,17 @@
 
       @if (linhasFichaPdf().length) {
         <section class="pdf-bloco">
-          <h2 class="pdf-h2">Ficha técnica — dados da API</h2>
+          <h2 class="pdf-h2">Ficha técnica</h2>
           <table class="pdf-tabela">
             <thead>
               <tr>
-                <th>Modelo</th><th>Variante</th><th>Combustível</th>
-                <th class="pdf-num">Potência</th><th class="pdf-num">Compr.</th>
-                <th class="pdf-num">Altura</th><th class="pdf-num">Tanque</th>
+                <th>Modelo</th>
+                <th>Versão</th>
+                <th>Combustível</th>
+                <th class="pdf-num">Potência</th>
+                <th class="pdf-num">Compr.</th>
+                <th class="pdf-num">Altura</th>
+                <th class="pdf-num">Tanque</th>
               </tr>
             </thead>
             <tbody>
@@ -642,11 +811,40 @@
         </section>
       }
 
+      <!-- Anexo técnico: sai no PDF porque o documento circula sem quem o gerou,
+           e alguém vai querer conferir o número. -->
+      @if (detalheLider(); as d) {
+        @if (d.efeitos_contexto.length) {
+          <section class="pdf-bloco pdf-quebra">
+            <h2 class="pdf-h2">Anexo técnico — {{ d.modelo }}</h2>
+            <table class="pdf-tabela">
+              <thead>
+                <tr>
+                  <th>Controle</th>
+                  <th class="pdf-num">Efeito por DP</th>
+                  <th class="pdf-num">IC 90%</th>
+                  <th>Conclusivo</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (e of d.efeitos_contexto; track e.controle) {
+                  <tr>
+                    <td>{{ e.descricao }}</td>
+                    <td class="pdf-num">{{ e.efeito_pct_por_dp }}%</td>
+                    <td class="pdf-num">{{ e.ic90_pct[0] }}% a {{ e.ic90_pct[1] }}%</td>
+                    <td>{{ e.distinguivel_de_zero ? 'sim' : 'não' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </section>
+        }
+      }
+
       <footer class="pdf-rodape">
-        <p><strong>Origem dos dados.</strong> {{ avisoMercado }}</p>
-        <p>Fonte da ficha técnica: {{ nomeFonte }}.</p>
+        <p><strong>Como ler estes números.</strong> {{ comoLer }}</p>
+        <p>Fonte: {{ nomeFonte }}.@if (linhasFichaPdf().length) { Ficha técnica: {{ nomeFonteVeiculos }}.}</p>
       </footer>
     </div>
   }
-
 </section>
